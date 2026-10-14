@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Claude Code 解説記事 | 中小DXラボ</title>
-<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けの解説記事の一覧です。権限設定(deny/ask/allow)、CLAUDE.md の書き方、スキル(SKILL.md)、API 料金の見積もり方、Windows でのつまずきを、公式ドキュメントと実機の確認結果にもとづいて解説します。">
+<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けの解説記事の一覧です。権限設定(deny/ask/allow)、CLAUDE.md の書き方、スキル(SKILL.md)、API 料金の見積もり方、Windows でのつまずき、試す前の確認、.env の守り方、非エンジニア向けの研修の進め方を、公式ドキュメントと実機の確認結果にもとづいて解説します。">
 <link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="中小DXラボ">
@@ -76,6 +76,21 @@
     <li class="card">
       <h2><a href="claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a></h2>
       <p>PowerShell の文字化けと実行ポリシー、CSV の BOM、allow が効かない、deny をすり抜ける読み取りなど、Windows で起きやすい10個を症状・原因・対処で解説します。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-company-checklist/index.html">Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)</a></h2>
+      <p>必要なプラン、Windows の要件、プロキシで許可する通信先、会話データの扱い、インストール後の確認を、試す前のチェックリストにまとめました。</p>
+      <p class="hint">対応するツール: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a> ・ <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-env-protection/index.html">Claude Code に .env を読ませない設定と、その限界(Windows で確認)</a></h2>
+      <p>deny ルールで .env の読み取りと cat は止まり、Python スクリプト経由の読み取りは止まりませんでした。Windows 11 での確認結果と、公式ドキュメントにある限界を整理しました。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-training-nonengineers/index.html">総務・経理など非エンジニアに Claude Code を教えるときの進め方</a></h2>
+      <p>研修なしで渡すと起きやすいこと、90分×3回の組み立て方、架空データと「条件」での判定、広げる順番と効果の記録の仕方を解説します。</p>
       <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
     </li>
   </ul>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code に .env を読ませない設定と、その限界(Windows で確認) | 中小DXラボ</title>
+<meta name="description" content="Claude Code に .env を読ませない deny ルールの書き方と、Windows 11 で実際に試した結果を解説します。読み取りツールと cat は止まり、Python スクリプト経由の読み取りは止まりませんでした。公式ドキュメントにある限界と、秘密情報の置き方まで整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code に .env を読ませない設定と、その限界(Windows で確認)">
+<meta property="og:description" content="deny ルールで .env の読み取りと cat は止まり、Python スクリプト経由の読み取りは止まりませんでした。Windows 11 での確認結果と、公式ドキュメントにある限界を整理しました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code に .env を読ませない設定と、その限界(Windows で確認)",
+  "description": "Claude Code に .env を読ませない deny ルールの書き方、Windows 11 での確認結果、公式ドキュメントにある限界の解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": ".env を読ませない設定と、その限界", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">.env を読ませない設定と、その限界</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code に .env を読ませない設定と、その限界(Windows で確認)</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントと実機の確認結果にもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li><code>.claude/settings.json</code> の deny に <code>Read(./.env)</code> を書くと、<strong>Claude の読み取りツールと <code>cat .env</code> は止まりました</strong>(Windows 11 で確認)。</li>
+      <li>一方で、<strong>Python スクリプトの中で <code>.env</code> を開く読み方は止まりませんでした</strong>。これは不具合ではなく、公式ドキュメントに書かれている仕様です。</li>
+      <li>deny は「うっかり読む」を防ぐ網として使い、本物の API キーなどは<strong>作業フォルダに置かない</strong>運用と組み合わせます。</li>
+    </ul>
+  </section>
+
+  <h2 id="why">なぜ .env が気になるのか</h2>
+  <p><code>.env</code> は、API キーや接続先のパスワードなどを書いておくファイルとして、多くのプロジェクトで使われています。Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は作業フォルダのファイルを読みながら作業するので、そのフォルダに <code>.env</code> があると、内容が会話に入る可能性があります。</p>
+  <p>Claude Code には、設定ファイル <code>settings.json</code> の権限ルールで特定の操作を止める仕組みがあります。CLAUDE.md(起動時に読まれる説明書きのファイル)に「読まないこと」と書くのは AI へのお願いですが、権限ルールは Claude Code 本体が操作を止めます。ただし、止まる範囲には限りがあります。そこを確かめるために、手元の Windows で試しました。</p>
+
+  <h2 id="setting">設定の書き方</h2>
+  <p>作業フォルダの <code>.claude/settings.json</code> に、次の禁止ルール(deny)を書きます。このファイルはプロジェクト用の設定で、Git で共有すれば同じフォルダで作業する全員に同じルールがかかります。</p>
+<pre><code>{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Bash(curl *)",
+      "Bash(git push *)"
+    ]
+  }
+}</code></pre>
+  <p>公式ドキュメントでは、<code>Read(./.env)</code> は今のフォルダの <code>.env</code> を対象にする例として載っています。下の階層にある <code>.env</code> もまとめて対象にしたい場合は、<code>Read(**/.env)</code> の形が案内されています。また、執筆時点では <code>.claudeignore</code> というファイルを置いても効果はなく、読ませたくないものは <code>Read</code> の deny に書くよう説明されています。</p>
+  <p>Windows では、パスは <code>/c/Users/…</code> のような形に直してから照合されます。ドライブ全体の <code>.env</code> を対象にする場合は <code>//c/**/.env</code> のように書くと公式ドキュメントにあります。</p>
+
+  <h2 id="test">Windows で試した方法</h2>
+  <p>中小DXラボで、次の環境を使って試しました(2026年10月13日)。</p>
+  <ul>
+    <li>Windows 11、Git for Windows(Git Bash)</li>
+    <li>Claude Code 2.1.296</li>
+    <li><code>claude -p</code>(画面を開かずに1回だけ頼むモード)で、<code>--allowedTools "Read,Bash"</code> を付けて読み取りとコマンドの実行を許可したうえで、上の deny を効かせる</li>
+  </ul>
+  <p>作業用のフォルダに、テスト用の値だけを書いたダミーの <code>.env</code> と、その <code>.env</code> を開いて表示するだけの Python スクリプトを置きました。本物のキーは使っていません。そのうえで、4つの操作を頼みました。</p>
+
+  <h2 id="result">確認結果</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">頼んだこと</th><th scope="col">結果</th></tr></thead>
+      <tbody>
+        <tr><td>Claude の読み取りツールで <code>.env</code> を読む</td><td>止まった(権限設定で拒否された、と返ってきた)</td></tr>
+        <tr><td><code>cat .env</code> を実行する</td><td>止まった</td></tr>
+        <tr><td><code>curl</code> で外部にアクセスする</td><td>止まった</td></tr>
+        <tr><td>Python スクリプトの中で <code>.env</code> を開いて表示する</td><td><strong>読めてしまった</strong>(ダミーの値がそのまま表示された)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>確認したのは上の環境と4つの操作だけです。PowerShell で実行される場合や、ほかのバージョンでの動きは個別には試していません。</p>
+
+  <h2 id="limits">止まらない読み方と、その理由</h2>
+  <p>執筆時点の公式ドキュメントでは、<code>Read</code> と <code>Edit</code> の deny が効く範囲が次のように説明されています(要約)。</p>
+  <ul>
+    <li>Claude の組み込みのファイルツールには効く</li>
+    <li><code>cat</code>、<code>head</code>、<code>tail</code> など、Claude Code がファイルを読むコマンドと認識できるものには効く</li>
+    <li>Python や Node のスクリプトが自分でファイルを開くような、間接的な読み書きには効かない</li>
+    <li>ファイル名を書かずに読むコマンド(そのフォルダで <code>grep -r</code> を実行する、など)にも効かない</li>
+  </ul>
+  <p>コマンドのルールも同じ考え方です。<code>Bash(curl *)</code> は <code>curl https://…</code> という書き方は止めますが、<code>/usr/bin/curl</code> のようにパスで呼ぶ書き方や、<code>sh -c '…'</code> で包む書き方には当たらないとされています。</p>
+  <p>つまり deny は「どんな方法でも読ませない壁」ではなく、ふつうの操作を止める網です。社内で説明するときも、この違いを先に伝えておくと、あとで「設定したのに読めた」と問題になるのを防げます。</p>
+
+  <h2 id="windows">Windows で押さえておきたいこと</h2>
+  <ul>
+    <li><strong>Git for Windows の有無で実行のされ方が変わる</strong>: 公式ドキュメントでは、Git for Windows がない場合、コマンドは PowerShell で実行されるとされています。PowerShell 向けには <code>PowerShell(Remove-Item *)</code> のような形のルールがあり、Bash のルールと同じ書き方です。PowerShell で使う場合は、そちらの形のルールも合わせて検討してください。</li>
+    <li><strong>OS のレベルで止める仕組み(サンドボックス)は Windows ネイティブでは使えない</strong>: 執筆時点の公式ドキュメントでは、サンドボックスは macOS・Linux・WSL 2 で動き、Windows で使うには WSL 2 の中で Claude Code を動かすと説明されています。</li>
+  </ul>
+
+  <h2 id="operation">社内で使うときの考え方</h2>
+  <ol>
+    <li><strong>本物の秘密情報を作業フォルダに置かない</strong>: API キーなどは Claude Code を起動するフォルダの外で管理し、必要なときだけ環境変数として渡します。置かなければ、読まれる心配もありません。</li>
+    <li><strong>deny は網として共有する</strong>: <code>.env</code>、秘密情報のフォルダ、外部送信のコマンドを deny に入れ、プロジェクトの <code>.claude/settings.json</code> として配ります。ふだんの操作でうっかり読む・送るのを防ぐ効果はあります。</li>
+    <li><strong>組織で統一するなら管理用の設定を検討する</strong>: 公式ドキュメントでは、利用者が上書きできない管理用の設定(managed settings)で deny を配る方法が案内されています。</li>
+    <li><strong>配る前にダミーで確かめる</strong>: テスト用の値だけを入れた <code>.env</code> を置き、止まること・止まらないことを手元で一度確かめてから配ります。</li>
+  </ol>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>.gitignore に .env を書いていれば、読まれませんか</summary>
+      <p>.gitignore は Git の管理から外す設定で、Claude Code に読ませない設定とは別です。コミットしたくないものは .gitignore に、読ませたくないものは deny に、それぞれ書きます。</p>
+    </details>
+    <details>
+      <summary>Python 経由でも止めたい場合はどうすればよいですか</summary>
+      <p>deny では止まりません。公式ドキュメントでは、すべてのプロセスからのアクセスを OS のレベルで止める方法としてサンドボックスが案内されています。Windows では WSL 2 の中で使う形になります。いちばん手軽なのは、本物の値を作業フォルダに置かないことです。</p>
+    </details>
+    <details>
+      <summary>deny を書いたのに効いていないように見えます</summary>
+      <p>置き場所やパスの書き方が違っていることがあります。Claude Code の中で <code>/permissions</code> を実行してルールが読み込まれているかを見て、<a href="../../troubleshooting/index.html">つまずき早見表</a> で症状から原因を探してみてください。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">deny のルールをチェックだけで作る</h2>
+    <p>この記事のルールは、<a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a> で、チェックを付けるだけで出力できます。実機で止まると確かめたルールには印を付けています。設定したのに思ったとおりに動かないときは、<a href="../../troubleshooting/index.html">つまずき早見表</a> も使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(Read のルールの書き方、効かない範囲、PowerShell のルール)</li>
+    <li><a href="https://code.claude.com/docs/en/sandboxing" rel="noopener">Sandboxing</a>(対応している環境)</li>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Set up Claude Code</a>(Windows で Git for Windows がない場合の動き)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a>(設定ファイルの置き場所、管理用の設定)</li>
+  </ul>
+  <p class="hint">仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認し、手元でも動きを確かめてください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

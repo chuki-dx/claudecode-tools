@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール) | 中小DXラボ</title>
+<meta name="description" content="情シスが Claude Code を社内で試す前に確認したい項目を、プラン・PC 環境・ネットワーク・社内ルールの4つに分けて解説します。必要なプラン、Windows の要件、プロキシで許可する通信先、会話データの扱い、インストール後の確認までを公式ドキュメントにもとづいて整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)">
+<meta property="og:description" content="必要なプラン、Windows の要件、プロキシで許可する通信先、会話データの扱い、インストール後の確認までを、公式ドキュメントにもとづいてチェックリストにしました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)",
+  "description": "情シスが Claude Code を社内で試す前に確認したい、プラン・PC 環境・ネットワーク・社内ルールのチェックリスト。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "社内で試す前に確認すること", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">社内で試す前に確認すること</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントにもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>インストールの前に<strong>プラン・PC 環境・ネットワーク・社内ルール</strong>の4つを確認しておくと、「使えなかった」「通らなかった」「規程に引っかかった」という手戻りを減らせます。</li>
+      <li>Claude Code は<strong>無料プランでは使えません</strong>。Windows では管理者権限なしで入れられますが、社内のインストール手続きは別に確認が要ります。</li>
+      <li>社内ルールに AI ツールの記載がなければ、使う範囲を決めて上司や担当者に一度相談し、その記録を残しておきます。</li>
+    </ul>
+  </section>
+
+  <h2 id="why">なぜ先に確認するのか</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)を社内で試すとき、止まる理由の多くは技術の難しさではありません。契約したプランでは使えなかった、社内のプロキシで通信が通らなかった、あとから規程に合わないと分かった、といった、事前に確認できることです。</p>
+  <p>個人で使うツールなら「まず入れてみる」でも困りません。ただ、業務で使う AI ツールは、あとから問題が見つかると「なぜ確認せずに使ったのか」という話になりがちです。先に確認しておけば、上司に相談するときにも「プラン・環境・ルールは確認済みです」と伝えられます。</p>
+  <p>以下は、執筆時点(2026年10月)の公式ドキュメントにもとづくチェックリストです。製品の仕様は変わるので、試す直前にリンク先で最新の情報を確かめてください。</p>
+
+  <h2 id="plan">1. プラン(アカウント)の確認</h2>
+  <ul>
+    <li><strong>Claude Code が使えるプランか</strong>: 公式ドキュメントでは、Pro・Max・Team・Enterprise、または Console(API 用の管理画面)のアカウントが必要とされています。claude.ai の無料プランには Claude Code が含まれていません。</li>
+    <li><strong>個人で契約するか、法人で契約するか</strong>: 個人の Pro で小さく試すのか、最初から Team などの法人向けプランにするのかを決めます。法人向けプランには管理機能があり、データの扱いも個人向けとは異なります。</li>
+    <li><strong>使える国・地域か</strong>: Anthropic がサービスを提供している国・地域で使う必要があります。</li>
+  </ul>
+  <p>個人契約で業務データを扱ってよいかは、会社によって判断が分かれます。迷ったら、後半の「社内ルールの確認」を先に済ませてからプランを決めると、手戻りがありません。</p>
+
+  <h2 id="pc">2. PC 環境の確認</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">項目</th><th scope="col">公式ドキュメントの記載(執筆時点)</th></tr></thead>
+      <tbody>
+        <tr><td>OS</td><td>Windows 10 1809 以上、または Windows Server 2019 以上。macOS は 13.0 以上</td></tr>
+        <tr><td>メモリ</td><td>4GB 以上</td></tr>
+        <tr><td>インストール</td><td>PowerShell または コマンドプロンプトからインストール用のコマンドを実行。管理者として実行する必要はない。WinGet でも入れられる</td></tr>
+        <tr><td>Git for Windows</td><td>任意。入れると、コマンドの実行に Git Bash が使われる。入れない場合は PowerShell で実行される</td></tr>
+        <tr><td>更新</td><td>推奨の方法で入れた場合は自動で更新される。更新を遅らせる stable のチャネルを選んだり、自動更新を止めたりもできる</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>中小企業の情シスにとって大きいのは、管理者権限なしで入れられる点です。ただし、権限が要らないことと、社内でインストールしてよいことは別の話です。この点は社内ルールの項目で確認します。</p>
+  <p>社内で更新のタイミングをそろえたい場合は、試す段階から更新の方法を決めておくと、利用者ごとにバージョンがばらつくのを防げます。</p>
+
+  <h2 id="network">3. ネットワークの確認</h2>
+  <p>Claude Code はインターネット接続が必要です。社内にプロキシやファイアウォールがある場合は、通信先の許可が要ることがあります。公式ドキュメントでは、許可が必要な通信先として次のようなものが挙げられています(一部)。</p>
+  <ul>
+    <li><code>api.anthropic.com</code>(Claude の API)</li>
+    <li><code>claude.ai</code> と <code>claude.com</code>(claude.ai のアカウントでのログイン)</li>
+    <li><code>platform.claude.com</code>(Console のアカウントでのログインなど)</li>
+    <li><code>downloads.claude.ai</code>(インストールと自動更新)</li>
+  </ul>
+  <p>プロキシを通す場合は、環境変数 <code>HTTPS_PROXY</code> にプロキシの URL を設定する方法が案内されています。通信先の一覧は変わることがあるので、許可を依頼する前に公式ドキュメントの最新の表を確認してください。</p>
+  <p>UTM(統合脅威管理)機器やプロキシの設定を外部の業者に任せている場合は、許可の反映に日数がかかることがあります。試したい日が決まっているなら、この項目は早めに動いておくと安心です。</p>
+
+  <h2 id="rules">4. 社内ルールの確認</h2>
+  <p>ここは製品の仕様ではなく、自社のルールの確認です。情シス自身がルールを作る立場のこともあれば、総務や情報管理の担当に確認する立場のこともあります。</p>
+  <ul>
+    <li><strong>情報セキュリティ規程で、外部の AI サービスの利用が認められているか</strong></li>
+    <li><strong>AI に入力してよい情報の範囲</strong>: たとえば、業務の手順はよいが、顧客名や個人情報は入れない、といった線引き</li>
+    <li><strong>会話データの扱い</strong>: 公式ドキュメントでは、個人向けプラン(Free・Pro・Max)は会話をモデルの改善に使うかどうかを利用者が設定で選ぶ形、Team・Enterprise・API などの法人向けの条件では、原則として学習に使わないと説明されています。業務で使うなら、試す前に設定を確認します。</li>
+    <li><strong>ソフトウェアのインストール手続き</strong>: 管理者権限が不要でも、社内で申請が必要な場合があります。</li>
+    <li><strong>費用の負担者</strong>: 個人の立て替えか、部署の予算か</li>
+  </ul>
+  <p>規程に AI ツールについての記載がない会社も少なくありません。その場合は「書いていないから使ってよい」と判断せず、「この範囲で試したい」と上司や情報管理の担当に一度相談しておくのがおすすめです。相談した記録が残っていれば、あとで説明を求められたときにも困りません。</p>
+
+  <h2 id="after">5. インストール後の確認</h2>
+  <ol>
+    <li>ターミナルで <code>claude --version</code> を実行し、バージョン番号が表示されることを確かめます。</li>
+    <li><code>claude doctor</code> を実行し、インストールや設定ファイルの問題が出ていないかを確かめます。</li>
+    <li>試すための空のフォルダを作り、その中で <code>claude</code> を起動してログインします。</li>
+  </ol>
+  <p>3つ目は小さなことに見えますが、大事な点です。Claude Code は起動したフォルダの中で作業します。業務の大事なファイルがあるフォルダでいきなり起動せず、空のフォルダから始めると安心です。</p>
+  <p>試すフォルダができたら、最初に2つのファイルを用意しておくと、そのあとの作業が落ち着きます。1つは、Claude Code が起動時に読む説明書きのファイル <code>CLAUDE.md</code> です。もう1つは、読ませないファイルや実行させないコマンドを決める <code>.claude/settings.json</code> です。どちらも、このサイトの <a href="../../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a> と <a href="../../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a> で、選ぶだけで下書きを作れます。</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>個人の Pro で試して、あとから法人プランに移ってもよいですか</summary>
+      <p>進め方としてはありえます。ただ、個人契約で業務データを扱ってよいかは社内ルールしだいです。試す範囲を「架空のデータだけ」などに決め、上司の了解を得てから始めると、移るときの説明もしやすくなります。</p>
+    </details>
+    <details>
+      <summary>管理者権限が無い PC でも入れられますか</summary>
+      <p>公式ドキュメントでは、Windows のインストールは管理者として実行する必要がないとされています。ただし、社内でソフトウェアのインストールに申請が要る場合は、その手続きを先に確認してください。</p>
+    </details>
+    <details>
+      <summary>プロキシがある環境で、ログインの画面から先に進みません</summary>
+      <p>許可が必要な通信先が通っていない可能性があります。公式ドキュメントのネットワーク構成のページで通信先とプロキシの設定方法を確認し、<code>claude doctor</code> の結果も合わせて担当者に伝えると、話が早く進みます。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">最初の設定ファイルを作る</h2>
+    <p>試すフォルダに置く <code>CLAUDE.md</code> は <a href="../../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a>、<code>.claude/settings.json</code> は <a href="../../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a> で作れます。どちらもブラウザの中だけで動き、入力した内容は送信しません。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Set up Claude Code</a>(システム要件、Windows でのインストール、更新、claude doctor)</li>
+    <li><a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a>(アカウントの種類)</li>
+    <li><a href="https://code.claude.com/docs/en/network-config" rel="noopener">Network configuration</a>(プロキシ、許可が必要な通信先)</li>
+    <li><a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a>(会話データの扱い)</li>
+    <li><a href="https://www.anthropic.com/supported-countries" rel="noopener">Supported countries</a>(使える国・地域)</li>
+  </ul>
+  <p class="hint">仕様や料金は変わることがあります。社内で試す前に、公式ドキュメントで最新の情報を確認してください。</p>
+  <p>試す前の確認から、稟議・セキュリティ設定・CLAUDE.md・最初の自動化・社内展開までを順番に進める本もまとめています。<a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">Zenn の本(はじめに〜第2章は無料)・2,500円</a></p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

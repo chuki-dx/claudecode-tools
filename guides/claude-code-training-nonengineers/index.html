@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>総務・経理など非エンジニアに Claude Code を教えるときの進め方 | 中小DXラボ</title>
+<meta name="description" content="プログラミングをしない総務・経理などの社員に Claude Code を教えるときの進め方を解説します。研修なしで渡すと起きやすい3つのこと、90分×3回の組み立て方、架空データと「条件」での判定、広げる順番と効果の記録の仕方を整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="総務・経理など非エンジニアに Claude Code を教えるときの進め方">
+<meta property="og:description" content="研修なしで渡すと起きやすいこと、90分×3回の組み立て方、架空データと「条件」での判定、広げる順番と効果の記録の仕方を整理しました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "総務・経理など非エンジニアに Claude Code を教えるときの進め方",
+  "description": "プログラミングをしない社員に Claude Code を教えるときの研修の組み立て方、判定の基準、広げる順番と効果の記録の仕方の解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "非エンジニアに教えるときの進め方", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">非エンジニアに教えるときの進め方</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>総務・経理など非エンジニアに Claude Code を教えるときの進め方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 製品の仕様にふれる部分は執筆時点(2026年10月)の公式ドキュメントにもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>プログラミングをしない人に渡すときは、設定を配るだけでなく、<strong>「頼み方」「確認画面の読み方」「結果の確かめ方」</strong>を練習してもらいます。</li>
+      <li>研修は<strong>90分×3回</strong>(基本操作と安全なフォルダ → 業務ファイルの整理・集計 → 自分の業務で1つ作る)に分け、練習は架空のデータだけで行います。</li>
+      <li>課題の正解は AI の文面ではなく、件数や合計などの<strong>確かめられる条件</strong>で判定します。広げるときは「自分 → 少人数 → 部署」の順に進めます。</li>
+    </ul>
+  </section>
+
+  <h2 id="problem">設定を配るだけでは、使い続けてもらえない</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、プログラミングをしない人にも使われ始めています。情シスとしては、権限設定や CLAUDE.md(起動時に読まれる説明書きのファイル)をそろえて配れば準備完了、と考えたくなります。</p>
+  <p>設定は、読ませないファイルや実行させないコマンドを止めてくれます。ただ、設定では止められないものがあります。研修なしでそのまま渡したときに起きやすいのは、次の3つです。</p>
+  <ol>
+    <li><strong>確認画面を読まずに許可する</strong>: Claude Code はファイルを書き換える前などに確認を求めます。意味が分からないまま許可を続けると、元のファイルが上書きされても気づけません。</li>
+    <li><strong>実データをそのまま渡す</strong>: 請求書や勤怠の実データを、試しに読ませてしまう。設定で止められるのは、決めておいたフォルダやファイルだけです。</li>
+    <li><strong>結果を確かめずに使う</strong>: AI が出した合計や一覧を、元のデータと突き合わせずに使う。間違いに気づくのは、あとで誰かに指摘されたときになります。</li>
+  </ol>
+  <p>こうしたつまずきで一度困ると、「やっぱり怖い」と使われなくなりがちです。社内にこうした場面が思い当たる方も多いのではないでしょうか。</p>
+
+  <h2 id="why-not-once">勉強会1回では足りない理由</h2>
+  <p>よくあるのは、1回の勉強会で機能を一通り紹介する形です。ただ、確認画面の読み方や結果の確かめ方は、説明を聞くだけでは身につきません。自分で操作して、間違いを見つける経験が要ります。</p>
+  <p>そのためには、受講者が実データを持ち込まずに何度でも試せる練習用の材料と、講師が「正しくできたか」をその場で判定できる基準が必要です。</p>
+
+  <h2 id="plan">90分×3回の組み立て方</h2>
+  <p>研修は、続けて3日でも、週1回ずつでも組めるように、90分×3回に分けます。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">回</th><th scope="col">テーマ</th><th scope="col">練習すること</th><th scope="col">持ち帰るもの</th></tr></thead>
+      <tbody>
+        <tr><td>1回目</td><td>基本操作と安全なフォルダ</td><td>起動と終了、ファイルを読ませる、確認画面を読む</td><td>社内ルールの1枚</td></tr>
+        <tr><td>2回目</td><td>業務ファイルの整理・集計</td><td>CSV の点検、集計、突き合わせ、ファイル名の整理</td><td>集計の仕組みと、結果の確かめ方</td></tr>
+        <tr><td>3回目</td><td>自分の業務で1つ作る</td><td>業務メモから依頼文を作り、仕組みを1つ作る</td><td>自分の業務メモと依頼文</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="rule-fake-data">練習は架空のデータだけで行う</h3>
+  <p>研修用のフォルダとサンプルのファイルは、スクリプトなどで作り直せるようにしておきます。失敗しても最初の状態に戻せると、受講者は安心して「断る」「やり直す」を試せます。実データを持ち込まないことは、そのまま社内ルールの練習にもなります。</p>
+
+  <h3 id="rule-conditions">正解は「条件」で判定する</h3>
+  <p>AI の返答は毎回同じではありません。文面で正解を決めると、講師が判定に迷います。そこで「部署は4つ」「合計は○円」「元のファイルは変わっていない」のように、受講者自身が確かめられる条件で判定します。結果を元のデータと突き合わせる習慣も、ここで身につきます。</p>
+
+  <h3 id="rule-own-work">3回目は自分の業務を題材にする</h3>
+  <p>事前に「毎月繰り返している作業を1つ」書いてきてもらい、それを題材にします。自分の業務が題材になると、研修のあとも使い続けやすくなります。業務メモには、AI に渡してよいデータかどうかも書いてもらうと、ルールの確認を兼ねられます。</p>
+
+  <h2 id="prepare">講師が先に用意しておくもの</h2>
+  <ul>
+    <li><strong>社内ルールの1枚</strong>: 使ってよいアカウント、渡してはいけない情報、迷ったときの相談先。最初に読み合わせ、「迷ったら渡さずに相談」を伝えます。</li>
+    <li><strong>作業用フォルダのひな形</strong>: 読ませないファイルなどを決めた <code>.claude/settings.json</code> と、短い <code>CLAUDE.md</code> を入れたもの。全員が同じひな形から始めると、人によって設定が違う状態を防げます。</li>
+    <li><strong>架空のサンプルデータ</strong>: 名簿、請求と入金、勤怠のような、業務に近い形のファイル。</li>
+    <li><strong>つまずきの記録先</strong>: 研修中に出たつまずきを書き留め、次の回やひな形の改善に使います。</li>
+  </ul>
+
+  <h2 id="spread">研修のあと、広げる順番</h2>
+  <p>いきなり全社に案内すると、問い合わせが一度に集まり、情シスが対応しきれなくなります。まず情シス自身が使い、次に興味のある2〜3人、そのあと部署へ、という順番で広げると、少人数のメンバーが身近な相談役になってくれます。最初の少人数には、手作業の繰り返しを抱えている人を選ぶと効果が見えやすくなります。</p>
+  <p>続けてもらうために、質問を書き込む場所を1つに決めておきます。同じ質問が来たら、答えを手順書やひな形に反映します。ひな形を直したときは、すでに配ったフォルダには自動で反映されないので、何を変えたかを質問の場所で知らせます。</p>
+  <p>組織として必ず守らせたいルールがある場合、公式ドキュメントでは、利用者が上書きできない管理用の設定(managed settings)で配る方法が案内されています。少人数のうちはひな形で始め、人数が増えてから検討する順番でも遅くありません。</p>
+
+  <h2 id="measure">効果は、体感と実測を分けて記録する</h2>
+  <p>広げていくと「どれくらい効果があったのか」を聞かれます。このとき、体感と実測を混ぜないことが大切です。「楽になった」は本人にとって本当ですが、それを根拠のない時間の数字に置きかえると、説明を求められたときに困ります。</p>
+  <p>実測するなら、置き換える前に手作業の時間を2〜3回分記録しておきます。置き換えたあとの時間には、結果を確かめる時間と、うまくいかなかったときの対処の時間も含めます。数字にしにくい効果は、体感であることを明記して別の欄に書きます。</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>3回も時間を取れません。1回にまとめられませんか</summary>
+      <p>まとめることはできますが、確認画面を読む練習と、結果を確かめる練習は省かないことをおすすめします。3回目の「自分の業務で1つ作る」は、後日の個別相談に回す形もあります。</p>
+    </details>
+    <details>
+      <summary>受講者の PC に何を入れておけばよいですか</summary>
+      <p>Claude Code と、全員共通の作業用フォルダのひな形です。Windows では文字化けや実行ポリシーなどでつまずきやすいので、研修の前に講師の PC と同じ手順で動くかを確かめておくと、当日の時間を練習に使えます。</p>
+    </details>
+    <details>
+      <summary>研修中に受講者が実データを使おうとしたら、どうしますか</summary>
+      <p>その場で止め、社内ルールの1枚の「渡してはいけない情報」を一緒に確認します。練習用のフォルダの外では使わない、と最初に決めておくと止めやすくなります。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">研修の準備に使えるツール</h2>
+    <p>作業用フォルダのひな形に入れる <code>CLAUDE.md</code> は <a href="../../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a> で、選ぶだけで下書きを作れます。研修中によく出るつまずき(文字化け、許可したのに確認が出る、など)は、<a href="../../troubleshooting/index.html">つまずき早見表</a> で症状から原因と対処を探せます。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(確認を求める操作、権限ルール)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a>(設定ファイルの置き場所、管理用の設定)</li>
+  </ul>
+  <p class="hint">仕様は変わることがあります。研修を組む前に、公式ドキュメントで最新の情報を確認してください。</p>
+  <p>課題10本の依頼文と判定の条件、サンプルデータを作るセットアップスクリプト、講師用の進行表、つまずき対応表は、こちらにまとめています。<a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット(有料記事・1,480円)</a></p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-company-checklist/index.html">Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>
