@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code 権限設定(settings.json)ジェネレーター | 中小DXラボ</title>
+<meta name="description" content="Claude Code の settings.json(権限設定)を、チェックを付けるだけで作れる無料ツール。.env を読ませない、curl などの外部送信を止める、git push は確認、を deny / ask / allow のルールで出力します。実機で止まると確認したルールを表示します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/settings-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code 権限設定(settings.json)ジェネレーター">
+<meta property="og:description" content="チェックを付けるだけで Claude Code の権限設定を作れる無料ツール。実機で止まると確認したルールを区別して表示します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/settings-generator/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Code 権限設定(settings.json)ジェネレーター",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web ブラウザ",
+  "url": "https://chuki-dx.github.io/claudecode-tools/settings-generator/",
+  "description": "Claude Code の settings.json の権限設定(deny / ask / allow)を、選んだ方針から生成するブラウザ上のツール。",
+  "inLanguage": "ja",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html" aria-current="page">権限設定ジェネレーター</a>
+      <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code 権限設定(settings.json)ジェネレーター</h1>
+  <p class="lead">社内で使う Claude Code の「読ませない・送らせない・確認させる」ルールを、チェックを付けるだけで settings.json にします。入力した内容はブラウザの外に送りません。</p>
+
+  <section class="card" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">設定を選ぶ</h2>
+    <form id="gen-form" novalidate>
+      <fieldset>
+        <legend>使うシェル</legend>
+        <div class="opt"><input type="radio" id="sh-both" name="shells" value="both" checked><label for="sh-both">Bash と PowerShell の両方(Windows で迷ったらこちら)</label></div>
+        <div class="opt"><input type="radio" id="sh-bash" name="shells" value="bash"><label for="sh-bash">Bash だけ(Git Bash・WSL・macOS・Linux)</label></div>
+        <div class="opt"><input type="radio" id="sh-ps" name="shells" value="powershell"><label for="sh-ps">PowerShell だけ</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>読ませない(deny)</legend>
+        <div class="opt"><input type="checkbox" id="opt-env" checked><label for="opt-env">.env と秘密情報を読ませない(<code>.env</code> と <code>.env.*</code>)</label></div>
+        <div class="opt"><input type="checkbox" id="opt-secrets" checked><label for="opt-secrets"><code>secrets/</code> フォルダを読ませない</label></div>
+        <div class="opt"><input type="checkbox" id="opt-block-data" checked><label for="opt-block-data">実データフォルダを読ませない</label></div>
+        <label class="field" for="opt-data-path">実データフォルダのパス(作業フォルダからの相対パス)</label>
+        <input type="text" id="opt-data-path" value="data/raw" autocomplete="off" spellcheck="false" aria-describedby="data-path-hint">
+        <p class="hint" id="data-path-hint">例: <code>data/raw</code>、<code>顧客データ</code>。区切りは / でも \ でも構いません。<code>data/raw</code> 以外は、書き方は同じですが個別には確認していません。</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>送らせない(deny)</legend>
+        <div class="opt"><input type="checkbox" id="opt-network" checked><label for="opt-network">外部送信コマンドを止める(curl / wget / Invoke-WebRequest / Invoke-RestMethod)</label></div>
+        <p class="hint">選んだシェルの分だけ出力します。</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>git push の扱い</legend>
+        <div class="opt"><input type="radio" id="gp-ask" name="gitpush" value="ask" checked><label for="gp-ask">毎回確認する(ask)</label></div>
+        <div class="opt"><input type="radio" id="gp-deny" name="gitpush" value="deny"><label for="gp-deny">禁止する(deny)</label></div>
+        <div class="opt"><input type="radio" id="gp-none" name="gitpush" value="none"><label for="gp-none">ルールを書かない</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>確認させる(ask)・許可する(allow)の例</legend>
+        <div class="opt"><input type="checkbox" id="opt-ask-delete" checked><label for="opt-ask-delete">ファイルの削除(rm / Remove-Item)は毎回確認</label></div>
+        <div class="opt"><input type="checkbox" id="opt-ask-web" checked><label for="opt-ask-web">Web の取得・検索(WebFetch / WebSearch)は毎回確認</label></div>
+        <div class="opt"><input type="checkbox" id="opt-allow-git"><label for="opt-allow-git">git status / git diff / git log は確認なしで許可</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>その他</legend>
+        <div class="opt"><input type="checkbox" id="opt-schema" checked><label for="opt-schema"><code>$schema</code> を入れる(エディタで入力補完が効きます)</label></div>
+      </fieldset>
+    </form>
+
+    <h3 id="out-heading">生成された settings.json</h3>
+    <p id="gen-status" class="status" role="status" aria-live="polite">JavaScript を有効にすると、ここに結果が表示されます。</p>
+    <div id="gen-warnings" class="note" hidden></div>
+    <pre aria-labelledby="out-heading" tabindex="0"><code id="gen-output"></code></pre>
+    <div class="buttons">
+      <button type="button" id="gen-copy">コピー</button>
+      <button type="button" id="gen-download" class="secondary">settings.json を保存</button>
+    </div>
+    <p id="gen-copy-msg" class="hint" role="status" aria-live="polite"></p>
+
+    <h3>ルールごとの確認状況</h3>
+    <p class="hint">「✓ 実機確認済み」は、Windows 11 と Claude Code 2.1.296 で、そのルールにより操作が止まったことを確かめたものです(2026年10月)。それ以外は公式ドキュメントの書き方に沿っていますが、個別には試していません。</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">ルール</th><th scope="col">区分</th><th scope="col">確認状況</th></tr></thead>
+        <tbody id="gen-rules"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">settings.json の権限設定でできること</h2>
+    <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、作業フォルダの <code>.claude/settings.json</code> に書いた権限ルールに従って、ファイルの読み取りやコマンドの実行を止めたり、実行前に確認を求めたりします。ルールは3種類で、<code>deny</code> は禁止、<code>ask</code> は毎回確認、<code>allow</code> は確認なしで許可です。公式ドキュメントでは deny → ask → allow の順に評価され、どこかで deny されたものはほかで allow しても使えないと説明されています(執筆時点)。</p>
+    <p>CLAUDE.md(Claude Code が起動時に読む説明書のファイル)に「.env を読まないこと」と書くのは AI へのお願いですが、settings.json のルールは Claude Code 本体が止めます。社内で配るなら、ルールは文章ではなくファイルで配るほうが写し間違いが起きません。</p>
+
+    <h3>使い方</h3>
+    <ol>
+      <li>上のチェックを選び、「settings.json を保存」を押します。</li>
+      <li>業務フォルダの中に <code>.claude</code> フォルダを作り、そこに保存したファイルを置きます。</li>
+      <li>そのフォルダで <code>claude</code> を起動し、信頼の確認を承認します。<code>/permissions</code> でルールが読み込まれたかを確認できます。</li>
+    </ol>
+
+    <h3>止まらないものがある(既知の限界)</h3>
+    <p>私の検証では、<code>Read(./.env)</code> のルールで Claude の読み取りツールと <code>cat .env</code> は止まりました。一方で、<strong>Python スクリプトの中で .env を開く方法では読めてしまいました</strong>。公式ドキュメントにも、スクリプトが自分でファイルを開く場合のような間接的な読み書きには効かないと書かれています。<code>Bash(curl *)</code> も、パスで呼ぶ書き方や <code>sh -c</code> で包む書き方は止めないとされています。</p>
+    <p>deny ルールは「うっかり読む・送る」を防ぐ網として使い、本物の API キーなどは作業フォルダに置かない運用と組み合わせてください。組織で強制したい場合は、利用者が上書きできない管理用設定(managed settings)やサンドボックスが公式ドキュメントで案内されています。</p>
+
+    <h3>公式ドキュメント(執筆時点)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a>(設定ファイルの置き場所と優先順位)</li>
+      <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(ルールの書き方と評価の順番)</li>
+    </ul>
+    <p class="hint">このページの内容は 2026年10月時点のものです。仕様は変わることがあるため、配る前に公式ドキュメントと手元の実機で確認してください。</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>settings.json はどこに置けばよいですか</summary>
+      <p>業務フォルダ(Claude Code を起動するフォルダ)の <code>.claude/settings.json</code> です。Git で共有すれば、同じフォルダを使う全員に同じルールを配れます。個人だけの設定は <code>.claude/settings.local.json</code>、全プロジェクト共通の個人設定は <code>~/.claude/settings.json</code> です。</p>
+    </details>
+    <details>
+      <summary>deny に入れたのに読めてしまいました</summary>
+      <p>スクリプトの中でファイルを開く場合など、Claude Code がファイルの読み取りと認識できない方法には deny が効きません。上の「既知の限界」をご覧ください。まずは <code>/permissions</code> でルールが読み込まれているかを確認してください。</p>
+    </details>
+    <details>
+      <summary>allow に入れたコマンドで確認が出ます</summary>
+      <p>プロジェクトの allow ルールは、そのフォルダで信頼の確認を承認するまで使われません。対話の画面で一度 <code>claude</code> を起動して承認してください。deny と ask は承認と関係なく効きます。</p>
+    </details>
+    <details>
+      <summary>入力した内容はどこかに送られますか</summary>
+      <p>送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。アクセス解析のタグも入れていません。</p>
+    </details>
+    <details>
+      <summary>「個別には未確認」のルールは使わないほうがよいですか</summary>
+      <p>書き方は公式ドキュメントと実機で確認したルールにそろえていますが、そのルール自体で止まるかは試していません。配る前に、ダミーのファイルやコマンドで止まることを手元で確かめてから使うことをおすすめします。</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">このツールの元になった settings.json 全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本、配置スクリプトをまとめています。</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ</p>
+    <p>免責: このページの情報とツールの出力は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認し、手元の環境で動作を確かめてください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+
+<script src="../assets/settings-generator.js"></script>
+<script src="../assets/settings-generator-ui.js"></script>
+</body>
+</html>

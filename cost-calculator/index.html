@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code API 料金 見積もり計算機(月額・円換算) | 中小DXラボ</title>
+<meta name="description" content="Claude Code を API の従量課金で使ったときの月額を、人数・1日あたりのトークン数・稼働日数・モデルから計算する無料ツール。入力・出力・キャッシュの書き込みと読み込みを分けて計算し、為替レートを入れると円でも表示します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/cost-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code API 料金 見積もり計算機">
+<meta property="og:description" content="人数・トークン数・稼働日数・モデルから、Claude Code の API 換算の月額を USD と円で計算する無料ツール。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/cost-calculator/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Code API 料金 見積もり計算機",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web ブラウザ",
+  "url": "https://chuki-dx.github.io/claudecode-tools/cost-calculator/",
+  "description": "Claude Code を API の従量課金で使ったときの月額を、人数・1日あたりのトークン数・稼働日数・モデルから計算するブラウザ上のツール。",
+  "inLanguage": "ja",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../cost-calculator/index.html" aria-current="page">API 料金 見積もり計算機</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code API 料金 見積もり計算機</h1>
+  <p class="lead">Claude Code を API の従量課金で使ったときの月額を、人数・1日あたりのトークン数・稼働日数・モデルから計算します。入力した内容はブラウザの外に送りません。</p>
+
+  <section class="card" aria-labelledby="calc-heading">
+    <h2 id="calc-heading" class="visually-hidden">条件を入れる</h2>
+    <form id="calc-form" novalidate>
+      <div class="grid">
+        <div>
+          <label class="field" for="calc-model">モデル</label>
+          <select id="calc-model">
+            <option value="claude-sonnet-5-5" selected>Claude Sonnet 5.5</option>
+            <option value="claude-opus-5-5">Claude Opus 5.5</option>
+            <option value="claude-haiku-5-5">Claude Haiku 5.5(プロンプト10万トークン以下)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field" for="calc-people">人数</label>
+          <input type="number" id="calc-people" value="1" min="1" step="1" inputmode="numeric">
+        </div>
+        <div>
+          <label class="field" for="calc-days">月の稼働日数</label>
+          <input type="number" id="calc-days" value="20" min="0" max="31" step="1" inputmode="numeric">
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>1人1日あたりのトークン数</legend>
+        <div class="buttons">
+          <button type="button" id="calc-preset" class="secondary">入力例を入れる(架空のデータ・Sonnet 5.5)</button>
+        </div>
+        <p class="hint">入力例は、有料記事で使った架空のログ(1人・5日分)の Sonnet 5.5 の合計を5で割った値です。実在の人や部署の数字ではありません。</p>
+        <div class="grid">
+          <div>
+            <label class="field" for="calc-input">入力</label>
+            <input type="number" id="calc-input" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-cw5m">キャッシュ書き込み(5分)</label>
+            <input type="number" id="calc-cw5m" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-cw1h">キャッシュ書き込み(1時間)</label>
+            <input type="number" id="calc-cw1h" value="0" min="0" step="1" inputmode="numeric" aria-describedby="cw1h-hint">
+            <p class="hint" id="cw1h-hint">5分・1時間の内訳が分からない書き込みは、こちらに入れると見積もりが小さく出すぎません。</p>
+          </div>
+          <div>
+            <label class="field" for="calc-cr">キャッシュ読み込み</label>
+            <input type="number" id="calc-cr" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-output">出力</label>
+            <input type="number" id="calc-output" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="grid">
+        <div>
+          <label class="field" for="calc-fx">為替レート(円/USD)</label>
+          <input type="number" id="calc-fx" value="" min="0" step="0.01" inputmode="decimal" placeholder="例: 150" aria-describedby="fx-hint">
+          <p class="hint" id="fx-hint">空欄のときは円を出しません。見積もり当日のレートを入れてください。</p>
+          <div class="buttons"><button type="button" id="calc-fx-example" class="secondary">例として 150 を入れる</button></div>
+        </div>
+        <div>
+          <div class="opt" style="margin-top:2.2em"><input type="checkbox" id="calc-us-only"><label for="calc-us-only">米国内だけで処理する指定(<code>inference_geo</code>)をする(単価×1.1)</label></div>
+        </div>
+      </div>
+    </form>
+
+    <div id="calc-errors" class="note" role="alert" hidden></div>
+
+    <h3>見積もり(API 換算)</h3>
+    <ul class="result-list" aria-live="polite">
+      <li><span>1人1日あたり</span><span class="val" id="res-day">—</span></li>
+      <li><span>1人1か月あたり</span><span class="val" id="res-person">—</span></li>
+      <li><span>全員の1か月</span><span class="val" id="res-total">—</span></li>
+      <li><span>全員の1か月(円)</span><span class="val" id="res-jpy">—</span></li>
+    </ul>
+    <details>
+      <summary>1人1日あたりの内訳</summary>
+      <ul class="result-list">
+        <li><span>入力</span><span class="val" id="res-bd-input">—</span></li>
+        <li><span>キャッシュ書き込み(5分)</span><span class="val" id="res-bd-cw5m">—</span></li>
+        <li><span>キャッシュ書き込み(1時間)</span><span class="val" id="res-bd-cw1h">—</span></li>
+        <li><span>キャッシュ読み込み</span><span class="val" id="res-bd-cr">—</span></li>
+        <li><span>出力</span><span class="val" id="res-bd-output">—</span></li>
+      </ul>
+    </details>
+    <p class="note">サブスクのプラン(Pro / Max / Team)は月額・席単位の料金で、Claude Code の利用は料金に含まれます。この計算機はサブスクの料金や利用枠を計算しません。サブスクで使う場合、ここでの金額は「誰がどれくらい使うか」を比べる物差しとして使ってください。</p>
+  </section>
+
+  <section aria-labelledby="price-heading">
+    <h2 id="price-heading">計算に使っている単価(2026-10-14 時点・公式ページで最新を確認)</h2>
+    <p>単位は100万トークンあたりの USD です。公式の料金ページ(<a href="https://platform.claude.com/docs/en/about-claude/pricing" rel="noopener">Pricing</a>)の「Model pricing」の表から抜き出しました。料金は変わることがあるため、見積もりの前に公式ページで最新の値を確認してください。</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">モデル</th><th scope="col" class="num">入力</th><th scope="col" class="num">5分キャッシュ書込</th><th scope="col" class="num">1時間キャッシュ書込</th><th scope="col" class="num">キャッシュ読込</th><th scope="col" class="num">出力</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Claude Opus 5.5(<code>claude-opus-5-5</code>)</th><td class="num">4</td><td class="num">5</td><td class="num">8</td><td class="num">0.20</td><td class="num">20</td></tr>
+          <tr><th scope="row">Claude Sonnet 5.5(<code>claude-sonnet-5-5</code>)</th><td class="num">2</td><td class="num">2.50</td><td class="num">4</td><td class="num">0.10</td><td class="num">10</td></tr>
+          <tr><th scope="row">Claude Haiku 5.5(<code>claude-haiku-5-5</code>、プロンプト10万トークン以下)</th><td class="num">0.10</td><td class="num">0.125</td><td class="num">0.20</td><td class="num">0.01</td><td class="num">0.50</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>Haiku 5.5 は、プロンプトが10万トークンを超えると単価が上がります。この計算機は10万トークン以下の単価で計算します。</li>
+      <li>高速モード(fast mode)は別の単価で、この計算機では扱いません。</li>
+      <li>米国内だけで処理する指定(<code>inference_geo</code>)をすると単価が1.1倍になります。上のチェックで反映できます。</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">Claude Code の月額を見積もる考え方</h2>
+    <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)を API で使うと、料金はトークン(AI が文章を数える単位)の量で決まります。入力・出力のほかに、プロンプトキャッシュ(同じ内容を再利用して安く読み込む仕組み)の書き込みと読み込みにも別々の単価があります。この計算機は、次の式で1人1日あたりの金額を出し、稼働日数と人数を掛けています。</p>
+    <pre><code>API換算(USD) = ( 入力 × 入力単価
+               + 5分キャッシュ書き込み × 5分キャッシュ書込単価
+               + 1時間キャッシュ書き込み × 1時間キャッシュ書込単価
+               + キャッシュ読み込み × キャッシュ読込単価
+               + 出力 × 出力単価 ) ÷ 1,000,000</code></pre>
+    <p>Claude Code は会話の履歴をリクエストのたびに送るため、長いセッションほどキャッシュ読み込みのトークン数が積み上がります。入力例を入れてみると、読み込みのトークン数が入力より桁違いに多いことが分かります。</p>
+    <p>料金表に人数を掛けただけの数字は、実際の使い方と離れがちです。人によって使う量の差が大きいので、公式の「コスト管理」ページでも、小さな試験グループで基準になる数字をつかんでから広げることが勧められています(<a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a>、執筆時点)。まず数人で2週間ほど使い、1日あたりのトークン数を測ってからこの計算機に入れると、稟議や予算の説明に使える数字になります。</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>1日あたりのトークン数はどうやって調べますか</summary>
+      <p>API で契約している場合は、Claude Console の使用量ページで確認できます。試験期間などで管理画面がない場合は、Claude Code が PC 内に保存している会話の記録にトークン数が残っているので、それを集計する方法があります。集計スクリプトと手順は下の有料記事で解説しています。</p>
+    </details>
+    <details>
+      <summary>Pro や Max、Team のプランだといくらになりますか</summary>
+      <p>サブスクは月額・席単位の料金で、この計算機の対象外です。プランの利用枠がトークン何件分にあたるかは、執筆時点で公式ページから確認できませんでした。プランの料金は公式の料金ページで確認してください。</p>
+    </details>
+    <details>
+      <summary>為替レートの初期値が空なのはなぜですか</summary>
+      <p>レートは日々変わるため、古い値で円の金額が出ないよう空欄にしています。見積もり当日のレートを入れてください。計算の流れを見るだけなら「例として 150 を入れる」を使えます。</p>
+    </details>
+    <details>
+      <summary>入力した数字はどこかに送られますか</summary>
+      <p>送られません。計算はブラウザの中だけで行い、アクセス解析のタグも入れていません。</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span><br><span class="hint">手元のログからトークン数を集計するスクリプト(標準ライブラリのみ)、メンバーから集めて月額を出す Excel のひな形、上限とモデルのルールの決め方をまとめています。</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ</p>
+    <p>免責: このページの単価と計算結果は、執筆時点で確認した範囲の目安です。実際の請求額とは異なることがあります。契約や予算の判断の前に、公式の料金ページで最新の情報を確認してください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+
+<script src="../assets/cost-calculator.js"></script>
+<script src="../assets/cost-calculator-ui.js"></script>
+</body>
+</html>
