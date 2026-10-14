@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code 解説記事 | 中小DXラボ</title>
+<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けの解説記事の一覧です。権限設定(deny/ask/allow)、CLAUDE.md の書き方、スキル(SKILL.md)、API 料金の見積もり方、Windows でのつまずきを、公式ドキュメントと実機の確認結果にもとづいて解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code 解説記事">
+<meta property="og:description" content="権限設定、CLAUDE.md、スキル、API 料金の見積もり、Windows でのつまずきを、公式ドキュメントと実機の確認結果にもとづいて解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="index.html" aria-current="page">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../index.html">ホーム</a></li>
+      <li aria-current="page">解説</li>
+    </ol>
+  </nav>
+
+  <h1>Claude Code 解説記事</h1>
+  <p class="lead">中小企業で Claude Code を試す・配る・予算を説明するときに知っておきたいことを、執筆時点(2026年10月)の公式ドキュメントと、Windows 11・Claude Code 2.1.296 での確認結果にもとづいて解説します。各記事から、内容に対応する無料ツールを使えます。</p>
+
+  <ul class="guide-list">
+    <li class="card">
+      <h2><a href="claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a></h2>
+      <p>ルールの評価の順番、設定ファイルの置き場所と優先順位、書き方を解説します。deny で止まる操作と、スクリプト経由の読み取りのように止まらない操作を整理しました。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a></h2>
+      <p>組織用・自分用・プロジェクト用・ローカル用の違いと読み込まれ方、最初の3行の例、200行以内に保つ書き方、書いてはいけないものをまとめました。</p>
+      <p class="hint">対応するツール: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-skills-intro/index.html">Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる</a></h2>
+      <p>スキルの置き場所、name と description の書き方、自動で使われる条件、本文に書く手順と出力の形、配る前の確かめ方を解説します。</p>
+      <p class="hint">対応するツール: <a href="../skill-generator/index.html">スキル(SKILL.md)雛形生成</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a></h2>
+      <p>入力・キャッシュ書き込み・キャッシュ読み込み・出力のトークンと単価(2026-10-14 時点)、計算式と計算例、トークン数の調べ方、サブスクとの違いを整理しました。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a></h2>
+      <p>PowerShell の文字化けと実行ポリシー、CSV の BOM、allow が効かない、deny をすり抜ける読み取りなど、Windows で起きやすい10個を症状・原因・対処で解説します。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+  </ul>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: 各記事の情報は、執筆時点で確認した範囲のものです。Claude Code の仕様や料金は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。記事の情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

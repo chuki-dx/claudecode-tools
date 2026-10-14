@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる | 中小DXラボ</title>
+<meta name="description" content="Claude Code のスキル(SKILL.md)の仕組みと書き方を解説します。置き場所、frontmatter の name と description、自動で使われる条件、本文に書く手順と出力の形、配る前の確かめ方を、公式ドキュメント(2026年10月時点)にもとづいて整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる">
+<meta property="og:description" content="スキルの置き場所、name と description の書き方、自動で使われる条件、配る前の確かめ方を公式ドキュメントにもとづいて整理しました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる",
+  "description": "Claude Code のスキル(SKILL.md)の置き場所、frontmatter、自動で使われる条件、本文の書き方、配る前の確かめ方の解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "スキル(SKILL.md)入門", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">スキル(SKILL.md)入門</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントにもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>スキルは、作業の手順と出力の形に名前を付けて、Claude Code が呼び出せるようにしたものです。<code>.claude/skills/&lt;スキル名&gt;/SKILL.md</code> に置きます。</li>
+      <li>自動で使われるかどうかは、先頭に書く <strong><code>description</code> の言葉</strong>でほぼ決まります。利用者がふだん使う言葉を入れます。</li>
+      <li>配る前に <code>claude plugin validate .claude/skills</code> で形を確かめ、架空のデータで一度試します。</li>
+    </ul>
+  </section>
+
+  <h2 id="what">スキルとは</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のスキルは、「この作業はこの手順で、この形で出す」という手順書をファイルにしたものです。議事録の要約、手順書の下書き、問い合わせ回答の下書きのように、毎回同じ指示を書いている業務ほど向いています。</p>
+  <p>CLAUDE.md(起動時に毎回読ませる説明書き)との違いは、読み込まれるタイミングです。公式ドキュメントによると、通常のセッションではスキルの説明(<code>description</code>)だけが読み込まれ、本文はそのスキルが呼び出されたときに初めて読み込まれます。そのため、作業ごとの細かい手順をスキルに分けると、CLAUDE.md を短く保ちながら、手順を詳しく書けます。</p>
+  <p>スキルの使われ方は2通りあります。依頼の内容が <code>description</code> に合えば Claude が自分で使い、利用者が <code>/スキル名</code> と入力して直接呼び出すこともできます。なお、以前の「カスタムコマンド」(<code>.claude/commands/</code> のファイル)はスキルに統合され、既存のファイルもそのまま動くとされています。</p>
+
+  <h2 id="where">置き場所</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">種類</th><th scope="col">置き場所</th><th scope="col">使える範囲</th></tr></thead>
+      <tbody>
+        <tr><td>プロジェクト</td><td><code>.claude/skills/&lt;スキル名&gt;/SKILL.md</code></td><td>そのフォルダ(リポジトリ)のセッション。Git で共有すればチーム全員</td></tr>
+        <tr><td>個人</td><td><code>~/.claude/skills/&lt;スキル名&gt;/SKILL.md</code></td><td>その PC の自分のすべてのプロジェクト</td></tr>
+        <tr><td>組織</td><td>管理用設定のフォルダの <code>.claude/skills/</code></td><td>組織が配った PC の利用者全員</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>同じ名前のスキルが複数の場所にある場合は、組織、個人、プロジェクトの順に優先されます。社内で配るなら、まずプロジェクトの <code>.claude/skills/</code> に置いて Git で共有する形が始めやすいです。</p>
+
+  <h2 id="format">SKILL.md の形</h2>
+  <p>SKILL.md は2つの部分でできています。先頭の <code>---</code> で囲んだ部分(frontmatter)に名前と説明を書き、その下に Claude が従う手順を Markdown で書きます。形の例を示します(この例そのものは実機で試したものではありません)。</p>
+<pre><code>---
+name: notice-draft
+description: 社内向けのお知らせ文の下書きを作る。お知らせ、周知文、社内通知の文面を頼まれたときに使う。
+---
+
+# 社内お知らせの下書き
+
+## 進め方
+1. 依頼から「誰に・何を・いつまでに」を読み取る
+2. 読み取れない項目は推測で埋めず、最後に確認事項として挙げる
+
+## 出力の形
+- 件名(30字以内)
+- 本文(結論を最初に書く。です・ます調)
+- 確認事項(読み取れなかった項目の一覧)</code></pre>
+  <p>公式ドキュメントでは、frontmatter の項目はすべて省略でき、<code>description</code> だけは書くことが推奨されています。<code>name</code> を省くとフォルダ名が呼び出し名になります。</p>
+
+  <h3 id="description">description の書き方</h3>
+  <p><code>description</code> は、Claude がそのスキルを使うかどうかを判断する材料です。「何をするか」と「いつ使うか」を、利用者が実際に頼むときの言葉で書きます。例の「お知らせ、周知文、社内通知」のように、言い換えを並べておくと合いやすくなります。</p>
+  <p>公式ドキュメントでは、スキルの一覧に載るときに <code>description</code> と <code>when_to_use</code> を合わせて1,536文字で切られるとされています。大事な使い道を先頭に書きます。</p>
+
+  <h3 id="body">本文の書き方</h3>
+  <ul>
+    <li><strong>進め方</strong>: 作業の順番を番号付きで書きます。</li>
+    <li><strong>出力の形</strong>: 見出しや項目を決めておくと、誰が頼んでも同じ形でそろいます。</li>
+    <li><strong>線引き</strong>: 推測で埋めない、決まっていないことは保留に入れる、のように迷いやすい点を書きます。</li>
+  </ul>
+  <p>公式ドキュメントでは、SKILL.md は500行以内に収め、詳しい参考資料は別のファイルに分けることが勧められています。</p>
+
+  <h2 id="cautions">気をつけたい点</h2>
+  <ul>
+    <li><strong><code>allowed-tools</code></strong>: スキルの実行中に確認なしでツールを使わせる項目です。公式ドキュメントでは、フォルダの信頼の確認と関係なく効くとされています。社内で配るスキルでは、必要がない限り書かないほうが安全です。</li>
+    <li><strong>予約されている名前</strong>: <code>synced</code> と <code>anthropic-skills</code> は公式ドキュメントで予約されており、スキルの名前に使えません。</li>
+    <li><strong>手動でだけ使いたいとき</strong>: <code>disable-model-invocation: true</code> を書くと、Claude が自分で使うことはなくなり、<code>/スキル名</code> で呼んだときだけ使われます。</li>
+  </ul>
+
+  <h2 id="check">配る前の確かめ方</h2>
+  <ol>
+    <li>スキルを置いたフォルダで <code>claude plugin validate .claude/skills</code> を実行し、形の誤りがないかを確かめます。</li>
+    <li>Claude Code に「使えるスキルの名前を一覧にして」と頼み、一覧に出るかを見ます。</li>
+    <li>架空のデータで一度頼み、出力の形どおりになるかを確かめます。実データは使いません。</li>
+  </ol>
+  <p>中小DXラボで Windows 11 と Claude Code 2.1.296 を使って試した範囲では(2026年10月)、<code>name</code> と <code>description</code> の2項目だけの frontmatter で、validate が通り、一覧にも表示されました。</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>スキルが一覧に出ません</summary>
+      <p><code>.claude/skills/&lt;名前&gt;/SKILL.md</code> の位置と、先頭行が <code>---</code> で始まっているかを確かめ、<code>claude plugin validate .claude/skills</code> を実行してください。</p>
+    </details>
+    <details>
+      <summary>スキルが自動で使われません</summary>
+      <p><code>description</code> の言葉と、頼み方の言葉が合っていないことがあります。利用者がふだん使う言い方を足すか、<code>/スキル名</code> で直接呼んでください。</p>
+    </details>
+    <details>
+      <summary>サブフォルダに置いたスキルが見つかりません</summary>
+      <p>公式ドキュメントでは、起動したフォルダより下の階層の <code>.claude/skills/</code> は起動時には読み込まれず、Claude がそのフォルダのファイルを扱ったときに読み込まれるとされています。よく使うスキルは、起動するフォルダの <code>.claude/skills/</code> に置きます。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">SKILL.md のひな形を作る</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a> で、スキル名・説明・いつ使うか・手順・出力の形を入れると、置き場所つきで SKILL.md のひな形を出力できます。スキル名の書き方と frontmatter の形も確かめます。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/skills" rel="noopener">Extend Claude with skills</a>(置き場所、frontmatter の項目、呼び出し名、読み込まれるタイミング)</li>
+  </ul>
+  <p class="hint">仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

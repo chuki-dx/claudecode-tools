@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/about/</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/claude-md-generator/</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/cost-calculator/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-cost-estimate/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/settings-generator/</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/skill-generator/</loc><lastmod>2026-10-14</lastmod></url>

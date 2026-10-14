@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows で Claude Code を使うときのつまずき10選と対処 | 中小DXラボ</title>
+<meta name="description" content="Windows で Claude Code を使う・社内に配るときに起きやすいつまずき10個を、症状・原因・対処で解説します。PowerShell スクリプトの文字化け(BOM)、実行ポリシー、CSV の Excel での文字化け、allow が効かない、deny をすり抜ける読み取り、Git for Windows の有無などを扱います。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Windows で Claude Code を使うときのつまずき10選と対処">
+<meta property="og:description" content="PowerShell の文字化け、実行ポリシー、CSV の BOM、allow が効かないなど、Windows で起きやすいつまずき10個を症状・原因・対処で解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Windows で Claude Code を使うときのつまずき10選と対処",
+  "description": "Windows で Claude Code を使う・社内に配るときに起きやすいつまずき10個の、症状・原因・対処の解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "Windows でのつまずき10選", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Windows でのつまずき10選</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Windows で Claude Code を使うときのつまずき10選と対処</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 実機の確認は Windows 11 と Claude Code 2.1.296(2026年10月)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Windows でのつまずきの多くは、<strong>文字コード(BOM)</strong>、<strong>PowerShell の実行ポリシー</strong>、<strong>起動するフォルダ</strong>の3つに集まります。</li>
+      <li>権限設定では、allow はフォルダの信頼の確認を承認するまで効かないこと、deny はスクリプト経由の読み取りを止めないことを押さえておきます。</li>
+      <li>社内に配る前に、この記事の10個を手元の PC で一度確かめておくと、問い合わせを減らせます。</li>
+    </ul>
+  </section>
+
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は Windows でも動きますが、macOS や Linux 向けの解説記事のとおりに進めると、思わぬところで止まることがあります。この記事では、中小DXラボの検証や研修の準備で実際に起きたこと、または公式ドキュメントで確かめたことに限って、10個を症状・原因・対処の順にまとめました。</p>
+
+  <h2 id="shell">シェルと PowerShell</h2>
+
+  <h3 id="p1">1. コマンドが Bash ではなく PowerShell で実行される</h3>
+  <p><strong>原因</strong>: 公式ドキュメントでは、Git for Windows が入っていない PC では、Claude Code はシェルのコマンドを PowerShell で実行するとされています。Git for Windows を入れると、Git Bash で実行されます。</p>
+  <p><strong>対処</strong>: Bash 前提の手順書を使うなら Git for Windows を入れます。なお公式ドキュメントでは、Git for Windows がある場合も、claude.ai や Console のアカウントでは PowerShell ツールが既定で一緒に使えるとされています。そのため権限設定では、<code>Bash(curl *)</code> だけでなく <code>PowerShell(Invoke-WebRequest *)</code> のような PowerShell 用のルールも書いておきます。社内で配る PC の条件をそろえておくと、手順の食い違いが減ります。</p>
+
+  <h3 id="p2">2. PowerShell スクリプトの日本語が文字化けする・構文エラーになる</h3>
+  <p><strong>原因</strong>: Windows PowerShell 5.1 は、BOM(ファイルの先頭に付ける文字コードの目印)の無い UTF-8 のスクリプトを、別の文字コードとして読みます。</p>
+  <p><strong>対処</strong>: スクリプトを UTF-8(BOM 付き)で保存し直します。Claude Code にスクリプトを作らせるときは、依頼に「UTF-8(BOM 付き)で保存」と書いておきます。</p>
+
+  <h3 id="p3">3. 「このシステムではスクリプトの実行が無効になっている」と出る</h3>
+  <p><strong>原因</strong>: PowerShell の実行ポリシーで止まっています。</p>
+  <p><strong>対処</strong>: <code>powershell -NoProfile -ExecutionPolicy Bypass -File スクリプト名.ps1</code> の形で実行します。この指定はその1回の実行だけに効き、PC の設定は変えません。</p>
+
+  <h2 id="encoding">文字コードと Excel</h2>
+
+  <h3 id="p4">4. 作らせた CSV を Excel で開くと文字化けする</h3>
+  <p><strong>原因</strong>: CSV が BOM の無い UTF-8 で保存されています。一度は正しく出力されていても、別のツールで保存し直して BOM が消えることもあります。</p>
+  <p><strong>対処</strong>: 依頼に「Excel で開けるよう UTF-8(BOM 付き)で保存」と書きます。毎回書くのが手間なら、CLAUDE.md の守ることに1行入れておきます。</p>
+
+  <h3 id="p5">5. Python で読んだ CSV の1列目の名前が合わない</h3>
+  <p><strong>原因</strong>: ファイル先頭の BOM が、1列目の列名の一部として読み込まれています。見た目では分かりません。</p>
+  <p><strong>対処</strong>: スクリプトの中で <code>encoding="utf-8-sig"</code> を指定して読むよう頼みます。4 と 5 は「BOM を付ける」「BOM を読み飛ばす」の組み合わせで考えると整理しやすくなります。</p>
+
+  <h2 id="permissions">権限設定</h2>
+
+  <h3 id="p6">6. allow に入れたコマンドなのに、毎回確認が出る</h3>
+  <p><strong>原因</strong>: そのフォルダで信頼の確認(workspace trust)をまだ承認していません。公式ドキュメントでは、プロジェクトの <code>.claude/settings.json</code> の allow は承認するまで使われず、deny と ask は承認と関係なく効くとされています。<code>claude -p</code> で実行すると、allow を無視したという警告が出ることがあります。</p>
+  <p><strong>対処</strong>: 対話の画面でそのフォルダの <code>claude</code> を一度起動し、信頼の確認を承認します。設定を配ったら、利用者にこの1回をしてもらいます。</p>
+
+  <h3 id="p7">7. deny に入れた .env が、スクリプト経由で読めてしまう</h3>
+  <p><strong>原因</strong>: Read の deny は、Claude の読み取りツールや <code>cat</code> などには効きますが、スクリプトが自分でファイルを開く読み方には効きません。公式ドキュメントに書かれた仕様です。また、OS のレベルでアクセスを止めるサンドボックスは、執筆時点では Windows ネイティブでは使えず、WSL 2 で使えるとされています。</p>
+  <p><strong>対処</strong>: 本物の API キーや実データを作業フォルダに置かないことを基本にします。強く止めたい場合は、WSL 2 でのサンドボックスや、利用者が上書きできない管理用設定を検討します。</p>
+
+  <h2 id="usage">使い方と環境</h2>
+
+  <h3 id="p8">8. 「ファイルが見つからない」と言われる</h3>
+  <p><strong>原因</strong>: 作業するフォルダ以外で Claude Code を起動しています。Claude Code は起動したフォルダを起点に作業します。</p>
+  <p><strong>対処</strong>: <code>cd</code> で作業するフォルダに移ってから起動し直します。研修では、最初に起動するフォルダを全員でそろえておきます。</p>
+
+  <h3 id="p9">9. 自分の PC と他の人の PC で、返答の傾向が違う</h3>
+  <p><strong>原因</strong>: 自分用の <code>~/.claude/CLAUDE.md</code>(すべてのプロジェクトに効く個人の指示)も一緒に読み込まれています。頼んでいない一文が返答の最後に付く、といった形で表れることがあります。</p>
+  <p><strong>対処</strong>: 研修や配布の前の確かめは、利用者と同じ条件のアカウントで行います。チームで共有したい内容は、プロジェクト用の CLAUDE.md に移します。</p>
+
+  <h3 id="p10">10. スクリプトを動かすと「python が見つからない」と出る</h3>
+  <p><strong>原因</strong>: Python が入っていないか、PATH(コマンドを探す場所の一覧)に入っていません。</p>
+  <p><strong>対処</strong>: <code>py -3 スクリプト名.py</code> のように、Windows 用の Python ランチャーで実行してみます。それでも動かなければ Python をインストールします。配る前に、利用者の PC に Python があるかを確かめておくと安心です。</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>インストールに管理者権限は必要ですか</summary>
+      <p>公式ドキュメントでは、Windows では PowerShell か CMD からインストールでき、管理者として実行する必要はないとされています。ただし、社内でインストールの申請が必要かどうかは別に確認してください。</p>
+    </details>
+    <details>
+      <summary>WSL と Windows ネイティブのどちらで使えばよいですか</summary>
+      <p>サンドボックスを使いたいなら WSL 2 です。Excel や PowerShell の業務ファイルを中心に扱うなら、Windows ネイティブと Git for Windows の組み合わせが始めやすい構成です。どちらにするかは、社内で配る PC の条件に合わせて決めます。</p>
+    </details>
+    <details>
+      <summary>ここにない症状が出ました</summary>
+      <p>まず <code>claude doctor</code> で、インストールや設定の問題が出ていないかを確かめます。症状から引ける早見表もあわせて見てください。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">症状から引ける早見表</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表(Windows・情シス向け)</a> では、この記事の10個を含むつまずきを、キーワードと分類で絞り込めます。各行に出典と、実機で起きたことか公式ドキュメントで確かめたことかの区別を付けています。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Set up Claude Code</a>(Windows でのインストール、Git for Windows の有無とシェル)</li>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(信頼の確認と allow、deny が効かない範囲)</li>
+    <li><a href="https://code.claude.com/docs/en/sandboxing" rel="noopener">Sandboxing</a>(対応している環境)</li>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a>(<code>~/.claude/CLAUDE.md</code> の扱い)</li>
+  </ul>
+  <p class="hint">仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

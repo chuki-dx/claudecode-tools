@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲 | 中小DXラボ</title>
+<meta name="description" content="Claude Code の settings.json に書く権限ルール(deny / ask / allow)の評価の順番、置き場所、書き方を解説します。deny で止まる操作と止まらない操作(スクリプト経由の読み取りなど)を、公式ドキュメントと実機の確認結果で整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲">
+<meta property="og:description" content="deny / ask / allow の評価の順番、置き場所、書き方と、deny で止まらない操作を公式ドキュメントと実機の確認結果で整理しました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲",
+  "description": "Claude Code の settings.json に書く権限ルールの評価の順番、置き場所、書き方と、deny で止まる操作・止まらない操作の解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "権限設定(deny/ask/allow)の基本", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">権限設定(deny/ask/allow)の基本</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントにもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>権限ルールは deny(禁止)・ask(毎回確認)・allow(確認なしで許可)の3種類で、<strong>deny → ask → allow の順に評価</strong>されます。deny に当たった操作は、allow に書いても使えません。</li>
+      <li>deny は Claude の読み取りツールや <code>cat</code>、<code>curl</code> といった「ふつうに書く操作」を止めます。一方で、<strong>スクリプトが自分でファイルを開く読み方は止めません</strong>。</li>
+      <li>deny は「うっかり」を防ぐ網として使い、本物の秘密情報は作業フォルダに置かない運用と組み合わせます。</li>
+    </ul>
+  </section>
+
+  <h2 id="what">権限設定とは</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、ファイルを読む・書く、コマンドを実行する、といった操作のたびに、設定ファイルに書かれた権限ルールを確かめます。ルールは JSON 形式の <code>settings.json</code> の <code>permissions</code> の中に書きます。</p>
+  <p>ルールの種類は次の3つです。</p>
+  <ul>
+    <li><strong>deny</strong>: その操作を禁止する</li>
+    <li><strong>ask</strong>: 実行する前に毎回、利用者に確認を求める</li>
+    <li><strong>allow</strong>: 確認なしで実行を許可する</li>
+  </ul>
+  <p>公式ドキュメントでは、ルールは deny、ask、allow の順に評価され、最初に当たったものが結果を決めると説明されています。たとえば <code>Bash(aws *)</code> を deny にすると、より細かい <code>Bash(aws s3 ls)</code> を allow に書いても止まります。allow で deny に例外を作ることはできない、という点を押さえておくと、ルールを組み立てるときに迷いません。</p>
+  <p>CLAUDE.md(Claude Code が起動時に読む説明書きのファイル)に「.env を読まないこと」と書くのは AI へのお願いです。これに対して権限ルールは、Claude Code 本体が操作を止めます。守らせたいことは、文章ではなく権限ルールに書くのが基本です。</p>
+
+  <h2 id="where">設定ファイルの置き場所と優先順位</h2>
+  <p>設定ファイルは置き場所によって効く範囲が変わります。情シスが押さえておきたいのは次の4つです。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">置き場所</th><th scope="col">効く範囲・使いどころ</th></tr></thead>
+      <tbody>
+        <tr><td><code>.claude/settings.json</code>(作業フォルダの中)</td><td>そのフォルダで使う全員。Git で共有すれば同じルールを配れる</td></tr>
+        <tr><td><code>.claude/settings.local.json</code></td><td>自分だけ、そのフォルダだけ。個人の好みを書く</td></tr>
+        <tr><td><code>~/.claude/settings.json</code></td><td>自分が使うすべてのプロジェクト</td></tr>
+        <tr><td>管理用設定(Windows では <code>C:\Program Files\ClaudeCode\managed-settings.json</code> など)</td><td>その PC の利用者全員。利用者は上書きできない</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>同じ項目が複数の場所にあるときは、管理用設定 → コマンドライン → <code>settings.local.json</code> → プロジェクトの <code>settings.json</code> → ユーザーの <code>settings.json</code> の順に優先されます。社内で配るなら、まずプロジェクトの <code>.claude/settings.json</code> から始め、全員に強制したいルールが固まってから管理用設定を検討する流れが無理のない順番です。</p>
+
+  <h2 id="how">ルールの書き方</h2>
+  <p>ルールは「ツール名(対象)」の形で書きます。ファイルの読み取りは <code>Read(パス)</code>、コマンドは <code>Bash(コマンド *)</code> です。<code>.env</code> を読ませず、<code>curl</code> での外部送信を止め、<code>git push</code> は禁止する最小の例は次のとおりです。</p>
+<pre><code>{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Bash(curl *)",
+      "Bash(git push *)"
+    ]
+  }
+}</code></pre>
+  <p>実データを置くフォルダも読ませたくない場合は、<code>Read(./data/raw/**)</code> のように <code>**</code> を使ってフォルダの中身全体を指定します。書いたあとは、Claude Code の中で <code>/permissions</code> を実行し、ルールが読み込まれているかを確かめます。</p>
+
+  <h2 id="works">deny で止まる操作</h2>
+  <p>中小DXラボで、Windows 11、Git for Windows、Claude Code 2.1.296 の環境を使い、ダミーの <code>.env</code>(中身はテスト用の値)を置いたフォルダで上の設定を試しました(2026年10月)。結果は次のとおりです。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">頼んだこと</th><th scope="col">結果</th></tr></thead>
+      <tbody>
+        <tr><td>Claude の読み取りツールで <code>.env</code> を読む</td><td>止まった</td></tr>
+        <tr><td><code>cat .env</code> を実行する</td><td>止まった</td></tr>
+        <tr><td><code>curl</code> で外部にアクセスする</td><td>止まった</td></tr>
+        <tr><td>Python スクリプトの中で <code>.env</code> を開いて表示する</td><td><strong>読めてしまった</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="limits">deny で止まらない操作</h2>
+  <p>最後の行は不具合ではなく、公式ドキュメントに書かれた仕様どおりの動きです。執筆時点の公式ドキュメントでは、Read と Edit の deny は次のように説明されています(要約)。</p>
+  <ul>
+    <li>Claude の組み込みのファイルツールには効く</li>
+    <li><code>cat</code>、<code>head</code>、<code>tail</code> など、Claude Code がファイルを読むコマンドと認識できるものには効く</li>
+    <li>Python や Node のスクリプトが自分でファイルを開くような、間接的な読み書きには効かない</li>
+  </ul>
+  <p>コマンドのルールも同じ考え方です。<code>Bash(curl *)</code> は <code>curl https://…</code> という書き方は止めますが、<code>/usr/bin/curl</code> のようにパスで呼ぶ書き方や、<code>sh -c '…'</code> で包む書き方には当たらないとされています。つまり deny は「どんな方法でも読ませない壁」ではなく、ふつうの操作を止める網です。</p>
+
+  <h2 id="trust">allow が効かないと感じたら</h2>
+  <p>プロジェクトの <code>.claude/settings.json</code> に書いた allow は、そのフォルダで「信頼の確認(workspace trust)」を承認するまで使われません。deny と ask は制限する方向のルールなので、承認と関係なく効きます。配ったあと allow に入れたコマンドで確認が出る場合は、対話の画面で一度 <code>claude</code> を起動し、信頼の確認を承認してもらいます。</p>
+
+  <h2 id="operation">社内で使うときの考え方</h2>
+  <ol>
+    <li><strong>本物の秘密情報を作業フォルダに置かない</strong>: API キーなどはフォルダの外で管理します。deny で守るより、そもそも置かないほうが確実です。</li>
+    <li><strong>deny は網として共有する</strong>: <code>.env</code>、<code>secrets/</code>、実データのフォルダ、外部送信のコマンドを deny に入れ、プロジェクトの設定として Git で配ります。</li>
+    <li><strong>確実に止めたいなら別の仕組みを使う</strong>: 公式ドキュメントでは、OS のレベルでアクセスを止めるサンドボックスが案内されています。執筆時点では Windows ネイティブでは使えず、WSL 2 の中で Claude Code を動かすと使えるとされています。</li>
+    <li><strong>配る前にダミーで確かめる</strong>: テスト用の値を入れたファイルを置き、読めないこと・送れないことを手元で一度確かめてから配ります。</li>
+  </ol>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>deny と ask の両方に同じルールを書いたらどうなりますか</summary>
+      <p>deny が先に評価されるため、禁止になります。確認を出したいだけのルールは ask にだけ書きます。</p>
+    </details>
+    <details>
+      <summary>.gitignore に書いたファイルは読まれませんか</summary>
+      <p>.gitignore は Git の管理から外す設定で、Claude Code に読ませない設定とは別です。読ませたくないものは deny にも書き、コミットしたくないものは .gitignore にも書きます。</p>
+    </details>
+    <details>
+      <summary>ルールを書いたのに効いていないように見えます</summary>
+      <p>置き場所やパスの書き方が違っていることがあります。<code>/permissions</code> でルールが読み込まれているかを見て、作業フォルダの <code>.claude/settings.json</code> に置いたかを確かめてください。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">settings.json をチェックだけで作る</h2>
+    <p>この記事のルールは、<a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a> で、チェックを付けるだけで出力できます。実機で止まると確かめたルールと、個別には確かめていないルールを分けて表示します。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(評価の順番、ルールの書き方、効かない範囲、信頼の確認)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a>(設定ファイルの置き場所と優先順位)</li>
+    <li><a href="https://code.claude.com/docs/en/sandboxing" rel="noopener">Sandboxing</a>(対応している環境)</li>
+  </ul>
+  <p class="hint">仕様や料金は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLAUDE.md の書き方:置き場所の違いと短く保つコツ | 中小DXラボ</title>
+<meta name="description" content="Claude Code が起動時に読む CLAUDE.md の書き方を解説します。組織用・自分用・プロジェクト用・ローカル用の置き場所の違い、読み込まれる順番、最初の3行の例、200行以内に保つコツ、書いてはいけないものを、公式ドキュメント(2026年10月時点)にもとづいて整理しました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="CLAUDE.md の書き方:置き場所の違いと短く保つコツ">
+<meta property="og:description" content="CLAUDE.md の置き場所の違い、読み込まれる順番、最初の3行の例、200行以内に保つコツを公式ドキュメントにもとづいて整理しました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "CLAUDE.md の書き方:置き場所の違いと短く保つコツ",
+  "description": "CLAUDE.md の置き場所の違い、読み込まれる順番、最初の3行の例、200行以内に保つコツの解説。",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/",
+  "author": { "@type": "Organization", "name": "中小DXラボ" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "解説", "item": "https://chuki-dx.github.io/claudecode-tools/guides/" },
+    { "@type": "ListItem", "position": 3, "name": "CLAUDE.md の書き方", "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">CLAUDE.md の書き方</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>CLAUDE.md の書き方:置き場所の違いと短く保つコツ</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-14">2026年10月14日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントにもとづきます</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>CLAUDE.md は、Claude Code がセッションの最初に読む「説明書き」です。最初は「立場・道具・優先順位」の3行で十分です。</li>
+      <li>置き場所で効く範囲が変わります。<strong>誰のためのルールか</strong>で、組織用・自分用・プロジェクト用・ローカル用を使い分けます。</li>
+      <li>公式ドキュメントの目安は1ファイル200行以下です。禁止したいことは CLAUDE.md ではなく権限設定に書きます。</li>
+    </ul>
+  </section>
+
+  <h2 id="what">CLAUDE.md とは</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、新しいセッションを前回の会話を覚えていない状態で始めます。毎回同じ説明を打ち込まなくて済むように、最初に読ませる説明を書いておくファイルが CLAUDE.md です。中身はふつうの Markdown(見出しや箇条書きを書けるテキスト)です。</p>
+  <p>大事なのは、CLAUDE.md は<strong>強制力のある設定ではない</strong>という点です。Claude は書かれた内容に従おうとしますが、操作を止める仕組みではありません。「このファイルは読まない」「このコマンドは実行しない」を確実にしたいなら、<code>settings.json</code> の権限設定に書きます。</p>
+
+  <h2 id="where">置き場所と効く範囲</h2>
+  <p>執筆時点の公式ドキュメントでは、CLAUDE.md の置き場所は次の4種類です。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">種類</th><th scope="col">置き場所</th><th scope="col">効く範囲と書く内容</th></tr></thead>
+      <tbody>
+        <tr><td>組織用</td><td>Windows: <code>C:\Program Files\ClaudeCode\CLAUDE.md</code></td><td>その PC の利用者全員。管理者が置く、組織全体のルール</td></tr>
+        <tr><td>自分用(全プロジェクト)</td><td><code>~/.claude/CLAUDE.md</code></td><td>自分が使うすべてのプロジェクト。自分の好みや共通の習慣</td></tr>
+        <tr><td>プロジェクト用</td><td>作業フォルダの <code>CLAUDE.md</code> または <code>.claude/CLAUDE.md</code></td><td>そのフォルダで作業する全員。チームで共有する前提や手順</td></tr>
+        <tr><td>ローカル用</td><td>作業フォルダの <code>CLAUDE.local.md</code></td><td>自分だけ、このプロジェクトだけ。<code>.gitignore</code> に入れて共有しない</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>同じ1行でも、置き場所は「誰のためのルールか」で決まります。「コードは他の人が読んで直せることを優先する」がチームの方針ならプロジェクト用、自分の書き方の好みなら自分用です。この振り分けをしておくと、プロジェクト用の CLAUDE.md を新しいメンバーに渡したときに、個人の好みまで持ち込まずに済みます。</p>
+
+  <h3 id="load-order">読み込まれ方</h3>
+  <p>公式ドキュメントによると、起動したフォルダとその上の階層にある CLAUDE.md と CLAUDE.local.md は、起動時にすべて読み込まれます。複数ある場合は上書きではなく<strong>つなげて</strong>読み込まれ、起動したフォルダに近いものほど後に読まれます。同じ階層では、CLAUDE.local.md が CLAUDE.md の後に足されます。</p>
+  <p>一方、起動したフォルダより下の階層にある CLAUDE.md は、起動時には読まれません。Claude がそのフォルダのファイルを読んだり書いたりしたときに読み込まれます。「サブフォルダに書いたのに効かない」と感じたら、この違いを思い出してください。</p>
+
+  <h2 id="first-lines">最初に書く3行</h2>
+  <p>何を書けばよいか迷ったら、次の3つを1行ずつ書くところから始めます。</p>
+  <ol>
+    <li>自分の立場(何のために使うか)</li>
+    <li>よく使う道具</li>
+    <li>判断に迷ったときの優先順位</li>
+  </ol>
+<pre><code># 業務環境メモ
+
+- 私は中小企業の情シス担当で、社内の業務改善ツールを作っています
+- よく使うのは Microsoft 365、Power Automate、Excel、Python です
+- コードは「短さ」より「他の人が読んで直せること」を優先してください</code></pre>
+  <p>すでにファイルがあるフォルダなら、Claude Code の中で <code>/init</code> を実行すると、フォルダの中身から最初の CLAUDE.md を作ってくれます。CLAUDE.md がすでにある場合は、上書きせずに改善案を出す、と公式ドキュメントに書かれています。</p>
+  <p>書き足すタイミングの目安は、同じ説明を2回打ち込んだと気づいたときです。そのつど1行足していくと、自分の業務に合った内容に育っていきます。</p>
+
+  <h2 id="keep-short">短く保つコツ</h2>
+  <p>公式ドキュメントでは、1ファイルあたり200行以下が目安とされています。長くなるほど読み込みの負担が増え、守られにくくなるためです。短く保つために、次の書き方を意識します。</p>
+  <ul>
+    <li><strong>具体的に書く</strong>: 「きれいに整形する」ではなく「日付は yyyy/mm/dd 形式で出力する」。あいまいな1行は補足の行を呼び込みます。</li>
+    <li><strong>確かめられる形で書く</strong>: 「テストする」ではなく「完成したら、サンプルの Excel で結果が合うか確認する」。</li>
+    <li><strong>矛盾させない</strong>: 食い違う指示があると、Claude はどちらかを選んでしまいます。1行足すときは、同じ話題の行がないかを探し、あれば書き換えます。</li>
+  </ul>
+  <p>200行を超えそうになったら、まず削れる行を探します。言われなくても守られていること、もう使っていない道具や手順、ほかの置き場所に移すべき個人の好みが候補です。</p>
+  <p>それでも長い場合、公式ドキュメントには2つの方法があります。<code>.claude/rules/</code> にテーマごとのファイルを分けると、特定のファイルを扱うときだけ読み込ませる指定ができます。CLAUDE.md の中に <code>@パス</code> と書いて別のファイルを読み込む方法もありますが、こちらは起動時に一緒に読み込まれるため、読み込む量は減りません。</p>
+
+  <h2 id="dont">書いてはいけないもの</h2>
+  <p>プロジェクト用の CLAUDE.md は Git などで共有されることが多いファイルです。パスワード、API キー、トークン、個人情報、顧客名、取引金額などは書きません。これらは共有の対象から外したファイルで管理し、Claude Code に読ませたくないものは権限設定の deny で止めます。</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>自分の PC と他の人の PC で、返答の傾向が違います</summary>
+      <p>自分用の <code>~/.claude/CLAUDE.md</code> も一緒に読み込まれているためと考えられます。チームで共有したい内容はプロジェクト用に移し、配る前の確かめは利用者と同じ条件のアカウントで行います。</p>
+    </details>
+    <details>
+      <summary>CLAUDE.md とスキルはどう使い分けますか</summary>
+      <p>CLAUDE.md は毎回読ませる前提、スキルはその作業を頼まれたときに使う手順書です。議事録の要約のように、決まった作業の手順と出力の形はスキルに分けると、CLAUDE.md を短く保てます。</p>
+    </details>
+    <details>
+      <summary>CLAUDE.md があるフォルダで /init を実行すると上書きされますか</summary>
+      <p>公式ドキュメントでは、すでに CLAUDE.md がある場合は上書きせず、改善案を出すとされています。定期的な見直しのたたき台として使う方法もあります。</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">CLAUDE.md のひな形を作る</h2>
+    <p><a href="../../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a> で、用途・言語・守ってほしいことを選ぶと、ひな形を出力できます。最初の3行版にも切り替えられ、200行以内に収まっているかを行数で表示します。</p>
+  </section>
+
+  <h2 id="refs">参考(公式ドキュメント・執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a>(置き場所、読み込まれ方、200行の目安、<code>.claude/rules/</code>、<code>@</code> での読み込み)</li>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(禁止したいことを書く権限設定)</li>
+  </ul>
+  <p class="hint">仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Claude Code のスキル(SKILL.md)入門</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>
