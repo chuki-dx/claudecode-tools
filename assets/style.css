@@ -176,3 +176,8 @@ summary { cursor: pointer; font-weight: 600; }
 .guide-list li { margin: 0 0 12px; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.follow-box { border-left: 4px solid var(--accent); }
+.follow-box p { margin: 6px 0; }
+.follow-links { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 6px 0 0; }
+.follow-links a { font-weight: 600; }
