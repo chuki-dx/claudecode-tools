@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code つまずき早見表(Windows・情シス向け) | 中小DXラボ</title>
+<meta name="description" content="Claude Code を Windows で使う・社内に配るときのつまずきを、症状・原因・対処の表にまとめた早見表。allow が効かない、deny をすり抜ける、PowerShell の文字化け、CSV の BOM など、実機で起きたことだけを出典つきで載せています。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/troubleshooting/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code つまずき早見表(Windows・情シス向け)">
+<meta property="og:description" content="Claude Code の権限設定・CLAUDE.md・スキル・文字コードのつまずきを、症状から引ける早見表。実機で起きたことを出典つきで載せています。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/troubleshooting/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Claude Code つまずき早見表(Windows・情シス向け)",
+  "url": "https://chuki-dx.github.io/claudecode-tools/troubleshooting/",
+  "description": "Claude Code を Windows で使う・社内に配るときのつまずきを、症状・原因・対処で引ける早見表。",
+  "inLanguage": "ja",
+  "isAccessibleForFree": true,
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../troubleshooting/index.html" aria-current="page">つまずき早見表</a>
+      <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code つまずき早見表(Windows・情シス向け)</h1>
+  <p class="lead">Claude Code を Windows で使う・社内に配るときに、私の検証や研修の準備で実際に起きたことを、症状から引けるようにまとめました。各行に出典の記事を付けています。</p>
+
+  <section class="card" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">症状で絞り込む</h2>
+    <form id="ts-form" role="search" novalidate>
+      <div class="grid">
+        <div>
+          <label class="field" for="ts-query">キーワード(空白で区切ると、すべてを含む行)</label>
+          <input type="text" id="ts-query" autocomplete="off" placeholder="例: allow、文字化け、BOM">
+        </div>
+        <div>
+          <label class="field" for="ts-category">分類</label>
+          <select id="ts-category">
+            <option value="" selected>すべて</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <p id="ts-status" class="status" role="status" aria-live="polite">JavaScript を有効にすると、ここに表が表示されます。</p>
+    <div class="table-scroll">
+      <table class="ts-table">
+        <thead><tr><th scope="col">症状</th><th scope="col">原因</th><th scope="col">対処</th><th scope="col">出典</th></tr></thead>
+        <tbody id="ts-rows"></tbody>
+      </table>
+    </div>
+    <p class="hint">「実機で起きた」は、Windows 11 と Claude Code 2.1.296 で、記事の検証・研修の準備の中で起きたことです(2026年10月)。「公式ドキュメントの記載を確認」は、記事を書くときに公式ドキュメントで確かめた内容で、実機では試していません。</p>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">この早見表について</h2>
+    <p>載せているのは、中小DXラボの記事と本で、実際に起きたこと、または公式ドキュメントで確かめて書いたことだけです。ネット上でよく聞く話でも、私が確かめていないものは載せていません。そのため、ここに無い症状も当然あります。</p>
+    <p>権限設定(settings.json)の deny は「うっかり読む・送る」を防ぐ網で、どんな方法でも止める壁ではありません。CLAUDE.md は Claude が読んで従おうとする説明書きで、強制力はありません。多くのつまずきは、この2つの役割の違いから起きています。</p>
+    <ul>
+      <li>止めたいルールを作る: <a href="../settings-generator/index.html">権限設定ジェネレーター</a></li>
+      <li>毎回読ませる前提を書く: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a></li>
+      <li>よく頼む作業を手順にする: <a href="../skill-generator/index.html">スキル(SKILL.md)雛形生成</a></li>
+    </ul>
+
+    <h3>公式ドキュメント(執筆時点)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(deny の効く範囲、信頼の確認と allow の関係)</li>
+      <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a>(CLAUDE.md の置き場所、200行の目安)</li>
+      <li><a href="https://code.claude.com/docs/en/skills" rel="noopener">Extend Claude with skills</a>(SKILL.md の置き場所と frontmatter)</li>
+    </ul>
+    <p class="hint">このページの内容は 2026年10月時点のものです。仕様は変わることがあるため、公式ドキュメントと手元の実機で確認してください。</p>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">権限設定・CLAUDE.md・スキル・配置スクリプトの実機確認と、つまずきポイントをまとめています。</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">練習課題10本と講師用の進行表、研修で使うつまずき対応表をまとめています。</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n8eea75ce93e9" rel="noopener">CLAUDE.mdは3行から始める</a><span class="tag">無料記事(note)</span></li>
+      <li><a href="../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a><span class="tag">無料ツール</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ</p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。対処を試す前に、公式ドキュメントで最新の情報を確認してください。この情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+
+<script src="../assets/troubleshooting.js"></script>
+<script src="../assets/troubleshooting-ui.js"></script>
+</body>
+</html>

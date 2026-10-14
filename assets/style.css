@@ -48,7 +48,7 @@ body {
 }
 
 a { color: var(--accent); }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
@@ -83,7 +83,7 @@ legend { font-weight: 700; padding: 0 4px; }
 .hint { color: var(--muted); font-size: 0.88rem; margin: 2px 0 0; }
 
 label.field { display: block; margin: 10px 0 2px; font-weight: 600; }
-input[type="text"], input[type="number"], select {
+input[type="text"], input[type="number"], select, textarea {
   width: 100%;
   max-width: 420px;
   font: inherit;
@@ -93,6 +93,9 @@ input[type="text"], input[type="number"], select {
   border: 1px solid var(--border);
   border-radius: 6px;
 }
+
+textarea { display: block; max-width: 100%; line-height: 1.5; resize: vertical; }
+input.wide { max-width: 100%; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
 
@@ -105,6 +108,7 @@ button {
   color: var(--accent-text);
   cursor: pointer;
 }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 button.secondary { background: transparent; color: var(--accent); }
 .buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 
@@ -147,6 +151,14 @@ summary { cursor: pointer; font-weight: 600; }
 .related { border-left: 4px solid var(--accent); }
 .related ul { padding-left: 1.2em; margin: 8px 0 0; }
 .tag { display: inline-block; font-size: 0.78rem; border: 1px solid var(--border); border-radius: 4px; padding: 0 6px; margin-left: 4px; color: var(--muted); }
+
+.ts-table { min-width: 760px; }
+.ts-table th:nth-child(1) { width: 26%; }
+.ts-table th:nth-child(2), .ts-table th:nth-child(3) { width: 26%; }
+.ts-table .badge { white-space: normal; }
+
+.source-list { margin: 6px 0 0; padding-left: 1.1em; }
+.source-list li { margin: 2px 0; }
 
 .tool-list { list-style: none; padding: 0; }
 .tool-list li { margin: 0 0 12px; }

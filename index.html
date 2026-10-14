@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>情シスのための Claude Code ツール | 中小DXラボ</title>
-<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けの無料ツール集。権限設定(settings.json)のジェネレーターと、API 料金の見積もり計算機を、ブラウザだけで使えます。">
+<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けの無料ツール集。権限設定(settings.json)・CLAUDE.md・スキル(SKILL.md)のひな形づくり、つまずき早見表、API 料金の見積もり計算機を、ブラウザだけで使えます。">
 <link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="中小DXラボ">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="情シスのための Claude Code ツール">
-<meta property="og:description" content="権限設定(settings.json)のジェネレーターと API 料金の見積もり計算機。ブラウザだけで動く無料ツールです。">
+<meta property="og:description" content="権限設定・CLAUDE.md・スキルのひな形づくり、つまずき早見表、API 料金の見積もり計算機。ブラウザだけで動く無料ツールです。">
 <meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/">
 <meta name="twitter:card" content="summary">
 <meta name="color-scheme" content="light dark">
@@ -22,6 +22,9 @@
     <a class="brand" href="index.html" aria-current="page">中小DXラボ のツール</a>
     <nav aria-label="ツール">
       <a href="settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="skill-generator/index.html">スキル雛形生成</a>
+      <a href="troubleshooting/index.html">つまずき早見表</a>
       <a href="cost-calculator/index.html">API 料金 見積もり計算機</a>
     </nav>
   </div>
@@ -35,6 +38,18 @@
     <li class="card">
       <h2><a href="settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a></h2>
       <p>「.env を読ませない」「curl などで外部に送らせない」「git push は確認」といった方針を選ぶと、settings.json の deny / ask / allow のルールを出力します。実機で止まると確認したルールと、個別には確認していないルールを分けて表示します。</p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-md-generator/index.html">CLAUDE.md テンプレート生成</a></h2>
+      <p>用途・言語・守ってほしいこと・触ってはいけないフォルダを選ぶと、Claude Code が起動時に読む CLAUDE.md のひな形を出力します。最初の3行版にも切り替えられ、200行以内に収まっているかを行数で表示します。</p>
+    </li>
+    <li class="card">
+      <h2><a href="skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a></h2>
+      <p>スキル名・説明・いつ使うか・手順・出力の形を入れると、<code>.claude/skills/&lt;名前&gt;/SKILL.md</code> のひな形を出力します。スキル名の書き方と frontmatter の形を確かめます。議事録の要約などの例つきです。</p>
+    </li>
+    <li class="card">
+      <h2><a href="troubleshooting/index.html">Claude Code つまずき早見表(Windows・情シス向け)</a></h2>
+      <p>allow が効かない、deny をすり抜ける、PowerShell の文字化け、CSV の BOM など、実機で起きたつまずきを症状・原因・対処の表にまとめました。キーワードと分類で絞り込めます。</p>
     </li>
     <li class="card">
       <h2><a href="cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a></h2>

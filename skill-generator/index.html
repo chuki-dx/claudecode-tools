@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code スキル(SKILL.md)雛形生成 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のスキル(SKILL.md)のひな形を、スキル名・説明・いつ使うか・手順・出力の形・禁止事項を入れるだけで作れる無料ツール。スキル名の書き方と frontmatter の形を確かめ、置き場所のパスも表示します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/skill-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code スキル(SKILL.md)雛形生成">
+<meta property="og:description" content="手順と出力の形を入れるだけで、Claude Code のスキル(SKILL.md)のひな形を作れる無料ツール。議事録の要約などの例つき。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/skill-generator/">
+<meta name="twitter:card" content="summary">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Code スキル(SKILL.md)雛形生成",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web ブラウザ",
+  "url": "https://chuki-dx.github.io/claudecode-tools/skill-generator/",
+  "description": "Claude Code のスキル(.claude/skills/<名前>/SKILL.md)のひな形を、入力した手順と出力の形から生成するブラウザ上のツール。",
+  "inLanguage": "ja",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "publisher": { "@type": "Organization", "name": "中小DXラボ" }
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../skill-generator/index.html" aria-current="page">スキル雛形生成</a>
+      <a href="../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code スキル(SKILL.md)雛形生成</h1>
+  <p class="lead">よく頼む作業の手順と出力の形を、Claude Code のスキル(SKILL.md)のひな形にします。入力した内容はブラウザの外に送りません。</p>
+
+  <section class="card" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">スキルの内容を入れる</h2>
+    <form id="sk-form" novalidate>
+      <fieldset>
+        <legend>例から始める(任意)</legend>
+        <label class="field" for="sk-preset">例を読み込む</label>
+        <select id="sk-preset">
+          <option value="" selected>(空のまま始める)</option>
+        </select>
+        <p class="hint">例は「社内標準セット」の業務スキル5本のうち3本を、短くしたものです。読み込むと下の入力欄を上書きします。</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>名前と説明</legend>
+        <label class="field" for="sk-name">スキル名(英小文字・数字・ハイフン)</label>
+        <input type="text" id="sk-name" autocomplete="off" spellcheck="false" aria-describedby="name-hint">
+        <p class="hint" id="name-hint">例: <code>minutes-summary</code>。<code>/minutes-summary</code> のように、名前でも呼び出せます。</p>
+        <label class="field" for="sk-title">見出し(日本語で可。空欄なら説明から作ります)</label>
+        <input type="text" id="sk-title" class="wide" autocomplete="off">
+        <label class="field" for="sk-desc">説明(description: 何をするスキルか)</label>
+        <input type="text" id="sk-desc" class="wide" autocomplete="off">
+        <label class="field" for="sk-when">いつ使うか(利用者がふだん使う言葉で)</label>
+        <input type="text" id="sk-when" class="wide" autocomplete="off" aria-describedby="when-hint">
+        <p class="hint" id="when-hint">例: 議事録の要約、会議のまとめを頼まれたとき。説明とつなげて description の1文にします。</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>中身</legend>
+        <label class="field" for="sk-steps">手順(1行に1つ)</label>
+        <textarea id="sk-steps" rows="4"></textarea>
+        <label class="field" for="sk-prohibit">してはいけないこと(1行に1つ)</label>
+        <textarea id="sk-prohibit" rows="3"></textarea>
+        <label class="field" for="sk-output">出力の形(Markdown のひな形)</label>
+        <textarea id="sk-output" rows="6" spellcheck="false"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>置き場所</legend>
+        <div class="opt"><input type="radio" id="loc-project" name="location" value="project" checked><label for="loc-project">このフォルダだけ(<code>.claude/skills/</code>。Git で共有できる)</label></div>
+        <div class="opt"><input type="radio" id="loc-user" name="location" value="user"><label for="loc-user">自分の全プロジェクト(<code>~/.claude/skills/</code>)</label></div>
+      </fieldset>
+    </form>
+
+    <h3 id="out-heading">生成された SKILL.md</h3>
+    <p id="sk-status" class="status" role="status" aria-live="polite">JavaScript を有効にすると、ここに結果が表示されます。</p>
+    <p class="hint">置き場所: <code id="sk-path">-</code></p>
+    <div id="sk-warnings" class="note" hidden></div>
+    <pre aria-labelledby="out-heading" tabindex="0"><code id="sk-output-text"></code></pre>
+    <div class="buttons">
+      <button type="button" id="sk-copy">コピー</button>
+      <button type="button" id="sk-download" class="secondary">SKILL.md を保存</button>
+    </div>
+    <p id="sk-copy-msg" class="hint" role="status" aria-live="polite"></p>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">スキル(SKILL.md)とは</h2>
+    <p>スキルは、手順と出力の形に名前を付けて呼び出せるようにしたものです。<code>.claude/skills/&lt;スキル名&gt;/SKILL.md</code> に置くと、依頼が <code>description</code> に合えば Claude Code が自分で使い、<code>/スキル名</code> のように名前でも呼べます。CLAUDE.md が「毎回読ませる前提」なのに対して、スキルは「その作業を頼まれたときに使う手順書」です。</p>
+
+    <h3>このツールが出力する形</h3>
+    <p>先頭の <code>---</code> で囲んだ部分(frontmatter)は、<code>name</code> と <code>description</code> の2項目だけにしています。社内標準セットで、Windows 11 と Claude Code 2.1.296 が5本とも読み込み、<code>claude plugin validate .claude/skills</code> も通った形と同じです(2026年10月)。</p>
+    <ul>
+      <li>公式ドキュメントでは、frontmatter の項目はすべて省略可能で、<code>description</code> は書くことが推奨、<code>name</code> を省くとフォルダ名が呼び出し名になるとされています(執筆時点)。</li>
+      <li><code>description</code> は、一覧に載るときに <code>when_to_use</code> と合わせて 1,536 文字で切られるとされています。大事な使い道を先に書きます。</li>
+      <li>スキル名は、社内標準セットと同じ英小文字・数字・ハイフンに限っています。<code>synced</code> と <code>anthropic-skills</code> は公式ドキュメントで予約されている名前のため使えません。</li>
+      <li>説明に「: 」のような YAML で意味を持つ書き方が入ると、frontmatter が読めなくなることがあります。このツールはその場合だけ説明を <code>"</code> で囲みます。</li>
+      <li>確認なしでツールを使わせる <code>allowed-tools</code> は入れていません。公式ドキュメントで、プロジェクトの信頼の確認と関係なく効くとされているためです。</li>
+    </ul>
+
+    <h3>使い方</h3>
+    <ol>
+      <li>上の欄を埋めるか、例を読み込んで書き換え、「SKILL.md を保存」を押します。</li>
+      <li>表示された置き場所(例: <code>.claude/skills/minutes-summary/</code>)にフォルダを作り、保存した SKILL.md を置きます。</li>
+      <li>そのフォルダで <code>claude plugin validate .claude/skills</code> を実行し、「使えるスキルの名前を一覧にして」と頼んで、一覧に出るかを確かめます。</li>
+      <li>架空のデータで一度頼み、出力の形どおりになるかを確かめてから配ります。</li>
+    </ol>
+
+    <h3>公式ドキュメント(執筆時点)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/skills" rel="noopener">Extend Claude with skills</a>(置き場所、frontmatter の項目、呼び出し名の決まり方)</li>
+    </ul>
+    <p class="hint">このページの内容は 2026年10月時点のものです。仕様は変わることがあるため、配る前に公式ドキュメントと手元の実機で確認してください。</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>スキルが一覧に出ません</summary>
+      <p><code>.claude/skills/&lt;名前&gt;/SKILL.md</code> の位置と、先頭行が <code>---</code> で始まっているかを確かめ、<code>claude plugin validate .claude/skills</code> を実行してください。ほかのつまずきは <a href="../troubleshooting/index.html">つまずき早見表</a> にまとめています。</p>
+    </details>
+    <details>
+      <summary>スキルが自動で使われません</summary>
+      <p><code>description</code> の言葉と、頼み方の言葉が合っていないことがあります。「いつ使うか」に、利用者がふだん使う言葉を足してください。<code>/スキル名</code> で直接呼ぶこともできます。</p>
+    </details>
+    <details>
+      <summary>入力した内容はどこかに送られますか</summary>
+      <p>送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。アクセス解析のタグも入れていません。</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">例の元になった業務スキル5本(議事録の要約・Excel 集計スクリプトの依頼・手順書の下書き・問い合わせ回答の下書き・週報のたたき台)の SKILL.md 全文と、実機での確認結果をまとめています。</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
+      <li><a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a><span class="tag">無料ツール</span></li>
+      <li><a href="../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a><span class="tag">無料ツール</span></li>
+      <li><a href="../troubleshooting/index.html">Claude Code つまずき早見表</a><span class="tag">無料ツール</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ</p>
+    <p>免責: このページの情報とツールの出力は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認し、手元の環境で動作を確かめてください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+
+<script src="../assets/skill-generator.js"></script>
+<script src="../assets/skill-generator-ui.js"></script>
+</body>
+</html>
