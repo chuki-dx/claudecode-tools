@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の hooks(フック)とは:設定の書き方と使いどころ | 中小DXラボ</title>
+<meta name="description" content="Claude Code の hooks は、決まったタイミングでシェルコマンドを自動実行する仕組みです。設定ファイルの書き方、置き場所、終了コード、使いどころと注意点を公式ドキュメントに沿って整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-hooks-intro/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の hooks(フック)とは:設定の書き方と使いどころ">
+<meta property="og:description" content="Claude Code の hooks は、決まったタイミングでシェルコマンドを自動実行する仕組みです。設定ファイルの書き方、置き場所、終了コード、使いどころと注意点を公式ドキュメントに沿って整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-hooks-intro/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-hooks-intro.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の hooks(フック)とは:設定の書き方と使いどころ">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-hooks-intro.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の hooks(フック)とは:設定の書き方と使いどころ",
+  "description": "Claude Code の hooks は、決まったタイミングでシェルコマンドを自動実行する仕組みです。設定ファイルの書き方、置き場所、終了コード、使いどころと注意点を公式ドキュメントに沿って整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-hooks-intro/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code hooks",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-hooks-intro/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code hooks</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の hooks(フック)とは:設定の書き方と使いどころ</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>hooks は、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の動作の決まった場面で、利用者が定義したシェルコマンドを自動実行する仕組みです。LLM が実行を選ぶかどうかに頼らず、決まった処理を必ず走らせられます。</li>
+      <li>設定は設定ファイルの <code>hooks</code> に、イベント名・<code>matcher</code>・実行するコマンドを書きます。<code>/hooks</code> で登録を確認できます。</li>
+      <li>コード整形や保護ファイルの編集ブロックに向きますが、<code>PostToolUse</code> では取り消せないなどの制約があります。社内に配る前に、公式ドキュメントで該当イベントの仕様を確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">hooks で何ができるか</h2>
+  <p>公式ドキュメントによると、hooks は利用者が定義するシェルコマンドです。Claude Code がライフサイクル上の決まったタイミングで実行するため、特定の処理が必ず起きる、という決定的な制御ができます。プロジェクトのルールの強制、繰り返し作業の自動化、既存ツールとの連携が主な用途です。</p>
+  <p>公式ドキュメントが挙げる例は、編集後のファイル整形、実行前のコマンドのブロック、入力待ちの通知、セッション開始時のコンテキスト注入などです。</p>
+  <p>多くの hook は <code>"type": "command"</code> でシェルコマンドを実行します。ほかに <code>http</code>、<code>mcp_tool</code>、<code>prompt</code>(単発の LLM 判断)、<code>agent</code>(ツールを使える複数ターンの検証)があります。<code>agent</code> は実験的で、将来変更される可能性があるため、本番のワークフローでは command hook が推奨されています。</p>
+  <p>この記事は執筆時点(2026年10月)で参照した公式ドキュメントに基づきます。イベントや設定項目は更新されうるため、導入前に最新の内容を確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+  <h2 id="s2">設定の書き方:最初の hook</h2>
+  <p>hook を作るには、設定ファイルに <code>hooks</code> ブロックを追加します。イベント名は、1つの <code>hooks</code> オブジェクトの中のキーとして並べます。すでに <code>hooks</code> キーがある場合は、全体を置き換えず、既存のイベントキーと同じ階層に追加します。</p>
+  <p>次は、ファイル編集ツールの実行後に Prettier(コード整形ツール)を走らせる例です。公式ドキュメントでは、プロジェクト直下の <code>.claude/settings.json</code> に追加するとされています。</p>
+<pre><code>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+  <p><code>PostToolUse</code> はツール呼び出しが成功した後のイベントです。<code>matcher</code> の <code>Edit|Write</code> は、<code>Edit</code> か <code>Write</code> ツールを使ったときだけ動かす指定で、<code>Bash</code> や <code>Read</code> では動きません。<code>matcher</code> を付けないと、そのイベントが起きるたびに動きます。コマンドは <code>jq</code>(JSON を処理するコマンド)で編集されたファイルのパスを取り出し、Prettier に渡しています。</p>
+  <p>設定したら、プロンプトで <code>/hooks</code> と入力すると hooks の一覧が開き、登録を確認できます。成功した hook は会話上に何も表示しないため、効果(ここではファイルが整形されたか)で確認します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+  <h2 id="s3">設定ファイルの置き場所と適用範囲</h2>
+  <p>公式ドキュメントでは、hook を置く場所で適用範囲が決まります。</p>
+  <ul>
+    <li><code>~/.claude/settings.json</code>:自分の全プロジェクト。手元のマシン限定で共有されません</li>
+    <li><code>.claude/settings.json</code>:そのプロジェクトのみ。リポジトリにコミットして共有できます</li>
+    <li><code>.claude/settings.local.json</code>:そのプロジェクトのみ。共有しません</li>
+    <li>管理ポリシー設定:組織全体。管理者が制御します</li>
+    <li>プラグインの <code>hooks/hooks.json</code>、スキルやサブエージェントの frontmatter:それぞれプラグインが有効な間、スキル呼び出し後のセッション、サブエージェントの実行中に適用されます</li>
+  </ul>
+  <p>社内で揃えたい hook は、<code>.claude/settings.json</code> に入れてリポジトリで共有する形になります。hooks を止めるには、設定ファイルに <code>"disableAllHooks": true</code> を書きます。ただしプロジェクトの設定ファイルが自分の設定を上書きすることがあり、管理設定の hooks は、管理設定側でも <code>disableAllHooks</code> を設定しない限り動き続けます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+  <h2 id="s4">入力・出力と終了コードの考え方</h2>
+  <p>イベントが起きると、Claude Code はイベント固有のデータを JSON で hook の標準入力に渡します。たとえば <code>PreToolUse</code> の hook は <code>tool_name</code> や <code>tool_input</code> を受け取ります。スクリプトはそれを読み、終了コードで次の動作を伝えます。</p>
+  <ul>
+    <li><strong>終了コード 0</strong>:異議なし。<code>PreToolUse</code> では承認にはならず、通常の権限確認が続きます。<code>UserPromptSubmit</code> や <code>SessionStart</code> などでは、標準出力がテキストとして Claude のコンテキストに追加されます</li>
+    <li><strong>終了コード 2</strong>:動作をブロックします。理由は標準エラー出力に書きます。理由の届け先はイベントによって異なり、<code>SessionStart</code> のようにブロックできないイベントもあります</li>
+    <li><strong>それ以外</strong>:標準出力の内容で結果が変わり、多くの場合は非ブロッキングエラーとして処理が進みます</li>
+  </ul>
+  <p>次は <code>PreToolUse</code> でコマンドをブロックするスクリプトの例です。</p>
+<pre><code>#!/bin/bash
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
+
+if echo "$COMMAND" | grep -q "drop table"; then
+  echo "Blocked: dropping tables is not allowed" &gt;&amp;2  # stderr becomes Claude's feedback
+  exit 2                                               # exit 2 = block the action
+fi
+
+exit 0  # exit 0 = no decision; the normal permission flow applies</code></pre>
+  <p>より細かく制御したいときは、終了コード 0 で JSON を標準出力に返します。ブロックは終了コード 2、構造化制御は終了コード 0 と JSON のどちらかに決め、1つの hook で混ぜないよう公式ドキュメントは案内しています。また、同じイベントに複数の hook が一致すると並列で実行され、<code>PreToolUse</code> の権限判断では最も厳しい結果が採用されます(<code>deny</code>、<code>defer</code>、<code>ask</code>、<code>allow</code> の順)。ある hook が <code>deny</code> を返しても、ほかの hook の実行は止まりません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+  <h2 id="s5">使いどころと注意点</h2>
+  <h3>向いている使いどころ</h3>
+  <ul>
+    <li>編集後のコード整形(<code>PostToolUse</code>)</li>
+    <li><code>.env</code>、<code>package-lock.json</code>、<code>.git/</code> など保護したいファイルの編集ブロック(<code>PreToolUse</code> とスクリプトの終了コード 2)。スクリプトは実行可能にしておく必要があります</li>
+    <li>入力待ちの通知(<code>Notification</code>)。macOS、Linux、Windows 向けの例が公式ドキュメントにあります</li>
+    <li>コンテキストの再注入(<code>SessionStart</code> と <code>compact</code>)。会話の要約で失われる情報を補う用途です</li>
+    <li>設定ファイル変更の監査ログ(<code>ConfigChange</code>)</li>
+  </ul>
+  <h3>注意点</h3>
+  <ul>
+    <li><code>PostToolUse</code> は、ツールがすでに実行された後なので、処理を取り消せません</li>
+    <li><code>Edit|Write</code> の <code>matcher</code> だけでは、Claude がシェルコマンドでファイルを変えるケースを拾えません。全変更を監査したい場合は、1ターンごとに作業ツリーを調べる <code>Stop</code> hook が案内されています</li>
+    <li><code>if</code> フィールドによる絞り込みはベストエフォートです。厳格な許可・拒否には、hook ではなく権限システムを使うよう案内されています</li>
+    <li><code>PermissionRequest</code> で自動承認する場合は <code>matcher</code> を狭くします。<code>.*</code> を指定したり空にしたりすると、ファイル書き込みやシェルコマンドを含むすべての権限確認が自動承認されます</li>
+    <li><code>PreToolUse</code> の <code>deny</code> は <code>bypassPermissions</code> モードでも効きます。一方、hook の <code>allow</code> は設定の deny ルールを回避できません</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>セッションのたびに同じ前提を Claude に伝えたいだけなら、hooks を使うべきですか。</summary>
+      <p>公式ドキュメントでは、セッション開始のたびにコンテキストを入れたい場合は、<code>SessionStart</code> hook より CLAUDE.md を検討するよう案内しています。<code>SessionStart</code> の <code>compact</code> matcher は、コンパクション後に重要な情報を入れ直す用途の例として紹介されています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+    </details>
+    <details>
+      <summary>hook が動かないときは、何から確認すればよいですか。</summary>
+      <p>公式ドキュメントでは、まず <code>/hooks</code> で正しいイベントの下に表示されているかを確認します。<code>matcher</code> はツール名と正確に一致させる必要があり、大文字小文字も区別されます。設定ファイルの JSON は末尾のカンマやコメントが使えません。スクリプトが動かない場合は実行権限を確認します。詳細なログは <code>claude --debug</code> で見られます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+    </details>
+    <details>
+      <summary>ルールで決められない、判断が必要な処理にも hooks は使えますか。</summary>
+      <p>公式ドキュメントでは、<code>prompt</code> hook が Claude モデルに1回判断させ、<code>agent</code> hook はファイルの読み取りなどのツールを使って検証します。<code>agent</code> hook は実験的で、将来変更される可能性があり、本番では command hook が推奨されています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/hooks-guide" rel="noopener">Automate actions with hooks</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code の MCP 設定:local・project・user の違いと .mcp.json</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

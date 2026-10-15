@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code で前の会話を再開する方法を、公式ドキュメントに沿って情シス向けに整理しました。--continue と --resume の違い、名前の付け方、復元される範囲と注意点がわかります。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方">
+<meta property="og:description" content="Claude Code で前の会話を再開する方法を、公式ドキュメントに沿って情シス向けに整理しました。--continue と --resume の違い、名前の付け方、復元される範囲と注意点がわかります。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-resume-session.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-resume-session.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方",
+  "description": "Claude Code で前の会話を再開する方法を、公式ドキュメントに沿って情シス向けに整理しました。--continue と --resume の違い、名前の付け方、復元される範囲と注意点がわかります。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code の会話再開",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code の会話再開</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の会話は、プロジェクトごとにローカルへ保存されます。<code>claude --continue</code> で直近、<code>claude --resume</code> で一覧から選んで再開できます。</li>
+      <li>並行作業が多いなら、<code>claude -n auth-refactor</code> や <code>/rename auth-refactor</code> で名前を付けておくと、<code>claude --resume &lt;name&gt;</code> で直接戻れます。名前を付けなくても、生成された題名なら再開に使えます。</li>
+      <li>再開しても復元されない起動オプションがあり、<code>bypassPermissions</code> で終わった会話の権限モードも復元されません。社内に配る前に、復元される範囲を確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">前の会話を再開する入口</h2>
+  <p>公式ドキュメントによると、セッションとはプロジェクトのディレクトリに結び付いた保存済みの会話です。作業中に保存され続けるので、終了後や <code>/clear</code> の後でも戻れます。この記事は CLI の話で、デスクトップアプリ、claude.ai/code、VS Code 拡張はそれぞれ別のセッション一覧を持ちます。</p>
+  <ul>
+    <li><code>claude --continue</code>:現在のディレクトリで最も新しいセッションを開き直します</li>
+    <li><code>claude --resume</code>:セッションピッカー(一覧から選ぶ画面)を開きます</li>
+    <li><code>claude --resume &lt;name&gt;</code>:名前を付けたセッションを直接再開します</li>
+    <li><code>claude --resume &lt;transcript-path&gt;</code>:<code>.jsonl</code> の記録ファイルを、フルパスで指定して再開します</li>
+    <li><code>claude --from-pr &lt;number&gt;</code>:そのプルリクエストに紐づくセッションに絞ったピッカーを開きます</li>
+    <li><code>/resume</code>:起動中のセッションの中から、別のセッションに切り替えます</li>
+  </ul>
+  <p>執筆時点(2026年10月)の公式ドキュメントに基づく整理で、自分で試した結果ではありません。バージョンで挙動が変わる点もあるため、導入前に最新の公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s2">名前を付けて再開する</h2>
+  <p>公式ドキュメントでは、複数のタスクを並行するときほど、わかりやすい名前を付けることが勧められています。名前はピッカーで探しやすくなり、名前での再開にも使えます。</p>
+  <ul>
+    <li>起動時:<code>claude -n auth-refactor</code></li>
+    <li>セッション中:<code>/rename auth-refactor</code>(名前はプロンプトバーにも出ます)</li>
+    <li>ピッカーから:セッションを選んで <code>Ctrl+R</code></li>
+    <li>プランモードでプランを承認したとき:名前が未設定なら、プランに基づく題名が自動で付きます</li>
+  </ul>
+  <p>名前を付けたら <code>claude --resume &lt;name&gt;</code> か <code>/resume &lt;name&gt;</code> で戻れます。完全一致なら、別のワークツリー(同じリポジトリの別の作業ディレクトリ)にあっても直接再開されます。名前が複数のセッションに当てはまる場合、<code>claude --resume &lt;name&gt;</code> は名前を検索語に入れてピッカーを開き、<code>/resume &lt;name&gt;</code> はエラーになります。その場合は引数なしの <code>/resume</code> でピッカーを開きます。</p>
+  <p>名前を付けないセッションには、既定の表示名(<code>my-app-3f</code> のような形)と、最初のプロンプトを要約した生成題名が付きます。再開に使えるのは生成題名だけで、既定の表示名を渡してもセッションは見つかりません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s3">セッションピッカーの使い方と探せる範囲</h2>
+  <p><code>claude --resume</code> を引数なしで実行するか、セッション中に <code>/resume</code> を実行するとピッカーが開きます。主な操作は次のとおりです。</p>
+  <ul>
+    <li><code>↑</code> / <code>↓</code> で移動、<code>Enter</code> で再開、<code>Space</code> で内容のプレビュー</li>
+    <li><code>/</code> などで検索。プルリクエストの URL を貼ると、それを作ったセッションを探せます</li>
+    <li><code>Ctrl+A</code> はこの端末の全プロジェクト、<code>Ctrl+W</code> はリポジトリの全ワークツリー、<code>Ctrl+B</code> は現在の git ブランチに絞り込み</li>
+  </ul>
+  <p>既定で出るのは、現在のワークツリーのセッションと、<code>/add-dir</code> で現在のディレクトリを追加した別の場所で始めたセッションです。</p>
+  <p>一覧に出てこないときの注意点があります。最初のプロンプトが <code>/loop</code> だったセッションは、ピッカーにも <code>claude --continue</code> にも出ません。<code>claude -p</code> や Agent SDK で作ったセッションも同様ですが、<code>claude --resume &lt;session-id&gt;</code> にセッション ID を渡せば再開できます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s4">再開で復元されるものと、渡し直すもの</h2>
+  <p>公式ドキュメントによると、記録から会話を読み込むと、ツール呼び出しと結果を含む会話履歴のほか、次の状態が復元されます。</p>
+  <ul>
+    <li>モデル:使っていたモデルで続きます(例外は公式のモデル設定のページを確認してください)</li>
+    <li>エージェント:<code>--agent</code> などで始めたセッションは、そのエージェントとして続きます</li>
+    <li>権限モード:ターミナルで <code>claude --continue</code> などを <code>-p</code> なしで使うと、終了時の権限モードが復元されます。<code>--permission-mode</code> などで上書きできます</li>
+    <li>予定タスク:期限切れでないものは復元されますが、バックグラウンドの Bash やモニタータスクは復元されません</li>
+  </ul>
+  <p>復元されないものもあります。<code>--mcp-config</code>、<code>--settings</code>、<code>--plugin-dir</code>、<code>--fallback-model</code>、<code>--add-dir</code> に依存していたセッションは、再開時に渡し直します。<code>/add-dir</code> で途中に追加したディレクトリも復元されません。<code>settings.json</code> などの設定ファイルは起動時に読み直されるので、渡し直しは不要です。</p>
+  <p>権限モードでは、<code>bypassPermissions</code> で終わったセッションをターミナルで再開しても、そのモードは戻らず、新規セッションと同じモードで始まります。プランモードで終わった場合は、ターミナルの再開でプランモードに戻ります(<code>--fork-session</code> を付けた場合と、deny ルールで <code>ExitPlanMode</code> ツールが外されている場合を除く)。</p>
+  <h3>長く放置した会話の再開</h3>
+  <p>Pro または Max プランで、約1時間を超えて動かしておらず 100,000 トークンを超えるセッションを再開すると、最初のメッセージの前にダイアログが出ます。<strong>Resume from summary</strong> は <code>/compact</code> を実行して要約を引き継ぎます。以降のコストは下がりますが、要約から漏れた内容は Claude の文脈から消えます。<strong>Resume full session as-is</strong> は会話をそのまま読み込みます。<strong>Don't ask me again</strong> を選ぶと、今後の再開でダイアログが出なくなります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s5">分岐と保存場所での注意</h2>
+  <p>元の会話を残して別の進め方を試すなら、セッション中に <code>/branch</code> を使うか、コマンドラインで次のように <code>--fork-session</code> を組み合わせます。</p>
+<pre><code>claude --continue --fork-session</code></pre>
+  <p>同じセッションを分岐せずに 2 つのターミナルで再開すると、両方のメッセージが 1 つの記録に混ざります。</p>
+  <p>記録は既定で <code>~/.claude/projects/&lt;project&gt;/&lt;session-id&gt;.jsonl</code> に保存され、保持期間は30日です。<code>settings.json</code> の <code>cleanupPeriodDays</code> で変更できます。記録の形式は Claude Code の内部仕様でバージョンにより変わるため、直接解析するスクリプトは壊れる可能性があります。人が読む形で残すなら <code>/export</code> を使います。早く消したい場合は <code>claude purge</code> があります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>直近の会話をすぐ再開するには?</summary>
+      <p><code>claude --continue</code> を使います。現在のディレクトリで最も新しいセッションを開き直します。最初のプロンプトが <code>/loop</code> だったセッションや、<code>claude -p</code>・Agent SDK で作ったセッションは対象外です。まだ動作中のバックグラウンドセッションも開かず、メッセージを出して終了します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+    <details>
+      <summary>名前を付けていない会話は再開できますか?</summary>
+      <p>できます。ピッカーで選ぶか、生成された題名を <code>claude --resume</code> や <code>/resume</code> に渡します。既定の表示名(<code>my-app-3f</code> のような形)は再開に使えません。なお、シェルやスクリプトから直接実行した <code>claude -p</code> には題名が付きません。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+    <details>
+      <summary>別のディレクトリで始めた会話を再開できますか?</summary>
+      <p><code>claude --resume &lt;session-id&gt;</code> はどのディレクトリからも実行できます。現在のプロジェクトのディレクトリとそのワークツリーを先に探し、次にこの端末の他のプロジェクトを探します。他のプロジェクトでは、記録を持つのが1つだけのときに限って解決されます。一致するものがなければ <code>No conversation found with session ID: &lt;session-id&gt;</code> と表示されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表</a>: Windows で Claude Code を使うときに起きやすい症状を、原因と対処で引ける早見表です。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-rewind-checkpoint/index.html">Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-vscode/index.html">Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

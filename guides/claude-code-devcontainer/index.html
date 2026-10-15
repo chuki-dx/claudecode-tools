@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール | 中小DXラボ</title>
+<meta name="description" content="Claude Code を開発コンテナ(dev container)で動かす手順を、公式ドキュメントに沿って整理します。認証の永続化、組織ポリシーの適用、通信制限、権限確認の扱いまで、情シスが判断に使える点をまとめました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール">
+<meta property="og:description" content="Claude Code を開発コンテナ(dev container)で動かす手順を、公式ドキュメントに沿って整理します。認証の永続化、組織ポリシーの適用、通信制限、権限確認の扱いまで、情シスが判断に使える点をまとめました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-devcontainer.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-devcontainer.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール",
+  "description": "Claude Code を開発コンテナ(dev container)で動かす手順を、公式ドキュメントに沿って整理します。認証の永続化、組織ポリシーの適用、通信制限、権限確認の扱いまで、情シスが判断に使える点をまとめました。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code 開発コンテナ",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code 開発コンテナ</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>開発コンテナに Claude Code を入れると、Claude が実行するコマンドはコンテナ内で動き、ファイル編集は手元のリポジトリに反映されます。</li>
+      <li>導入は <code>devcontainer.json</code> にフィーチャーを足して再ビルドしますが、再ビルドで認証が消えるため <code>~/.claude</code> の永続化が要ります。</li>
+      <li>組織のルールは <code>managed-settings.json</code> で入れられますが、Dockerfile 経由はリポジトリの書き込み権限者が変更できる点に注意が必要です。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">開発コンテナで何ができるか</h2>
+  <p>執筆時点(2026年10月)の公式ドキュメントによると、開発コンテナ(dev container)は、チーム全員が同じ分離された環境を動かすための定義です。Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)をその中に入れると、Claude が実行するコマンドはホストではなくコンテナ内で動き、プロジェクトファイルの編集は手元のリポジトリに反映されます。</p>
+  <p>接続できるのは VS Code、GitHub Codespaces、JetBrains IDE、Cursor など Dev Containers 仕様に対応したエディタです。素の Vim のような非対応エディタは対象外です。</p>
+  <p>公式ドキュメントの警告では、<code>--dangerously-skip-permissions</code> で実行すると、悪意あるプロジェクトによるコンテナ内の情報の持ち出し(<code>~/.claude</code> の認証情報を含む)は防げません。信頼できるリポジトリでだけ使い、Claude の動きを監視し、<code>~/.ssh</code> などホストの秘密情報はマウントしないよう勧められています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s2">Claude Code を開発コンテナに追加する</h2>
+  <p>公式ドキュメントでは、Claude Code Dev Container Feature を使うと、どの開発コンテナにも Claude Code を入れられます。手順は VS Code の例です。<code>.devcontainer/devcontainer.json</code> に次を保存するか、既存ファイルに <code>features</code> ブロックを足します。</p>
+<pre><code>{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  }
+}</code></pre>
+  <p>末尾の <code>:1.0</code> のようなバージョンタグが固定するのはフィーチャーのインストールスクリプトで、Claude Code 本体ではありません。フィーチャーは最新の Claude Code を入れ、コンテナ内では既定で自動更新されます。<code>image</code> の行は自社の基本イメージに置き換えるか、Dockerfile を使う場合は削除します。</p>
+  <ol>
+    <li>上の内容を <code>devcontainer.json</code> に保存する</li>
+    <li>コマンドパレットで <strong>Dev Containers: Rebuild Container</strong> を実行する</li>
+    <li>再ビルドしたコンテナのターミナルで <code>claude</code> を実行し、認証の案内に従う</li>
+  </ol>
+  <p>Node.js が基本イメージに無ければフィーチャーが入れますが、失敗して <code>Failed to install Node.js and npm</code> でビルドが止まったら、<code>"ghcr.io/devcontainers/features/node:1": {}</code> を Claude Code フィーチャーの上に足して再ビルドします。Amazon Bedrock などのクラウドプロバイダーでは、ホストの認証情報ファイルをマウントせず、<code>containerEnv</code> などで環境変数として渡すよう勧められています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s3">再ビルドで認証を消さない設定</h2>
+  <p>公式ドキュメントによると、既定ではコンテナのホームが再ビルドで破棄され、毎回サインインし直しになります。認証トークンやセッション履歴は <code>~/.claude</code> にありますが、OAuth アカウントなどは別ファイル <code>~/.claude.json</code> にあるため、ボリュームのマウントだけでは足りません。<code>~/.claude</code> に名前付きボリュームをマウントし、<code>CLAUDE_CONFIG_DIR</code> を同じパスにします。次は <code>remoteUser</code> が <code>node</code> の例です。</p>
+<pre><code>"mounts": [
+  "source=claude-code-config,target=/home/node/.claude,type=volume"
+],
+"containerEnv": {
+  "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+}</code></pre>
+  <p><code>/home/node</code> は自分の <code>remoteUser</code> のホームに置き換え、すでに <code>containerEnv</code> がある場合はそこに足します。プロジェクトごとに分けたい場合は、ボリューム名に <code>${devcontainerId}</code> を含めます。GitHub Codespaces では、停止・開始では残りますが再ビルドで消えるため、同じ設定が要ります。codespace をまたぐには、<code>ANTHROPIC_API_KEY</code> か、<code>claude setup-token</code> で得た <code>CLAUDE_CODE_OAUTH_TOKEN</code> を Codespaces のシークレットに保存します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s4">組織のルールを入れる</h2>
+  <p>公式ドキュメントでは、Claude Code は Linux で <code>/etc/claude-code/managed-settings.json</code> を読み、設定の階層で最も高い優先順位で適用するとしています。<code>~/.claude</code> やプロジェクトの <code>.claude/</code> の値より優先され、Dockerfile から次のようにコピーします。</p>
+<pre><code>RUN mkdir -p /etc/claude-code
+COPY managed-settings.json /etc/claude-code/managed-settings.json</code></pre>
+  <p>ただし Dockerfile はリポジトリにあるため、書き込み権限のある人はこの手順を変更・削除できます。エンジニアが回避できない運用にするには、サーバー管理設定か MDM での配布が案内されています。</p>
+  <p>コンテナ全体の環境変数は <code>containerEnv</code> に書きます。次の例はテレメトリとエラー報告を無効化し、自動更新を止めます。</p>
+<pre><code>"containerEnv": {
+  "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+  "DISABLE_AUTOUPDATER": "1"
+}</code></pre>
+  <p><code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> は Remote Control などが依存するフィーチャーフラグの評価も無効にするため、コンテナ内ではそれらが使えません。バージョンを固定したいときは、フィーチャーの代わりに Dockerfile で <code>npm install -g @anthropic-ai/claude-code@X.Y.Z</code> を実行し、<code>DISABLE_AUTOUPDATER</code> を <code>1</code> にします。MCP サーバーはリポジトリ直下の <code>.mcp.json</code> にプロジェクトスコープで定義すると、設定と一緒にチェックインできます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s5">通信制限と権限確認の扱い</h2>
+  <p>外向き通信は、必要なドメインだけに絞れます。ドメインは公式ドキュメントのネットワーク要件のページで確認してください。参考コンテナの <code>init-firewall.sh</code> は、許可した宛先だけに通信を絞ります。コンテナ内のファイアウォールには追加権限が要るため <code>runArgs</code> で <code>NET_ADMIN</code> と <code>NET_RAW</code> を加えていますが、Claude Code 自体には必須ではなく、自社のネットワーク制御に任せる形でも構いません。</p>
+  <p>コンテナは非 root ユーザーで動くため、無人運用では <code>--dangerously-skip-permissions</code> を渡せます。root で起動すると CLI が拒否するので、<code>remoteUser</code> が非 root か確認します。ただしツール実行前の確認はなくなり、バインドマウントされたワークスペースのファイルは Claude が変更でき、ホストに直接反映されます。通信制限と組み合わせてください。</p>
+  <p>確認を減らしつつ安全確認を残すなら auto mode があり、分類器が実行前に審査します。このフラグ自体を禁止するには、managed settings で <code>permissions.disableBypassPermissionsMode</code> を <code>"disable"</code> にします。試すなら <code>anthropics/claude-code</code> リポジトリに参考の開発コンテナがあります。動く例として提供されたもので、メンテナンスされるベースイメージではないとされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>再ビルドのたびにサインインし直しになるのはなぜですか。</summary>
+      <p>既定ではコンテナのホームが再ビルドで破棄されるためです。<code>~/.claude</code> に名前付きボリュームをマウントし、<code>CLAUDE_CONFIG_DIR</code> を同じパスにすると、<code>.claude.json</code> もボリューム内に書かれます。GitHub Codespaces でも再ビルドで消えるため、同じ設定が必要です。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+    <details>
+      <summary>Dockerfile で managed-settings.json を入れれば、利用者は設定を変えられませんか。</summary>
+      <p>Dockerfile はリポジトリにあり、書き込み権限のある人は手順を変更・削除できます。リポジトリのファイル編集で回避されないルールにしたい場合は、公式ドキュメントはサーバー管理設定か MDM での配布を案内しています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+    <details>
+      <summary><code>--dangerously-skip-permissions</code> は開発コンテナなら安全に使えますか。</summary>
+      <p>安全とは言えません。悪意あるプロジェクトによるコンテナ内の情報の持ち出しは防げず、ワークスペースの変更はホストに反映されます。信頼できるリポジトリでだけ使い、通信制限と組み合わせます。フラグ自体を禁止する設定もあります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-legal-compliance/index.html">Claude Code の利用規約とコンプライアンス:プラン別の規約と確認点</a><span class="tag">解説</span></li>
+      <li><a href="../ai-usage-rules-claude-code/index.html">中小企業で Claude Code を使う前に決める生成AI利用ルールの考え方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

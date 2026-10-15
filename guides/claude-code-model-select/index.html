@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のモデルの選び方と切り替え方(/model と設定) | 中小DXラボ</title>
+<meta name="description" content="Claude Code のモデルの選び方と、/model・--model・設定ファイルでの切り替え方を公式ドキュメントに沿って整理。Fable の注意点や管理者の制限、保存されない原因も解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のモデルの選び方と切り替え方(/model と設定)">
+<meta property="og:description" content="Claude Code のモデルの選び方と、/model・--model・設定ファイルでの切り替え方を公式ドキュメントに沿って整理。Fable の注意点や管理者の制限、保存されない原因も解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-model-select.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のモデルの選び方と切り替え方(/model と設定)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-model-select.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のモデルの選び方と切り替え方(/model と設定)",
+  "description": "Claude Code のモデルの選び方と、/model・--model・設定ファイルでの切り替え方を公式ドキュメントに沿って整理。Fable の注意点や管理者の制限、保存されない原因も解説します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code のモデル切り替え",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code のモデル切り替え</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のモデルの選び方と切り替え方(/model と設定)</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>モデルは <code>sonnet</code>・<code>opus</code>・<code>haiku</code> などのエイリアスかモデル名で指定します。公式ドキュメントでは、日常のコーディングは <code>sonnet</code>、複雑な推論は <code>opus</code>、簡単な作業は <code>haiku</code> という位置づけです。</li>
+      <li>切り替えはセッション中なら <code>/model</code>、起動時なら <code>--model</code>、常用するなら設定ファイルの <code>model</code> です。<code>/model</code> は Enter で選ぶと既定として保存されます。</li>
+      <li>社内に配る前に、エイリアスが更新されること、Fable は利用クレジットに請求される場合があること、管理者設定が優先されることを確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Claude Code で指定できるモデルとエイリアス</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)では、<code>model</code> 設定にモデルエイリアス(バージョン番号を覚えずに使える短い名前)かモデル名を指定できます。執筆時点(2026年10月)の公式ドキュメントによると、モデル名の形式は提供元ごとに異なります。</p>
+  <ul>
+    <li>Anthropic API: フルのモデル名</li>
+    <li>Amazon Bedrock: 推論プロファイルの ARN</li>
+    <li>Microsoft Foundry: デプロイ名</li>
+    <li>Google Cloud の Agent Platform: バージョン名</li>
+  </ul>
+  <p>なお <code>ANTHROPIC_BASE_URL</code> は送信先を変えるもので、どのモデルが答えるかは変えません。作業別のモデルの向き不向きは、公式ドキュメントが案内するブログ記事で確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s2">用途別のエイリアスの選び方</h2>
+  <ul>
+    <li><code>sonnet</code>: 日常的なコーディング向けの最新 Sonnet</li>
+    <li><code>opus</code>: 複雑な推論向けの最新 Opus</li>
+    <li><code>haiku</code>: 簡単なタスク向けの、高速で効率的なモデル</li>
+    <li><code>opusplan</code>: プランモードでは <code>opus</code>、実行では <code>sonnet</code> を使う特別なモード</li>
+    <li><code>sonnet[1m]</code>・<code>opus[1m]</code>: 1 million token のコンテキストウィンドウで、長いセッション向け。モデルがすでに標準で 1M のウィンドウを持つ場合は効果がありません</li>
+    <li><code>fable</code>: 最も難しく長時間かかるタスク向け。<code>best</code> は Fable が使えるならその Fable、使えなければ <code>opus</code> と同じモデルです</li>
+    <li><code>default</code>: 上書きを解除してアカウントの既定に戻す特別な値で、エイリアスそのものではありません</li>
+  </ul>
+  <h3>提供元によって解決先が違います</h3>
+  <p><code>opus</code>・<code>sonnet</code>・<code>haiku</code> は、Anthropic API では最新版に、他の提供元では以前のバージョンに解決されることがあります。たとえば Amazon Bedrock では Opus 5.5・Sonnet 4.5・Haiku 4.5、Microsoft Foundry では Opus 4.6・Sonnet 4.5・Haiku 4.5 です。</p>
+  <p>エイリアスは時間とともに更新されます。固定したい場合は <code>claude-opus-5-5</code> のようなフルのモデル名か、<code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> などの環境変数を使います。新しいモデルには Claude Code 側のバージョン条件もあり、たとえば Sonnet 5.5 は v2.1.284 以降が必要です。古い場合は <code>claude update</code> で更新します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s3">/model・--model・設定ファイルでの切り替え方</h2>
+  <p>公式ドキュメントは、次の方法を優先度の順に挙げています。</p>
+  <ol>
+    <li>セッション中: <code>/model &lt;alias|name&gt;</code> で即時に切り替え、引数なしの <code>/model</code> でピッカー(選択画面)を開く</li>
+    <li>起動時: <code>claude --model &lt;alias|name&gt;</code></li>
+    <li>環境変数: <code>ANTHROPIC_MODEL=&lt;alias|name&gt;</code></li>
+    <li>設定ファイルの <code>model</code> フィールドで恒久的に指定</li>
+    <li>新規セッションの既定: <code>ANTHROPIC_DEFAULT_MODEL=&lt;alias|name&gt;</code>(Claude Code v2.1.236 以降)</li>
+  </ol>
+<pre><code>claude --model opus</code></pre>
+<pre><code>/model sonnet</code></pre>
+<pre><code>{
+    "permissions": {
+        "allow": ["Bash(npm run lint)"]
+    },
+    "model": "opus"
+}</code></pre>
+  <p>ピッカーでは <code>Enter</code> で切り替えて既定として保存し、<code>s</code> でこのセッションだけ切り替えます。<code>/model &lt;name&gt;</code> と直接入力した場合は <code>Enter</code> と同じ動きで、既定として保存されます。<code>--model</code> と <code>ANTHROPIC_MODEL</code> は起動したセッションにだけ効くため、複数のターミナルで別々のモデルを使うなら、それぞれ <code>--model</code> で起動します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s4">思ったモデルで始まらないときの確認</h2>
+  <p>現在のモデルは、ステータスライン(設定している場合)か <code>/status</code> で確認できます。次の新規セッションが違うモデルで始まる主な原因として、公式ドキュメントは次を挙げています。</p>
+  <ul>
+    <li>このセッションだけの選択だった(<code>s</code>、<code>--model</code>、非対話モードの <code>/model</code>)</li>
+    <li>優先度の高い設定がある(プロジェクトや管理設定の <code>model</code>、シェルの <code>ANTHROPIC_MODEL</code>、管理者が上書きを有効にした組織の既定)</li>
+    <li><code>~/.claude/settings.json</code> に書き込めず、保存できなかった</li>
+    <li>セッションを再開した(<code>claude --resume</code> や <code>--continue</code> は通常、そのときのモデルを保持します)</li>
+  </ul>
+  <p>また、<code>/model</code> での切り替えは、メインの会話のモデルを引き継ぐサブエージェントにも及びます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s5">Fable を使うときの注意</h2>
+  <p>公式ドキュメントによると、Claude Fable 5.1 と Claude Fable 5 は Claude Code で最も高性能なモデルで、一度に終わらない大きなタスク向けです。どのプラン・提供元でもアカウント種別の既定ではないため、明示的に選びます。Fable 5.1 は <code>/model fable</code> か <code>claude --model fable</code> で選べます(Claude apps gateway のセッションではエイリアスが Fable 5 に解決されるため、代わりに <code>/model claude-fable-5-1</code> を使います)。Claude Code v2.1.257 以降が必要です。</p>
+  <p>プランや席の種別によっては、Fable の利用がプランに含まれる上限ではなく利用クレジットに請求されます。その場合、ピッカーの Fable 行に「Requires usage credits」と出ます。対話セッションでは請求前に同意プロンプトが出ます(組織請求の Enterprise プランのメンバーには出ません)が、<code>-p</code> の非対話モードでは確認なしで請求されます。自動実行に使う場合は、先に公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s6">管理者が制限や既定を決めるとき</h2>
+  <p>公式ドキュメントでは、管理対象設定の <code>availableModels</code> で、利用者が選べるモデルを制限できます。Anthropic API と Claude Platform on AWS では、ファミリーエイリアスが許可リスト外のモデルを指す場合、リストが許可する同じファミリーの最新版に置き換えられます。それ以外の許可リスト外のモデルは <code>/model</code> ではエラーになり、<code>--model</code> などで指定した値は起動時に置き換えられて、既定モデルで始まります。</p>
+<pre><code>{
+  "availableModels": ["sonnet", "haiku"]
+}</code></pre>
+  <p>接頭辞マッチの既定では、<code>availableModels</code> だけだと Default は許可リスト外のモデルになりえます。その場合は <code>enforceAvailableModels</code> を併用します(v2.1.175 以降)。また <code>model</code> 設定は初期選択であって強制ではなく、利用者は <code>/model</code> で Default を選べます。</p>
+  <p>Enterprise プランでは、管理者が管理コンソールで組織の既定モデルを設定でき、個別のモデルを無効にすることもできます。ただし Haiku は無効にできません。組織の既定は、上書きを有効にした場合に限り、ユーザー・プロジェクト・ローカル設定の <code>model</code> より優先されます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary><code>/model</code> で選んだモデルは次回の起動でも使われますか?</summary>
+      <p>ピッカーで <code>Enter</code> を押すか <code>/model &lt;name&gt;</code> と直接入力すると、既定として保存されます。<code>s</code> で選んだ場合や <code>--model</code> での起動は、そのセッションだけです。プロジェクト設定や管理設定、<code>ANTHROPIC_MODEL</code> など優先度の高い指定があると、保存した選択より優先されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+    <details>
+      <summary>複数のターミナルで別々のモデルを同時に使うには?</summary>
+      <p>公式ドキュメントでは、<code>/model</code> で切り替えるのではなく、それぞれのターミナルを自分の <code>--model</code> フラグ付きで起動するよう案内しています。<code>--model</code> は起動したセッションにだけ適用されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+    <details>
+      <summary>モデルのバージョンを固定するにはどうしますか?</summary>
+      <p>エイリアスは推奨バージョンを指し、時間とともに更新されます。固定するには <code>claude-opus-5-5</code> のようなフルのモデル名を使うか、<code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> のような対応する環境変数を設定します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-context-compact/index.html">Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-prompt-caching/index.html">Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

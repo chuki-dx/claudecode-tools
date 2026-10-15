@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code の権限モード(default・acceptEdits・plan・auto・dontAsk・bypassPermissions)の違いと、切り替え方、選ぶときの注意点を公式ドキュメントに沿って整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方">
+<meta property="og:description" content="Claude Code の権限モード(default・acceptEdits・plan・auto・dontAsk・bypassPermissions)の違いと、切り替え方、選ぶときの注意点を公式ドキュメントに沿って整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-permission-modes.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-permission-modes.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方",
+  "description": "Claude Code の権限モード(default・acceptEdits・plan・auto・dontAsk・bypassPermissions)の違いと、切り替え方、選ぶときの注意点を公式ドキュメントに沿って整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code 権限モード",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code 権限モード</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>権限モードは、確認なしで Claude が実行できる範囲を決める設定です。公式ドキュメントでは <code>default</code>、<code>acceptEdits</code>、<code>plan</code>、<code>auto</code>、<code>dontAsk</code>、<code>bypassPermissions</code> を挙げています。</li>
+      <li>変更内容を後から確認するなら <code>acceptEdits</code>、変更前に調べるなら <code>plan</code> と、目的で選びます。<code>bypassPermissions</code> は隔離されたコンテナや VM 専用です。</li>
+      <li><code>auto</code> は確認を減らせますが、安全を保証するものではなく、モデルや組織設定の条件もあります。執筆時点(2026年10月)の公式ドキュメントに基づくため、導入前に最新の記載を確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">権限モードで何が変わるか:6つのモードの違い</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)には権限モードがあります。公式ドキュメントによると、権限モードはセッション中に確認なしで実行できる操作を決める設定で、ファイル編集、シェルコマンド、ネットワークアクセスの前に止まって確認するかどうかが変わります。</p>
+  <ul>
+    <li><code>default</code>:確認なしで実行できるのは読み取りのみ。すべて自分で確認したい作業、機微な作業向けです。</li>
+    <li><code>acceptEdits</code>:読み取り、ファイル編集、<code>mkdir</code>・<code>touch</code>・<code>mv</code>・<code>cp</code> などの一般的なファイル操作コマンド。レビューしながらコードを直す場面向けです。</li>
+    <li><code>plan</code>:読み取りが中心です。変更前にコードベースを調べる場面向けです。</li>
+    <li><code>auto</code>:すべて実行しますが、裏で安全チェックが走ります。長いタスクや、確認の繰り返しを減らしたい場面向けです。</li>
+    <li><code>dontAsk</code>:作業ディレクトリ内の読み取りと事前承認済みのツールのみ実行し、確認が要る操作は拒否します。CI やスクリプト向けです。</li>
+    <li><code>bypassPermissions</code>:すべて実行します。隔離されたコンテナや VM 専用です。</li>
+  </ul>
+  <p><code>default</code> は、CLI や VS Code、デスクトップアプリなどでは <strong>Manual</strong> と表示されます。設定値は <code>default</code> で、CLI では <code>manual</code> という別名も使えます。</p>
+  <p>モードは基準で、権限ルールを重ねて特定ツールを事前承認またはブロックできます。deny ルールは <code>bypassPermissions</code> を含むすべてのモードで効きますが、allow ルールは <code>bypassPermissions</code> では効果がありません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s2">起動時のモードと切り替え方</h2>
+  <p>公式ドキュメントでは、ターミナルで新しいセッションを始めるとき、次のうち最初に当てはまるものが使われると説明しています。</p>
+  <ol>
+    <li><code>--permission-mode</code> フラグ、または <code>--dangerously-skip-permissions</code></li>
+    <li>設定ファイルの <code>permissions.defaultMode</code></li>
+    <li>組み込みのデフォルト</li>
+  </ol>
+  <p>組み込みのデフォルトは、Claude Code v2.1.283 以降の対話型ターミナルと VS Code では <code>auto</code> です。それより前のバージョンでは Pro、Max、Team プランが対象で、<code>claude -p</code> や組織の設定によっても変わります。何も指定しないと確認の少ない <code>auto</code> で始まる場合があるため、配布前に起動時のモードを明示しておくと安心です。</p>
+  <p>1回だけ指定する例です。</p>
+<pre><code>claude --permission-mode plan</code></pre>
+  <p>全セッションの既定を <code>default</code> にする例は、<code>~/.claude/settings.json</code> に次のように書きます。</p>
+<pre><code>{
+  "permissions": {
+    "defaultMode": "default"
+  }
+}</code></pre>
+  <p>プロジェクトの <code>.claude/settings.json</code> の <code>permissions.defaultMode</code> は、ターミナルでは <code>auto</code> と <code>bypassPermissions</code> 以外の値が有効です。VS Code 拡張は、開始モードのためにプロジェクト設定を読みません。</p>
+  <h3>セッション中の切り替え</h3>
+  <p>CLI では <code>Shift+Tab</code> で切り替えます。<code>auto</code> からは最初の1回で <code>default</code> になり、その後は <code>default</code>、<code>acceptEdits</code>、<code>plan</code> の順です。<code>dontAsk</code> は順番に含まれず、<code>--permission-mode dontAsk</code> で指定します。VS Code ではプロンプト欄下のモード表示から選びます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s3">acceptEdits と plan の使いどころ</h2>
+  <p><code>acceptEdits</code> は、作業ディレクトリ内のファイルの作成・編集を確認なしで進めます。<code>mkdir</code>、<code>touch</code>、<code>rm</code>、<code>rmdir</code>、<code>mv</code>、<code>cp</code>、<code>sed</code> も自動承認されますが、対象は作業ディレクトリか <code>additionalDirectories</code> 内のパスだけです。保護パスへの書き込みや、組み込みの読み取り専用コマンド以外のその他の Bash コマンドは確認が出ます。後から <code>git diff</code> などで変更を見る運用に向きます。</p>
+  <p><code>plan</code> は、調査して計画を書くだけで、ソースは編集しません。計画を承認するまで編集はブロックされます。ただし、bypass permissions が使える対話型ターミナルでは、このブロックは強制されません。<code>Shift+Tab</code> か、1回のプロンプトの先頭に <code>/plan</code> を付けて入ります。</p>
+  <p>計画の承認時は、<strong>Yes, and use auto mode</strong>、<strong>Yes, manually approve edits</strong>、<strong>No, keep planning</strong> から選びます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s4">auto モードの便利さと注意点</h2>
+  <p><code>auto</code> では、別のモデル(分類器)が実行前に操作を確認し、依頼を超える操作や、読み込んだ内容に誘導された疑いのある操作などをブロックします。公式ドキュメントは、確認を減らすが安全を保証するものではなく、機微な操作のレビューの代わりにはしないよう注意しています。</p>
+  <p>利用にはモデルの要件があり、Sonnet 4.5、Opus 4.5、Haiku 4.5 などの古いモデルはどのプロバイダでも非対応です。Team と Enterprise では既定で使えますが、管理者は managed settings の <code>permissions.disableAutoMode</code> を <code>"disable"</code> にして無効にできます。使えない場合、セッションは Manual で始まります。</p>
+  <p>既定でブロックされる例は、コードのダウンロードと実行、機微データの外部送信、本番デプロイ、フォースプッシュなどです。作業ディレクトリ内のファイル操作や、読み取り専用の HTTP リクエストは許可されます。連続3回、または合計20回ブロックされると auto は一時停止し、確認に戻ります。</p>
+  <p>会話で伝えた「プッシュしないで」などの境界は分類器が参照しますが、ルールとして保存されず、コンテキスト圧縮で失われる場合があります。確実に止めたいなら deny ルールを使います。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s5">dontAsk・bypassPermissions と、どのモードでも変わらない点</h2>
+  <p><code>dontAsk</code> は、確認が出るはずの操作をすべて自動拒否します。事前に許可範囲を決める CI 向けで、公式ドキュメントの例は次のとおりです。</p>
+<pre><code>claude -p "run the test suite" --permission-mode dontAsk --allowedTools "Bash(npm test)" "Read"</code></pre>
+  <p><code>bypassPermissions</code> は、権限確認と安全チェックを無効にします。公式ドキュメントは、隔離された環境でのみ使うこと、プロンプトインジェクションや意図しない操作への保護がないことを警告しています。起動時に有効化していないセッションでは入れず、Linux と macOS では root や sudo での起動を拒否します(認識されたサンドボックスの中ではこの確認は省かれます)。管理者は <code>permissions.disableBypassPermissionsMode</code> を <code>"disable"</code> にしてブロックできます。</p>
+  <p>どのモードでも自動承認されないものがあります。たとえば ask ルールに一致するツールや、ルートやホームディレクトリなど重要なパスを対象にした <code>rm</code>・<code>rmdir</code> です。また <code>.git</code> や <code>.claude</code> などの保護パスへの書き込みは、<code>bypassPermissions</code> モードと、bypass permissions が使える対話型ターミナルの plan モードのセッション以外では自動承認されません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>Manual モードと default は別物ですか?</summary>
+      <p>同じモードです。画面では Manual、設定値や hooks・SDK では <code>default</code> と呼びます。CLI では <code>manual</code> も別名として使えます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>何も設定しないと、どのモードで始まりますか?</summary>
+      <p>公式ドキュメントでは、Claude Code v2.1.283 以降の対話型ターミナルと VS Code で、組み込みのデフォルトは <code>auto</code> です。<code>auto</code> が使えない場合は Manual で始まります。細かい条件は公式ドキュメントで確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>bypassPermissions を社内で使わせてよいですか?</summary>
+      <p>公式ドキュメントでは、コンテナや VM など隔離された環境でのみ使うモードとされています。使わせたくない場合は、管理者が managed settings で <code>permissions.disableBypassPermissionsMode</code> を <code>"disable"</code> にできます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code の MCP 設定:local・project・user の違いと .mcp.json</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-data-usage/index.html">Claude Code の会話データは学習に使われるか:保存期間と設定の確認先</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のチェックポイントと /rewind で、何が戻せて何が戻せないかを公式ドキュメントに沿って整理します。メニューの操作、要約、Bash やサブエージェントの制限、Git との使い分けまで解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲">
+<meta property="og:description" content="Claude Code のチェックポイントと /rewind で、何が戻せて何が戻せないかを公式ドキュメントに沿って整理します。メニューの操作、要約、Bash やサブエージェントの制限、Git との使い分けまで解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-rewind-checkpoint.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-rewind-checkpoint.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲",
+  "description": "Claude Code のチェックポイントと /rewind で、何が戻せて何が戻せないかを公式ドキュメントに沿って整理します。メニューの操作、要約、Bash やサブエージェントの制限、Git との使い分けまで解説します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code の巻き戻し",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code の巻き戻し</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、Claude Code は Claude のファイル編集ツールによる変更を自動で追跡し、<code>/rewind</code> で以前の状態へ戻せます。</li>
+      <li>戻す対象はコード・会話・その両方から選べ、会話を要約してコンテキストウィンドウの空きを確保する操作もあります。</li>
+      <li>Bash コマンド、サブエージェント、Claude Code の外での変更などは戻せない場合があり、Git の代わりにはなりません。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">チェックポイントで何ができるか</h2>
+  <p>公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、作業中の Claude のファイル編集を自動で追跡します。作業が思わぬ方向に進んでも、変更を取り消して以前の状態へ戻せます。</p>
+  <p>仕組みは、ターンを開始するプロンプトを送るたびに、その直前のコードの状態をチェックポイントとして記録するというものです。公式ドキュメントには次の点が書かれています。</p>
+  <ul>
+    <li>ターンを開始するプロンプトごとに、新しいチェックポイントが作られます。</li>
+    <li>ファイルのスナップショットは、1セッションで直近 100 件のチェックポイント分が保持されます。</li>
+    <li>チェックポイントは会話と一緒に保存されるため、セッションを再開した後でも <code>/rewind</code> を実行できます。</li>
+    <li>セッションのスナップショットは、既定では最後に保存されてから約 30 日後の掃除処理で削除されます。スナップショットが消えたチェックポイントへ戻そうとすると <code>No files were restored</code> で失敗することがあります。長く残したい場合は <code>cleanupPeriodDays</code> を設定します。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+  <h2 id="s2">/rewind の開き方と選べる操作</h2>
+  <p><code>/rewind</code> を実行するか、プロンプト入力が空の状態で <code>Esc</code> を2回押すと、巻き戻しメニューが開きます。入力欄に文字がある場合は、2回押しても入力が消えるだけでメニューは開きません。消えた文字は入力履歴に保存されるので、メニューでの作業後に <code>Up</code> で呼び戻せます。</p>
+  <p>メニューにはセッション中に送ったプロンプトが並びます。作業の対象にしたい地点を選び、次の操作から選びます。</p>
+  <ul>
+    <li><strong>Restore code and conversation</strong>:コードと会話の両方をその時点に戻します。</li>
+    <li><strong>Restore conversation</strong>:現在のコードを残したまま、そのメッセージの時点へ会話を戻します。</li>
+    <li><strong>Restore code</strong>:会話を残したまま、ファイルの変更を元に戻します。</li>
+    <li><strong>Summarize from here</strong>:この地点以降の会話を要約に圧縮し、コンテキストウィンドウの空きを確保します。</li>
+    <li><strong>Summarize up to here</strong>:この地点より前の会話を要約に圧縮し、後ろのメッセージはそのまま残します。</li>
+    <li><strong>Never mind</strong>:何も変更せずメッセージ一覧に戻ります。</li>
+  </ul>
+  <p>コードを戻す2つの選択肢は、選んだチェックポイントに戻せる追跡済みのファイル変更がある場合だけ表示されます。その地点以降にファイル編集が記録されていなければ、メニューには <strong>Restore conversation</strong>、要約の2つ、<strong>Never mind</strong> だけが出ます。</p>
+  <p>会話を戻した後や <strong>Summarize from here</strong> を選んだ後は、選んだメッセージの元のプロンプトが入力欄に戻るため、再送も編集もできます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+  <h2 id="s3">会話の要約と /clear 前への復帰</h2>
+  <p><strong>Summarize up to here</strong> を選ぶと、会話の末尾に移り、入力欄は空になります。どちらの要約でも、圧縮された位置に <strong>Summarized conversation</strong> という目印が表示されます。</p>
+  <p>要約はディスク上のファイルを変更せず、元のメッセージもセッションの記録に残るため、Claude は詳細を参照できます。要約の重点を指定するには、矢印キーで <strong>Summarize</strong> の選択肢を強調し、<strong>add context (optional)</strong> と表示された行に指示を入力して <code>Enter</code> を押します。番号キーで選ぶと、指示なしですぐに要約します。</p>
+  <p>要約は同じセッションの中でコンテキストを圧縮するもので、狙いを絞った <code>/compact</code> のようなものです。元のセッションを残したまま別の方法を試したい場合は、<code>/branch</code> か <code>claude --continue --fork-session</code> を使うよう公式ドキュメントは案内しています。</p>
+  <h3>/clear の前の会話に戻る</h3>
+  <p>同じ Claude Code のプロセスで先に <code>/clear</code> を実行していると、巻き戻しメニューの先頭に <code>/resume &lt;session-id&gt; (previous session)</code> という項目が加わります。選ぶと <code>/clear</code> 前の会話を再開でき、Claude Code を終了するか別のセッションを再開するまで使えます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+  <h2 id="s4">戻せないもの・注意点</h2>
+  <p>公式ドキュメントには、次の制限が書かれています。社内で使う前に把握しておきたい点です。</p>
+  <h3>Bash コマンドによる変更</h3>
+  <p>チェックポイントは、Bash コマンドで変更されたファイルを追跡しません。たとえば Claude Code が次のコマンドを実行した場合です。</p>
+<pre><code>rm file.txt
+mv old.txt new.txt
+cp source.txt dest.txt</code></pre>
+  <p>これらの変更は rewind で取り消せません。追跡されるのは、Claude のファイル編集ツールによる直接の編集だけです。</p>
+  <h3>サブエージェントの編集</h3>
+  <p>サブエージェントも Claude のファイル編集ツールで編集しますが、通常、その編集はセッションのチェックポイントに記録されません。戻るかどうかは実行方法によります。</p>
+  <ul>
+    <li><code>context: fork</code> のスキルをフォアグラウンドで動かした場合は、利用者自身のターン中に作業ツリーを編集するため、通常どおり戻せます。フォークをフォアグラウンドで動かすには <code>background: false</code> を設定します。設定にかかわらずフォアグラウンドになる状況もあり、詳細はスキルのページに記載されています。</li>
+    <li>それ以外のサブエージェントの編集は戻りません。Git で戻します。既定のバックグラウンドで動くフォークスキルや、バックグラウンドの <code>/code-review --fix</code> も含まれます。</li>
+  </ul>
+  <h3>外部の変更とリンク</h3>
+  <p>追跡するのは現在のセッション内で編集されたファイルだけです。Claude Code の外での手作業の変更や、同時に動く別セッションの編集は、通常は記録されません。ただし、現在のセッションと同じファイルを変更した場合は別です。</p>
+  <p>シンボリックリンクやハードリンクのファイルは戻りません。<strong>Restore code</strong> などを選ぶと、該当パスをスキップして <code>Restored the code, but skipped N files</code> の警告が出て、スキップされたファイルは現在の内容のままです。dotfile マネージャがリンクする設定ファイルや、pnpm がハードリンクで置くファイルが該当します。どのパスがスキップされるかは、復元前に <code>/debug</code> でデバッグログを有効にすると確認できます。</p>
+  <h3>作業中に送ったメッセージ</h3>
+  <p>Claude の作業中に入力したメッセージは、メニューで <strong>No code restore</strong> と表示されることがあります。チェックポイントはターンを開始するプロンプトに対して作られるためです。そのファイル変更を戻すには、ターンを開始したプロンプトを選んで <strong>Restore code</strong> か <strong>Restore code and conversation</strong> を選びます。メッセージ送信前の編集も含め、そのターン全体が戻ります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+  <h2 id="s5">社内で使うときの判断ポイント</h2>
+  <p>公式ドキュメントでは、チェックポイントは素早いセッション単位の復旧向けで、恒久的な履歴や共同作業には、コミット・ブランチ・長期履歴のために Git などのバージョン管理を使い続けるよう述べています。向いている場面として、次が挙げられています。</p>
+  <ul>
+    <li>別の実装方法を、出発点を失わずに試す</li>
+    <li>バグや不具合を招いた変更を素早く取り消す</li>
+    <li>動く状態に戻せる前提で、機能のバリエーションを試す</li>
+    <li>長いデバッグ会話を途中から要約し、最初の指示を残したままコンテキストの空きを作る</li>
+  </ul>
+  <p>執筆時点(2026年10月)の公式ドキュメントに基づく内容です。保持期間や表示名は変わる可能性があるため、社内に配る前に公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>Claude Code が Bash の rm で消したファイルは /rewind で戻せますか?</summary>
+      <p>戻せません。公式ドキュメントによると、チェックポイントは Bash コマンドで変更されたファイルを追跡せず、追跡されるのは Claude のファイル編集ツールによる直接の編集だけです。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+    </details>
+    <details>
+      <summary>セッションを再開した後でも /rewind は使えますか?</summary>
+      <p>使えます。チェックポイントは会話と一緒に保存されます。ただし、スナップショットは既定では最後の保存から約 30 日後に削除され、消えていると <code>No files were restored</code> で失敗することがあります。長く残すには <code>cleanupPeriodDays</code> を設定します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+    </details>
+    <details>
+      <summary>コードはそのままで、会話だけを前の時点に戻せますか?</summary>
+      <p><strong>Restore conversation</strong> を選ぶと、現在のコードを残したまま、選んだメッセージの時点へ会話を戻せます。反対にコードだけ戻すなら <strong>Restore code</strong> です。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表</a>: Windows で Claude Code を使うときに起きやすい症状を、原因と対処で引ける早見表です。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/checkpointing" rel="noopener">Checkpointing</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-resume-session/index.html">Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-vscode/index.html">Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

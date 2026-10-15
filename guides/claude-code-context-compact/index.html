@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか | 中小DXラボ</title>
+<meta name="description" content="Claude Code のコンテキストウィンドウに入るもの、/compact と自動圧縮で起きること、圧縮後に残るもの・消えるものを公式ドキュメントに沿って整理します。社内で使う前の確認に。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか">
+<meta property="og:description" content="Claude Code のコンテキストウィンドウに入るもの、/compact と自動圧縮で起きること、圧縮後に残るもの・消えるものを公式ドキュメントに沿って整理します。社内で使う前の確認に。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-context-compact.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-context-compact.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか",
+  "description": "Claude Code のコンテキストウィンドウに入るもの、/compact と自動圧縮で起きること、圧縮後に残るもの・消えるものを公式ドキュメントに沿って整理します。社内で使う前の確認に。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "コンテキストと /compact",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">コンテキストと /compact</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のコンテキストウィンドウには、利用者の指示、読んだファイル、Claude の応答、端末に表示されない内容までが入ります。</li>
+      <li>公式ドキュメントによると、上限に近づくと自動で圧縮されるためセッションは終わりません。<code>/compact</code> は会話を構造化された要約に置き換えるコマンドです。</li>
+      <li>圧縮後の扱いは、内容がどう読み込まれたかで変わります。残したい指示の置き場所(CLAUDE.md、<code>paths:</code> の有無、スキルの先頭)に注意が必要です。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">コンテキストウィンドウには何が入っているか</h2>
+  <p>公式ドキュメントでは、コンテキストウィンドウ(セッション中に Claude が把握している内容を入れておく領域)には、利用者の指示、Claude が読んだファイル、Claude 自身の応答、そして端末に表示されない内容が入ると説明されています。</p>
+  <p>入力前に読み込まれるのは、CLAUDE.md、auto memory、MCP のツール名、スキルの説明です。CLAUDE.md の代わりに AGENTS.md が読み込まれる場合もあります。</p>
+  <p>作業中は、ファイルを読むたびにコンテキストが増えます。<code>paths:</code> を持つルールは、一致するファイルと一緒に自動で読み込まれます。</p>
+  <p>公式ドキュメントのタイムラインでは、ファイル読み取りが使用量の大半を占めるとされ、プロンプトで対象を具体的に指定すると読むファイルが減ると説明しています。トークン数は説明用の例で、実際の値は CLAUDE.md の大きさ、MCP サーバー、ファイルの長さで変わります。</p>
+  <p>CLAUDE.md は 200 行未満に収め、参照用の内容はスキルやパス指定のルールへ移すと、必要なときだけ読み込まれると案内されています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s2">/compact と自動圧縮で起きること</h2>
+  <p><code>/compact</code> を実行すると、会話が構造化された要約に置き換わります。タイムラインの説明では、端末には「Conversation compacted」というメッセージが出るだけで、要約の作業自体は端末に表示されません。</p>
+  <p>同じ説明では、要約に残るのは、依頼と意図、主要な技術概念、調べた・変更したファイルと重要なコード断片、エラーと修正、未完了のタスク、現在の作業です。ツール出力の全文や途中の推論は残らず、Claude は正確な内容までは持たないとされています。</p>
+  <p>上限に近づくと自動で圧縮されるため、満杯でもセッションは終わりません。自動圧縮は <code>/compact</code> と同じ流れです。圧縮が走る位置はモデルと設定で変わるため、公式ドキュメントの Default auto-compact thresholds で確認してください。</p>
+  <p>v2.1.198 の時点で、要約の要求はセッションの extended thinking 設定を引き継ぎます。セッションで有効なら有効な状態で要約し、無効なら無効のままです。影響は要約の作り方だけです。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s3">圧縮後に残るもの・残らないもの</h2>
+  <p>公式ドキュメントの表を要約すると、圧縮後の扱いは次のとおりです。</p>
+  <ul>
+    <li>システムプロンプトと出力スタイル:どちらも引き続き適用されます。</li>
+    <li>プロジェクトルートの CLAUDE.md と、スコープ指定のないルール:ディスクから再注入されます。</li>
+    <li>auto memory と、plan mode で Claude が書いたプラン:ディスクから再注入されます。</li>
+    <li>Git status スナップショット:セッション開始時にあった場合は、リポジトリから最新のものを読み直します。</li>
+    <li><code>paths:</code> frontmatter 付きのルール、サブディレクトリの CLAUDE.md:必要になった時点で再読み込みされます。</li>
+    <li>Claude が読んだ・編集したファイル:更新が新しい順に最大5つ再読み込みされます。</li>
+    <li>呼び出したスキルの本文:スキルごと 5,000 トークン、合計 25,000 トークンを上限に再注入され、古いものから落ちます。</li>
+    <li>hook が以前に追加した文脈:ほかの会話と一緒に要約されます。</li>
+    <li><code>compact</code> ソースに一致する SessionStart hook:実行され、出力が圧縮後の文脈に加わります。</li>
+    <li>バックグラウンドコマンドとバックグラウンドのサブエージェント:動き続けます。</li>
+  </ul>
+  <p>5,000 トークンを超えるファイルは、内容なしのパス参照になり、<code>Read</code> ではなく <code>Referenced file</code> と表示されます。スキルの説明一覧は圧縮後に再注入されず、実際に呼び出したスキルだけが残ります。</p>
+  <p><code>paths:</code> 付きルールやネストした CLAUDE.md は、読み込み時にメッセージ履歴へ入るため、圧縮で他の内容と一緒に要約されます。圧縮後も残したいルールは、<code>paths:</code> frontmatter を外すか、プロジェクトルートの CLAUDE.md に移すと案内されています。スキルは大きいと切り詰められ、先頭が残るため、重要な指示は <code>SKILL.md</code> の先頭近くに置きます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s4">埋まる前にできる手当て</h2>
+  <p>公式ドキュメントでは、自動圧縮が走る前に次の操作ができると案内されています。</p>
+  <ul>
+    <li><code>/compact focus on the auth bug fix</code> のように指示を付けて実行する。長い新しい作業の前に使うと、自動圧縮の推測ではなく、選んだ内容が要約に残ります。</li>
+    <li><code>/rewind</code> でメッセージを選び、<strong>Summarize from here</strong> か <strong>Summarize up to here</strong> を選ぶ。会話の一部だけを要約できます。</li>
+    <li><code>/autocompact 500k</code> のようにトークン数を指定し、自動圧縮が走るまでの目安を変える。受け付ける値は公式ドキュメントで確認してください。</li>
+    <li>無関係な作業に移るときは <code>/clear</code>。古い会話は次に必要なファイルを押し出し、メッセージごとにトークンを消費します。</li>
+    <li>大きな調査はサブエージェントに任せる。ファイルの中身はサブエージェント側のコンテキストに入り、結果の要約だけが戻ります。</li>
+  </ul>
+  <p>より大きなウィンドウが必要な場合、一部のモデルは 1 million トークンのコンテキストウィンドウに対応します。対応モデルとプラン別の提供状況は、公式ドキュメントの Extended context で確認してください。圧縮の仕組みは大きい上限でも同じです。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s5">セッション内のコマンドと確認方法</h2>
+  <p>公式ドキュメントのセッション管理のページでは、セッションを離れずにコンテキストを操作するコマンドとして、次の3つを挙げています。</p>
+  <ul>
+    <li><code>/clear</code>:空のコンテキストで始め直します。前のセッションは保存され、<code>/resume</code> で再開できます。</li>
+    <li><code>/compact [instructions]</code>:履歴を要約に置き換えます。重点を指定することもできます。</li>
+    <li><code>/context</code>:いまコンテキストを消費しているものを表示します。</li>
+  </ul>
+  <p>コンテキストウィンドウの解説ページによると、<code>/context</code> はカテゴリ別の内訳と最適化の提案を表示し、読み込まれた CLAUDE.md と auto memory のファイルも分かります。<code>/memory</code> でそれらを開いて編集できます。以上は執筆時点(2026年10月)の公式ドキュメントに基づく内容で、挙動やバージョンは変わる可能性があります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>コンテキストが一杯になるとセッションは止まりますか?</summary>
+      <p>公式ドキュメントによると、上限に近づくと自動で圧縮されるため、満杯でもセッションは終わりません。自動圧縮は <code>/compact</code> と同じ流れで動き、走る位置はモデルと設定で変わります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+    <details>
+      <summary>圧縮すると CLAUDE.md の指示は消えますか?</summary>
+      <p>プロジェクトルートの CLAUDE.md はディスクから再注入されます。一方、<code>paths:</code> frontmatter 付きのルールやサブディレクトリの CLAUDE.md は、圧縮で要約され、必要になった時点で再読み込みされます。圧縮後も残したいルールは、<code>paths:</code> を外すか、プロジェクトルートの CLAUDE.md に移します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+    <details>
+      <summary>圧縮で残す内容を指定できますか?</summary>
+      <p><code>/compact</code> に指示を付けて実行できます。たとえば <code>/compact focus on the auth bug fix</code> のようにすると、自動圧縮が重要と推測する内容ではなく、選んだ内容が要約に残ります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a>(公式ドキュメント)</li>
+    <li><a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-caching/index.html">Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-model-select/index.html">Claude Code のモデルの選び方と切り替え方(/model と設定)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け | 中小DXラボ</title>
+<meta name="description" content="Claude Code の CLAUDE.md、スキル、hooks、MCP、サブエージェントをどう使い分けるか。公式ドキュメントの内容に沿って、役割の違い、追加するきっかけ、コンテキスト消費の注意点を整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け">
+<meta property="og:description" content="Claude Code の CLAUDE.md、スキル、hooks、MCP、サブエージェントをどう使い分けるか。公式ドキュメントの内容に沿って、役割の違い、追加するきっかけ、コンテキスト消費の注意点を整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-features-overview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-features-overview.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け",
+  "description": "Claude Code の CLAUDE.md、スキル、hooks、MCP、サブエージェントをどう使い分けるか。公式ドキュメントの内容に沿って、役割の違い、追加するきっかけ、コンテキスト消費の注意点を整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "拡張機能の使い分け",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">拡張機能の使い分け</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>毎回守らせたい規約やビルドコマンドは CLAUDE.md に、必要なときだけ使う資料や呼び出す手順はスキルに分けます。</li>
+      <li>毎回必ず実行させたいことや、破られては困るガードレールは hooks にします。外部サービスとの接続は MCP、大量の読み取りを切り離したい作業はサブエージェントの役割です。</li>
+      <li>最初から全部設定する必要はありません。同じ失敗や手作業が繰り返されたときに、該当する機能を一つずつ足していきます。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">各機能が担う役割をひとことで整理する</h2>
+  <p>この記事は、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の拡張機能の使い分けを、公式ドキュメントの記述に沿って整理したものです。執筆時点(2026年10月)の内容で、私が実機で試した結果ではありません。</p>
+  <p>公式ドキュメントによると、組み込みツールでほとんどのコーディング作業はこなせます。拡張機能は、Claude が何を知っているかを調整し、外部サービスとつなぎ、作業を自動化するための層です。</p>
+  <ul>
+    <li>CLAUDE.md:毎セッション Claude が見る、持続的な前提情報です。</li>
+    <li>スキル:再利用できる知識や手順を書いたマークダウンのファイルです。<code>/deploy</code> のようなコマンドで呼ぶほか、関連するときに Claude が自動で読み込むこともできます。</li>
+    <li>MCP:外部サービスやツールへの接続です。</li>
+    <li>サブエージェント:独立したコンテキストで動き、要約だけを返す作業役です。</li>
+    <li>hooks:ライフサイクルイベントに達したときに、スクリプトなどを実行する仕組みです。</li>
+    <li>プラグイン:スキル、hooks、サブエージェント、MCP サーバーを一つにまとめて配る単位です。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+  <h2 id="s2">CLAUDE.md とスキルの使い分け:毎回か、必要なときか</h2>
+  <p>どちらも指示を保存できますが、読み込み方が違います。公式ドキュメントによると、CLAUDE.md は毎セッション自動で読み込まれ、スキルは必要になったときに読み込まれます。<code>/deploy</code> のように呼び出して手順を動かせるのはスキルで、CLAUDE.md にはできません。</p>
+  <ul>
+    <li>CLAUDE.md に置くもの:コーディング規約、ビルドコマンド、プロジェクト構成、「〜しない」ルールなど、Claude が常に知っているべきこと。</li>
+    <li>スキルに置くもの:API ドキュメントやスタイルガイドのように、たまに必要になる資料。デプロイ、レビュー、リリースのように、呼び出して動かす手順。</li>
+  </ul>
+  <p>目安として、CLAUDE.md は 200 行未満に保つとされています。増えてきたら、参照用の内容をスキルに移すか、<code>.claude/rules/</code> のファイルに分けます。ルールに <code>paths</code> frontmatter を付けると、該当するファイルを扱うときだけ読み込まれ、コンテキストを節約できます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+  <h2 id="s3">必ず守らせたいことは hooks に書く</h2>
+  <p>公式ドキュメントによると、hook はイベントのたびに必ず発火し、トリガーが保証されます。一方スキルは Claude が指示を解釈して動くため、結果がぶれることがあります。</p>
+  <ul>
+    <li>hooks が向く場面:編集後のリント、危険なコマンドのブロック、ログ、通知など、Claude の判断が要らず毎回同じ動きをさせたいこと。</li>
+    <li>スキルが向く場面:Claude に適用方法を判断させたいことや、スクリプトではなく知識にあたる内容。<code>/release</code> のチェックリストやデバッグの手順書などです。</li>
+  </ul>
+  <p>注意したいのはガードレールです。「<code>.env</code> を編集しない」と CLAUDE.md やスキルに書いても、それは依頼であって保証ではありません。<code>PreToolUse</code> hook で編集をブロックすれば強制になります。毎回守る必要があるルールは、プロンプトの指示ではなく hook にする、というのが公式ドキュメントの考え方です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+  <h2 id="s4">MCP とサブエージェント:つなぐか、切り離すか</h2>
+  <h3>MCP は外部サービスにつなぐ</h3>
+  <p>MCP は外部サービスへ接続するためのプロトコルです。公式ドキュメントによると、外部システム向けの専用ツールを Claude に与え、接続と認証はサーバー側で処理されます。例として、データベースへの問い合わせ、Slack への投稿、ブラウザの操作が挙げられています。スキルは、そのツールを上手に使うための知識を渡す役割です。MCP でデータベースにつなぎ、スキルにスキーマとクエリの型を書く、という組み合わせが紹介されています。</p>
+  <h3>サブエージェントは作業を切り離す</h3>
+  <p>コンテキストを分離したいとき、またはコンテキストウィンドウが埋まってきたときに使います。多数のファイルを読む調査をさせても、メインの会話には要約だけが戻ります。スキルはメインのウィンドウに内容が加わりますが、サブエージェントは別のウィンドウを使います。</p>
+  <p>組み合わせも可能です。サブエージェントに <code>skills:</code> field でスキルを事前に読み込ませたり、スキルに <code>context: fork</code> を指定して隔離した環境で動かしたりできます。詳細は公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+  <h2 id="s5">困りごとが出たら足す:追加のきっかけ</h2>
+  <p>公式ドキュメントによると、最初にすべてを設定する必要はなく、機能ごとに目安となるきっかけがあります。</p>
+  <ul>
+    <li>Claude が同じ規約やコマンドを2回間違えた:CLAUDE.md に書く</li>
+    <li>毎回同じプロンプトを打って作業を始めている:ユーザーが呼び出せるスキルとして保存する</li>
+    <li>同じ手順書をチャットに3回目に貼ろうとしている:スキルにまとめる</li>
+    <li>Claude から見えないブラウザのタブのデータを何度もコピーしている:そのシステムを MCP サーバーとして接続する</li>
+    <li>補助的な作業の出力が会話を埋め、後で参照しない:サブエージェントに回す</li>
+    <li>毎回頼まずに必ず実行させたい:hook を書く</li>
+    <li>2つ目のリポジトリで同じ設定が必要になった:プラグインにまとめる</li>
+  </ul>
+  <p>繰り返される間違いやレビューコメントは、チャットでその場限りの訂正をするのではなく、CLAUDE.md の修正にします。社内に配る場合は、プラグインにまとめるとマーケットプレイス経由で配布でき、プラグインのスキルには名前空間が付くので複数のプラグインが共存できます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+  <h2 id="s6">コンテキスト消費と、重なったときの扱い</h2>
+  <p>公式ドキュメントでは、機能を足すほどコンテキストを消費し、増やしすぎるとノイズになって、スキルが正しく起動しなくなったり規約を見失ったりすると説明されています。</p>
+  <ul>
+    <li>CLAUDE.md:セッション開始時に全文が読み込まれ、毎リクエストで消費します。</li>
+    <li>スキル:説明は毎リクエスト、全文は使うときに読み込まれます。副作用のあるスキルには <code>disable-model-invocation: true</code> を付けると、名前を指定したときだけ動き、コンテキストも節約できます。</li>
+    <li>MCP:ツール名が読み込まれ、スキーマは必要になるまで保留されます。<code>/mcp</code> で接続状況、<code>/context all</code> でトークン消費を確認できます。</li>
+    <li>hooks:出力を返さない限り、消費はゼロです。</li>
+    <li>サブエージェント:メインのセッションからは分離されます。</li>
+  </ul>
+  <p>スキルの説明があいまいだったり重なっていたりすると、別のスキルが読まれたり、役立つスキルが見逃されたりします。使わせたいスキルは名前を指定して呼び出します。なお、同じ機能が複数の階層にある場合、CLAUDE.md は全階層が加算され、スキル・サブエージェント・MCP サーバーは同名なら一つが優先され、hooks はすべて発火します。優先順位の細部は公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>CLAUDE.md に「触らない」と書けば、ファイルの編集を防げますか?</summary>
+      <p>防げる保証はありません。公式ドキュメントによると、CLAUDE.md やスキルに書いた指示は依頼であって保証ではありません。毎回必ず守らせたいルールは、<code>PreToolUse</code> hook で編集をブロックする形で hook として作ります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+    </details>
+    <details>
+      <summary>CLAUDE.md が長くなってきたらどうしますか?</summary>
+      <p>公式ドキュメントでは 200 行未満を目安としています。参照用の内容はスキルに移すか、<code>.claude/rules/</code> のファイルに分けます。ルールは <code>paths</code> frontmatter で、該当ファイルを扱うときだけ読み込ませることもできます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+    </details>
+    <details>
+      <summary>MCP とスキルは、どちらか一方を選ぶものですか?</summary>
+      <p>役割が違い、組み合わせて使います。公式ドキュメントによると、MCP は外部サービスへの接続とツールを提供し、スキルはそのツールを上手に使うための知識や手順を提供します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a>: スキル名・説明・手順・出力の形を入れると、置き場所つきで SKILL.md のひな形を出力します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">Claude Code のプラグインの入れ方と、マーケットプレイスを選ぶときの注意</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-slash-commands/index.html">Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のトークン使用量を減らす方法と、使用量の確かめ方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のトークン消費を抑える方法を、公式ドキュメントに沿って整理。/usage での確認、/clear、モデル選択、拡張思考、MCP の見直しまで、情シス向けに解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のトークン使用量を減らす方法と、使用量の確かめ方">
+<meta property="og:description" content="Claude Code のトークン消費を抑える方法を、公式ドキュメントに沿って整理。/usage での確認、/clear、モデル選択、拡張思考、MCP の見直しまで、情シス向けに解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-reduce-tokens.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のトークン使用量を減らす方法と、使用量の確かめ方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-reduce-tokens.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のトークン使用量を減らす方法と、使用量の確かめ方",
+  "description": "Claude Code のトークン消費を抑える方法を、公式ドキュメントに沿って整理。/usage での確認、/clear、モデル選択、拡張思考、MCP の見直しまで、情シス向けに解説します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "トークン節約と使用量確認",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">トークン節約と使用量確認</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のトークン使用量を減らす方法と、使用量の確かめ方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、Claude Code は API のトークン消費量で課金されます。使用量は <code>/usage</code> の Session ブロックで確認できますが、ドル表示は見積もりで、正式な請求は Claude Console の Usage ページで確認します。</li>
+      <li>節約の基本は、コンテキストを小さく保つことです。無関係な作業の間に <code>/clear</code> を使い、簡単な作業ではモデルや拡張思考の effort level を見直すことが挙げられています。</li>
+      <li>長く開いたままのセッション、キャッシュミス、定期タスク、サブエージェントは使用量を押し上げます。社内に配る前に、小さなパイロットで基準値を取る進め方が案内されています。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">まず使用量を確かめる(/usage とスピナー横の表示)</h2>
+  <p>執筆時点(2026年10月)の公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は API のトークン消費量で課金されます。費用はモデルの選び方、コードベースの大きさ、複数インスタンスや自動化といった使い方で大きく変わります。</p>
+  <p>エンタープライズ導入全体の平均は、開発者1人あたり稼働日1日で約$13、月で$150-250とされ、稼働日あたり$30未満の利用者が90%と書かれています。自社の見込みは、小さなパイロットで計測してから広げる進め方が案内されています。</p>
+  <p><code>/usage</code> の Session ブロックに、現在のセッションのトークン使用量が出ます。ドル表示はトークン数から定価でローカル計算した見積もりで、正式な請求は Claude Console の Usage ページで確認します。Max・Pro の利用者は利用料がサブスクリプションに含まれるため、この費用額は請求の面では関係ありません。合計は <code>/clear</code> で新しいセッションを始めるとリセットされます。</p>
+  <p>v2.1.251 以降では <code>Prompt cache (main)</code> の行が加わり、キャッシュから供給された入力トークンの割合やキャッシュミスの回数が分かります。対象はメイン会話のみで、サブエージェントは含まれません。作業中にスピナーの横に出るトークン数は、そのターンの出力の概算で、<code>/usage</code> の合計とは一致しません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s2">コンテキストを小さく保つ</h2>
+  <p>公式ドキュメントでは、トークンのコストはコンテキストが大きいほど増えると説明されています。Claude Code はプロンプトキャッシュと自動コンパクション(会話履歴の要約)で自動的に最適化しますが、次の習慣でさらに抑えられます。</p>
+  <ul>
+    <li>無関係な作業に移るときは <code>/clear</code> で新しく始めます。古いコンテキストは以降のメッセージごとにトークンを消費します。後で戻るなら、先に <code>/rename</code>、あとで <code>/resume</code> を使います。</li>
+    <li><code>/compact Focus on code samples and API usage</code> のように、要約時に残す内容を指示できます。</li>
+    <li>プロジェクト直下の CLAUDE.md にも、要約時の方針を書けます。</li>
+  </ul>
+<pre><code># Compact instructions
+
+When you are using compact, please focus on test output and code changes</code></pre>
+  <p>CLAUDE.md はセッション開始時に読み込まれます。PR レビューやデータベース移行のような特定作業の詳細な手順は、呼び出したときだけ読み込まれるスキルに移すと、基本のコンテキストが小さくなります。CLAUDE.md は要点に絞り、200行未満が目安とされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s3">モデルと拡張思考を見直す</h2>
+  <p>公式ドキュメントによると、Sonnet は多くのコーディング作業をこなし、Opus より安価です。Opus は複雑な設計判断や複数ステップの推論に取っておきます。<code>/model</code> でセッション中に切り替え、<code>/config</code> で既定を設定できます。Opus に切り替えると、セッションのモデルを継承するサブエージェントにも適用されます。単純なサブエージェントの作業には <code>model: haiku</code> を指定できます。</p>
+  <p>拡張思考は既定で有効で、思考トークンは出力トークンとして課金されます。既定の予算は、モデルによっては1リクエストあたり数万トークンになりえます。簡単な作業では、<code>/effort</code> または <code>/model</code> で effort level を下げるか、<code>/config</code> で思考を無効にします。ただし Opus 5.5、Sonnet 5.5、Haiku 5.5、Fable 系のモデルは常に拡張思考を使い、オフにできません。</p>
+  <p>思考予算が固定のモデルでは、環境変数 <code>MAX_THINKING_TOKENS</code> で予算を下げられます(例: <code>MAX_THINKING_TOKENS=8000</code>)。適応的推論のモデルはゼロ以外の予算を無視するため、effort level を使います。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s4">MCP・hooks・サブエージェント・依頼の書き方</h2>
+  <ul>
+    <li>MCP: ツール定義は既定で遅延読み込みされ、特定のツールを使うまでは名前とサーバーの指示だけがコンテキストに入ります。<code>/context</code> で何が容量を使っているか確認し、<code>/mcp</code> で使っていないサーバーを無効にします。</li>
+    <li><code>gh</code>、<code>aws</code>、<code>gcloud</code>、<code>sentry-cli</code> などの CLI ツールは、ツール一覧を足さないため MCP サーバーよりコンテキスト効率が良いとされています。</li>
+    <li>hooks: 10,000行のログを Claude が読む代わりに、hook で <code>ERROR</code> を grep して該当行だけ返せば、コンテキストを数万トークンから数百トークンに減らせます。公式ドキュメントには、テスト出力を失敗だけに絞る PreToolUse hook の例があります。</li>
+    <li>サブエージェント: テスト実行やログ処理など出力の多い作業を任せると、要約だけがメインの会話に戻ります。ただしサブエージェント自身のリクエストも使用量に含まれます。</li>
+    <li>依頼の書き方: 「improve this codebase」のような曖昧な依頼は広い走査を招きます。対象を具体的に書くと、ファイルの読み込みが少なくなります。</li>
+  </ul>
+  <p>複雑な作業では、Shift+Tab でプランモードに切り替えて方針を確認してから実装すると、やり直しを防げます。違う方向に進んだら Escape で止め、<code>/rewind</code> で戻します。なお、エージェントチームはチームメイトがプランモードのとき標準セッションの約7倍のトークンを使うとされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s5">使用量が増えやすい場面と、組織での管理</h2>
+  <p>公式ドキュメントでは、長く開いたセッションで使用量が増える原因として次を挙げています。</p>
+  <ul>
+    <li>長いコンテキスト: リクエストごとに会話全体が送られるため、一行の質問でも会話全体分の使用量がかかります。</li>
+    <li>キャッシュミス: キャッシュの有効期間を超えた休憩後の最初のメッセージは、全コンテキストを再処理します。有効期間はサブスクリプションで1時間、usage credits を使い始めると5分です。API キーやクラウドプロバイダでは既定で5分です。</li>
+    <li>定期タスクはセッションが待機中でも間隔どおりに全コンテキストを送ります。サブエージェントやチームメイトも別にリクエストを送ります。</li>
+    <li>コンパクト: <code>/compact</code> は要約対象の会話を読むため、大きなコンテキストでは大きなリクエストになります。仕切り直したいときの <code>/clear</code> は費用がかかりません。</li>
+  </ul>
+  <p>Pro、Max、Team、Enterprise の <code>/usage</code> には、直近の使用量の10%以上を占める挙動(長いコンテキストやキャッシュミスなど)に、減らすヒント付きのフラグが出ます。</p>
+  <p>組織で管理する場合、Teams・Enterprise は管理画面の支出レポートと上限設定、Console はワークスペースの支出上限、クラウド経由は各クラウドの請求コンソールが中心です。OpenTelemetry はどの構成でも使えます。詳しい設定手順は公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary><code>/usage</code> のドル表示は請求額と一致しますか?</summary>
+      <p>一致するとは限りません。公式ドキュメントによると、ドル表示はトークン数から定価でローカル計算した見積もりです。契約単価で支払う組織では、管理者が管理設定の <code>modelPricing</code> に単価を入れると、契約単価ベースの表示になります(v2.1.242 以降)。ただしそれも請求書ではなく見積もりで、正式な請求は Claude Console の Usage ページで確認します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+    <details>
+      <summary>拡張思考は、どのモデルでもオフにできますか?</summary>
+      <p>できません。拡張思考は既定で有効で、簡単な作業では <code>/effort</code> や <code>/model</code> で effort level を下げるか、<code>/config</code> で無効にできます。ただし公式ドキュメントによると、Opus 5.5、Sonnet 5.5、Haiku 5.5、Fable 系のモデルは常に拡張思考を使い、オフにできません。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+    <details>
+      <summary>席を外したあとの最初のメッセージで使用量が多くなるのはなぜですか?</summary>
+      <p>公式ドキュメントによると、キャッシュの有効期間を超える休憩のあとの最初のメッセージはキャッシュミスになり、全コンテキストを再処理するためです。有効期間はサブスクリプションで1時間、usage credits を使い始めると5分で、API キーやクラウドプロバイダでは既定で5分です。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-caching/index.html">Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-context-compact/index.html">Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準 | 中小DXラボ</title>
+<meta name="description" content="Power Automate などのノーコードか、Claude Code のコードか。中小企業の情シス向けに、直す人・データの場所・変更の多さの3基準と、失敗しないための確認点を、中小DXラボの記事に基づいて整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準">
+<meta property="og:description" content="Power Automate などのノーコードか、Claude Code のコードか。中小企業の情シス向けに、直す人・データの場所・変更の多さの3基準と、失敗しないための確認点を、中小DXラボの記事に基づいて整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-nocode-or-claude-code.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-nocode-or-claude-code.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準",
+  "description": "Power Automate などのノーコードか、Claude Code のコードか。中小企業の情シス向けに、直す人・データの場所・変更の多さの3基準と、失敗しないための確認点を、中小DXラボの記事に基づいて整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ノーコードとコードの使い分け",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">ノーコードとコードの使い分け</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>社内の小さな業務ツールは、「作ったあと誰が直すか」「データがどこにあるか」「どれくらい変わるか」の3つの質問で、ノーコードか、Claude Code(ターミナルで動く AI コーディングエージェント)によるコードかを振り分けます。</li>
+      <li>現場の担当者が直す、または Microsoft 365 や SaaS の中で完結するならノーコード。複数のシステムをまたぐ、例外が多いならコードが向きます。</li>
+      <li>「AI で書けるから全部コード」では、属人化の場所が情シスに移るだけです。現場が触る部分はノーコード、裏の重い処理はコードと分け、迷ったら「1年後に誰が直すか」を先に決めます。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">先に答え:3つの質問で振り分ける</h2>
+  <p>この記事は、中小DXラボの記事「ノーコードで作るか、Claude Codeでコードを書くか」に書かれた判断基準を整理したものです。執筆時点(2026年10月)で公開されている内容に基づいており、筆者が自分の判断に使っている基準として紹介されています。</p>
+  <p>中小DXラボの記事では、AI でコードが書けるようになってから、ノーコードで作るかコードで作るかの迷いはむしろ増えたと書かれています。「AI に頼めば何でもコードで作れる」一方で、作ったあとに困るのは自分たちだからです。</p>
+  <p>同記事が挙げる質問は、次の3つです。</p>
+  <ol>
+    <li>作ったあと、誰が直すか</li>
+    <li>データがどこにあるか</li>
+    <li>どれくらい変わるか</li>
+  </ol>
+  <p>この3つに対する振り分けの目安は、次のとおりです。</p>
+  <ul>
+    <li>現場の担当者が直す → ノーコード</li>
+    <li>Microsoft 365 や SaaS の中で完結する → ノーコード</li>
+    <li>複数のシステムをまたぐ、例外が多い → コード(Claude Code)</li>
+  </ul>
+  <p>ここでのノーコードは、Power Automate のように、画面上で処理の流れを組む作り方を指しています。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+  <h2 id="s2">基準1:作ったあと、誰が直すか</h2>
+  <p>中小DXラボの記事では、これを一番大事な基準としています。<strong>現場の担当者が自分で直すなら、ノーコード</strong>が向いているとされます。画面を見れば処理の流れがわかるため、「承認者を変えたい」「通知先を増やしたい」といった小さな変更を、情シスを通さずに済ませられるからです。</p>
+  <p>一方、<strong>情シスが面倒を見る前提なら、コード</strong>でも困らないとされています。Claude Code にコードを読ませれば、作った本人がいなくても、どこを直せばよいかを説明してもらえるという考え方です。</p>
+  <p>逆に、現場に渡すつもりのツールをコードで作ると、ちょっとした変更のたびに情シスへ依頼が来ます。作る速さよりも、<strong>直す人の手が届くか</strong>で選ぶのがポイントです。社内に配る前に、まず誰が直す体制なのかを決めておくと、道具の選択がぶれにくくなります。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+  <h2 id="s3">基準2:データがどこにあるか</h2>
+  <p><strong>Microsoft 365 や SaaS の中で完結するなら、ノーコードが楽</strong>だとされています。Power Automate なら、Outlook・Teams・SharePoint などへの接続(コネクタ)がはじめから用意されていて、認証の設定に悩むことがほとんどない、という説明です。</p>
+  <p><strong>社内のファイルサーバーや、複数のシステムをまたぐ場合は、コード</strong>が向いています。たとえば「基幹システムから出した CSV と、Excel の台帳を突き合わせて、差分だけを一覧にする」といった処理は、ノーコードでも組めますが、条件が増えるほど画面が複雑になります。コードなら、変換や突き合わせのルールを細かく書けます。</p>
+  <p>情シスの方は、対象の業務データがふだん置かれている場所を先に確認すると、この基準で判断しやすくなります。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+  <h2 id="s4">基準3:どれくらい変わるか</h2>
+  <p><strong>手順がほぼ固定なら、ノーコードで十分</strong>とされています。毎月同じ形のデータを、同じ場所に通知するだけなら、作って終わりにできます。</p>
+  <p><strong>条件分岐や例外が毎月のように増えるなら、コード</strong>を選びます。ノーコードは分岐が増えると、画面上で全体を追いにくくなりがちです。コードなら、変更した箇所と理由を履歴として残せるので、「いつ、なぜこの条件が増えたのか」をあとから確認できます。</p>
+  <p>変更が多い業務ほど、あとから経緯を追えるかどうかが効いてくる、という整理です。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+  <h2 id="s5">やりがちな失敗:「AIで書けるから全部コード」</h2>
+  <p>中小DXラボの記事が特に注意しているのが、「AI でコードが書けるから全部コードで作る」ことです。こうすると、直せるのが情シスだけになり、属人化(特定の人しか直せない状態)の場所が「マクロを書いた人」から「情シス」に移るだけになる、と説明されています。</p>
+  <p>筆者の場合は、次のように分ける形が、今のところ一番うまくいっているそうです。</p>
+  <ul>
+    <li>現場が触る部分(入力フォーム・承認・通知)はノーコード</li>
+    <li>裏の重い処理(集計・突き合わせ・変換)はコード</li>
+  </ul>
+  <p>それでも迷うときは、「1年後に誰が直すか」を先に決めてから選ぶことが勧められています。直す人が決まれば、基準2と3は、その人の得意な道具に合わせて考えられるからです。</p>
+  <h3>読むときの注意</h3>
+  <p>ここで紹介した基準は、あくまで一人の情シスの経験に基づく考え方です。費用、ライセンス、セキュリティ設定、Claude Code の具体的な使い方は、この記事では扱われていません。自社の環境に当てはめるときは、各製品の公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+  <h2 id="s6">試す前に確認したいこと:兼任情シスの振り返りから</h2>
+  <p>中小DXラボの別の記事(兼任情シスの振り返り)では、社内DXのつまずきは、ツールの性能よりも進め方の順番と担当の寄せ方で起きやすかったと書かれています。ノーコードかコードかを決める前後で、次の点が参考になります。</p>
+  <h3>ツールを先に決めない</h3>
+  <p>この記事には、先に製品を決めてあとから業務に当てはめた結果、現場の作業の流れとツールの前提が合わず、入力の手間がかえって増えた例が挙げられています。次にやったこととして、ツールを選ぶ前に「今どんな手順で、誰が、何に困っているか」を現場で聞き、紙1枚に書き出す方法が紹介されています。</p>
+  <h3>作る前と作ったあとの確認項目</h3>
+  <p>同記事の筆者が、新しい仕組みに手をつける前に確認している点は次のとおりです。</p>
+  <ul>
+    <li>現場の今の手順を、自分の目で見たか</li>
+    <li>困っているのは誰で、何が減れば成功と言えるか</li>
+    <li>自分がいないときに、最初に誰が何をするか</li>
+    <li>1部署・1業務で試せる大きさになっているか</li>
+    <li>どうなったら止めるか、を決めたか</li>
+  </ul>
+  <p>全部を満たしてから始める必要はないものの、抜けている項目を自覚しておくだけで、つまずいたときの立て直しが早くなったとされています。基準1の「誰が直すか」は、この中の「自分がいないときに、最初に誰が何をするか」とも重なります。</p>
+  <p>また、Claude Code を試すときも、最初は自分の作業だけで使い、社内に広げる前にルールを決める順番にしている、と書かれています。</p>
+  <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">中小企業の社内DXでつまずいたパターンと、次にやったこと — 兼任情シスの振り返り</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>現場に渡すツールをコードで作ると、どんな困りごとが出ますか?</summary>
+      <p>中小DXラボの記事では、ちょっとした変更のたびに情シスへ依頼が来ると説明されています。そのため、作る速さよりも、直す人の手が届くかで選ぶのがポイントとされています。</p>
+      <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+    </details>
+    <details>
+      <summary>条件分岐や例外が増える業務は、なぜコードが向くのですか?</summary>
+      <p>ノーコードは分岐が増えると、画面上で全体を追いにくくなりがちだからです。コードなら、変更した箇所と理由を履歴として残せるので、いつ、なぜ条件が増えたのかをあとから確認できると説明されています。</p>
+      <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a></p>
+    </details>
+    <details>
+      <summary>Claude Code を社内に広げるときは、どんな順番で進めればよいですか?</summary>
+      <p>兼任情シスの振り返り記事では、最初は自分の作業だけで使い、社内に広げる前にルールを決める順番にしていると書かれています。広げ方としては、まず1部署・1業務で小さく試し、効果と手間を記録してから次に広げるかを決める方法が紹介されています。ルールの具体的な中身は出典に書かれていないため、公式ドキュメントなどで確認してください。</p>
+      <p class="hint">出典: <a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">中小企業の社内DXでつまずいたパターンと、次にやったこと — 兼任情シスの振り返り</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md テンプレート生成</a>: 用途と守ってほしいことを選ぶと、短い CLAUDE.md のひな形を出力します。最初の数行を決めるときに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">ノーコードで作るか、Claude Codeでコードを書くか — 社内ツールの作り方を決める3つの基準</a>(中小DXラボの記事)</li>
+    <li><a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">中小企業の社内DXでつまずいたパターンと、次にやったこと — 兼任情シスの振り返り</a>(中小DXラボの記事)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-first-week/index.html">Claude Code を入れて最初の1週間にやること(兼任の情シス向け)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-output-styles/index.html">Claude Code の出力スタイル(output styles)とは:変え方と作り方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

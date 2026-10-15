@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ | 中小DXラボ</title>
+<meta name="description" content="Claude Code に集計スクリプトを書かせ、毎月の Excel 集計を置き換える手順を解説します。置き換える作業の選び方、依頼文の型、担当者へ渡す実行用バッチ、つまずきやすい点までを、中小DXラボの記事に基づいて整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ">
+<meta property="og:description" content="Claude Code に集計スクリプトを書かせ、毎月の Excel 集計を置き換える手順を解説します。置き換える作業の選び方、依頼文の型、担当者へ渡す実行用バッチ、つまずきやすい点までを、中小DXラボの記事に基づいて整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-excel-automation.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-excel-automation.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ",
+  "description": "Claude Code に集計スクリプトを書かせ、毎月の Excel 集計を置き換える手順を解説します。置き換える作業の選び方、依頼文の型、担当者へ渡す実行用バッチ、つまずきやすい点までを、中小DXラボの記事に基づいて整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Excel 集計の自動化",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Excel 集計の自動化</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>最初に置き換えるのは「毎月同じ形の Excel を集めて合計する」作業1つに絞ります。中小DXラボの記事では、全部を一度に置き換えようとすると例外対応に追われて挫折しがちだとされています。</li>
+      <li>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)には、入力ファイルの形、出力の形、異常時の動きの3点を渡してスクリプトを書かせます。</li>
+      <li>最初の1〜2か月は手作業の結果と突き合わせ、仕上げに実行用のバッチと手順書を残して担当者へ渡します。コードが正しいかどうかの確認は人が行います。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Excel の集計作業が減らない理由と、置き換え先の考え方</h2>
+  <p>中小DXラボの記事では、月初に各部署から届く明細の Excel をまとめる作業を例にしています。ファイルを1つずつ開いて明細シートを集計用のブックに貼り、ピボットテーブルを更新して、部署別・品目別の合計を報告用にまとめる流れです。1回あたりの量は大きくありませんが、毎月必ず発生します。途中で列の順番が変わったファイルが混ざると、合計が合わない原因を探すだけで時間がかかる、と書かれています。</p>
+  <p>既存の手段について、記事は次のように整理しています。</p>
+  <ul>
+    <li>マクロ(VBA。Excel 上の操作を自動化する仕組み)は、書ける人が限られ、作った人が異動すると誰も直せなくなりがちです。</li>
+    <li>Power Query(Excel に組み込まれたデータ取得・変換機能)は、定型の結合には強い一方、ファイルごとの不備を検知して知らせる処理は組みにくいと筆者は感じています。</li>
+    <li>RPA(Robotic Process Automation)で画面操作を記録する方法は、画面や列の位置が変わると止まりやすく、集計そのものの正しさは保証してくれません。</li>
+  </ul>
+  <p>これに対し Claude Code では、処理の中身を文章で説明できれば、読みやすいスクリプトとして書いてもらえる状態になります。コードとして残るので、次の担当者も Claude Code に読ませて直せる点が、マクロとの大きな違いだと記事は述べています。</p>
+  <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+  <h2 id="s2">Step 1:置き換える作業を1つ選び、入力と出力をメモに書く</h2>
+  <p>記事が挙げる、最初に選ぶ作業の条件は次の3つです。</p>
+  <ul>
+    <li>毎月(または毎週)発生する</li>
+    <li>入力ファイルの形がだいたい決まっている(シート名・列名が同じ)</li>
+    <li>結果が合っているかを、これまでの手作業の結果と突き合わせて確認できる</li>
+  </ul>
+  <p>選んだら、入力と出力をメモに書き出します。記事では架空の例として、部署ごとの備品購入明細を集めて部署別・品目別に合計する作業を使っています。メモの内容は次のとおりです。</p>
+  <ul>
+    <li>入力:<code>input/</code> フォルダの .xlsx(部署ごとに1ファイル)</li>
+    <li>シート:「明細」</li>
+    <li>列:日付 / 部署 / 品目 / 数量 / 単価</li>
+    <li>出力:<code>集計結果.xlsx</code>(シート「部署別」「品目別」)</li>
+  </ul>
+  <p>記事には、手元で試せるように架空のサンプルデータを <code>input/</code> に作るスクリプト <code>make_sample.py</code> も載っています。実データに触れる前に、流れを確認する材料になります。</p>
+  <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+  <h2 id="s3">Step 2:入力・出力・異常時の動きを書いて Claude Code に依頼する</h2>
+  <p>依頼のポイントは、「入力の形」「出力の形」「異常時の動き」の3点を必ず書くことです。異常時の動きを書かないと、列が欠けたファイルを黙って読み飛ばすようなコードになりがちだと記事は注意しています。記事で使われた依頼文は次のとおりです。</p>
+<pre><code>input/ フォルダにある .xlsx をすべて読み込んで集計する Python スクリプト aggregate.py を作ってください。
+
+入力:
+- 各ファイルのシート「明細」。1行目が見出しで、列は 日付 / 部署 / 品目 / 数量 / 単価
+- 列の並び順はファイルによって違うことがあるので、見出しの名前で列を探す
+- Excel が作る一時ファイル(~$ で始まるもの)は対象外
+
+出力:
+- 集計結果.xlsx に、シート「部署別」(部署, 金額)と「品目別」(品目, 数量, 金額)を作る
+- 金額 = 数量 × 単価。金額列は桁区切りの書式にする
+
+異常時:
+- シートや列が無いファイル、数量・単価が数値でない行があるファイルは、集計に含めずにスキップする
+- スキップしたファイルと理由を最後に画面へ出し、終了コードを 0 以外にする
+
+制約:
+- Python 3.10 以上と openpyxl だけで動くこと
+- 入力フォルダと出力ファイルはコマンドライン引数で変えられること(省略時は上の既定値)</code></pre>
+  <p>この依頼文には、列の並び順がファイルごとに違っても見出しの名前で列を探すこと、Excel が作る一時ファイルは対象外にすること、スキップしたファイルと理由を最後に画面へ出して終了コードを 0 以外にすること、が含まれています。</p>
+  <p>記事の筆者は、この依頼文をもとに出来上がったコードを整えて <code>aggregate.py</code> としています。Python と openpyxl(Python から Excel ファイルを扱うライブラリ)だけで動く作りで、実行は次のとおりです。</p>
+<pre><code>pip install openpyxl
+python make_sample.py
+python aggregate.py</code></pre>
+  <p>ここで大事なのは確認です。最初の1〜2か月は<strong>手作業の結果と並べて突き合わせ</strong>、合計が一致することを確認してから手作業をやめます。Claude Code が書いたコードでも、正しさを保証するのは自分の確認だけだと記事は述べています。</p>
+  <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+  <h2 id="s4">Step 3:ダブルクリックで動く形にして担当者へ渡す</h2>
+  <p>スクリプトができても自分しか動かせないなら、属人化の場所が変わっただけです。記事では、担当者がダブルクリックで実行できるように、次のバッチファイルを <code>aggregate.py</code> と同じフォルダに置く方法を紹介しています。</p>
+<pre><code>@echo off
+rem 集計.bat  aggregate.py と同じフォルダに置いてダブルクリックで実行する
+cd /d %~dp0
+py aggregate.py
+pause</code></pre>
+  <p><code>py</code> は python.org のインストーラで入る Python ランチャーだと記事は説明しています。あわせて、次の内容を1枚の手順書(README)にまとめます。手順書の下書きも、Claude Code に「担当者向けに、専門用語を使わずに書いて」と頼めば作ってくれるとのことです。</p>
+  <ul>
+    <li>毎月やること(<code>input/</code> にファイルを入れて、<code>集計.bat</code> をダブルクリック)</li>
+    <li>「スキップ」と表示されたときの対処(どの部署に何を確認するか)</li>
+    <li>列や品目が増えたときの直し方(Claude Code にこのフォルダを開いて依頼する)</li>
+  </ul>
+  <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+  <h2 id="s5">つまずきやすい点と、社内で試すときの注意</h2>
+  <p>記事が挙げるつまずきポイントは、症状・原因・対処の順に次のとおりです。</p>
+  <ul>
+    <li><code>PermissionError</code> で保存できない:<code>集計結果.xlsx</code> を Excel で開いたまま実行したためです。ファイルを閉じてから再実行します。</li>
+    <li>金額がすべて空になる:単価が数式で入っていて、一度も Excel で保存されていないためです。元ファイルを Excel で開いて保存し直します(openpyxl は数式を計算しないため)。</li>
+    <li>「列が足りません」と出る:見出しの表記ゆれ(「単 価」「単価(円)」など)が原因です。入力側の様式を固定するか、見出しの別名を許すように Claude Code へ修正を依頼します。</li>
+    <li><code>py</code> が見つからない:Python ランチャーが入っていないためです。<code>py</code> を <code>python</code> に書き換えるか、python.org版の Python を入れ直します。</li>
+  </ul>
+  <h3>社内で試す前に確認したい点</h3>
+  <p>本記事は中小DXラボの記事の内容を整理したもので、執筆時点(2026年10月)で私が検証した結果ではありません。依頼文やコードは架空の備品購入明細を例にしているため、自社のファイルの形に合わせて、入力・出力・異常時の動きを書き直す必要があります。Claude Code の操作や設定の詳細は、公式ドキュメントで確認してください。</p>
+  <p>記事の筆者は、担当範囲で手作業の集計を1つ置き換えただけでも、月初の作業が体感で軽くなったと述べています。これは筆者個人の感想で、効果は職場によって異なります。最初の一歩として、毎月繰り返している Excel 作業を3つ書き出し、Step 1の条件に当てはまるものを1つ選ぶことが勧められています。</p>
+  <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>VBA のマクロで自動化する方法と、Claude Code でスクリプトを作る方法は何が違いますか?</summary>
+      <p>中小DXラボの記事では、コードとして残るので次の担当者も Claude Code に読ませて直せる点を大きな違いとしています。マクロは書ける人が限られ、作った人が異動すると誰も直せなくなりがちだと説明されています。ただし、結果の正しさを保証するのは自分の確認だけとも書かれています。</p>
+      <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+    </details>
+    <details>
+      <summary>集計を実行したら、金額がすべて空になりました。原因は何ですか?</summary>
+      <p>記事によると、単価が数式で入っていて、そのファイルが一度も Excel で保存されていないことが原因です。元ファイルを Excel で開いて保存し直すと対処できます。openpyxl は数式を計算しないためです。</p>
+      <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+    </details>
+    <details>
+      <summary>手作業での集計は、いつまで並行して続ければよいですか?</summary>
+      <p>記事では、最初の1〜2か月は手作業の結果と並べて突き合わせ、合計が一致することを確認してから手作業をやめるとしています。一致の判断基準の細かい設定までは書かれていないため、自社で決めてください。</p>
+      <p class="hint">出典: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表</a>: Windows で Claude Code を使うときに起きやすい症状を、原因と対処で引ける早見表です。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Claude Code で社内 Excel 地獄を脱出する3ステップ — 手作業の集計をスクリプトに置き換える</a>(中小DXラボの記事)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-debug-config/index.html">Claude Code の設定が効かないときの確かめ方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-vscode/index.html">Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

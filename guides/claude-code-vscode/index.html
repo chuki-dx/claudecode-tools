@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い | 中小DXラボ</title>
+<meta name="description" content="Claude Code の VS Code 拡張について、公式ドキュメントをもとに、前提条件、インストール、最初の使い方、権限モードの注意点、CLI との違いを情シスの方向けに整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い">
+<meta property="og:description" content="Claude Code の VS Code 拡張について、公式ドキュメントをもとに、前提条件、インストール、最初の使い方、権限モードの注意点、CLI との違いを情シスの方向けに整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-vscode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-vscode.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い",
+  "description": "Claude Code の VS Code 拡張について、公式ドキュメントをもとに、前提条件、インストール、最初の使い方、権限モードの注意点、CLI との違いを情シスの方向けに整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "VS Code 拡張の使い方",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">VS Code 拡張の使い方</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、VS Code 拡張は Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)を VS Code 内のグラフィカルなパネルで使うもので、VS Code での推奨の使い方とされています。</li>
+      <li>前提は VS Code 1.94.0 以降と Anthropic アカウントです。拡張は CLI(コマンドラインで使う版)を内蔵しますが、統合ターミナルで <code>claude</code> を使うには別途 CLI のインストールが必要です。</li>
+      <li>自動編集の権限では VS Code の設定ファイルも変更されうるため、信頼できないコードを扱うときは Manual モードと制限モードの併用を検討してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">何ができて、何が要るか</h2>
+  <p>以下は執筆時点(2026年10月)で参照した公式ドキュメントの内容です。拡張では、Claude の計画を受け入れる前にレビュー・編集する、編集を自動で受け入れる、選択範囲の行番号つきでファイルを @ メンション(@ を付けてファイルを指定する書き方)で渡す、会話履歴を開く、複数の会話を別々のタブやウィンドウで開く、といったことができます。</p>
+  <p>前提は次の2つです。</p>
+  <ul>
+    <li>VS Code 1.94.0 以降</li>
+    <li>Anthropic アカウント。有料の Claude サブスクリプション(Pro、Max、Team、Enterprise)か Claude Console アカウントで使え、API キーは不要です。Amazon Bedrock などの第三者プロバイダー経由の場合は、別の設定手順があります。</li>
+  </ul>
+  <p>インストールは、VS Code で <code>Ctrl+Shift+X</code>(Mac は <code>Cmd+Shift+X</code>)を押して拡張機能の画面を開き、「Claude Code」を検索して <strong>Install</strong> をクリックします。表示されない場合は VS Code を再起動するか、コマンドパレットから「Developer: Reload Window」を実行します。</p>
+  <p>Cursor 向けのリンクもあり、Devin Desktop や Kiro など他の VS Code フォークにも入れられます。拡張を入れられないエディターでは、統合ターミナルで CLI の <code>claude</code> を動かす方法が案内されています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s2">起動から最初の依頼まで</h2>
+  <p>最も手早い開き方は、エディター右上のツールバーにある Spark アイコンのクリックです。ファイルを開いているときだけ表示されます。ステータスバーの <strong>✻ Claude Code</strong> なら、ファイルを開いていなくても使えます。</p>
+  <p>初回はサインイン画面が出るので <strong>Sign in</strong> を押し、ブラウザーで認可します。シェルに <code>ANTHROPIC_API_KEY</code> を設定していてもサインイン画面が出る場合は、VS Code がシェルの環境変数を引き継いでいない可能性があります。ターミナルから <code>code .</code> で起動するか、Claude アカウントでサインインしてください。</p>
+  <p>選択したテキストは Claude に自動で見えます。<code>Option+K</code>(Windows/Linux は <code>Alt+K</code>)で、<code>@file.ts#5-10</code> のような参照をプロンプトに入れられます。ファイルやフォルダーは @ に続けて名前を入力して指定でき、あいまい一致にも対応しています。</p>
+<pre><code>Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)</code></pre>
+  <p>ファイル編集の動きは権限モードで変わります。Manual モードでは、元の内容と変更案の左右比較が出て、承認・拒否・別の指示を選べます。変更ごとの <strong>Accept this change</strong> / <strong>Reject this change</strong> ボタンは Claude Code v2.1.275 以降が必要で、変更が 100 を超える差分では出ないため、ファイル単位で確認します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s3">権限モードと社内で使うときの注意</h2>
+  <p>プロンプト欄の下のモード表示から、権限モードを切り替えられます。</p>
+  <ul>
+    <li><strong>Auto</strong>:分類器がほとんどの操作を確認し、都度の確認の代わりにします。Claude Code v2.1.283 以降では組み込みの開始モードで、それより前は Pro、Max、Team プランのみです。</li>
+    <li><strong>Manual</strong>:ファイル編集とほとんどのシェルコマンドの前に許可を求めます。</li>
+    <li><strong>Plan</strong>:実行内容を説明し、承認を待ちます。VS Code が計画を Markdown 文書として開き、実行前にインラインコメントで意見を返せます。</li>
+    <li><strong>Edit automatically</strong>:確認なしで編集します。</li>
+  </ul>
+  <p>公式ドキュメントは、自動編集の権限では、VS Code が自動実行しうる <code>settings.json</code> や <code>tasks.json</code> なども Claude Code が変更できると注意しています。信頼できないコードを扱うときは、VS Code の制限モードを有効にする、Auto や Edit automatically ではなく Manual モードを使う、承認前に変更をよく確認する、の対策が挙げられています。</p>
+  <p>選択テキストの除外にも条件があります。ワークスペース内にあり、<code>files.exclude</code> や <code>search.exclude</code> に一致するファイルでは、Claude に渡るのは最大でパスだけです。ただしこれはチャットパネルだけが対象で、統合ターミナルの CLI は選択テキストをファイルを問わず送ります。守りたいファイルには <code>Read</code> の deny ルールを追加するよう案内されています。</p>
+  <p>コードの扱いについて、公式ドキュメントでは、Claude Code はコードを処理するがモデルの学習には使わないとされています。詳細は公式の Data and privacy のページで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s4">CLI との違いと、動かないとき</h2>
+  <p>拡張を入れても <code>claude</code> は PATH に追加されません。拡張が内蔵するのはチャットパネル用の CLI のコピーなので、統合ターミナルで <code>claude</code> を動かすにはスタンドアロンの CLI を別途インストールします。</p>
+  <ul>
+    <li>コマンドとスキル:CLI はすべて、拡張は一部です。<code>!</code> Bash ショートカットとタブ補完は CLI のみです。</li>
+    <li>MCP(Claude を外部のツールや API につなぐ仕組み)のサーバー設定とチェックポイント(Claude のファイル編集を記録し、以前の状態に戻す機能)は、どちらでも使えます。</li>
+  </ul>
+  <p>拡張と CLI は同じ会話履歴を共有し、拡張の会話は <code>claude --resume</code> で CLI から続けられます。</p>
+  <p>Spark アイコンが見えないときは、ファイルを開いているか、VS Code が 1.94.0 以降か、他の AI 拡張と競合していないかを確認してください。制限モードでは拡張は動きません。拡張をアンインストールしても、統合ターミナルで <code>claude</code> を実行すると自動で再インストールされるため、止めたい場合は <code>/config</code> の <strong>Auto-install IDE extension</strong> をオフにします。</p>
+  <p>ここに書いていない設定や挙動は、公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>Claude Code の VS Code 拡張に API キーは必要ですか?</summary>
+      <p>公式ドキュメントでは不要とされています。有料の Claude サブスクリプション(Pro、Max、Team、Enterprise)か Claude Console アカウントでサインインして使います。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+    <details>
+      <summary>拡張を入れたのに、ターミナルで claude が見つかりません。</summary>
+      <p>拡張は <code>claude</code> を PATH に追加しないためです。統合ターミナルで使うには、スタンドアロンの CLI のインストールが必要とされています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+    <details>
+      <summary>拡張で始めた会話を CLI で続けられますか?</summary>
+      <p>拡張と CLI は同じ会話履歴を共有しています。ターミナルで <code>claude --resume</code> を実行すると、一覧から会話を選んで続けられます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表</a>: Windows で Claude Code を使うときに起きやすい症状を、原因と対処で引ける早見表です。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-rewind-checkpoint/index.html">Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-resume-session/index.html">Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

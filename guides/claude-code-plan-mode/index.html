@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の plan モードの使い方:編集の前に計画を確かめる | 中小DXラボ</title>
+<meta name="description" content="Claude Code の plan モードの入り方、計画の承認と編集、既定にする設定、使うべき場面を、社内で試す前に押さえたい点として公式ドキュメントに基づき整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の plan モードの使い方:編集の前に計画を確かめる">
+<meta property="og:description" content="Claude Code の plan モードの入り方、計画の承認と編集、既定にする設定、使うべき場面を、社内で試す前に押さえたい点として公式ドキュメントに基づき整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plan-mode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の plan モードの使い方:編集の前に計画を確かめる">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plan-mode.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の plan モードの使い方:編集の前に計画を確かめる",
+  "description": "Claude Code の plan モードの入り方、計画の承認と編集、既定にする設定、使うべき場面を、社内で試す前に押さえたい点として公式ドキュメントに基づき整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "plan モードの使い方",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">plan モードの使い方</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の plan モードの使い方:編集の前に計画を確かめる</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、plan モードは Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)に、ファイルを読んで調べさせ、変更案を計画として出させるモードです。計画を承認するまで、ソースの編集はブロックされます(バイパス権限が使える対話型ターミナルセッションは例外です)。</li>
+      <li>入り方は <code>Shift+Tab</code>、プロンプト先頭の <code>/plan</code>、起動時の <code>claude --permission-mode plan</code> のいずれかです。承認前に <code>Ctrl+G</code> で計画をテキストエディタで直接編集できます。</li>
+      <li>計画には手間も増えるため、公式ドキュメントでは、方針が不確かなときや複数ファイルに及ぶときに使い、差分を一文で説明できる小さな修正では省くよう説明しています。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">plan モードでできること</h2>
+  <p>この記事は、執筆時点(2026年10月)の公式ドキュメントを出典にしています。表示や挙動は環境によって変わる場合があるため、導入前に最新の公式ドキュメントも確認してください。</p>
+  <p>公式ドキュメントによると、plan モードは、変更を加えずに調べて提案するためのモードです。Claude はファイルを読み、調査のためにシェルコマンドを実行し、計画を書きますが、ソースは編集しません。計画を承認するまで編集はブロックされます。ただし、バイパス権限(bypass permissions)が使える対話型ターミナルセッションは例外です。</p>
+  <h3>計画中のシェルコマンドの扱い</h3>
+  <p>計画中のシェルコマンドの扱いはセッションによって変わり、次のうち最初に当てはまるものが適用されると公式ドキュメントに書かれています。</p>
+  <ol>
+    <li>バイパス権限が使える対話型ターミナルセッション:計画中のコマンドには、分類器(実行前に操作を審査する別モデル)も確認プロンプトも適用されません。</li>
+    <li>auto モード(定型的な権限確認なしで実行させるモード)が使え、<code>useAutoModeDuringPlan</code> 設定がオン(既定でオン)の場合:クリティカルパスの削除を除くシェルコマンドを、確認プロンプトの代わりに分類器が審査します。承認されたコマンドは実行され、拒否されたものはブロックされます。</li>
+    <li>auto モードが使えない、または <code>useAutoModeDuringPlan</code> がオフの場合:組み込みの読み取り専用コマンド以外は、承認の確認が出ます。サンドボックスの auto-allow モードが有効な場合も同様です。</li>
+  </ol>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s2">plan モードの入り方と抜け方</h2>
+  <p>公式ドキュメントでは、<code>Shift+Tab</code> を押すか、1回のプロンプトの先頭に <code>/plan</code> を付けて plan モードに入ります。CLI から plan モードで始めることもできます。</p>
+<pre><code>claude --permission-mode plan</code></pre>
+  <p>plan モードの間、ステータスバーには <code>⏸ plan mode on</code> と表示されます。承認せずに抜けるには、もう一度 <code>Shift+Tab</code> を押します。</p>
+  <p><code>Shift+Tab</code> の切り替え順は、<code>auto</code> からの最初の1回で <code>default</code> になり、その後 <code>default</code> → <code>acceptEdits</code> → <code>plan</code> と進みます。</p>
+  <h3>利用画面ごとの違い</h3>
+  <ul>
+    <li>VS Code:プロンプト欄下部のモード表示をクリックして Plan を選びます。</li>
+    <li>JetBrains:IDE のターミナルで動くため、CLI と同じ操作です。</li>
+    <li>Web とモバイル:クラウドセッションのモード選択に Plan があります。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s3">計画の確認・承認と編集</h2>
+  <p>計画ができると Claude が計画を示し、進め方を尋ねます。選べるのは次の3つです。</p>
+  <ul>
+    <li><strong>Yes, and use auto mode</strong>:承認して auto モードで始めます。組織が無効にしているなど auto モードが使えない場合、表示は <strong>Yes, auto-accept edits</strong> になります。バイパス権限を有効にして始めた場合は、<strong>Yes, and switch to BYPASS PERMISSIONS (no further prompts) for this session</strong> と表示されます。</li>
+    <li><strong>Yes, manually approve edits</strong>:承認し、編集を1件ずつ確認します。</li>
+    <li><strong>No, keep planning</strong>:plan モードにとどまり、変更してほしい点を Claude に伝えます。</li>
+  </ul>
+  <p>承認すると plan モードを抜け、選んだ選択肢が示す権限モードに切り替わって、Claude が編集を始めます。もう一度計画させるときは、<code>Shift+Tab</code> で plan モードに戻すか、次のプロンプトの先頭に <code>/plan</code> を付けます。</p>
+  <p><code>Ctrl+G</code> を押すと、提案された計画を既定のテキストエディタで開き、Claude が進む前に直接編集できます。<code>showClearContextOnPlanAccept</code> が有効な場合は、計画を承認して計画時のコンテキストを消去する選択肢が先頭に加わります。</p>
+  <p>計画を承認すると、すでにセッションに名前を付けていない限り、計画に基づく生成タイトルがセッションに付きます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s4">plan モードを既定にする設定</h2>
+  <p>ターミナルセッションで、プロジェクトの既定を plan モードにするには、<code>.claude/settings.json</code> の <code>defaultMode</code> を <code>plan</code> に設定します。書き方は、公式ドキュメントの「Start in a different permission mode」にある例に従ってください。</p>
+  <p>VS Code 拡張が始める会話は、開始時の権限モードについてプロジェクトの設定を読みません。この場合は、VS Code のユーザー設定で <code>claudeCode.initialPermissionMode</code> を <code>plan</code> にします。</p>
+  <h3>画面から Plan を選んだ場合の注意</h3>
+  <ul>
+    <li>VS Code:モード表示から Plan を選んだ場合、適用されるのはその会話だけです。</li>
+    <li>デスクトップアプリ:Plan を選んだ場合、適用されるのは現在のセッションだけです。</li>
+  </ul>
+  <p>そのほかの設定場所の詳細は、公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s5">どんな変更で使うか:公式が勧める進め方</h2>
+  <p>公式のベストプラクティスでは、いきなりコードを書かせると、目的とずれた問題を解くコードになることがあるため、plan モードで調査と実行を分けるよう説明しています。流れは次の4段階です。</p>
+  <ol>
+    <li>探索:plan モードに入り、Claude にファイルを読ませて質問に答えさせます。変更はしません。</li>
+    <li>計画:詳細な実装計画を作らせます。<code>Ctrl+G</code> で直接編集できます。</li>
+    <li>実装:計画を承認するか <code>Shift+Tab</code> で plan モードを抜け、計画と照らして確認しながらコーディングさせます。</li>
+    <li>コミット:分かりやすいメッセージでのコミットと PR の作成を依頼します。</li>
+  </ol>
+  <p>ただし公式ドキュメントは、plan モードにはオーバーヘッドもあると述べています。誤字の修正、ログ出力の追加、変数名の変更のように範囲が明確で小さい修正は、直接依頼します。計画が役立つのは、進め方に迷うとき、複数のファイルを変更するとき、不慣れなコードを触るときです。差分を一文で説明できるなら計画は省きます。</p>
+  <p>公式の一般的なワークフローでも、ディスクに反映される前にレビューしたい変更では plan モードに切り替えると説明されています。情シスの方が社内に展開する場合は、この使い分けの基準をあわせて伝えておくと迷いにくくなります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>plan モードの間、Claude はソースを編集しますか?</summary>
+      <p>公式ドキュメントによると、Claude はファイルを読み、調査のためにシェルコマンドを実行し、計画を書きますが、ソースは編集しません。計画を承認するまで編集はブロックされます。例外は、バイパス権限が使える対話型ターミナルセッションです。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>plan モードを、計画を承認せずに抜けるにはどうしますか?</summary>
+      <p>もう一度 <code>Shift+Tab</code> を押します。計画を承認した場合も plan モードを抜けますが、その場合は選んだ選択肢が示す権限モードに切り替わり、Claude が編集を始めます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>小さな修正でも plan モードを使うべきですか?</summary>
+      <p>公式のベストプラクティスでは、範囲が明確で修正が小さい場合(誤字の修正、ログ出力の追加、変数名の変更など)は、直接依頼するよう説明しています。差分を一文で説明できるなら、計画は省くとされています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md テンプレート生成</a>: 用途と守ってほしいことを選ぶと、短い CLAUDE.md のひな形を出力します。最初の数行を決めるときに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a>(公式ドキュメント)</li>
+    <li><a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a>(公式ドキュメント)</li>
+    <li><a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-md-vs-settings-json/index.html">CLAUDE.md と settings.json の違い:何をどちらに書くか</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-best-practices/index.html">Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

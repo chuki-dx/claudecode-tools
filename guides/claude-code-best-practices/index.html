@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理 | 中小DXラボ</title>
+<meta name="description" content="Claude Code の公式ベストプラクティスを、コンテキスト管理、確認手段、プランモード、CLAUDE.md、権限設定、セッション管理、自動化の順に、中小企業の情シス向けに整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理">
+<meta property="og:description" content="Claude Code の公式ベストプラクティスを、コンテキスト管理、確認手段、プランモード、CLAUDE.md、権限設定、セッション管理、自動化の順に、中小企業の情シス向けに整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-best-practices.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-best-practices.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理",
+  "description": "Claude Code の公式ベストプラクティスを、コンテキスト管理、確認手段、プランモード、CLAUDE.md、権限設定、セッション管理、自動化の順に、中小企業の情シス向けに整理します。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code ベストプラクティス",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code ベストプラクティス</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の公式ベストプラクティスの多くは、コンテキストウィンドウが急速に埋まり、埋まるほど性能が落ちるという1つの制約が土台です。</li>
+      <li>最初に整えるのは、テストなど Claude が自分で実行できる確認手段、短く保った CLAUDE.md、権限の事前承認です。</li>
+      <li>無関係な作業の間は <code>/clear</code> を使い、同じ問題で2回を超えて直せなければ、具体的なプロンプトで新しく始め直します。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">土台の制約と、確認手段を渡すこと</h2>
+  <p>公式ドキュメントによると、Claude Code はファイルを読み、コマンドを実行し、変更を加え、自律的に問題へ取り組めるエージェント型の環境です。その分、理解しておくべき制約があります。</p>
+  <p>中心はコンテキストウィンドウ(会話全体を保持する領域)です。メッセージ、読み込んだファイル、コマンド出力のすべてが入り、1回の調査で数万トークンを消費することもあります。埋まるほど、以前の指示を「忘れる」ようになったり、ミスが増えたりします。</p>
+  <p>最初の勧めは、テストやビルドなど、Claude が自分で実行できる確認手段を渡すことです。ないと「できたように見える」しか手がかりがなく、利用者が確認役になります。確認の強さは次のように選べます。</p>
+  <ul>
+    <li>1回のプロンプト内で、確認の実行と修正の繰り返しまで頼みます。</li>
+    <li>セッション全体では <code>/goal</code> 条件にします。別の評価役がターンごとに再確認し、Claude が停滞すると、目標を残したまま実行が止まることがあります。</li>
+    <li>決定的な関門としては Stop フックを使います。確認をスクリプトとして実行し、通るまでターンの終了をブロックします。</li>
+    <li>第二の目として、検証用サブエージェントなどに結果を反証させます。</li>
+  </ul>
+  <p>成功を宣言させるより、テスト出力や実行結果などの証拠を出させるほうが確認は速く、見ていなかったセッションにも使えるとされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s2">探索、計画、実装の順に進め、指示は具体的にする</h2>
+  <p>いきなりコードを書かせると、違う問題を解くことがあります。そこでプランモードで調査と実装を分けます。<code>Shift+Tab</code> でステータスバーに <code>⏸ plan mode on</code> と出るまで切り替えるか、<code>claude --permission-mode plan</code> でセッションを始めます。</p>
+  <ol>
+    <li>探索:ファイルを読み質問に答えさせます。変更はしません。</li>
+    <li>計画:実装計画を作らせます。<code>Ctrl+G</code> でエディタ上で直接編集できます。</li>
+    <li>実装:プランモードを抜け、計画に照らして検証しながらコードを書かせます。</li>
+    <li>コミット:説明的なメッセージでコミットし、PR を作らせます。</li>
+  </ol>
+  <p>ただし、タイポ修正やログ1行の追加のように範囲が明確で小さい作業は、直接頼みます。差分を1文で説明できるなら、プランは省きます。</p>
+  <h3>指示は具体的に</h3>
+  <p>公式ドキュメントでは、対象ファイル、制約、手本にする既存パターンを示すよう勧めています。不具合なら、症状、疑わしい場所、「直った」状態を伝えます。</p>
+  <ul>
+    <li><code>@</code> でファイルを参照すると、Claude は回答前にそのファイルを読みます。</li>
+    <li>画像は貼り付けやドラッグ&amp;ドロップで渡せます。</li>
+    <li><code>cat error.log | claude -p "explain this error"</code> のようにデータをパイプで渡せます。</li>
+  </ul>
+  <p>探索中で軌道修正できるなら、曖昧なプロンプトが役立つこともあります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s3">環境設定:CLAUDE.md、権限、フック</h2>
+  <h3>CLAUDE.md</h3>
+  <p>CLAUDE.md は Claude が毎回の会話の開始時に読む特別なファイルです。<code>/init</code> で雛形を作り、育てていきます。形式の決まりはなく、短く読みやすく保ちます。公式ドキュメントの例です。</p>
+<pre><code># Code style
+- Use ES modules (import/export) syntax, not CommonJS (require)
+- Destructure imports when possible (eg. import { foo } from 'bar')
+
+# Workflow
+- Be sure to typecheck when you're done making a series of code changes
+- Prefer running single tests, and not the whole test suite, for performance</code></pre>
+  <p>毎回読まれるため、広く当てはまる内容に絞り、時々しか要らない知識は skills(必要なときだけ読み込まれる知識や手順)に回します。各行について「これを消すと Claude がミスするか」と問い、そうでなければ削ります。長すぎると肝心の指示が埋もれます。コードを読めば分かること、頻繁に変わる情報、API ドキュメントの全文は入れません。git にチェックインしてチームで育てます。</p>
+  <h3>権限</h3>
+  <p>Manual モードは確認が多く、承認が惰性になりがちです。<code>/permissions</code> で信頼するツールを事前承認し、<code>/sandbox</code> でサンドボックス内のコマンドを確認なしで実行させられます。</p>
+  <p>公式ドキュメントによると、Claude Code v2.1.283 以降では、対話ターミナルと VS Code のセッションで auto mode(別の分類モデルが危険そうな操作だけを止める方式)が最初の権限モードです。それ以前のバージョンでは、Pro、Max、Team プランのみです。社内で配る際は、バージョンとプランを確認してください。</p>
+  <h3>フックと拡張</h3>
+  <p>CLAUDE.md の指示は助言ですが、フックは決定的に毎回実行されます。<code>.claude/settings.json</code> を編集して設定し、<code>/hooks</code> で確認します。繰り返し使う手順は <code>.claude/skills/</code> の <code>SKILL.md</code>、分担先は <code>.claude/agents/</code> に置けます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s4">セッション管理:早めに直し、文脈を整える</h2>
+  <p>会話は保存され、巻き戻せます。</p>
+  <ul>
+    <li><code>Esc</code> で作業を中断します。コンテキストは保たれます。</li>
+    <li><code>Esc + Esc</code> か <code>/rewind</code> で、会話やコードを以前の状態に戻せます。</li>
+    <li><code>/clear</code> で、無関係な作業の間にコンテキストをリセットします。</li>
+    <li><code>/compact Focus on the API changes</code> のように指示付きで圧縮もできます。</li>
+  </ul>
+  <p>同じ問題で2回を超えて修正しているなら、失敗した試行でコンテキストが散らかっています。<code>/clear</code> して、学んだことを入れた具体的なプロンプトでやり直します。広い調査はサブエージェントに任せると、本編の会話を汚しません。</p>
+  <p>チェックポイントが記録するのは Claude のファイル編集ツールによる変更だけです。Bash コマンドや外部プロセスの変更は記録されず、git の代わりにはなりません。中断した作業は <code>claude --continue</code> で再開でき、<code>claude --resume</code> で一覧から選べます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s5">自動化と並列実行、避けたい失敗パターン</h2>
+  <p><code>claude -p "prompt"</code> で、CI やスクリプトから非対話で実行できます。</p>
+<pre><code># One-off queries
+claude -p "Explain what this project does"</code></pre>
+  <p>並列実行には worktrees(独立した git チェックアウトで編集の衝突を避ける仕組み)などがあります。Agent view は research preview、Agent teams は experimental で既定では無効です。新しい文脈でレビューさせると、書いた直後のコードへの偏りを避けられるため、書く役とレビューする役でセッションを分ける方法も紹介されています。</p>
+  <p>多数のファイルに同じ作業を回す場合は、<code>claude -p</code> をループで呼びます。無人で動かすときは <code>--allowedTools</code> で必要なツールだけを事前承認し、<code>--permission-mode dontAsk</code> でそれ以外を拒否します。最初の2〜3ファイルで試してから全体に広げます。</p>
+  <p>指摘を探すよう頼まれたレビュー役は、健全な作業でもたいてい何かしら報告します。すべて追うと過剰設計になるので、正しさや要件に関わる指摘だけを出させます。</p>
+  <p>公式ドキュメントが挙げる失敗パターンは、無関係な作業を混ぜたキッチンシンク型のセッション、何度も修正を重ねること、長すぎる CLAUDE.md、確認なしで出荷すること、範囲を決めない調査です。</p>
+  <p>本記事は執筆時点(2026年10月)の公式ドキュメントに基づきます。導入前に最新の公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>CLAUDE.md には何を書けばよいですか?</summary>
+      <p>公式ドキュメントによると、Claude が推測できない Bash コマンド、既定と違うコードスタイル、テスト手順、ブランチ名や PR の作法、プロジェクト固有の設計判断などです。コードを読めば分かることや頻繁に変わる情報は入れません。長すぎると指示が無視されやすくなります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+    <details>
+      <summary>同じ指摘を繰り返しても Claude が直せないときは?</summary>
+      <p>同じ問題で2回を超えて修正したなら、文脈が失敗した試行で散らかっています。<code>/clear</code> して、学んだことを入れた具体的なプロンプトで始め直すと、長いセッションよりほとんどの場合で良い結果になると公式ドキュメントは述べています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+    <details>
+      <summary>チェックポイントは git の代わりになりますか?</summary>
+      <p>なりません。Claude のファイル編集ツールによる変更だけが対象で、Bash コマンドや外部プロセスによる変更は記録されないと公式ドキュメントに書かれています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md テンプレート生成</a>: 用途と守ってほしいことを選ぶと、短い CLAUDE.md のひな形を出力します。最初の数行を決めるときに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-common-workflows/index.html">Claude Code の使い方の例:公式の作業レシピと基本ワークフロー</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-output-styles/index.html">Claude Code の出力スタイル(output styles)とは:変え方と作り方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

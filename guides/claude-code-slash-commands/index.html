@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド | 中小DXラボ</title>
+<meta name="description" content="Claude Code のスラッシュコマンドの入力ルールと、初回設定・作業中・出荷前・トラブル時の主なコマンドを、公式ドキュメントに沿って整理します。表示条件の注意点も扱います。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド">
+<meta property="og:description" content="Claude Code のスラッシュコマンドの入力ルールと、初回設定・作業中・出荷前・トラブル時の主なコマンドを、公式ドキュメントに沿って整理します。表示条件の注意点も扱います。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-slash-commands.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-slash-commands.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド",
+  "description": "Claude Code のスラッシュコマンドの入力ルールと、初回設定・作業中・出荷前・トラブル時の主なコマンドを、公式ドキュメントに沿って整理します。表示条件の注意点も扱います。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "スラッシュコマンド一覧",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">スラッシュコマンド一覧</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、スラッシュコマンドは Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)をセッションの中から操作する仕組みです。<code>/</code> を入力すると、自分が使えるコマンドが表示されます。</li>
+      <li>一覧は作業の流れで覚えるのが現実的です。初回設定は <code>/init</code>、作業中は <code>/plan</code> や <code>/compact</code>、出荷前は <code>/diff</code> や <code>/code-review</code>、困ったときは <code>/rewind</code> や <code>/doctor</code> が入口になります。</li>
+      <li>すべてのコマンドが全員に表示されるわけではありません。プラン、プラットフォーム、環境、バージョンで変わるため、社内で配る前に実機の <code>/</code> メニューと公式ドキュメントで確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">スラッシュコマンドでできることと入力のルール</h2>
+  <p>以下は執筆時点(2026年10月)の公式ドキュメントの内容を整理したもので、私が実機で試した結果ではありません。公式ドキュメントによると、コマンドはセッションの中から Claude Code を操作するためのもので、モデルの切り替え、権限の管理、コンテキスト(AI が会話の中で参照する内容)の整理、ワークフローの実行などを手早く行えます。</p>
+  <p><code>/</code> を入力すると使えるコマンドが表示され、続けて文字を入力すると絞り込めます。次の点を押さえておくと迷いません。</p>
+  <ul>
+    <li>コマンドはメッセージの先頭にあるときだけ認識され、コマンド名の後ろの文字列は引数になります。</li>
+    <li>スキル(自作できるコマンド)は例外です。<code>/skill-a /skill-b do XYZ</code> のように続けると、先頭に並べたスキルを読み込み、後ろの文章を各スキルに引数として渡します。連結できるのは6つまでです。</li>
+    <li>Claude の応答中に送ったコマンドは、現在のターンの終了後に実行されます。ただし <code>/status</code>、<code>/tasks</code>、<code>/usage</code> などは応答を止めずに即時に実行されます。</li>
+    <li>フルスクリーン表示では、<code>/theme</code> や <code>/help</code> などのダイアログ系コマンドも即時に開きます。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s2">作業の流れごとの主なコマンド(初回設定から並列実行まで)</h2>
+  <h3>リポジトリで最初に使う</h3>
+  <p><code>/init</code> で <code>CLAUDE.md</code>(プロジェクト向けの案内ファイル)のひな形を作り、<code>/memory</code> で整えます。<code>/mcp</code> で必要な MCP サーバーを設定し、<code>/permissions</code> で承認ルールを決めます。サブエージェント(補助作業を任せる別のエージェント)は、Claude に作成を頼みます。</p>
+  <h3>作業中</h3>
+  <p>大きな変更の前は <code>/plan</code> で計画モードに入ります。<code>/plan fix the auth bug</code> のように説明を付けると、計画モードに入ってすぐその作業を始めます。<code>/model</code> はモデルの切り替えで、新しいセッションの既定としても保存されます。現在のセッションだけ切り替えたい場合は、引数なしで開いた選択画面で <code>s</code> を押します。<code>/effort</code> は推論の度合いの調整です。会話が長くなったら <code>/context</code> で何が占めているかを確認し、<code>/compact</code> で要約して空きを作ります。<code>/btw</code> は、会話履歴に加えたくない横道の質問に使います。</p>
+  <h3>並列で進める</h3>
+  <p><code>/tasks</code> は現在のセッションのバックグラウンド作業を一覧します。<code>/background</code> はセッション全体を切り離して動かし続け、端末を空けます。<code>/batch</code> はコードベース全体にわたる大きな変更を独立した単位に分け、計画の承認後に、それぞれ別のワークツリーで実行します。git リポジトリか、ワークツリーを作る <code>WorktreeCreate</code> フックが必要です。例は <code>/batch migrate src/ from JavaScript to TypeScript</code> です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s3">出荷前とセッション間で使うコマンド</h2>
+  <p>公式ドキュメントでは、出荷前は <code>/diff</code> で変更を確認し、<code>/code-review</code> で現在の差分の正しさに関するバグを調べる流れが示されています。<code>--fix</code> を付けると指摘を適用でき、<code>/code-review high 1234</code> のように PR 番号を渡すとプルリクエストをレビューします。<code>/review</code> は別名です。<code>/code-review ultra</code> はクラウドで複数エージェントによるレビューを行います。<code>/ultrareview</code> の説明には、Pro と Max で無料実行が3回含まれ、その後は利用クレジットが必要とあります。<code>/security-review</code> は現在のブランチの変更を脆弱性の観点で調べ、<code>origin</code> リモートが必要です。</p>
+  <h3>セッション間の移動</h3>
+  <ul>
+    <li><code>/clear</code>: プロジェクトのメモリを保ったまま、新しい作業を始めます。</li>
+    <li><code>/resume</code>: 以前の会話に戻ります。</li>
+    <li><code>/branch</code>: 現在の会話を分岐させ、別の方向を試せます。元の会話は <code>/resume</code> で戻れます。</li>
+    <li><code>/fork</code>: 会話を新しいバックグラウンドセッションにコピーします。</li>
+    <li><code>/teleport</code>: クラウドのセッションをこの端末に取り込みます。claude.ai のサブスクリプションが必要です。</li>
+    <li><code>/remote-control</code>: このローカルセッションを別の端末から続けられます。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s4">困ったときのコマンド</h2>
+  <p><code>/rewind</code> は、コードと会話をチェックポイントまで戻すか、会話の一部を要約します。<code>/doctor</code> はインストールや設定、<code>CLAUDE.md</code> の問題を診断し、修正案を示します。修正は確認後に Claude が適用します。<code>/debug</code> は実行時の問題を診断します。デバッグログは既定でオフのため、セッションの途中で実行すると、その時点からの記録になります。<code>/feedback</code> は、セッションの情報を付けてバグを報告します。送信前に同意画面があり、含める履歴の量を選べます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s5">社内で配る前に確認したい注意点</h2>
+  <ul>
+    <li>表示は人によって変わります。公式ドキュメントでは、<code>/desktop</code> は Claude サブスクリプションでサインインした macOS と x64 Windows でのみ表示され、<code>/upgrade</code> は Enterprise プランでは表示されないと例示されています。使えないコマンドはメニューに出ません。</li>
+    <li>バージョン条件があるものがあります。たとえば <code>/output-style</code> は v2.1.269 以降が必要です。</li>
+    <li>廃止されたものがあります。<code>/vim</code> は v2.1.92 で削除され、<code>/config</code> の Editor mode を使います。<code>/ultraplan</code> は削除済みで、計画モードを使います。</li>
+    <li>打ち間違いに注意してください。何もハイライトされず、<code>Enter</code> を押すと入力のまま送信されて Unknown command になります。</li>
+    <li><code>/heapdump</code> のように、メニューに出ない隠しコマンドがあります。全名を入力すると実行されます。不具合を報告するときは <code>-diagnostics.json</code> だけを添付してください。<code>.heapsnapshot</code> は会話の全体と認証情報を含むため、共有しないでください。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>一覧にあるコマンドが自分の画面に出ないのはなぜですか?</summary>
+      <p>公式ドキュメントによると、利用できるコマンドはプラットフォーム、プラン、環境によって変わります。利用できないコマンドはメニューから外れ、一致するものがないと <code>No commands match "/name"</code> と表示されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+    <details>
+      <summary>自社用のコマンドを追加できますか?</summary>
+      <p>公式ドキュメントでは、自分のコマンドはスキルで追加すると案内されています。また、MCP サーバーが公開するプロンプトもコマンドとして表示されます。手順の詳細は公式ドキュメントで確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+    <details>
+      <summary><code>/clear</code> と <code>/compact</code> はどう使い分けますか?</summary>
+      <p><code>/clear</code> は空のコンテキストで新しい会話を始め、前の会話は <code>/resume</code> で戻れます。同じ会話を続けながら空きを作りたいときは、会話を要約する <code>/compact</code> を使います。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a>: スキル名・説明・手順・出力の形を入れると、置き場所つきで SKILL.md のひな形を出力します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">Claude Code のプラグインの入れ方と、マーケットプレイスを選ぶときの注意</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-features-overview/index.html">Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>

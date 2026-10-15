@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の会話データは学習に使われるか:保存期間と設定の確認先 | 中小DXラボ</title>
+<meta name="description" content="Claude Code の会話データが学習に使われる条件を、個人向けと商用のプラン別に整理します。保存期間、ゼロデータ保持、フィードバック送信の注意点と確認先も公式ドキュメントに基づいてまとめます。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の会話データは学習に使われるか:保存期間と設定の確認先">
+<meta property="og:description" content="Claude Code の会話データが学習に使われる条件を、個人向けと商用のプラン別に整理します。保存期間、ゼロデータ保持、フィードバック送信の注意点と確認先も公式ドキュメントに基づいてまとめます。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-data-usage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の会話データは学習に使われるか:保存期間と設定の確認先">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-data-usage.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の会話データは学習に使われるか:保存期間と設定の確認先",
+  "description": "Claude Code の会話データが学習に使われる条件を、個人向けと商用のプラン別に整理します。保存期間、ゼロデータ保持、フィードバック送信の注意点と確認先も公式ドキュメントに基づいてまとめます。",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code のデータと保存期間",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/"
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code のデータと保存期間</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の会話データは学習に使われるか:保存期間と設定の確認先</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>個人向けプラン(Free・Pro・Max)では、データを将来のモデル改善に使うかを選ぶ設定があり、オンの間は Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の利用分も学習に使われます。</li>
+      <li>商用プラン(Team・Enterprise・API など)では、商用条件の下で送られたコードやプロンプトは、顧客がモデル改善への提供を選んだ場合を除き、生成モデルの学習に使われません。</li>
+      <li>保存期間は、個人向けで許可ありなら5年、許可なしなら30日、商用の標準は30日です。ゼロデータ保持は Enterprise の適格アカウントに別途有効化されるもので、標準では含まれません。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">学習に使われるかはプランで決まります</h2>
+  <p>本記事は、執筆時点(2026年10月)の公式ドキュメント「Data usage」の内容を整理したものです。実機で試した結果ではありません。</p>
+  <h3>個人向け(Free・Pro・Max)</h3>
+  <p>公式ドキュメントによると、Free、Pro、Max のアカウントでは、データを将来の Claude モデルの改善に使ってよいかを利用者が選べます。この設定がオンの場合、これらのアカウントで Claude Code を使ったときのデータも、新しいモデルの学習に使われます。</p>
+  <h3>商用(Team・Enterprise・API など)</h3>
+  <p>Team と Enterprise、API、サードパーティのプラットフォーム、Claude Gov は商用の扱いです。公式ドキュメントでは、商用条件の下で Claude Code に送られたコードやプロンプトで Anthropic が生成モデルを学習することはないとされています。ただし、顧客自身がモデル改善のためにデータを提供すると選んだ場合は例外です。</p>
+  <p>例外の例が Development Partner Program です。組織の管理者が明示的に参加を選ぶ仕組みで、Anthropic 直接の API だけが対象です。Amazon Bedrock や Google Cloud の Agent Platform の利用者は対象外です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s2">保存期間:個人向けは5年か30日、商用は標準30日</h2>
+  <p>公式ドキュメントでは、Anthropic は Claude Code のデータをアカウントの種類と設定に応じて保存するとされています。</p>
+  <h3>個人向け(Free・Pro・Max)</h3>
+  <ul>
+    <li>モデル改善への利用を許可している場合:5年間(モデル開発と安全性向上のため)</li>
+    <li>許可していない場合:30日間</li>
+    <li>プライバシー設定はいつでも変更できます。</li>
+  </ul>
+  <h3>商用(Team・Enterprise・API)</h3>
+  <ul>
+    <li>標準:30日間</li>
+    <li>ゼロデータ保持:Claude for Enterprise の Claude Code で、適格なアカウントが対象です。標準の Enterprise プランには含まれず、アカウントチームが適格性を確認したうえで組織ごとに有効化されます。</li>
+    <li>ローカルキャッシュ:Claude Code のクライアントは、セッションの記録を <code>~/.claude/projects/</code> に平文で、標準では30日間保存します。セッション再開のためで、期間は <code>cleanupPeriodDays</code> で調整できます。Claude Desktop や Cowork で開始または直近に続けたセッションの記録は、標準ではこの期限の対象外です。</li>
+  </ul>
+  <p>クラウドセッションは個別にいつでも削除でき、削除するとセッションのイベントデータが完全に削除されます。ローカルに平文で残る点は、端末の管理方針を考える材料になります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s3">設定の確認先と、社内で確認する順番</h2>
+  <p>個人向けのプライバシー設定は、公式ドキュメントにリンクされている設定ページで、いつでも変更できます。詳しい条件は、商用向け(Team、Enterprise、API)の Commercial Terms of Service、個人向け(Free、Pro、Max)の Consumer Terms、Privacy Policy、Privacy Center で確認するよう案内されています。</p>
+  <ol>
+    <li>利用するアカウントのプラン(個人向けか商用か)を確認する。</li>
+    <li>個人向けなら、モデル改善への利用の設定を確認する。</li>
+    <li>商用なら、Development Partner Program に組織として参加していないかを管理者に確認する。</li>
+    <li>ゼロデータ保持が必要なら、アカウントチームに適格性を相談する。</li>
+  </ol>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s4">フィードバックやアンケートで送られるデータ</h2>
+  <p>学習の設定とは別に、利用者の操作や設定で送られるデータがあります。</p>
+  <ul>
+    <li><code>/feedback</code>:会話履歴(コードを含む)のコピーが Anthropic に送られます。ただし Amazon Bedrock や Google Cloud の Agent Platform などのサードパーティのプロバイダーを使う場合や、Anthropic の認証情報を設定していない場合は、Anthropic には送られず <code>~/.claude/feedback-bundles/</code> にローカルの書庫として書き出されます。<code>/bug</code> と <code>/share</code> も同じ経路で、これらで共有した記録は5年間保存されます。送信前に、現在のセッションだけ(既定)か、同じプロジェクトの過去24時間または7日分も含めるかを選べます。止めるには <code>DISABLE_FEEDBACK_COMMAND=1</code> を設定します。</li>
+    <li>セッション品質アンケート:評価だけが記録されます。続く「セッション記録を見てよいか」の確認で「Yes」を選んだときだけ、会話記録がアップロードされ、最長6か月保存されます(Amazon Bedrock、Google Cloud の Agent Platform、Microsoft Foundry、サインイン済みの Claude apps gateway のセッションでは、アップロードされず <code>~/.claude/feedback-bundles/</code> にローカルの書庫として書き出されます)。既知の API キーやトークンのパターンは伏せられますが、ソースコードやファイルの内容はそのまま送られます。回答は学習の設定に影響せず、モデルの学習にも使えないとされています。無効化は <code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1</code> です。</li>
+    <li>テレメトリ(利用状況の指標):遅延、信頼性、利用パターンが送られ、コード、プロンプト、ファイルパスは含まれません。止めるには <code>DISABLE_TELEMETRY=1</code> を設定します。</li>
+  </ul>
+  <p>Amazon Bedrock、Microsoft Foundry などを使う場合は、テレメトリ、エラー報告、バグ報告は既定で無効ですが、セッション品質アンケートは例外で動きます。<code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> を設定すると、アンケートを含む非必須の通信をまとめて止められます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s5">ゼロデータ保持(ZDR)の範囲と注意点</h2>
+  <p>公式ドキュメントによると、ZDR を有効にすると、Claude Code のセッションで生成されるプロンプトとモデルの応答はリアルタイムで処理され、応答が返された後は Anthropic に保存されません。法令遵守や悪用対策に必要な場合は例外です。</p>
+  <ul>
+    <li>対象は Claude for Enterprise の適格アカウントです。標準プランには含まれず、管理画面からは有効化できません。営業窓口か Anthropic のアカウントチームに連絡します。</li>
+    <li>有効化は組織ごとです。同じアカウントで新しく作った組織には自動で適用されません。</li>
+    <li>ZDR の組織にログインしたセッションだけが対象です。個人アカウントや別組織の API キーで使った分は対象外で、<code>forceLoginMethod</code> と <code>forceLoginOrgUUID</code> の管理設定でログインを制限できます。</li>
+    <li>Anthropic の直接のプラットフォームだけが対象です。Amazon Bedrock などは各プラットフォームのポリシーを確認します。</li>
+    <li>対象外:claude.ai のチャット、Cowork、Claude Code Analytics、ユーザーと席の管理データ、サードパーティ連携。</li>
+    <li>自動で無効になる機能:クラウドセッション、Claude Tag、Artifacts、<code>/feedback</code>・<code>/bug</code>・<code>/share</code>、Remote Control。</li>
+  </ul>
+  <p>ポリシー違反としてフラグが付いたセッションは、入出力が最長2年保持されることがあります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>個人の Pro プランで Claude Code を使うと、会話は学習に使われますか?</summary>
+      <p>データをモデル改善に使うかの設定がオンの場合は、Claude Code の利用分も含めて新しいモデルの学習に使われます。設定は公式ドキュメントにリンクされたプライバシー設定のページでいつでも変更できます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+    </details>
+    <details>
+      <summary>学習を許可しない場合、データはどれくらい保存されますか?</summary>
+      <p>個人向けプランでは30日間です。許可している場合は5年間です。商用プランの標準は30日間で、ゼロデータ保持は適格な Enterprise アカウントに別途有効化されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+    </details>
+    <details>
+      <summary>Enterprise プランに入れば、ゼロデータ保持は使えますか?</summary>
+      <p>標準では使えません。標準の Enterprise プランには含まれず、管理画面からも有効化できません。適格性の確認後、Anthropic が組織ごとに有効化します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a>(公式ドキュメント)</li>
+    <li><a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-injection/index.html">Claude Code のセキュリティの仕組みとプロンプトインジェクション対策</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲</a><span class="tag">解説</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
+      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+</body>
+</html>
