@@ -35,6 +35,38 @@
   "publisher": { "@type": "Organization", "name": "中小DXラボ" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "スキルが一覧に出ません",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": ".claude/skills/<名前>/SKILL.md の位置と、先頭行が --- で始まっているかを確かめ、claude plugin validate .claude/skills を実行してください。ほかのつまずきは つまずき早見表 にまとめています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "スキルが自動で使われません",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "description の言葉と、頼み方の言葉が合っていないことがあります。「いつ使うか」に、利用者がふだん使う言葉を足してください。/スキル名 で直接呼ぶこともできます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "入力した内容はどこかに送られますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。閲覧数を数えるため、開いたページの URL だけを運営者のサーバに送ります(Cookie や外部の解析サービスは使いません。詳しく)。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -47,6 +79,7 @@
       <a href="../troubleshooting/index.html">つまずき早見表</a>
       <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../guides/index.html">解説</a>
+      <a href="../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -155,6 +188,15 @@
     </details>
   </section>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
@@ -163,8 +205,6 @@
       <li class="more-guide"><a href="../guides/claude-code-slash-commands/index.html">解説: Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-plugins/index.html">解説: Claude Code のプラグインの入れ方と、マーケットプレイスを選ぶときの注意</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-features-overview/index.html">解説: Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け</a><span class="tag">解説記事(このサイト)</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">例の元になった業務スキル5本(議事録の要約・Excel 集計スクリプトの依頼・手順書の下書き・問い合わせ回答の下書き・週報のたたき台)の SKILL.md 全文と、実機での確認結果をまとめています。</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
       <li><a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a><span class="tag">無料ツール</span></li>
       <li><a href="../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a><span class="tag">無料ツール</span></li>
       <li><a href="../troubleshooting/index.html">Claude Code つまずき早見表</a><span class="tag">無料ツール</span></li>
@@ -183,6 +223,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報とツールの出力は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認し、手元の環境で動作を確かめてください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

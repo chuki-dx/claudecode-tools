@@ -35,6 +35,54 @@
   "publisher": { "@type": "Organization", "name": "中小DXラボ" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "settings.json はどこに置けばよいですか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "業務フォルダ(Claude Code を起動するフォルダ)の .claude/settings.json です。Git で共有すれば、同じフォルダを使う全員に同じルールを配れます。個人だけの設定は .claude/settings.local.json、全プロジェクト共通の個人設定は ~/.claude/settings.json です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "deny に入れたのに読めてしまいました",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "スクリプトの中でファイルを開く場合など、Claude Code がファイルの読み取りと認識できない方法には deny が効きません。上の「既知の限界」をご覧ください。まずは /permissions でルールが読み込まれているかを確認してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "allow に入れたコマンドで確認が出ます",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "プロジェクトの allow ルールは、そのフォルダで信頼の確認を承認するまで使われません。対話の画面で一度 claude を起動して承認してください。deny と ask は承認と関係なく効きます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "入力した内容はどこかに送られますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。閲覧数を数えるため、開いたページの URL だけを運営者のサーバに送ります(Cookie や外部の解析サービスは使いません。詳しく)。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "「個別には未確認」のルールは使わないほうがよいですか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "書き方は公式ドキュメントと実機で確認したルールにそろえていますが、そのルール自体で止まるかは試していません。配る前に、ダミーのファイルやコマンドで止まることを手元で確かめてから使うことをおすすめします。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -47,6 +95,7 @@
       <a href="../troubleshooting/index.html">つまずき早見表</a>
       <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../guides/index.html">解説</a>
+      <a href="../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -169,6 +218,15 @@
     </details>
   </section>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
@@ -177,8 +235,6 @@
       <li class="more-guide"><a href="../guides/claude-code-mcp-scopes/index.html">解説: Claude Code の MCP 設定:local・project・user の違いと .mcp.json</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-permission-modes/index.html">解説: Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-data-usage/index.html">解説: Claude Code の会話データは学習に使われるか:保存期間と設定の確認先</a><span class="tag">解説記事(このサイト)</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span><br><span class="hint">このツールの元になった settings.json 全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本、配置スクリプトをまとめています。</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
       <li><a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a><span class="tag">無料ツール</span></li>
       <li><a href="../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a><span class="tag">無料ツール</span></li>
       <li><a href="../troubleshooting/index.html">Claude Code つまずき早見表</a><span class="tag">無料ツール</span></li>
@@ -197,6 +253,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報とツールの出力は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。社内に配る前に、公式ドキュメントで最新の情報を確認し、手元の環境で動作を確かめてください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

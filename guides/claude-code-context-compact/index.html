@@ -66,6 +66,38 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "コンテキストが一杯になるとセッションは止まりますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、上限に近づくと自動で圧縮されるため、満杯でもセッションは終わりません。自動圧縮は /compact と同じ流れで動き、走る位置はモデルと設定で変わります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "圧縮すると CLAUDE.md の指示は消えますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "プロジェクトルートの CLAUDE.md はディスクから再注入されます。一方、paths: frontmatter 付きのルールやサブディレクトリの CLAUDE.md は、圧縮で要約され、必要になった時点で再読み込みされます。圧縮後も残したいルールは、paths: を外すか、プロジェクトルートの CLAUDE.md に移します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "圧縮で残す内容を指定できますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "/compact に指示を付けて実行できます。たとえば /compact focus on the auth bug fix のようにすると、自動圧縮が重要と推測する内容ではなく、選んだ内容が要約に残ります。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -78,6 +110,7 @@
       <a href="../../troubleshooting/index.html">つまずき早見表</a>
       <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -187,14 +220,21 @@
   <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
   </article>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
       <li><a href="../claude-code-prompt-caching/index.html">Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-model-select/index.html">Claude Code のモデルの選び方と切り替え方(/model と設定)</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -210,6 +250,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

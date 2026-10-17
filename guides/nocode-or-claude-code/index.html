@@ -66,6 +66,38 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "現場に渡すツールをコードで作ると、どんな困りごとが出ますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "中小DXラボの記事では、ちょっとした変更のたびに情シスへ依頼が来ると説明されています。そのため、作る速さよりも、直す人の手が届くかで選ぶのがポイントとされています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "条件分岐や例外が増える業務は、なぜコードが向くのですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ノーコードは分岐が増えると、画面上で全体を追いにくくなりがちだからです。コードなら、変更した箇所と理由を履歴として残せるので、いつ、なぜ条件が増えたのかをあとから確認できると説明されています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Claude Code を社内に広げるときは、どんな順番で進めればよいですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "兼任情シスの振り返り記事では、最初は自分の作業だけで使い、社内に広げる前にルールを決める順番にしていると書かれています。広げ方としては、まず1部署・1業務で小さく試し、効果と手間を記録してから次に広げるかを決める方法が紹介されています。ルールの具体的な中身は出典に書かれていないため、公式ドキュメントなどで確認してください。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -78,6 +110,7 @@
       <a href="../../troubleshooting/index.html">つまずき早見表</a>
       <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -196,14 +229,21 @@
   <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
   </article>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+    <li><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
       <li><a href="../claude-code-first-week/index.html">Claude Code を入れて最初の1週間にやること(兼任の情シス向け)</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-output-styles/index.html">Claude Code の出力スタイル(output styles)とは:変え方と作り方</a><span class="tag">解説</span></li>
       <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -219,6 +259,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>情シス向け Claude Code の本・有料記事 — 目的別の選び方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code を社内で使う情シス・社内SE向けに、中小DXラボの Zenn の本と note の有料記事を目的別(稟議・セキュリティ・配布・研修・費用)に整理しました。価格と、購入前に無料で読める範囲を載せています。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/books/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="情シス向け Claude Code の本・有料記事 — 目的別の選び方">
+<meta property="og:description" content="稟議・セキュリティ・配布・研修・費用の目的別に、Zenn の本と note の有料記事を整理。価格と無料で読める範囲つき。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/books/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/books.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="情シス向け Claude Code の本・有料記事 — 目的別の選び方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/books.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://chuki-dx.github.io/claudecode-tools/" },
+    { "@type": "ListItem", "position": 2, "name": "本・有料記事", "item": "https://chuki-dx.github.io/claudecode-tools/books/" }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../guides/index.html">解説</a>
+      <a href="index.html" aria-current="page">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../index.html">ホーム</a></li>
+      <li aria-current="page">本・有料記事</li>
+    </ol>
+  </nav>
+
+  <h1>情シス向け Claude Code の本・有料記事 — 目的別の選び方</h1>
+  <p class="lead">このサイトの無料ツール・解説の元になった内容を、社内で使える形(設定ファイル・ひな形・スクリプト・手順)にまとめた有料コンテンツです。どれも購入前に無料部分で中身を確かめられます。</p>
+
+  <section class="card summary-box" aria-labelledby="first-heading">
+    <h2 id="first-heading">迷ったら</h2>
+    <p>導入の最初から社内展開までを順番に知りたい方は、Zenn の本から読むのがおすすめです。はじめに〜第2章(試す前の確認・最初の1週間)は無料で読めます。決まった場面だけを手早く片づけたい方は、下の目的別の記事を選んでください。</p>
+    <ul class="offer-list">
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  </section>
+
+  <h2 id="ringi">上司・決裁者に導入を通したい</h2>
+  <p>稟議で聞かれる費用・リスク・試行範囲の示し方。費用の根拠には、使用量の見積もりも使えます。無料で試せるもの: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>、<a href="../guides/claude-code-company-checklist/index.html">社内で試す前に確認すること</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></li>
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+  </ul>
+
+  <h2 id="security">業務情報の扱い・セキュリティのルールを決めたい</h2>
+  <p>学習に使わせない設計と、権限設定(deny / ask / allow)で止められる範囲。無料で試せるもの: <a href="../settings-generator/index.html">権限設定ジェネレーター</a>、<a href="../guides/claude-code-data-usage/index.html">会話データは学習に使われるか</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n2e750e4913b1" rel="noopener">Claude Code に業務情報を学習させないための設計パターン</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">規約・データ・設定の3層で決める項目の一覧、設定ファイルの例、確認用スクリプト、社内ルールのひな形をまとめています。(無料部分で考え方と確認先を確認できます)</span></li>
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+  </ul>
+
+  <h2 id="kit">チームに同じ設定を配りたい</h2>
+  <p>権限設定・CLAUDE.md・業務スキルを、配布できる形でそろえたい方向け。無料で試せるもの: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a>、<a href="../skill-generator/index.html">スキル雛形生成</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+  </ul>
+
+  <h2 id="training">総務・経理など非エンジニアに使ってもらいたい</h2>
+  <p>架空のデータで練習し、条件で正解を判定する研修の進め方。無料で試せるもの: <a href="../troubleshooting/index.html">つまずき早見表</a>、<a href="../guides/claude-code-training-nonengineers/index.html">非エンジニアに教えるときの進め方</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">練習用フォルダを作るセットアップスクリプト、課題10本(依頼文・正しい結果の条件・つまずきと講師の返し)、講師用の進行表、つまずき対応表をまとめています(Windows)。(無料部分で研修の組み立てとキットの中身を確認できます)</span></li>
+  </ul>
+
+  <h2 id="cost">部署で使ったときの月額を見積もりたい</h2>
+  <p>ログからの使用量の集計と、上限・モデルのルールの決め方。無料で試せるもの: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a>、<a href="../guides/claude-code-usage-monitoring/index.html">利用状況を把握する方法</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+  </ul>
+
+  <h2 id="scripts">日々の運用のスクリプトを手早くそろえたい</h2>
+  <p>台帳の突き合わせやログの集計など、情シスの定常業務のスクリプトを依頼文・確かめ方つきで。無料で試せるもの: <a href="../guides/claude-code-excel-automation/index.html">Excel の手作業の集計をスクリプトに置き換える手順</a>。</p>
+  <ul class="offer-list">
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+
+  <p class="hint">価格は各販売ページの表示が正です。note の記事は note で、Zenn の本は Zenn で購入できます(このサイトでは販売・決済をしていません)。</p>
+
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: 各記事・本の内容は、執筆時点で確認した範囲のものです。Claude Code の仕様や料金は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。</p>
+  </div>
+</footer>
+<script src="../assets/count.js" defer></script>
+</body>
+</html>

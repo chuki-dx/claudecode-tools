@@ -45,6 +45,38 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "/usage に出る金額は、そのまま請求額ですか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは見積もりとされています。API の請求の正式な値は Claude Console の使用量ページで確かめます。サブスクの場合は請求と関係しません。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "円での金額はどう出しますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "料金は USD で決まっています。見積もりの日の為替レートを掛けて円にし、資料には使ったレートと日付も書いておきます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "サブスクの利用枠はトークン何件分ですか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "執筆時点の公式の料金ページでは、プランの利用枠は「Pro の何倍」という相対的な書き方で、トークン数では示されていません。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -57,6 +89,7 @@
       <a href="../../troubleshooting/index.html">つまずき早見表</a>
       <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -190,12 +223,20 @@
   <p class="hint">料金は変わることがあります。見積もりの前に、公式ページで最新の単価を確認してください。</p>
   </article>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
       <li><a href="../claude-code-permissions-basics/index.html">Claude Code の権限設定(deny/ask/allow)の基本</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-windows-pitfalls/index.html">Windows で Claude Code を使うときのつまずき10選と対処</a><span class="tag">解説</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -211,6 +252,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様や料金は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

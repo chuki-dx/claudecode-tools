@@ -35,6 +35,46 @@
   "publisher": { "@type": "Organization", "name": "中小DXラボ" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1日あたりのトークン数はどうやって調べますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "API で契約している場合は、Claude Console の使用量ページで確認できます。試験期間などで管理画面がない場合は、Claude Code が PC 内に保存している会話の記録にトークン数が残っているので、それを集計する方法があります。集計スクリプトと手順は下の有料記事で解説しています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Pro や Max、Team のプランだといくらになりますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "サブスクは月額・席単位の料金で、この計算機の対象外です。プランの利用枠がトークン何件分にあたるかは、執筆時点で公式ページから確認できませんでした。プランの料金は公式の料金ページで確認してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "為替レートの初期値が空なのはなぜですか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "レートは日々変わるため、古い値で円の金額が出ないよう空欄にしています。見積もり当日のレートを入れてください。計算の流れを見るだけなら「例として 150 を入れる」を使えます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "入力した数字はどこかに送られますか",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "送られません。計算はブラウザの中だけで行います。閲覧数を数えるため、開いたページの URL だけを運営者のサーバに送ります(Cookie や外部の解析サービスは使いません。詳しく)。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -47,6 +87,7 @@
       <a href="../troubleshooting/index.html">つまずき早見表</a>
       <a href="../cost-calculator/index.html" aria-current="page">API 料金 見積もり計算機</a>
       <a href="../guides/index.html">解説</a>
+      <a href="../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -197,6 +238,15 @@
     </details>
   </section>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
@@ -205,8 +255,6 @@
       <li class="more-guide"><a href="../guides/claude-code-prompt-caching/index.html">解説: Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-context-compact/index.html">解説: Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか</a><span class="tag">解説記事(このサイト)</span></li>
       <li class="more-guide"><a href="../guides/claude-code-model-select/index.html">解説: Claude Code のモデルの選び方と切り替え方(/model と設定)</a><span class="tag">解説記事(このサイト)</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">有料記事・980円(note)</span><br><span class="hint">手元のログからトークン数を集計するスクリプト(標準ライブラリのみ)、メンバーから集めて月額を出す Excel のひな形、上限とモデルのルールの決め方をまとめています。</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span><br><span class="hint">試す前の確認から、稟議・セキュリティ設定・社内展開までを順番にまとめた本です。</span></li>
       <li><a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a><span class="tag">無料ツール</span></li>
       <li><a href="../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a><span class="tag">無料ツール</span></li>
       <li><a href="../troubleshooting/index.html">Claude Code つまずき早見表</a><span class="tag">無料ツール</span></li>
@@ -225,6 +273,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの単価と計算結果は、執筆時点で確認した範囲の目安です。実際の請求額とは異なることがあります。契約や予算の判断の前に、公式の料金ページで最新の情報を確認してください。ツールの利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>

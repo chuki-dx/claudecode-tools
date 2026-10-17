@@ -66,6 +66,38 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "プラグインを使わず、スキルだけ入れることはできますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "できます。公式ドキュメントによると、スキル、サブエージェント、フック、MCP サーバーはプラグインなしでも単体で動きます。例として、~/.claude/skills/ に保存したスキルは、そのマシンの全プロジェクトで使えます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "知人から届いたインストールコマンドの @ 以降が claude-plugins-official ではないときは?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは、先にそのマーケットプレイスを追加するよう案内しています。/plugin marketplace add に取得元を続けて実行し、追加してから入れてください。同僚や自社が公開するものはサードパーティ扱いなので、入れる前の確認が必要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "使わないプラグインを一時的に止めるには?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "アンインストールせずに無効化できます。/plugin から、またはシェルで claude plugin disable を使います。Installed タブの Not used recently で、使っていないプラグインを探せます。"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -78,6 +110,7 @@
       <a href="../../troubleshooting/index.html">つまずき早見表</a>
       <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
       <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
     </nav>
   </div>
 </header>
@@ -184,14 +217,21 @@
   <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
   </article>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">関連する解説</h2>
     <ul>
       <li><a href="../claude-code-features-overview/index.html">Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-slash-commands/index.html">Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-skills-intro/index.html">Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる</a><span class="tag">解説</span></li>
-      <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">有料記事・1,480円(note)</span></li>
-      <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">有料の本・2,500円(Zenn、第2章まで無料)</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -207,6 +247,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
     <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
     <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
   </div>
