@@ -19,6 +19,9 @@
 <meta property="og:image:alt" content="CLAUDE.md テンプレート生成">
 <meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/claude-md-generator.png">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f7f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b12" media="(prefers-color-scheme: dark)">
+<script>(function(){try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)document.documentElement.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
 <link rel="stylesheet" href="../assets/style.css">
 <script type="application/ld+json">
 {
@@ -68,10 +71,10 @@
 }
 </script>
 </head>
-<body>
+<body class="pg-tool">
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="../index.html">中小DXラボ のツール</a>
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
     <nav aria-label="ツール">
       <a href="../settings-generator/index.html">権限設定ジェネレーター</a>
       <a href="../claude-md-generator/index.html" aria-current="page">CLAUDE.md 生成</a>
@@ -81,6 +84,7 @@
       <a href="../guides/index.html">解説</a>
       <a href="../books/index.html">本・有料記事</a>
     </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   </div>
 </header>
 
@@ -88,8 +92,10 @@
   <h1>CLAUDE.md テンプレート生成</h1>
   <p class="lead">Claude Code に毎回読ませる説明書き(CLAUDE.md)のひな形を、選ぶだけで作ります。最初の3行版にも切り替えられます。入力した内容はブラウザの外に送りません。</p>
 
-  <section class="card" aria-labelledby="tool-heading">
+  <section class="card tool-panel" aria-labelledby="tool-heading">
     <h2 id="tool-heading" class="visually-hidden">内容を選ぶ</h2>
+    <div class="tool-grid">
+    <div class="tool-input">
     <form id="md-form" novalidate>
       <fieldset>
         <legend>版</legend>
@@ -152,6 +158,8 @@
         </fieldset>
       </div>
     </form>
+    </div>
+    <div class="tool-output">
 
     <h3 id="out-heading">生成された CLAUDE.md</h3>
     <p id="md-status" class="status" role="status" aria-live="polite">JavaScript を有効にすると、ここに結果が表示されます。</p>
@@ -162,6 +170,8 @@
       <button type="button" id="md-download" class="secondary">CLAUDE.md を保存</button>
     </div>
     <p id="md-copy-msg" class="hint" role="status" aria-live="polite"></p>
+    </div>
+    </div>
   </section>
 
   <section aria-labelledby="about-heading">
@@ -256,6 +266,7 @@
 
 <script src="../assets/claude-md-generator.js"></script>
 <script src="../assets/claude-md-generator-ui.js"></script>
+<script src="../assets/ui.js" defer></script>
 <script src="../assets/count.js" defer></script>
 </body>
 </html>
