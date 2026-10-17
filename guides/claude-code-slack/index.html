@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code を Slack から使う方法:設定の流れ・権限・制限 | 中小DXラボ</title>
+<meta name="description" content="Claude Code の Slack 連携を公式ドキュメントをもとに整理します。対象プラン、設定の手順、権限とチャンネル管理、GitHub のみなどの制限、退役通知の見方まで、情シス向けに解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code を Slack から使う方法:設定の流れ・権限・制限">
+<meta property="og:description" content="Claude Code の Slack 連携を公式ドキュメントをもとに整理します。対象プラン、設定の手順、権限とチャンネル管理、GitHub のみなどの制限、退役通知の見方まで、情シス向けに解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-slack.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code を Slack から使う方法:設定の流れ・権限・制限">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-slack.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code を Slack から使う方法:設定の流れ・権限・制限",
+  "description": "Claude Code の Slack 連携を公式ドキュメントをもとに整理します。対象プラン、設定の手順、権限とチャンネル管理、GitHub のみなどの制限、退役通知の見方まで、情シス向けに解説します。",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Slack 連携",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Team プランの会社でもこの連携を使えますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、この版は Pro と Max のアカウントだけが対象で、Team・Enterprise プランでは Claude Tag を設定します。手順は公式ドキュメントで確認してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "DM で使えますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "使えません。公開または非公開のチャンネルで、/invite @Claude で招待したあとの @mention にだけ応答します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "利用量は誰の分に数えられますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "各セッションは利用者本人のアカウントで動き、本人のプランの上限に数えられます。金額や回数は出典に無いため、最新の内容は公式の料金ページで確認してください。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code Slack 連携</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code を Slack から使う方法:設定の流れ・権限・制限</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>この記事の Slack 連携は、個人アカウントで動く旧来の版で、対象は Pro と Max、かつ Claude Tag に接続されていない Slack ワークスペースです。</li>
+      <li>設定は、管理者による Claude アプリの導入、各自のアカウント連携、GitHub とクラウドセッションの準備、チャンネルへの招待の順です。</li>
+      <li>セッションは各利用者のアカウントと上限で動き、DM では使えず、GitHub のみ・1セッション1PRの制限があります。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">何ができて、どのプランで使えるか</h2>
+  <p>公式ドキュメントによると、Slack で <code>@Claude</code> にコーディング作業を頼むと、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のクラウドセッションが作られます。チームの会話から離れずに開発作業を任せられる機能です。本記事は執筆時点(2026年10月)の公式ドキュメントだけを根拠にしています。</p>
+  <ul>
+    <li>バグの調査と修正の依頼</li>
+    <li>チームの意見を受けた小さな機能の実装やリファクタリング</li>
+    <li>会話にある再現手順やユーザー報告を踏まえたデバッグ</li>
+    <li>Slack で依頼して別作業を続け、完了時に通知を受け取る</li>
+  </ul>
+  <h3>対象の条件</h3>
+  <p>公式ドキュメントでは、この版は各セッションを個人の Claude アカウントで動かし、チャンネルでの @mention に応答するのは Pro と Max のアカウントだけです。さらに、どの組織も Claude Tag(組織の共通の ID で @Claude を動かす仕組み)に接続していないワークスペースに限られます。</p>
+  <p>Team・Enterprise プランでは既存の Slack アプリと @Claude のハンドルは残り、新しいワークスペースでは Claude Tag を設定する、とされています。その手順は出典に無いため、公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+  <h2 id="s2">設定の流れ</h2>
+  <p>公式ドキュメントが示す前提は、Pro または Max、Slack 側の条件、クラウドセッションの有効化、claude.ai/code での GitHub 接続とリポジトリ認証、Slack と Claude アカウントの連携です。手順は次のとおりです。</p>
+  <ol>
+    <li>Slack ワークスペースの管理者が、Slack App Marketplace から Claude アプリを導入します。</li>
+    <li>各利用者が Slack の Claude アプリの App Home タブで「Connect」を押し、ブラウザで認証を完了します。</li>
+    <li>同じアカウントで claude.ai/code にサインインし、GitHub を接続して、使わせたいリポジトリを1つ以上認証します。</li>
+    <li>App Home の Routing Mode を選びます。</li>
+    <li>チャンネルで <code>/invite @Claude</code> と入力して招待します。</li>
+  </ol>
+  <p>Routing Mode は2種類です。「Code only」はすべての @mention を Claude Code に回します。「Code + Chat」は内容を見て、コーディングは Claude Code、文章作成や分析、一般的な質問は Claude Chat に振り分けます。Chat に振られたときは「Retry as Code」で Claude Code に切り替えられ、逆の場合もスレッドで選べます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+  <h2 id="s3">使い方と画面の操作</h2>
+  <p>Code + Chat では、コーディング作業と判断されたものがクラウドセッションになり、それ以外は通常のチャット返信です。Code only ではすべて Claude Code に渡ります。コーディング作業として扱うよう明示することもできます。</p>
+  <p>文脈は、スレッドで呼べばスレッド内の全メッセージ、チャンネルで直接呼べば最近のチャンネルメッセージから集められます。完了時には、次のボタンが表示されます。</p>
+  <ul>
+    <li><strong>View Session</strong>:ブラウザでセッション全体を開き、続きの依頼もできます。</li>
+    <li><strong>Create PR</strong>:セッションの変更からプルリクエストを作ります。</li>
+    <li><strong>Retry as Code</strong>:チャット応答だったものを Claude Code で再実行します。</li>
+    <li><strong>Change Repo</strong>:選ばれたリポジトリが違うときに変更します。</li>
+  </ul>
+  <p>依頼は、ファイル名や関数名、エラーメッセージを入れ、リポジトリと完了条件(テストや PR 作成の要否など)を書き、スレッドで会話すると意図が伝わりやすいと公式ドキュメントにあります。ファイルのアップロードやリアルタイムのやり取りが要る作業、長く複雑な作業は、Web を直接使う方がよいとされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+  <h2 id="s4">権限・アクセス制御と注意点</h2>
+  <ul>
+    <li>セッションは各利用者が自分の Claude アカウントで実行し、利用量とレート上限は個人のプランの上限に数えられます。具体的な数値は出典に無いため、公式で確認してください。</li>
+    <li>リポジトリは、本人が接続したものだけ使えます。</li>
+    <li>セッションは claude.ai/code の履歴に残ります。Team・Enterprise のアカウントでは、Slack から作ったセッションは組織から自動で見えます。</li>
+  </ul>
+  <p>ワークスペースでは、管理者がアプリを導入するかを決めます。Enterprise Grid では組織の管理者が、どのワークスペースで使えるかを管理できます。アプリを削除すると、そのワークスペースの全利用者のアクセスがすぐに失効します。</p>
+  <p>チャンネルについては、導入しただけでは Claude はどのチャンネルにも入りません。招待したチャンネルの @mention にだけ応答し、公開・非公開の両方で動きます。管理者は招待先と参加者を管理することで、利用範囲を絞れます。</p>
+  <p>注意点が2つあります。DM では動きません。また、呼び出された会話の文脈を Claude が参照し、他のメッセージの指示に従うことがあるため、信頼できる Slack の会話でだけ使うよう公式ドキュメントは求めています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+  <h2 id="s5">制限と、通知・エラーが出たとき</h2>
+  <ul>
+    <li>GitHub のリポジトリのみ対応</li>
+    <li>1セッションで作れるプルリクエストは1つ</li>
+    <li>クラウドセッションへのアクセスが必要</li>
+  </ul>
+  <h3>通知が返ってきたとき</h3>
+  <p>「This workspace isn't set up for Claude Tag yet」は、組織が Claude Tag に接続しておらず、連携したアカウントが Pro・Max でない場合に @Claude が返す通知です。通知にある <code>@Claude connect</code> から始め、Claude Tag の設定に進みます。</p>
+  <p>退役の通知は <code>The legacy Claude in Slack bot is retired effective October 5, 2026 and no longer responds in channels.</code> で始まります。ワークスペースが Claude の組織に接続され、その組織の Claude Tag 設定で旧版が選ばれたままの状態で、自分のプランに関係なく Pro・Max にも出ます。組織の Owner が管理設定で Claude Tag をオンにする必要があり、Owner でなければ Owner に伝えます。</p>
+  <h3>その他のエラー</h3>
+  <ul>
+    <li>「Claude Code is not enabled for your account」:claude.ai/code に一度サインインして web onboarding を終えると、次の @mention で解消します。利用者ごとに必要です。</li>
+    <li>セッションが始まらない:App Home での接続、クラウドセッションの有効化、GitHub リポジトリの接続を確認します。</li>
+    <li>リポジトリが違う・出ない:「Change Repo」や依頼文へのリポジトリ名、claude.ai/code での接続、GitHub 権限を確認します。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>Team プランの会社でもこの連携を使えますか?</summary>
+      <p>公式ドキュメントによると、この版は Pro と Max のアカウントだけが対象で、Team・Enterprise プランでは Claude Tag を設定します。手順は公式ドキュメントで確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+    </details>
+    <details>
+      <summary>DM で使えますか?</summary>
+      <p>使えません。公開または非公開のチャンネルで、<code>/invite @Claude</code> で招待したあとの @mention にだけ応答します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+    </details>
+    <details>
+      <summary>利用量は誰の分に数えられますか?</summary>
+      <p>各セッションは利用者本人のアカウントで動き、本人のプランの上限に数えられます。金額や回数は出典に無いため、最新の内容は公式の料金ページで確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a>: スキル名・説明・手順・出力の形を入れると、置き場所つきで SKILL.md のひな形を出力します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/slack" rel="noopener">Claude Code in Slack</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-web/index.html">Claude Code をブラウザ(クラウド)で使う:できること・GitHub の接続・制限</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-headless/index.html">Claude Code を claude -p でスクリプトから動かす方法(ヘッドレス実行)</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

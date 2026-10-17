@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のインストール・ログインのエラーの調べ方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のインストールやログインでエラーが出たときの調べ方を、公式ドキュメントに沿って整理しました。エラー文言の探し方、再認証、403 や API キーの確認点を解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のインストール・ログインのエラーの調べ方">
+<meta property="og:description" content="Claude Code のインストールやログインでエラーが出たときの調べ方を、公式ドキュメントに沿って整理しました。エラー文言の探し方、再認証、403 や API キーの確認点を解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-install-errors.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のインストール・ログインのエラーの調べ方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-install-errors.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のインストール・ログインのエラーの調べ方",
+  "description": "Claude Code のインストールやログインでエラーが出たときの調べ方を、公式ドキュメントに沿って整理しました。エラー文言の探し方、再認証、403 や API キーの確認点を解説します。",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "インストール・ログインのエラー",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "ログインが何度も失敗する場合、最初に何を試しますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは、/logout で完全にサインアウトし、Claude Code を閉じて、claude で再起動して認証をやり直す手順を案内しています。ブラウザが開かないときは c で URL をコピーして手動で開きます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Claude Code access has not been granted for this account は Claude Code の設定で直せますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "直せません。Claude Enterprise 組織で利用者のロールが Custom で、割り当て済みのカスタムロールが Claude Code を許可していないことが原因です。組織の Owner にロールの変更を依頼し、その後 claude で再ログインします。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "サブスクリプションがあるのに This organization has been disabled と出るのはなぜですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは、ANTHROPIC_API_KEY が設定されていて、サブスクリプションの代わりにそのキーが使われていることが原因だと説明しています。環境変数を解除し、シェルのプロファイルからも削除します。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">インストール・ログインのエラー</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のインストール・ログインのエラーの調べ方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントには、画面に出たエラー文言から対処を探せる一覧があります。まず表示された文言を一覧と照らすのが近道です。</li>
+      <li>ログインの原因が分からないときは、<code>/logout</code> でサインアウトし、Claude Code を閉じて <code>claude</code> から認証をやり直すと、多くの場合は解決するとされています。</li>
+      <li>ログイン後の 403 や「アクセス権が付与されていない」エラーは、契約・ロール・プロキシなど、Claude Code の外側に原因があることがあります。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">まず、エラー文言から対処を探す</h2>
+  <p>執筆時点(2026年10月)の公式ドキュメント(インストールとログインのトラブルシューティング)では、エラーを、画面に出た文言や症状から対処を探す一覧にまとめています。Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)を社内で配るときは、この一覧が問い合わせ対応の起点になります。一覧の例は次のとおりです。</p>
+  <ul>
+    <li><code>command not found: claude</code>:PATH(コマンドを探すフォルダの指定)を直す案内です。</li>
+    <li><code>EACCES: permission denied</code>:インストール先ディレクトリの権限を直す案内です。</li>
+    <li><code>unable to get local issuer certificate</code>:社内の CA 証明書を設定する案内です。</li>
+    <li><code>Failed to fetch version</code>:ネットワークとプロキシの設定を確認する案内です。</li>
+    <li><code>OAuth error</code> や <code>403 Forbidden</code>:ログインと認証の節への案内です。</li>
+  </ul>
+  <p>一覧に無い場合は、公式ドキュメントの診断チェックで原因を絞る流れです。なお <code>App unavailable in region</code> は、Claude Code が利用者の国では提供されていないという表示で、設定では対処できません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+  <h2 id="s2">インストール時の代表的な症状</h2>
+  <p>具体的な手順は症状ごとに異なるため、公式ドキュメントの該当節で確認してください。</p>
+  <ul>
+    <li>Windows で <code>irm is not recognized</code> や <code>'bash' is not recognized as the name of a cmdlet</code> が出る場合:使っているシェルに合ったインストールコマンドを使う案内です。</li>
+    <li><code>syntax error near unexpected token '&lt;'</code>:インストールスクリプトがシェルスクリプトではなく HTML を返している場合の案内です。</li>
+    <li>PowerShell のインストーラーが完了しても <code>claude</code> が見つからない、または古いバージョンが表示される場合:インストール先を PATH に追加し、新しいターミナルを開く案内です。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+  <h2 id="s3">ログインできないときは、まず再認証</h2>
+  <p>公式ドキュメントによると、ログインが失敗して原因が分からないときは、再認証で多くの場合は解決します。手順は次のとおりです。</p>
+  <ol>
+    <li><code>/logout</code> を実行してサインアウトする</li>
+    <li>Claude Code を閉じる</li>
+    <li><code>claude</code> で再起動し、認証をやり直す</li>
+  </ol>
+  <p>ブラウザが自動で開かないときは <code>c</code> を押すと、OAuth URL(ログイン用の URL)をクリップボードにコピーできます。それをブラウザに貼り付けます。狭い端末や SSH で URL が折り返され、クリックできない場合にも使えます。</p>
+  <h3>OAuth error: Invalid code</h3>
+  <p><code>OAuth error: Invalid code. Please make sure the full code was copied</code> は、ログインコードの期限切れか、コピー時の欠落が原因です。Enter で再試行し、ブラウザが開いたらすぐ完了させます。リモートや SSH では、ブラウザが別のマシンで開くことがあります。その場合は端末に表示された URL を、手元のブラウザで開きます。</p>
+  <h3>再ログインを求められる場合</h3>
+  <p>セッション後に再度ログインを求められるのは、OAuth トークンが期限切れになったためかもしれません。<code>/login</code> で再認証します。頻繁に起きる場合は、システム時計が正確か確認します。トークンの検証が正しいタイムスタンプに依存するためです。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+  <h2 id="s4">ログイン後の 403 とアクセス権のエラー</h2>
+  <p>ログイン後に <code>API Error: 403 Request not allowed</code> が出る場合、公式ドキュメントは次を確認するよう案内しています。</p>
+  <ul>
+    <li>Claude Pro/Max の利用者:サブスクリプションが有効かを、claude.ai の設定画面で確認します。</li>
+    <li>Anthropic Console の利用者:アカウントに「Claude Code」または「Developer」のロールがあるか確認します。管理者が Console の Members ページで割り当てます。</li>
+    <li>プロキシ配下の場合:社内プロキシが API リクエストに干渉することがあります。設定は公式のネットワーク設定のページを参照してください。</li>
+  </ul>
+  <h3>アクセスが付与されていないエラー</h3>
+  <p>サインインページに <code>Authorization failed</code> と <code>Claude Code access has not been granted for this account. Contact your administrator.</code> が出る場合は、Claude Enterprise 組織で利用者のロールが Custom になっており、グループに割り当てられたカスタムロールのどれも Claude Code を許可していません。Custom ロールではそれらのカスタムロールからしかアクセスを得られないため、Claude Code 側で何を変えても解決しません。</p>
+  <p>対処は、組織の Owner に、Claude Code を許可するカスタムロールをグループへ割り当てるか、ロールを Custom から User などの標準ロールへ変更してもらうことです。変更後に <code>claude</code> を実行し、再ログインします。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+  <h2 id="s5">契約があるのにエラーになる:API キーの上書き</h2>
+  <p>有効なサブスクリプションがあるのに <code>API Error: 400</code> と <code>This organization has been disabled</code> が出る場合、環境変数 <code>ANTHROPIC_API_KEY</code> がサブスクリプションを上書きしていると公式ドキュメントは説明しています。以前の勤務先やプロジェクトの古い API キーがシェルのプロファイルに残っていると、よく起きます。</p>
+  <p><code>ANTHROPIC_API_KEY</code> が存在し、承認済みの場合、Claude Code はサブスクリプションの OAuth 資格情報ではなくそのキーを使います。<code>-p</code> フラグの非対話モードでは、キーがあれば常にそれが使われます。サブスクリプションを使うには、環境変数を解除します。macOS/Linux の場合は次のとおりです。</p>
+<pre><code>unset ANTHROPIC_API_KEY
+claude</code></pre>
+  <p>Windows PowerShell の場合は次のとおりです。</p>
+<pre><code>Remove-Item Env:ANTHROPIC_API_KEY
+claude</code></pre>
+  <p>恒久的に直すには、<code>~/.zshrc</code>、<code>~/.bashrc</code>、<code>~/.profile</code> にある <code>export ANTHROPIC_API_KEY=...</code> の行を削除します。Windows では PowerShell プロファイル(<code>$PROFILE</code>)とユーザー環境変数を確認します。Claude Code 内で <code>/status</code> を実行すると、有効な認証方式を確認できます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+  <h2 id="s6">WSL2・SSH・コンテナでのログイン</h2>
+  <p>WSL2、SSH 接続先、コンテナでは、ブラウザが通常は別のホストで開き、リダイレクトが Claude Code のローカルのコールバックサーバーに届きません。サインイン後にブラウザへログインコードが表示されるので、端末の <code>Paste code here if prompted</code> のプロンプトに貼り付けます。WSL2 でブラウザがまったく開かない場合は、<code>BROWSER</code> 環境変数に Windows のブラウザのパスを設定します。</p>
+<pre><code>export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+claude</code></pre>
+  <p>コードを貼り付けても反応しない場合は、端末の別の貼り付け操作を試すか、貼り付けたコードを標準入力から読み取る <code>claude auth login</code> を使います。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>ログインが何度も失敗する場合、最初に何を試しますか?</summary>
+      <p>公式ドキュメントでは、<code>/logout</code> で完全にサインアウトし、Claude Code を閉じて、<code>claude</code> で再起動して認証をやり直す手順を案内しています。ブラウザが開かないときは <code>c</code> で URL をコピーして手動で開きます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+    </details>
+    <details>
+      <summary><code>Claude Code access has not been granted for this account</code> は Claude Code の設定で直せますか?</summary>
+      <p>直せません。Claude Enterprise 組織で利用者のロールが Custom で、割り当て済みのカスタムロールが Claude Code を許可していないことが原因です。組織の Owner にロールの変更を依頼し、その後 <code>claude</code> で再ログインします。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+    </details>
+    <details>
+      <summary>サブスクリプションがあるのに <code>This organization has been disabled</code> と出るのはなぜですか?</summary>
+      <p>公式ドキュメントでは、<code>ANTHROPIC_API_KEY</code> が設定されていて、サブスクリプションの代わりにそのキーが使われていることが原因だと説明しています。環境変数を解除し、シェルのプロファイルからも削除します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code つまずき早見表</a>: Windows で Claude Code を使うときに起きやすい症状を、原因と対処で引ける早見表です。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/troubleshoot-install" rel="noopener">Troubleshoot installation and login</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">総務・経理に Claude Code を渡す前の3日間研修キット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">練習用フォルダを作るセットアップスクリプト、課題10本(依頼文・正しい結果の条件・つまずきと講師の返し)、講師用の進行表、つまずき対応表をまとめています(Windows)。(無料部分で研修の組み立てとキットの中身を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-install-windows/index.html">Claude Code を Windows に入れる手順:ネイティブと WSL・インストール後の確認</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

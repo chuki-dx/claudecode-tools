@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除) | 中小DXラボ</title>
+<meta name="description" content="Claude Code に MCP サーバーを接続する方法を、公式ドキュメントに沿って整理。claude mcp add での追加、list での確認、スコープの違い、削除、つながらないときの確認点まで解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)">
+<meta property="og:description" content="Claude Code に MCP サーバーを接続する方法を、公式ドキュメントに沿って整理。claude mcp add での追加、list での確認、スコープの違い、削除、つながらないときの確認点まで解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-mcp-quickstart.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-mcp-quickstart.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)",
+  "description": "Claude Code に MCP サーバーを接続する方法を、公式ドキュメントに沿って整理。claude mcp add での追加、list での確認、スコープの違い、削除、つながらないときの確認点まで解説します。",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code MCP 接続",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "追加したサーバーが別のプロジェクトで使えないのはなぜですか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、既定の local スコープは追加したプロジェクトだけで有効です。全プロジェクトで使うには --scope user で登録し直します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Added と表示されれば接続できていますか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "stdio サーバーの例では、Added は設定が保存されたことを示すだけで、コマンドが動く保証ではないと説明されています。claude mcp list で ✔ Connected を確認してください。初回は npx のダウンロード中に失敗表示になることもあります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "同じ名前のサーバーを追加できないと言われたときはどうしますか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "同じスコープに同名のサーバーがあります。claude mcp remove claude-code-docs で削除するか、別の名前にします。複数のスコープに同名がある場合は exists in multiple scopes と表示されるので、--scope で削除する側を選びます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code MCP 接続</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、MCP サーバーは <code>claude mcp add</code> で登録し、<code>claude mcp list</code> で接続状態を確認します。</li>
+      <li>登録先(スコープ)は既定で <code>local</code> です。現在のプロジェクトで本人だけが使えます。全プロジェクトなら <code>--scope user</code>、チーム共有なら <code>--scope project</code> を使います。</li>
+      <li>接続したサーバーはコンテキストウィンドウを消費するため、使わないものは <code>claude mcp remove</code> で外します。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">MCP とは何か、始める前の条件</h2>
+  <p>MCP(Model Context Protocol)は、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)が標準機能に加えて、課題管理ツールの検索やデータベースへの問い合わせ、ブラウザ操作などを使えるようにする仕組みです。これらの道具は MCP サーバーが提供し、手元のマシンで動くものとホスト型サービスがあります。</p>
+  <p>公式ドキュメントでは、Claude Code のインストールと認証を済ませ、プロジェクトのディレクトリでターミナルを開いておくことが前提です(空のディレクトリでも構いません)。本記事は執筆時点(2026年10月)の公式ドキュメントのうち CLI の手順を扱います。デスクトップアプリや VS Code、Web からの追加方法は公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s2">サーバーを追加して接続を確認する</h2>
+  <p>公式の例は、認証不要で Claude Code のドキュメントを全文検索できるホスト型サーバーです。<code>claude</code> のセッション内ではなく、通常のターミナルで実行します。</p>
+<pre><code>claude mcp add --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p><code>--transport http</code> は URL で公開されているサーバーを示します。<code>claude-code-docs</code> は利用者が自由に決める名前で、<code>claude mcp remove</code> などの操作で使います。実行すると、書き込んだ設定ファイルを示す <code>File modified:</code> の行が表示されます。</p>
+  <p>続けて接続状態を確認します。</p>
+<pre><code>claude mcp list</code></pre>
+  <p>公式ドキュメントによると、主な表示の意味は次のとおりです。</p>
+  <ul>
+    <li><code>✔ Connected</code>: 使える状態です。</li>
+    <li><code>! Needs authentication</code>: ブラウザでのサインイン、または <code>--header</code> で渡すトークンが必要です。</li>
+    <li><code>✘ Failed to connect</code>: サーバーが応答していません。</li>
+    <li><code>! Connected · tools fetch failed</code>: 接続できましたがツール一覧を取得できていません。<code>claude mcp get &lt;name&gt;</code> でエラー詳細を見ます。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s3">使う・削除する</h2>
+  <p>セッションを開始し、サーバー名を挙げて依頼します。</p>
+<pre><code>claude</code></pre>
+<pre><code>Use the claude-code-docs server to look up what MCP_TIMEOUT does</code></pre>
+  <p>通常はサーバー名を指定しなくても Claude が適切なツールを選びます。初回の呼び出しで許可を求められたら承認します。出力のツール呼び出しにサーバー名が付いていれば、MCP サーバーから得た回答だと確認できます。</p>
+  <p>使い終わったら削除できます。</p>
+<pre><code>claude mcp remove claude-code-docs</code></pre>
+  <p>接続したサーバーのツール名や指示は毎回のセッションで読み込まれ、コンテキストウィンドウ(Claude が一度に扱える情報の範囲)を使います。使わないサーバーを外すと空きを保てます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s4">スコープと設定ファイルの場所</h2>
+  <p><code>claude mcp add</code> は既定で <code>local</code> に登録します。スコープごとの保存先は次のとおりです。</p>
+  <ul>
+    <li><code>local</code>: <code>~/.claude.json</code> の当該プロジェクトの項目。本人のみ・このプロジェクトのみ(既定)。</li>
+    <li><code>project</code>: プロジェクトルートの <code>.mcp.json</code>。クローンした全員が対象です。</li>
+    <li><code>user</code>: <code>~/.claude.json</code> の最上位の <code>mcpServers</code>。本人のみ・全プロジェクト。</li>
+  </ul>
+  <p>Windows では <code>~/.claude.json</code> は <code>%USERPROFILE%\.claude.json</code> に対応します。<code>claude mcp get claude-code-docs</code> で、どのスコープに定義があるか確認できます。</p>
+  <p>スコープは追加時に固定されるため、変更は削除して再登録します。たとえば local の定義を外してから user で追加します。</p>
+<pre><code>claude mcp remove claude-code-docs --scope local</code></pre>
+<pre><code>claude mcp add --scope user --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p>チームで共有するときは project スコープで追加し、<code>.mcp.json</code> をバージョン管理にコミットします。</p>
+<pre><code>claude mcp add --scope project --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p>メンバーが Claude Code を起動すると承認の確認が出て、承認すると接続されます。これは、クローンしたリポジトリが利用者の同意なくプロセスを起動できないようにするためです。<code>.mcp.json</code> は起動時に読まれるので、編集後は新しいセッションを始めます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s5">ローカルサーバーとサインインが必要なサーバー</h2>
+  <h3>ローカルサーバー(stdio)</h3>
+  <p>stdio サーバーは、Claude Code が手元のマシンでサブプロセスとして起動するプログラムです。公式の例は Playwright MCP サーバーで、<code>npx</code> 経由で動くため Node.js 18 以降が必要です。</p>
+<pre><code>claude mcp add playwright -- npx -y @playwright/mcp@latest</code></pre>
+  <p><code>--transport</code> は付けず、<code>--</code> の後ろが起動コマンドです。<code>Added</code> と出ても保存されただけなので、<code>claude mcp list</code> で確認します。初回は <code>npx</code> のダウンロード中に <code>✘ Failed to connect</code> となることがあり、少し待って再実行すると <code>✔ Connected</code> になります。</p>
+  <h3>サインインが必要なサーバー</h3>
+  <p>Sentry、Linear、Notion などのホスト型サービスは OAuth で保護されています。公式の例は Sentry です。</p>
+<pre><code>claude mcp add --transport http sentry https://mcp.sentry.dev/mcp</code></pre>
+  <p>追加直後は <code>! Needs authentication</code> と表示されますが、想定どおりです。セッションで <code>/mcp</code> を開き、<code>sentry</code> を選んで Enter、<code>Authenticate</code> を選ぶとブラウザでサインイン画面が開きます。固定トークンで認証するサーバーは、追加時に <code>--header "Authorization: Bearer &lt;token&gt;"</code> でトークンを渡します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s6">つながらないときの確認点</h2>
+  <p>状態は、セッション内なら <code>/mcp</code>、シェルなら <code>claude mcp list</code> で確認します。公式ドキュメントが挙げる主な原因は次のとおりです。</p>
+  <ul>
+    <li><code>No MCP servers configured</code>: 別のプロジェクトで追加した local のサーバーは、そのプロジェクトに紐づきます。今のプロジェクトで再登録するか <code>--scope user</code> を使います。設定ファイルのパス違い(正しいのは <code>~/.claude.json</code> と <code>&lt;project&gt;/.mcp.json</code>)や <code>.mcp.json</code> の記述ミスも原因です。</li>
+    <li><code>Failed to connect</code> や <code>Connection error</code>: サーバーが起動していないか URL が応答していません。HTTP サーバーは curl で到達性を、stdio サーバーは設定のコマンドを直接実行してエラーを確認します。</li>
+    <li>起動時のタイムアウト: 既定の 30秒を超えた場合、<code>MCP_TIMEOUT</code> 環境変数(ミリ秒)で延ばします。</li>
+    <li>ツールが出ない: 必要な環境変数(API キーなど)が不足している可能性があります。<code>--env KEY=value</code> で渡します。</li>
+    <li><code>.mcp.json</code> の変更が反映されない: セッションを再起動します。以前に承認を拒否した場合は <code>claude mcp reset-project-choices</code> を実行します。</li>
+  </ul>
+<pre><code>MCP_TIMEOUT=60000 claude</code></pre>
+  <p>エラー詳細の表示内容はバージョンで異なる部分があるため、詳しくは公式ドキュメントで確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>追加したサーバーが別のプロジェクトで使えないのはなぜですか。</summary>
+      <p>公式ドキュメントによると、既定の <code>local</code> スコープは追加したプロジェクトだけで有効です。全プロジェクトで使うには <code>--scope user</code> で登録し直します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+    <details>
+      <summary><code>Added</code> と表示されれば接続できていますか。</summary>
+      <p>stdio サーバーの例では、<code>Added</code> は設定が保存されたことを示すだけで、コマンドが動く保証ではないと説明されています。<code>claude mcp list</code> で <code>✔ Connected</code> を確認してください。初回は <code>npx</code> のダウンロード中に失敗表示になることもあります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+    <details>
+      <summary>同じ名前のサーバーを追加できないと言われたときはどうしますか。</summary>
+      <p>同じスコープに同名のサーバーがあります。<code>claude mcp remove claude-code-docs</code> で削除するか、別の名前にします。複数のスコープに同名がある場合は <code>exists in multiple scopes</code> と表示されるので、<code>--scope</code> で削除する側を選びます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code の MCP 設定:local・project・user の違いと .mcp.json</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

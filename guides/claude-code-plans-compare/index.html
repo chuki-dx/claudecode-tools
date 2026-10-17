@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code を使える Pro・Max・Team・Enterprise と Console の違いを、公式の説明だけで整理。設定手順、請求の注意点、機能差、選び方の目安をまとめました。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方">
+<meta property="og:description" content="Claude Code を使える Pro・Max・Team・Enterprise と Console の違いを、公式の説明だけで整理。設定手順、請求の注意点、機能差、選び方の目安をまとめました。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plans-compare.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plans-compare.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方",
+  "description": "Claude Code を使える Pro・Max・Team・Enterprise と Console の違いを、公式の説明だけで整理。設定手順、請求の注意点、機能差、選び方の目安をまとめました。",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code のプラン比較",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "ANTHROPIC_API_KEY を設定していると、Pro や Max の枠は使われませんか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ヘルプセンターによると、この環境変数があると Claude Code はサブスクリプションではなく API キーで認証します。そのため、プランに含まれる利用枠ではなく API の利用料金が発生します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Enterprise プランでは Claude Code を別に購入する必要がありますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "新しい Enterprise プランまたはセルフサーブの Enterprise プランでは、すべての Enterprise シートに含まれ、追加購入は不要です。古いプランでは、Claude Code を含むシート種別が必要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Team プランで Computer use は使えますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントの機能一覧では、Computer use は Pro・Max が利用可、Team・Enterprise は利用不可です。Code Review は逆に Team・Enterprise のみです。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code のプラン比較</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Pro と Max は、Claude(Web・デスクトップ・モバイル)と Claude Code を1つのサブスクリプションで使えます。個人や少人数で試す入口です。</li>
+      <li>SSO やサーバー管理設定、Code Review などは、公式ドキュメントの機能一覧で Team 以上が対象です。金額は公式の料金ページで確認してください。</li>
+      <li>プランの利用枠と Console の API クレジットは別の請求です。<code>ANTHROPIC_API_KEY</code> が設定されていると API 課金になるため、先に確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Claude Code で何ができるか(Pro・Max)</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)について、公式ヘルプセンターによると、Claude のモデルをターミナルや対応する IDE から直接使えるツールで、複雑なコーディング作業を任せつつ、透明性と制御を保てるとされています。Pro と Max では、Claude(Web・デスクトップ・モバイル)とターミナルの Claude Code を1つのサブスクリプションで使えます。</p>
+  <p>対応する IDE は、VS Code、Cursor などの VS Code 派生、IntelliJ や PyCharm などの JetBrains 系です。ターミナルと同じ認証情報でログインし、IDE での利用も Claude と Claude Code で共有する同じ利用上限に数えられます。</p>
+  <p>本記事は執筆時点(2026年10月)の出典に基づきます。金額や利用上限の数値は出典に無いため、最新の内容は公式の料金ページで確認してください。</p>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s2">Pro・Max で使い始める設定と注意点</h2>
+  <ol>
+    <li>Pro または Max のサブスクリプションが有効であることを確認する</li>
+    <li>公式ドキュメントの Claude Code のページに従い、OS に合わせてインストールする</li>
+    <li>セットアップ時または初回利用時に、Claude と同じ認証情報でログインする</li>
+  </ol>
+  <p>すでに Claude Console の従量課金(PAYG)でログインしている場合は、Claude Code 内で <code>/login</code> を実行するとサブスクリプションに切り替えられます。</p>
+  <h3>認証の選択肢が出ないとき</h3>
+  <ol>
+    <li><code>/logout</code> で完全にログアウトする</li>
+    <li><code>claude update</code> を実行する</li>
+    <li>ターミナルを完全に再起動する</li>
+    <li><code>claude</code> を実行し、正しいアカウントを選ぶ</li>
+  </ol>
+  <p><strong>注意</strong>:システムに <code>ANTHROPIC_API_KEY</code> 環境変数があると、Claude Code はサブスクリプション(Pro、Max、Team、Enterprise)ではなくこの API キーで認証します。その結果、プランに含まれる利用枠ではなく API の利用料金が発生します。社内の端末で試す前に、この変数の有無を確認しておくと安心です。</p>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s3">請求の仕組み:プランの枠と API クレジットは別</h2>
+  <p>公式ヘルプセンターでは、Claude Code と Claude Console / Claude API は別の仕組みと説明されています。Claude Code は API クレジットで使い続ける選択肢を示し、自動チャージ(auto-reload)の設定は Console 側にあります。</p>
+  <ul>
+    <li>API クレジットを選ぶと、標準の API 料金(Pro/Max のプラン料金とは別)で請求されます</li>
+    <li>Console で auto-reload が有効なら、残高が減ったときにクレジットが自動で追加されます</li>
+    <li>auto-reload が働くのは、API クレジットを使うと選んだ場合だけです</li>
+  </ul>
+  <h3>プランの範囲内に収めるには</h3>
+  <ul>
+    <li>API クレジットの選択肢が出たら断る</li>
+    <li>利用期間がリセットされるのを待つ</li>
+    <li><code>/status</code> コマンドで残りの枠を確認する</li>
+  </ul>
+  <h3>選択肢を出さないようにするには</h3>
+  <ol>
+    <li>ターミナルで <code>claude logout</code> を実行する</li>
+    <li><code>claude login</code> を実行し、Pro または Max の認証情報だけで認証する</li>
+    <li>ログイン中に Claude Console の認証情報を追加しない</li>
+  </ol>
+  <p>こうすると、上限に達しても API クレジットの利用を促されず、プランの枠だけを使うとされています。auto-reload の状態は、Console の Billing 設定で確認・調整します。</p>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s4">Team・Enterprise で使う場合</h2>
+  <p>公式ヘルプセンターによると、新しい Enterprise プランまたはセルフサーブの Enterprise プランでは、Claude Code はすべての Enterprise シートに含まれ、追加購入は不要です。古い Enterprise プラン(Chat と Chat + Claude Code のシート、または Standard と Premium のシート)では、Claude Code を含むシート種別が必要です。オーナーは Organization settings &gt; Organization で Chat + Claude Code / Premium シートを購入・再割り当てできます。</p>
+  <p>HIPAA 対応の Enterprise プランでは注意が必要です。プライマリオーナーによる HIPAA 構成の適用も、Claude Code のゼロデータ保持(ZDR)も無い場合、Claude Code はシートに含まれて使えますが、BAA の対象外です。保護対象医療情報(PHI)には使わないよう案内されています。</p>
+  <h3>ログインの流れ</h3>
+  <ol>
+    <li>ターミナルで <code>claude</code> を入力し、セッションを開始する</li>
+    <li>ログイン方法を選ぶ(別アカウントでログイン済みなら <code>/login</code>)</li>
+    <li>「Claude account with subscription」を選び、OAuth の画面に進む</li>
+    <li>Team または Enterprise のプランを選び、「Authorize」をクリックする</li>
+  </ol>
+  <p>ログイン後は、組織が提供するものを含め、Claude アカウントのスキルとプラグインが Claude Code に自動で読み込まれます。これには Claude Code v2.1.273 以降が必要です。認証の選択肢が出ないときの手順は、Pro・Max と同じ内容が案内されています。</p>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
+  <h2 id="s5">プラン別の機能差と選び方の目安</h2>
+  <p>公式ドキュメントによると、claude.ai アカウントでログインした場合は、プランによって使える機能が変わります。Amazon Bedrock、Google Cloud の Agent Platform、Microsoft Foundry、Anthropic Console の API キーで認証する場合、この区分は当てはまりません。Enterprise で HIPAA 構成を適用すると、一部の機能は無効になります。</p>
+  <ul>
+    <li>Pro・Max のみ:Computer use、Dispatch(Desktop)</li>
+    <li>Team・Enterprise のみ:Code Review、分析ダッシュボードと貢献メトリクス、Server-managed settings、SSO</li>
+    <li>Enterprise のみ:Enterprise Analytics API、SCIM、Compliance API、Zero Data Retention</li>
+    <li>Remote Control と Channels:Pro・Max は利用可、Team・Enterprise は管理者が有効にした場合</li>
+    <li>Cloud sessions:全プランで利用可。ただし Enterprise はプレミアムシートか Chat + Claude Code シートが必要</li>
+  </ul>
+  <p>Zero Data Retention は標準の Enterprise プランに含まれず、条件を満たすアカウントに Anthropic が別途有効化する必要があります。金額を含む詳しい比較は、公式の Team プランと Enterprise プランのページを参照してください。</p>
+  <h3>選び方の目安</h3>
+  <ul>
+    <li>個人や少人数で試す:Pro・Max(Computer use などが使えます)</li>
+    <li>SSO やサーバー管理設定、利用状況の分析が要る:Team 以上</li>
+    <li>SCIM、Compliance API、ゼロデータ保持が要る:Enterprise(ゼロデータ保持は別途の有効化が必要)</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary><code>ANTHROPIC_API_KEY</code> を設定していると、Pro や Max の枠は使われませんか?</summary>
+      <p>公式ヘルプセンターによると、この環境変数があると Claude Code はサブスクリプションではなく API キーで認証します。そのため、プランに含まれる利用枠ではなく API の利用料金が発生します。</p>
+      <p class="hint">出典: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+    </details>
+    <details>
+      <summary>Enterprise プランでは Claude Code を別に購入する必要がありますか?</summary>
+      <p>新しい Enterprise プランまたはセルフサーブの Enterprise プランでは、すべての Enterprise シートに含まれ、追加購入は不要です。古いプランでは、Claude Code を含むシート種別が必要です。</p>
+      <p class="hint">出典: <a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
+    </details>
+    <details>
+      <summary>Team プランで Computer use は使えますか?</summary>
+      <p>公式ドキュメントの機能一覧では、Computer use は Pro・Max が利用可、Team・Enterprise は利用不可です。Code Review は逆に Team・Enterprise のみです。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a>(公式ヘルプセンター)</li>
+    <li><a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a>(公式ヘルプセンター)</li>
+    <li><a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></li>
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-usage-limits/index.html">Claude Code の使用量上限に達したら?表示・リセット・待つか追加するかの判断</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-api-key-billing/index.html">Claude Code で ANTHROPIC_API_KEY があると API 課金になる?確認と外し方</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

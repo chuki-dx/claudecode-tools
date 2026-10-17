@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のログイン方法の違いとチームでの認証設定 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のログイン方法を、サブスク・Console・クラウド別に整理します。チームでの認証設定、API キーなしの Console サインイン、ログイン先を組織に絞る管理設定まで、公式ドキュメントをもとに解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のログイン方法の違いとチームでの認証設定">
+<meta property="og:description" content="Claude Code のログイン方法を、サブスク・Console・クラウド別に整理します。チームでの認証設定、API キーなしの Console サインイン、ログイン先を組織に絞る管理設定まで、公式ドキュメントをもとに解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-login-auth.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のログイン方法の違いとチームでの認証設定">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-login-auth.png">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のログイン方法の違いとチームでの認証設定",
+  "description": "Claude Code のログイン方法を、サブスク・Console・クラウド別に整理します。チームでの認証設定、API キーなしの Console サインイン、ログイン先を組織に絞る管理設定まで、公式ドキュメントをもとに解説します。",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code の認証",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "ブラウザが開かない、またはログインコードが表示されたときはどうしますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "c を押してログイン URL をコピーし、ブラウザに貼り付けます。コードが表示された場合は、ターミナルの Paste code here if prompted に貼り付けます。WSL2、SSH セッション、コンテナで起きやすいと公式ドキュメントに書かれています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "チームで使う場合、どの認証方式が推奨ですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは、Claude for Teams または Enterprise がほとんどのチームに推奨されています。API ベースの課金を希望する組織は Claude Console、クラウドを使う組織は各クラウドの設定を選びます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "API キーを作らずに Console にサインインできますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "できます。/login で Console アカウントを選ぶと方法を聞かれます(Claude Code v2.1.242 以降)。ただしクラウドプロバイダー利用時や forceLoginOrgUUID 設定時などは、API キーが作られます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">中小DXラボ のツール</a>
+    <nav aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code の認証</li>
+    </ol>
+  </nav>
+
+  <article>
+  <h1>Claude Code のログイン方法の違いとチームでの認証設定</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>チームには Claude for Teams または Enterprise が、公式ドキュメントで推奨されています。API 課金なら Claude Console、クラウド利用なら Bedrock などを選びます。</li>
+      <li>初回は <code>claude</code> を実行するとブラウザでログインします。ブラウザが開かない場合や、コード表示になる場合の対処も公式に書かれています。</li>
+      <li>管理設定の <code>forceLoginMethod</code> と <code>forceLoginOrgUUID</code> でログイン先を組織に絞れますが、対象外の経路があります。配布前に公式ドキュメントで確認してください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">ログインの流れと選べるアカウント</h2>
+  <p>この記事は、執筆時点(2026年10月)の公式ドキュメントの記載にもとづきます。Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は、インストール後に <code>claude</code> を実行すると、初回起動時にブラウザが開いてログインを求められます。環境変数 <code>ANTHROPIC_API_KEY</code> を設定済みで、確認でそのキーを承認した場合は、ログインの画面は省略されます。成功すると <code>Login successful</code> と表示されます。</p>
+  <p>公式ドキュメントによると、使えるアカウントは次のとおりです。</p>
+  <ul>
+    <li>Claude Pro または Max:claude.ai のアカウントでログインします。</li>
+    <li>Claude for Teams または Enterprise:管理者から招待された claude.ai アカウントでログインします。</li>
+    <li>Claude Console:Console の認証情報でログインします。先に管理者の招待が必要です。</li>
+    <li>クラウドプロバイダー(Bedrock、Agent Platform、Foundry):<code>claude</code> の実行前に環境変数を設定するか、ログイン画面で <strong>3rd-party platform</strong> を選びます(これで起動する対話式のセットアップウィザードは Bedrock と Vertex AI 向けです)。ブラウザでのログインは不要です。</li>
+    <li>クラウドゲートウェイ:自前の Claude apps gateway がある組織では、<code>/login</code> から社内 SSO でサインインします。</li>
+  </ul>
+  <p>やり直すときは <code>/logout</code> を入力します。初回起動時のセットアップ状態もリセットされます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s2">ブラウザが開かないとき・アカウントを分けるとき</h2>
+  <p>ブラウザが自動で開かない場合は <code>c</code> を押すとログイン URL がコピーされます。サインイン後にログインコードが表示されたら、ターミナルの <code>Paste code here if prompted</code> に貼り付けます。公式ドキュメントによると、これは WSL2、SSH セッション、コンテナで多い現象です。</p>
+  <p>仕事用と個人用を同時に使うなら、アカウントごとに <code>CLAUDE_CONFIG_DIR</code> で設定ディレクトリを分けます。Bash や Zsh では、次のエイリアスを <code>~/.bashrc</code> または <code>~/.zshrc</code> に追加する例が示されています。</p>
+<pre><code>alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'</code></pre>
+  <p>ただし、API キーなしの Console サインインは設定ディレクトリの外に保存されるため、ディレクトリを分けても区別できません。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s3">チームで配る認証方式</h2>
+  <p>公式ドキュメントによると、チーム向けの方式は Claude for Teams または Enterprise、Claude Console、Claude apps gateway、Amazon Bedrock、Google Cloud の Agent Platform、Microsoft Foundry で、このうち Teams または Enterprise がほとんどのチームに推奨されています。</p>
+  <h3>Claude for Teams または Enterprise</h3>
+  <p>Teams はセルフサービスのプランで、管理ツール、SSO、課金管理、サーバー管理設定を備え、小さめのチーム向けです。Enterprise はドメインキャプチャ、ロールベースの権限、コンプライアンス API が加わり、大きな組織向けです。流れは、購読(Enterprise は営業へ問い合わせ)、管理画面でメンバー招待、各メンバーが claude.ai アカウントでログイン、の順です。料金は公式の料金ページで確認してください。</p>
+  <h3>Claude Console</h3>
+  <p>API ベースの課金を希望する組織向けです。ユーザーは Members ページからの一括招待か SSO で追加します。ロールは、Claude Code 用の API キーだけ作れる <strong>Claude Code</strong> ロールと、あらゆる種類の API キーを作れる <strong>Developer</strong> ロールから選びます。各ユーザーは招待を承諾し、Claude Code をインストールして Console の認証情報でログインします。</p>
+  <h3>クラウドプロバイダー</h3>
+  <p>各プロバイダーのドキュメントに沿って設定し、環境変数とクラウド認証情報の作り方の案内を利用者に配布します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s4">API キーなしで Console にサインインする</h2>
+  <p>公式ドキュメントによると、組織が API キーの作成を許していなくても、キーなしで Console にサインインできます。<code>/login</code> で Anthropic Console アカウントを選ぶと方法を聞かれます。Claude Code v2.1.242 以降が必要です。<code>(recommended)</code> の方法は OAuth トークンをプロファイルとして保存し、API キーは作りません。<code>(legacy)</code> の方法は API キーを作って保存します。</p>
+  <p>次の場合は選択肢が出ず、API キーが作られます。</p>
+  <ul>
+    <li>クラウドプロバイダーで実行している場合</li>
+    <li>設定ファイルに <code>forceLoginOrgUUID</code> がある、または <code>forceLoginMethod</code> が <code>"claudeai"</code> か <code>"console"</code> の場合</li>
+    <li>管理設定のソースがあるのに Claude Code が読み取れず、ほかに方針を与えるソースもない場合</li>
+  </ul>
+  <p>キーなしでサインインする前に <code>ANTHROPIC_API_KEY</code> を unset します。この方法でサインインすると、マシン上の claude.ai のログインからはサインアウトされます。元に戻すには <code>/logout</code> です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s5">ログイン先を組織に絞る</h2>
+  <p>管理設定に <code>forceLoginMethod</code> と <code>forceLoginOrgUUID</code> を設定すると、claude.ai ログインを特定の組織に限定できます。<code>forceLoginOrgUUID</code> には組織 ID を入れます。公式ドキュメントの例は次のとおりです。</p>
+<pre><code>{
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"],
+  "allowedProviders": ["anthropic", "bedrock"]
+}</code></pre>
+  <p>この例で <code>allowedProviders</code>(Claude Code v2.1.285 以降)は、接続を許すサービスを列挙します。claude.ai の組織にサインインした開発者か Bedrock 向けの設定は起動でき、それ以外のプロバイダーは拒否されます。</p>
+  <p>注意点は次のとおりです。</p>
+  <ul>
+    <li><code>/login</code> と初回オンボーディングの画面は、方式を事前選択するだけで強制しません。<code>"claudeai"</code> を指定しても Console ログインは完了できます。</li>
+    <li><code>claude setup-token</code> と <code>/install-github-app</code> は <code>forceLoginMethod</code> しか強制せず、別の組織のトークンを作れます。</li>
+    <li>サーバー管理設定は認証済みのアカウントにしか届かず、最初のログインは誘導できません。デバイス管理ツールで配布し、併用する場合は両方に同じキーを入れます。</li>
+    <li><code>ANTHROPIC_API_KEY</code> などの環境変数の認証情報は、これらのキーを設定すると起動時にブロックされます。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>ブラウザが開かない、またはログインコードが表示されたときはどうしますか?</summary>
+      <p><code>c</code> を押してログイン URL をコピーし、ブラウザに貼り付けます。コードが表示された場合は、ターミナルの <code>Paste code here if prompted</code> に貼り付けます。WSL2、SSH セッション、コンテナで起きやすいと公式ドキュメントに書かれています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+    <details>
+      <summary>チームで使う場合、どの認証方式が推奨ですか?</summary>
+      <p>公式ドキュメントでは、Claude for Teams または Enterprise がほとんどのチームに推奨されています。API ベースの課金を希望する組織は Claude Console、クラウドを使う組織は各クラウドの設定を選びます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+    <details>
+      <summary>API キーを作らずに Console にサインインできますか?</summary>
+      <p>できます。<code>/login</code> で Console アカウントを選ぶと方法を聞かれます(Claude Code v2.1.242 以降)。ただしクラウドプロバイダー利用時や <code>forceLoginOrgUUID</code> 設定時などは、API キーが作られます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></li>
+    <li><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-api-key-billing/index.html">Claude Code で ANTHROPIC_API_KEY があると API 課金になる?確認と外し方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

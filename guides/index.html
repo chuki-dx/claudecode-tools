@@ -101,7 +101,7 @@
     </li>
   </ul>
   <h2 id="more-guides">テーマ別の解説(公式ドキュメントの要約)</h2>
-  <p class="hint">以下の 32 本は、執筆時点(2026年10月)の公式ドキュメントなどを出典に、各節の末尾に出典を示して要約・再構成した記事です。</p>
+  <p class="hint">以下の 52 本は、執筆時点(2026年10月)の公式ドキュメントなどを出典に、各節の末尾に出典を示して要約・再構成した記事です。</p>
   <h2 id="g-settings-generator">設定・権限・安全</h2>
   <ul class="guide-list">
     <li class="card">
@@ -154,6 +154,31 @@
       <p>Claude Code を社内で使う前に、情シスが決めておきたい利用ルールを整理。権限の線引き、秘密情報の置き場所、プラン別のデータの扱いを解説します。</p>
       <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
     </li>
+    <li class="card">
+      <h3><a href="claude-code-managed-settings/index.html">Claude Code の管理者設定(managed settings)を全社に配る方法</a></h3>
+      <p>Claude Code の管理者設定を社内の端末に配る方法を整理。4つの配布方法の違い、ファイルでの配り方、確認方法と注意点を解説します。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-mcp-quickstart/index.html">Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)</a></h3>
+      <p>claude mcp add での追加から接続確認、スコープの選び方、削除、つまずきやすい点までを、中小企業の情シス向けに整理しました。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-audit-events/index.html">Claude Code の操作ログを監査に残す方法:OpenTelemetry と SIEM 連携</a></h3>
+      <p>Claude Code の操作を監査に残す仕組みを整理。イベントの種類、ユーザーの紐付け、SIEM への送り方、機微な情報の扱いまでを公式ドキュメントで確認します。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-settings-examples/index.html">Claude Code の settings.json の例:公式サンプル3種の読み方と書き方</a></h3>
+      <p>公式の3つのサンプル設定(個人・チーム・組織)の読み方と、コピーして使うときの注意点を、中小企業の情シス向けに整理します。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-auto-mode/index.html">Claude Code の auto モードの設定:分類器が止める操作と許可の足し方</a></h3>
+      <p>auto モードの分類器が止める操作と、autoMode や permissions.ask で許可・確認を足す方法を、情シス向けにまとめました。</p>
+      <p class="hint">対応するツール: <a href="../settings-generator/index.html">権限設定(settings.json)ジェネレーター</a></p>
+    </li>
   </ul>
   <h2 id="g-claude-md-generator">CLAUDE.md・使い方の基本</h2>
   <ul class="guide-list">
@@ -192,6 +217,11 @@
       <p>最初の1週間は成果を求めず、1日30分のルーティンと3行の CLAUDE.md を身につける。兼任の情シス向けに進め方と注意点を解説します。</p>
       <p class="hint">対応するツール: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a></p>
     </li>
+    <li class="card">
+      <h3><a href="claude-code-worktrees/index.html">Claude Code を worktree で並行して動かす方法と注意点</a></h3>
+      <p>Claude Code の worktree 機能で、同じリポジトリのセッションを並行して動かす手順と、後片付け・隔離の限界・共有される設定の注意点をまとめます。</p>
+      <p class="hint">対応するツール: <a href="../claude-md-generator/index.html">CLAUDE.md テンプレート生成</a></p>
+    </li>
   </ul>
   <h2 id="g-skill-generator">スキル・サブエージェント・拡張</h2>
   <ul class="guide-list">
@@ -213,6 +243,16 @@
     <li class="card">
       <h3><a href="claude-code-features-overview/index.html">Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け</a></h3>
       <p>CLAUDE.md・スキル・hooks・MCP・サブエージェントの役割の違いと、どの困りごとでどれを足すかを、公式ドキュメントに沿って整理します。</p>
+      <p class="hint">対応するツール: <a href="../skill-generator/index.html">スキル(SKILL.md)雛形生成</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-headless/index.html">Claude Code を claude -p でスクリプトから動かす方法(ヘッドレス実行)</a></h3>
+      <p>claude -p でスクリプトや CI から Claude Code を動かすときの基本、--bare、出力形式、権限設定、注意点を公式ドキュメントに沿って整理します。</p>
+      <p class="hint">対応するツール: <a href="../skill-generator/index.html">スキル(SKILL.md)雛形生成</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-slack/index.html">Claude Code を Slack から使う方法:設定の流れ・権限・制限</a></h3>
+      <p>Slack で @Claude にコード作業を頼む仕組みを解説。対象は Pro・Max、設定手順、権限、制限、退役通知への対処を、情シスの判断に必要な範囲でまとめます。</p>
       <p class="hint">対応するツール: <a href="../skill-generator/index.html">スキル(SKILL.md)雛形生成</a></p>
     </li>
   </ul>
@@ -248,6 +288,36 @@
       <p>毎月の Excel 集計を Claude Code でスクリプトに置き換える3ステップを紹介。作業の選び方、依頼の型、担当者に渡す形まで、情シスの判断材料をまとめました。</p>
       <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
     </li>
+    <li class="card">
+      <h3><a href="claude-code-install-windows/index.html">Claude Code を Windows に入れる手順:ネイティブと WSL・インストール後の確認</a></h3>
+      <p>Windows でのインストールをネイティブと WSL に分けて整理。コマンドの違い、Git for Windows の扱い、claude --version での確認までまとめます。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-install-errors/index.html">Claude Code のインストール・ログインのエラーの調べ方</a></h3>
+      <p>インストールやログインのエラーを、画面の文言から調べる手順を整理。再認証、403、アクセス権、API キーの上書きなど、情シスが確認したい点をまとめました。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-rollout-kit/index.html">Claude Code を社内に広める進め方:公式の周知キットと推進役の役割</a></h3>
+      <p>公式の周知キットと推進役キットを元に、告知文の準備、パイロット展開、推進役の時間配分と30日の進め方を、情シス向けに整理します。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-terminal-config/index.html">Claude Code で Shift+Enter が改行にならないときの設定と tmux・通知・貼り付け</a></h3>
+      <p>改行の入れ方、tmux の設定、通知、貼り付け、Windows の Backspace まで、Claude Code のターミナル周りで詰まりやすい点を公式ドキュメントに沿って整理します。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-web/index.html">Claude Code をブラウザ(クラウド)で使う:できること・GitHub の接続・制限</a></h3>
+      <p>ブラウザ上のクラウドで Claude Code を動かす際の GitHub 接続の2方式、セッションの扱い、レート上限や IP 許可リストなどの制限を情シス向けに整理します。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-desktop-app/index.html">Claude Code デスクトップアプリの始め方と、Team・Enterprise での管理設定</a></h3>
+      <p>ターミナルなしで使える Claude Code のデスクトップアプリについて、導入手順と最初の操作、組織で配るときの管理設定を整理しました。</p>
+      <p class="hint">対応するツール: <a href="../troubleshooting/index.html">つまずき早見表</a></p>
+    </li>
   </ul>
   <h2 id="g-cost-calculator">料金・使用量・モデル</h2>
   <ul class="guide-list">
@@ -274,6 +344,36 @@
     <li class="card">
       <h3><a href="claude-code-usage-monitoring/index.html">Claude Code の利用状況を把握する方法:アナリティクスと OpenTelemetry の使い分け</a></h3>
       <p>Teams / Enterprise・API 別のダッシュボードと、OpenTelemetry での書き出し設定、管理者設定で配るときの注意点を整理します。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plans-compare/index.html">Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方</a></h3>
+      <p>Claude Code を使えるプランの違いと、API 課金との分かれ目、機能差を公式の説明に沿って整理します。社内で試す前の確認用です。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-usage-limits/index.html">Claude Code の使用量上限に達したら?表示・リセット・待つか追加するかの判断</a></h3>
+      <p>上限に達したときの表示、リセット時刻の確認、待つ・モデルを変える・使用量クレジットで続ける、の判断点を情シス向けに整理しました。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-api-key-billing/index.html">Claude Code で ANTHROPIC_API_KEY があると API 課金になる?確認と外し方</a></h3>
+      <p>環境変数に ANTHROPIC_API_KEY があると、サブスクでログインしていても API 従量課金になります。/status での確認と外し方、社内配布時の注意をまとめました。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-login-auth/index.html">Claude Code のログイン方法の違いとチームでの認証設定</a></h3>
+      <p>Claude Code のログイン手順と、Teams・Console・クラウドの認証方式の違いを整理。チームで配るときの設定と注意点をまとめました。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-microsoft-foundry/index.html">Claude Code を Microsoft Foundry(Azure)経由で使う設定手順と注意点</a></h3>
+      <p>Azure の Microsoft Foundry に作ったモデルを Claude Code から使う手順を整理。認証方式の選び方と、モデル固定など配布前の注意点を解説します。</p>
+      <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-cloud-providers/index.html">Claude Code を企業導入するには?Bedrock・Google Cloud など提供経路の選び方</a></h3>
+      <p>Claude Code を会社で使うとき、Anthropic 直接か Bedrock・Google Cloud・Foundry か。公式ドキュメントから、選び方と使えない機能の違いを整理しました。</p>
       <p class="hint">対応するツール: <a href="../cost-calculator/index.html">API 料金 見積もり計算機</a></p>
     </li>
   </ul>
