@@ -1296,6 +1296,64 @@ details[open] > summary + * { animation: reveal 0.3s var(--ease); }
   font-variant-numeric: tabular-nums;
 }
 .offer-list .hint { display: inline-block; margin-top: 6px; }
+/* タイトルのリンクをカード全体に広げる(画像を押しても開く。::after は「↗」で使用中) */
+.offer-list .offer-body > a::before { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.offer-list li:has(a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.offer-list .offer-body > a:focus-visible { outline: none; }
+
+/* 画像つきのカード(表紙・アイキャッチ。既定は左に小さな画像) */
+.offer-list li.has-thumb {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 14px 18px 14px 14px;
+}
+.offer-body { display: block; min-width: 0; }
+.offer-thumb {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1280 / 670;
+  border-radius: 10px;
+  background: #0b1030;
+  box-shadow: 0 0 0 1px var(--border), 0 10px 22px -14px rgba(20, 24, 80, 0.55);
+}
+.offer-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease), filter 0.6s var(--ease);
+}
+.offer-list li:hover .offer-thumb img { transform: scale(1.05); filter: saturate(1.08); }
+
+/* 本・有料記事の一覧: 目的別の記事は画像が上のカードを並べる */
+.pg-books main > .offer-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 18px; }
+.pg-books main > .offer-list li.has-thumb {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.pg-books main > .offer-list li.has-thumb:hover { transform: translateY(-3px); box-shadow: var(--shadow-md), 0 22px 44px -26px rgba(79, 70, 229, 0.55); }
+.pg-books main > .offer-list .offer-thumb { border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--border); }
+.pg-books main > .offer-list .offer-body { padding: 16px 20px 20px; }
+/* 1件だけの目的と「迷ったら」の本は、画像を左に大きく置く横長のカード */
+.pg-books main > .offer-list:has(> li:only-child),
+.pg-books .summary-box .offer-list { grid-template-columns: minmax(0, 1fr); }
+.pg-books main > .offer-list > li.has-thumb:only-child,
+.pg-books .summary-box .offer-list li.has-thumb {
+  grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
+  padding: 14px 22px 14px 14px;
+}
+.pg-books main > .offer-list > li.has-thumb:only-child .offer-thumb,
+.pg-books .summary-box .offer-list .offer-thumb { border-radius: 12px; border-bottom: 0; box-shadow: 0 0 0 1px var(--border), 0 14px 30px -18px rgba(20, 24, 80, 0.6); }
+.pg-books main > .offer-list > li.has-thumb:only-child .offer-body,
+.pg-books .summary-box .offer-list .offer-body { padding: 4px 0; }
+.pg-books .summary-box .offer-list a { font-size: 1.08rem; }
 
 .follow-box {
   padding: 24px 26px;
@@ -1582,6 +1640,15 @@ article table { font-size: 0.88rem; }
   .tool-panel { padding: 16px; }
   .tool-output { padding: 14px; }
   .band, .paid-cta, .follow-box { padding: 20px 18px; }
+  /* 狭い画面では画像を左に浮かせ、説明文は画像の下で全幅に回り込ませる */
+  .paid-cta .offer-list li.has-thumb { display: flow-root; padding: 12px 14px 14px 12px; }
+  .paid-cta .offer-list li.has-thumb > .offer-thumb { float: left; width: 112px; margin: 2px 12px 6px 0; border-radius: 8px; }
+  .pg-books main > .offer-list > li.has-thumb:only-child,
+  .pg-books .summary-box .offer-list li.has-thumb { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; overflow: hidden; border-radius: var(--radius-lg); }
+  .pg-books main > .offer-list > li.has-thumb:only-child .offer-thumb,
+  .pg-books .summary-box .offer-list .offer-thumb { border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--border); }
+  .pg-books main > .offer-list > li.has-thumb:only-child .offer-body,
+  .pg-books .summary-box .offer-list .offer-body { padding: 14px 16px 16px; }
   .hero { padding: 32px 0 28px; }
   .hero h1 { font-size: clamp(2rem, 1.2rem + 4.2vw, 2.4rem); }
   .hero-actions .btn { flex: 1 1 auto; }
