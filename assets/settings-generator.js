@@ -4,6 +4,11 @@
  *
  * ルールの書き方は、中小DXラボの検証記事(2026-10、Claude Code 2.1.296、Windows 11)に
  * 載せたものだけを使う。verified: true は、その検証で「止まった」と確認したルール。
+ *
+ * PowerShell ツール向けの git ルール(PowerShell(git push *) など)は、公式ドキュメントの
+ * 記載に従って出す(2026-10-23 確認、https://code.claude.com/docs/en/permissions の「PowerShell」節)。
+ * 公式には「PowerShell のルールは Bash のルールと同じ形」とあり、例として
+ * "PowerShell(git commit *)" が載っている。実機では確かめていないので verified: false のまま。
  */
 (function (root, factory) {
   var api = factory();
@@ -18,6 +23,10 @@
   var VERIFIED_LABEL = '実機確認済み 2026-10, Claude Code 2.1.296';
   var SCHEMA_URL = 'https://json.schemastore.org/claude-code-settings.json';
   var DEFAULT_DATA_PATH = 'data/raw';
+  var PS_DOC_URL = 'https://code.claude.com/docs/en/permissions';
+  var PS_DOC_CHECKED = '2026-10-23';
+  var PS_GIT_NOTE = '書き方は公式ドキュメントの例 PowerShell(git commit *) に沿う(' + PS_DOC_CHECKED + ' 確認)。実機では未確認';
+  var TRUST_NOTE = 'allow はプロジェクトの信頼の確認を承認するまで使われない';
 
   // 検証記事に載せたルールと、確認の状況
   var CATALOG = {
@@ -28,15 +37,19 @@
     'Bash(curl *)': { verified: true, note: 'Bash で curl https://example.com が止まった' },
     'Bash(wget *)': { verified: false, note: '' },
     'Bash(git push *)': { verified: false, note: '' },
+    'PowerShell(git push *)': { verified: false, note: PS_GIT_NOTE },
     'PowerShell(Invoke-WebRequest *)': { verified: true, note: 'PowerShell ツールで Invoke-WebRequest が止まった' },
     'PowerShell(Invoke-RestMethod *)': { verified: false, note: '' },
     'Bash(rm *)': { verified: false, note: '' },
     'PowerShell(Remove-Item *)': { verified: false, note: '' },
     'WebFetch': { verified: false, note: '' },
     'WebSearch': { verified: false, note: '' },
-    'Bash(git status)': { verified: false, note: 'allow はプロジェクトの信頼の確認を承認するまで使われない' },
-    'Bash(git diff *)': { verified: false, note: 'allow はプロジェクトの信頼の確認を承認するまで使われない' },
-    'Bash(git log *)': { verified: false, note: 'allow はプロジェクトの信頼の確認を承認するまで使われない' }
+    'Bash(git status)': { verified: false, note: TRUST_NOTE },
+    'Bash(git diff *)': { verified: false, note: TRUST_NOTE },
+    'Bash(git log *)': { verified: false, note: TRUST_NOTE },
+    'PowerShell(git status)': { verified: false, note: PS_GIT_NOTE + '。' + TRUST_NOTE },
+    'PowerShell(git diff *)': { verified: false, note: PS_GIT_NOTE + '。' + TRUST_NOTE },
+    'PowerShell(git log *)': { verified: false, note: PS_GIT_NOTE + '。' + TRUST_NOTE }
   };
 
   var DEFAULT_OPTIONS = {
@@ -45,12 +58,12 @@
     blockEnv: true,          // Read(./.env), Read(./.env.*)
     blockSecretsDir: true,   // Read(./secrets/**)
     blockNetwork: true,      // curl / wget / Invoke-WebRequest / Invoke-RestMethod
-    gitPush: 'ask',          // 'deny' | 'ask' | 'none'
+    gitPush: 'ask',          // 'deny' | 'ask' | 'none'(シェルに合わせて Bash(...) / PowerShell(...))
     blockDataDir: true,
     dataPath: DEFAULT_DATA_PATH,
     askDelete: true,         // Bash(rm *) / PowerShell(Remove-Item *)
     askWeb: true,            // WebFetch / WebSearch
-    allowGitRead: false      // Bash(git status) / Bash(git diff *) / Bash(git log *)
+    allowGitRead: false      // git status / git diff * / git log *(シェルに合わせて Bash(...) / PowerShell(...))
   };
 
   function merge(opts) {
@@ -139,8 +152,8 @@
     }
 
     if (o.gitPush === 'deny' || o.gitPush === 'ask') {
-      add(o.gitPush, 'Bash(git push *)');
-      if (!useBash) warnings.push('git push のルールは Bash の書き方(Bash(git push *))だけを載せています。PowerShell ツール向けの書き方は検証記事で扱っていません。');
+      if (useBash) add(o.gitPush, 'Bash(git push *)');
+      if (usePs) add(o.gitPush, 'PowerShell(git push *)');
     } else if (o.gitPush !== 'none') {
       errors.push('git push の指定が正しくありません。');
     }
@@ -152,10 +165,13 @@
     if (o.askWeb) { add('ask', 'WebFetch'); add('ask', 'WebSearch'); }
 
     if (o.allowGitRead) {
-      add('allow', 'Bash(git status)');
-      add('allow', 'Bash(git diff *)');
-      add('allow', 'Bash(git log *)');
+      if (useBash) { add('allow', 'Bash(git status)'); add('allow', 'Bash(git diff *)'); add('allow', 'Bash(git log *)'); }
+      if (usePs) { add('allow', 'PowerShell(git status)'); add('allow', 'PowerShell(git diff *)'); add('allow', 'PowerShell(git log *)'); }
       warnings.push('allow のルールは、そのフォルダで一度 claude を対話の画面で起動し、信頼の確認を承認するまで使われません(deny と ask は承認と関係なく効きます)。');
+    }
+
+    if (usePs && (o.gitPush === 'deny' || o.gitPush === 'ask' || o.allowGitRead)) {
+      warnings.push('PowerShell ツール向けの git のルール(PowerShell(git push *) など)は、公式ドキュメントの書き方(' + PS_DOC_URL + '、' + PS_DOC_CHECKED + ' 確認)に従っています。実機では確かめていません。');
     }
 
     var permissions = {};
@@ -201,6 +217,8 @@
   return {
     VERIFIED_LABEL: VERIFIED_LABEL,
     SCHEMA_URL: SCHEMA_URL,
+    PS_DOC_URL: PS_DOC_URL,
+    PS_DOC_CHECKED: PS_DOC_CHECKED,
     DEFAULT_OPTIONS: merge(null),
     CATALOG: CATALOG,
     normalizeDataPath: normalizeDataPath,

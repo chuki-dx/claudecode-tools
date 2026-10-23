@@ -83,7 +83,7 @@
    }
   }
  ],
- "dateModified": "2026-10-19"
+ "dateModified": "2026-10-23"
 }
 </script>
 </head>
@@ -119,6 +119,7 @@
         <div class="opt"><input type="radio" id="sh-both" name="shells" value="both" checked><label for="sh-both">Bash と PowerShell の両方(Windows で迷ったらこちら)</label></div>
         <div class="opt"><input type="radio" id="sh-bash" name="shells" value="bash"><label for="sh-bash">Bash だけ(Git Bash・WSL・macOS・Linux)</label></div>
         <div class="opt"><input type="radio" id="sh-ps" name="shells" value="powershell"><label for="sh-ps">PowerShell だけ</label></div>
+        <p class="hint">コマンドのルール(外部送信・git・削除)は、選んだシェルの書き方で出します。PowerShell では <code>PowerShell(git push *)</code> のような形です。</p>
       </fieldset>
 
       <fieldset>
@@ -201,6 +202,7 @@
     <ul>
       <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a>(設定ファイルの置き場所と優先順位)</li>
       <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a>(ルールの書き方と評価の順番)</li>
+      <li><a href="https://code.claude.com/docs/en/permissions#powershell" rel="noopener">Configure permissions の「PowerShell」節</a>(2026年10月23日確認。PowerShell のルールは Bash と同じ形で、例に <code>PowerShell(git commit *)</code> が載っています。このツールの <code>PowerShell(git push *)</code> などはこれに沿った書き方で、実機では確かめていません)</li>
     </ul>
     <p class="hint">このページの内容は 2026年10月時点のものです。仕様は変わることがあるため、配る前に公式ドキュメントと手元の実機で確認してください。</p>
   </section>
