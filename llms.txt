@@ -1,0 +1,89 @@
+# 情シスのための Claude Code ツール
+
+> Claude Code を社内で使う情シス・社内SE向けの無料ツール集。権限設定(settings.json)・CLAUDE.md・スキル(SKILL.md)のひな形づくり、つまずき早見表、API 料金の見積もり計算機を、ブラウザだけで使えます。
+
+- ツールはブラウザの中だけで動き、入力した内容を外部に送りません。
+- 解説記事は Claude Code の公式ドキュメントにもとづいて整理しています。仕様は変わることがあるため、最新の内容は公式ドキュメントで確認してください。
+- 各ページの更新日は sitemap.xml の lastmod と、構造化データ(JSON-LD)の dateModified にあります。
+- 運営: 中小DXラボ(運営者情報は about/)。
+
+## 主要ページ
+
+- [情シスのための Claude Code ツール](https://chuki-dx.github.io/claudecode-tools/): Claude Code を社内で使う情シス・社内SE向けの無料ツール集。権限設定(settings.json)・CLAUDE.md・スキル(SKILL.md)のひな形づくり、つまずき早見表、API 料金の見積もり計算機を、ブラウザだけで使えます。
+- [Claude Code 解説記事](https://chuki-dx.github.io/claudecode-tools/guides/): Claude Code を社内で使う情シス・社内SE向けの解説記事の一覧です。権限設定(deny/ask/allow)、CLAUDE.md の書き方、スキル(SKILL.md)、API 料金の見積もり方、Windows でのつまずき、試す前の確認、.env の守り方、非エンジニア向けの研修の進め方を、公式ドキュメントと実機の確認結果にもとづいて解説します。
+- [情シス向け Claude Code の本・有料記事 — 目的別の選び方](https://chuki-dx.github.io/claudecode-tools/books/): Claude Code を社内で使う情シス・社内SE向けに、中小DXラボの Zenn の本と note の有料記事を目的別(稟議・セキュリティ・配布・研修・費用・定型作業の自動化)に整理しました。価格と、購入前に無料で読める範囲を載せています。
+
+## ツール
+
+- [Claude Code 権限設定(settings.json)ジェネレーター](https://chuki-dx.github.io/claudecode-tools/settings-generator/): Claude Code の settings.json(権限設定)を、チェックを付けるだけで作れる無料ツール。.env を読ませない、curl などの外部送信を止める、git push は確認、を deny / ask / allow のルールで出力します。実機で止まると確認したルールを表示します。
+- [CLAUDE.md テンプレート生成](https://chuki-dx.github.io/claudecode-tools/claude-md-generator/): Claude Code の CLAUDE.md を、用途・言語・守ってほしいこと・触ってはいけないフォルダを選ぶだけで作れる無料ツール。最初の3行版にも切り替えられ、200行以内に収まっているかを行数で表示します。
+- [Claude Code スキル(SKILL.md)雛形生成](https://chuki-dx.github.io/claudecode-tools/skill-generator/): Claude Code のスキル(SKILL.md)のひな形を、スキル名・説明・いつ使うか・手順・出力の形・禁止事項を入れるだけで作れる無料ツール。スキル名の書き方と frontmatter の形を確かめ、置き場所のパスも表示します。
+- [Claude Code つまずき早見表(Windows・情シス向け)](https://chuki-dx.github.io/claudecode-tools/troubleshooting/): Claude Code を Windows で使う・社内に配るときのつまずきを、症状・原因・対処の表にまとめた早見表。allow が効かない、deny をすり抜ける、PowerShell の文字化け、CSV の BOM など、実機で起きたことだけを出典つきで載せています。
+- [Claude Code API 料金 見積もり計算機(月額・円換算)](https://chuki-dx.github.io/claudecode-tools/cost-calculator/): Claude Code を API の従量課金で使ったときの月額を、人数・1日あたりのトークン数・稼働日数・モデルから計算する無料ツール。入力・出力・キャッシュの書き込みと読み込みを分けて計算し、為替レートを入れると円でも表示します。
+
+## 解説記事
+
+- [中小企業で Claude Code を使う前に決める生成AI利用ルールの考え方](https://chuki-dx.github.io/claudecode-tools/guides/ai-usage-rules-claude-code/): 中小企業が Claude Code を社内で使う前に決めたい生成AIの利用ルールを、権限・外部の文章・秘密情報・データの扱い・設定共有の5点と、プラン別の学習方針から整理します。
+- [Claude Code を組織で導入する管理者設定の流れ:管理設定の配り方と制限項目](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-admin-setup/): Claude Code を組織で導入する中小企業の情シスの方向けに、API プロバイダーの選び方、管理設定の配布方法、制限できる項目、利用状況の確認までを公式ドキュメントに沿って整理します。
+- [Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-cost-estimate/): Claude Code を API の従量課金で使うときの月額の見積もり方を解説します。入力・キャッシュ書き込み・キャッシュ読み込み・出力の4種類のトークンと単価(2026-10-14 時点の公式料金)、計算式、トークン数の調べ方、サブスクとの違いを整理しました。
+- [Claude Code で ANTHROPIC_API_KEY があると API 課金になる?確認と外し方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-key-billing/): Claude Code は環境変数 ANTHROPIC_API_KEY があるとサブスクより API キーを優先し、従量課金になります。公式の記載をもとに、確認方法と外し方、注意点を整理します。
+- [Claude Code の操作ログを監査に残す方法:OpenTelemetry と SIEM 連携](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-audit-events/): Claude Code の操作を監査ログとして残すための OpenTelemetry イベントの種類、ユーザーの紐付け、SIEM への送信設定、記録内容に関する注意点を公式ドキュメントに沿って整理します。
+- [Claude Code の auto モードの設定:分類器が止める操作と許可の足し方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-mode/): Claude Code の auto モードで分類器が読む設定の場所、allow・soft_deny・hard_deny の使い方、push や PR に確認を挟む permissions.ask までを公式ドキュメントに沿って整理します。
+- [Claude Code ベストプラクティス:公式ドキュメントの要点を情シス向けに整理](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/): Claude Code の公式ベストプラクティスを、コンテキスト管理、確認手段、プランモード、CLAUDE.md、権限設定、セッション管理、自動化の順に、中小企業の情シス向けに整理します。
+- [Claude Code を企業導入するには?Bedrock・Google Cloud など提供経路の選び方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cloud-providers/): Claude Code を企業で導入する際の提供経路を、公式ドキュメントに沿って整理。Teams/Enterprise、Bedrock、Google Cloud、Foundry の違い、使えない機能、ゲートウェイ、モデル固定の注意点をまとめます。
+- [Claude Code の使い方の例:公式の作業レシピと基本ワークフロー](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-common-workflows/): Claude Code の公式ドキュメントにある作業例を、コード理解、バグ修正、テスト、PR、worktree、plan mode まで情シス向けに整理します。社内で試す前の確認点も押さえます。
+- [Claude Code を社内で試す前に確認すること(プラン・PC・ネットワーク・社内ルール)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/): 情シスが Claude Code を社内で試す前に確認したい項目を、プラン・PC 環境・ネットワーク・社内ルールの4つに分けて解説します。必要なプラン、Windows の要件、プロキシで許可する通信先、会話データの扱い、インストール後の確認までを公式ドキュメントにもとづいて整理しました。
+- [Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/): Claude Code のコンテキストウィンドウに入るもの、/compact と自動圧縮で起きること、圧縮後に残るもの・消えるものを公式ドキュメントに沿って整理します。社内で使う前の確認に。
+- [Claude Code の会話データは学習に使われるか:保存期間と設定の確認先](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/): Claude Code の会話データが学習に使われる条件を、個人向けと商用のプラン別に整理します。保存期間、ゼロデータ保持、フィードバック送信の注意点と確認先も公式ドキュメントに基づいてまとめます。
+- [Claude Code の設定が効かないときの確かめ方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-debug-config/): Claude Code の CLAUDE.md や設定、フック、MCP が反映されないときに、公式ドキュメントにある確認コマンドと切り分けの手順を、情シス向けに順を追ってまとめます。
+- [Claude Code デスクトップアプリの始め方と、Team・Enterprise での管理設定](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-desktop-app/): Claude Code のデスクトップアプリの入れ方、最初のセッションの進め方、権限モードの考え方と、Team・Enterprise プランでの管理コンソール・管理設定・MDM の要点を公式ドキュメントに沿って整理します。
+- [Claude Code を開発コンテナ(dev container)で動かす:設定と組織のルール](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/): Claude Code を開発コンテナ(dev container)で動かす手順を、公式ドキュメントに沿って整理します。認証の永続化、組織ポリシーの適用、通信制限、権限確認の扱いまで、情シスが判断に使える点をまとめました。
+- [Claude Code に .env を読ませない設定と、その限界(Windows で確認)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/): Claude Code に .env を読ませない deny ルールの書き方と、Windows 11 で実際に試した結果を解説します。読み取りツールと cat は止まり、Python スクリプト経由の読み取りは止まりませんでした。公式ドキュメントにある限界と、秘密情報の置き方まで整理しました。
+- [Claude Code で Excel の集計を自動化する手順:手作業をスクリプトに置き換える3ステップ](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/): Claude Code に集計スクリプトを書かせ、毎月の Excel 集計を置き換える手順を解説します。置き換える作業の選び方、依頼文の型、担当者へ渡す実行用バッチ、つまずきやすい点までを、中小DXラボの記事に基づいて整理します。
+- [Claude Code の CLAUDE.md・スキル・hooks・MCP・サブエージェントの使い分け](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/): Claude Code の CLAUDE.md、スキル、hooks、MCP、サブエージェントをどう使い分けるか。公式ドキュメントの内容に沿って、役割の違い、追加するきっかけ、コンテキスト消費の注意点を整理します。
+- [Claude Code を入れて最初の1週間にやること(兼任の情シス向け)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-first-week/): Claude Code を入れた兼任の情シス向けに、最初の1週間の進め方を整理します。1日30分の朝・昼・夜のルーティンと、3行の CLAUDE.md の始め方、注意点をまとめました。
+- [Claude Code を claude -p でスクリプトから動かす方法(ヘッドレス実行)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-headless/): Claude Code を claude -p で非対話実行する方法を、公式ドキュメントに沿って整理します。--bare、出力形式、権限の事前設定、会話の継続、停止時の挙動まで、情シスの判断に要る点をまとめました。
+- [Claude Code の hooks(フック)とは:設定の書き方と使いどころ](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-hooks-intro/): Claude Code の hooks は、決まったタイミングでシェルコマンドを自動実行する仕組みです。設定ファイルの書き方、置き場所、終了コード、使いどころと注意点を公式ドキュメントに沿って整理します。
+- [Claude Code の仕組み:エージェントループと、Claude が触れる範囲](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-how-it-works/): Claude Code のエージェントループ(文脈収集・行動・確認)、使えるツール、触れる範囲、セッションと権限の要点を、公式ドキュメントに基づいて中小企業の情シス向けに整理します。
+- [Claude Code のインストール・ログインのエラーの調べ方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/): Claude Code のインストールやログインでエラーが出たときの調べ方を、公式ドキュメントに沿って整理しました。エラー文言の探し方、再認証、403 や API キーの確認点を解説します。
+- [Claude Code を Windows に入れる手順:ネイティブと WSL・インストール後の確認](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-windows/): Claude Code を Windows に入れる手順を、ネイティブ(PowerShell・CMD)と WSL に分けて整理します。選び方、Git for Windows の扱い、インストール後の確認方法まで公式ドキュメントに沿って解説。
+- [Claude Code の利用規約とコンプライアンス:プラン別の規約と確認点](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-legal-compliance/): 情シスの方向けに、Claude Code の利用規約をプラン別に整理し、製品への組み込み条件、OAuth と API キーの使い分け、BAA の対象範囲まで公式ドキュメントに沿って解説します。
+- [Claude Code のログイン方法の違いとチームでの認証設定](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/): Claude Code のログイン方法を、サブスク・Console・クラウド別に整理します。チームでの認証設定、API キーなしの Console サインイン、ログイン先を組織に絞る管理設定まで、公式ドキュメントをもとに解説します。
+- [Claude Code の管理者設定(managed settings)を全社に配る方法](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-managed-settings/): Claude Code の managed settings を全社に配る方法を、公式ドキュメントに沿って整理します。配布方法の選び方、ファイル配布の手順、反映の確認と注意点までを解説します。
+- [Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/): Claude Code に MCP サーバーを接続する方法を、公式ドキュメントに沿って整理。claude mcp add での追加、list での確認、スコープの違い、削除、つながらないときの確認点まで解説します。
+- [Claude Code の MCP 設定:local・project・user の違いと .mcp.json](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-scopes/): Claude Code の MCP サーバー設定の3つのスコープ(local・project・user)の違い、.mcp.json の書き方、承認と優先順位、環境変数展開を公式ドキュメントに基づいて整理します。
+- [Claude Code を Microsoft Foundry(Azure)経由で使う設定手順と注意点](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-microsoft-foundry/): Claude Code を Azure の Microsoft Foundry 経由で動かすための前提、認証方式、環境変数、モデルバージョンの固定、権限設定を、公式ドキュメントに基づいて情シス向けに整理します。
+- [Claude Code のモデルの選び方と切り替え方(/model と設定)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/): Claude Code のモデルの選び方と、/model・--model・設定ファイルでの切り替え方を公式ドキュメントに沿って整理。Fable の注意点や管理者の制限、保存されない原因も解説します。
+- [Claude Code の出力スタイル(output styles)とは:変え方と作り方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-output-styles/): Claude Code の出力スタイル(output styles)で応答の役割・口調・形式を変える方法を、公式ドキュメントに基づき解説。組み込み4種、切り替え手順、自作の作り方、hook や CLAUDE.md との使い分けまで。
+- [Claude Code の権限モードの違い:default・acceptEdits・plan・auto の選び方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/): Claude Code の権限モード(default・acceptEdits・plan・auto・dontAsk・bypassPermissions)の違いと、切り替え方、選ぶときの注意点を公式ドキュメントに沿って整理します。
+- [Claude Code の権限設定(deny/ask/allow)の基本と、効く範囲・効かない範囲](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/): Claude Code の settings.json に書く権限ルール(deny / ask / allow)の評価の順番、置き場所、書き方を解説します。deny で止まる操作と止まらない操作(スクリプト経由の読み取りなど)を、公式ドキュメントと実機の確認結果で整理しました。
+- [Claude Code の plan モードの使い方:編集の前に計画を確かめる](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/): Claude Code の plan モードの入り方、計画の承認と編集、既定にする設定、使うべき場面を、社内で試す前に押さえたい点として公式ドキュメントに基づき整理します。
+- [Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/): Claude Code を使える Pro・Max・Team・Enterprise と Console の違いを、公式の説明だけで整理。設定手順、請求の注意点、機能差、選び方の目安をまとめました。
+- [Claude Code のプラグインの入れ方と、マーケットプレイスを選ぶときの注意](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins/): Claude Code のプラグインを入れる手順と、インストール範囲(スコープ)の選び方、公式・コミュニティ・サードパーティのマーケットプレイスを選ぶ際の注意点を、公式ドキュメントに沿って整理します。
+- [Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-caching/): Claude Code のプロンプトキャッシュが先頭一致で働く仕組みと、モデル切り替えや /compact などキャッシュが切れる操作、切れない操作、確認方法を公式ドキュメントから整理します。
+- [Claude Code のセキュリティの仕組みとプロンプトインジェクション対策](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-injection/): Claude Code の権限モード、サンドボックス、プロンプトインジェクション対策、MCP やクラウド実行の注意点を、社内で試す前の確認点として公式ドキュメントに基づき整理します。
+- [Claude Code をプロキシ・社内証明書の環境で使う設定(環境変数と確認方法)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-proxy-network/): Claude Code を社内プロキシや独自の証明書がある環境で使うための設定を、公式ドキュメントに沿って整理。環境変数、CA の信頼、mTLS、読み込みの確認方法、配布時の注意点までまとめます。
+- [Claude Code のトークン使用量を減らす方法と、使用量の確かめ方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/): Claude Code のトークン消費を抑える方法を、公式ドキュメントに沿って整理。/usage での確認、/clear、モデル選択、拡張思考、MCP の見直しまで、情シス向けに解説します。
+- [Claude Code で前の会話を再開する方法:--continue・--resume・名前の付け方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/): Claude Code で前の会話を再開する方法を、公式ドキュメントに沿って情シス向けに整理しました。--continue と --resume の違い、名前の付け方、復元される範囲と注意点がわかります。
+- [Claude Code の変更を巻き戻す方法:チェックポイントと /rewind で戻せる範囲](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/): Claude Code のチェックポイントと /rewind で、何が戻せて何が戻せないかを公式ドキュメントに沿って整理します。メニューの操作、要約、Bash やサブエージェントの制限、Git との使い分けまで解説します。
+- [Claude Code を社内に広める進め方:公式の周知キットと推進役の役割](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rollout-kit/): Claude Code を社内に展開するとき、公式ドキュメントの周知キットと推進役(チャンピオン)向けキットで何が使えるかを整理。送信前チェック、パイロット、30日の進め方、注意点まで情シス向けに解説します。
+- [Claude Code の settings.json の例:公式サンプル3種の読み方と書き方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-settings-examples/): Claude Code の settings.json の例を、公式ドキュメントの個人用・チーム用・組織用の3種類のサンプルで解説します。コピーの仕方、コミット前の注意、管理設定の読み方まで、情シス向けに整理しました。
+- [Claude Code のスキル(SKILL.md)入門:業務手順を Claude に覚えさせる](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/): Claude Code のスキル(SKILL.md)の仕組みと書き方を解説します。置き場所、frontmatter の name と description、自動で使われる条件、本文に書く手順と出力の形、配る前の確かめ方を、公式ドキュメント(2026年10月時点)にもとづいて整理しました。
+- [Claude Code を Slack から使う方法:設定の流れ・権限・制限](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/): Claude Code の Slack 連携を公式ドキュメントをもとに整理します。対象プラン、設定の手順、権限とチャンネル管理、GitHub のみなどの制限、退役通知の見方まで、情シス向けに解説します。
+- [Claude Code のスラッシュコマンドの使い方と、作業の流れごとの主なコマンド](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/): Claude Code のスラッシュコマンドの入力ルールと、初回設定・作業中・出荷前・トラブル時の主なコマンドを、公式ドキュメントに沿って整理します。表示条件の注意点も扱います。
+- [Claude Code のサブエージェントの使い方と作り方(設定・呼び出し・注意点)](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-subagents/): Claude Code のサブエージェントとは何か、ファイルの作り方、置き場所、ツール制限、呼び出し方、同時実行数などの注意点を、公式ドキュメントに基づいて情シス向けに整理します。
+- [Claude Code で Shift+Enter が改行にならないときの設定と tmux・通知・貼り付け](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-terminal-config/): Claude Code で Shift+Enter が送信になる、通知が来ない、tmux や Windows で挙動がおかしいときの設定を、公式ドキュメントに沿って情シス向けに整理します。
+- [総務・経理など非エンジニアに Claude Code を教えるときの進め方](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/): プログラミングをしない総務・経理などの社員に Claude Code を教えるときの進め方を解説します。研修なしで渡すと起きやすい3つのこと、90分×3回の組み立て方、架空データと「条件」での判定、広げる順番と効果の記録の仕方を整理しました。
+- [Claude Code の使用量上限に達したら?表示・リセット・待つか追加するかの判断](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-limits/): Claude Code で使用量の上限に達したときの表示、リセットまでの待ち方、使用量クレジットやプラン変更で続ける場合の判断点を、公式ドキュメントとヘルプセンターに沿って整理します。
+- [Claude Code の利用状況を把握する方法:アナリティクスと OpenTelemetry の使い分け](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-monitoring/): Claude Code の利用状況を把握する方法を、公式ドキュメントに沿って整理します。プラン別のアナリティクスダッシュボードと、OpenTelemetry の設定、管理者設定で配る際の注意点をまとめました。
+- [Claude Code を VS Code で使う:拡張機能の入れ方と CLI との違い](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/): Claude Code の VS Code 拡張について、公式ドキュメントをもとに、前提条件、インストール、最初の使い方、権限モードの注意点、CLI との違いを情シスの方向けに整理します。
+- [Claude Code をブラウザ(クラウド)で使う:できること・GitHub の接続・制限](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-web/): Claude Code をブラウザ(クラウド)で使うときの、クラウド環境、GitHub の接続方法(GitHub App と /web-setup)、セッションの操作、セキュリティ、制限を公式ドキュメントに沿って整理します。
+- [Windows で Claude Code を使うときのつまずき10選と対処](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/): Windows で Claude Code を使う・社内に配るときに起きやすいつまずき10個を、症状・原因・対処で解説します。PowerShell スクリプトの文字化け(BOM)、実行ポリシー、CSV の Excel での文字化け、allow が効かない、deny をすり抜ける読み取り、Git for Windows の有無などを扱います。
+- [Claude Code を worktree で並行して動かす方法と注意点](https://chuki-dx.github.io/claudecode-tools/guides/claude-code-worktrees/): Claude Code の --worktree で隔離したセッションを並行して動かす方法を、公式ドキュメントに沿って解説します。環境の初期化、終了時の後片付け、隔離の限界、共有されるものを整理します。
+- [CLAUDE.md の書き方:置き場所の違いと短く保つコツ](https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/): Claude Code が起動時に読む CLAUDE.md の書き方を解説します。組織用・自分用・プロジェクト用・ローカル用の置き場所の違い、読み込まれる順番、最初の3行の例、200行以内に保つコツ、書いてはいけないものを、公式ドキュメント(2026年10月時点)にもとづいて整理しました。
+- [CLAUDE.md と settings.json の違い:何をどちらに書くか](https://chuki-dx.github.io/claudecode-tools/guides/claude-md-vs-settings-json/): CLAUDE.md と settings.json の違いを、公式ドキュメントに沿って整理します。指示と強制の違い、置き場所、優先順位、何をどちらに書くかを中小企業の情シス向けに解説します。
+- [ノーコードと Claude Code の使い分け:社内ツールを作る前の3つの基準](https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/): Power Automate などのノーコードか、Claude Code のコードか。中小企業の情シス向けに、直す人・データの場所・変更の多さの3基準と、失敗しないための確認点を、中小DXラボの記事に基づいて整理します。
+
+## Optional
+
+- [運営者情報・免責・広告の方針](https://chuki-dx.github.io/claudecode-tools/about/): 中小DXラボが運営する「情シスのための Claude Code ツール」の運営者情報です。サイトの目的、掲載内容の確認方法、免責事項、アフィリエイト(広告)の方針、問い合わせ先を記載しています。

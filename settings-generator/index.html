@@ -39,50 +39,51 @@
 </script>
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "settings.json はどこに置けばよいですか",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "業務フォルダ(Claude Code を起動するフォルダ)の .claude/settings.json です。Git で共有すれば、同じフォルダを使う全員に同じルールを配れます。個人だけの設定は .claude/settings.local.json、全プロジェクト共通の個人設定は ~/.claude/settings.json です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "deny に入れたのに読めてしまいました",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "スクリプトの中でファイルを開く場合など、Claude Code がファイルの読み取りと認識できない方法には deny が効きません。上の「既知の限界」をご覧ください。まずは /permissions でルールが読み込まれているかを確認してください。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "allow に入れたコマンドで確認が出ます",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "プロジェクトの allow ルールは、そのフォルダで信頼の確認を承認するまで使われません。対話の画面で一度 claude を起動して承認してください。deny と ask は承認と関係なく効きます。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "入力した内容はどこかに送られますか",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。閲覧数を数えるため、開いたページの URL だけを運営者のサーバに送ります(Cookie や外部の解析サービスは使いません。詳しく)。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "「個別には未確認」のルールは使わないほうがよいですか",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "書き方は公式ドキュメントと実機で確認したルールにそろえていますが、そのルール自体で止まるかは試していません。配る前に、ダミーのファイルやコマンドで止まることを手元で確かめてから使うことをおすすめします。"
-      }
-    }
-  ]
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "settings.json はどこに置けばよいですか",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "業務フォルダ(Claude Code を起動するフォルダ)の .claude/settings.json です。Git で共有すれば、同じフォルダを使う全員に同じルールを配れます。個人だけの設定は .claude/settings.local.json、全プロジェクト共通の個人設定は ~/.claude/settings.json です。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "deny に入れたのに読めてしまいました",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "スクリプトの中でファイルを開く場合など、Claude Code がファイルの読み取りと認識できない方法には deny が効きません。上の「既知の限界」をご覧ください。まずは /permissions でルールが読み込まれているかを確認してください。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "allow に入れたコマンドで確認が出ます",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "プロジェクトの allow ルールは、そのフォルダで信頼の確認を承認するまで使われません。対話の画面で一度 claude を起動して承認してください。deny と ask は承認と関係なく効きます。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "入力した内容はどこかに送られますか",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "送られません。このページは HTML と JavaScript だけで動き、生成もブラウザの中で行います。閲覧数を数えるため、開いたページの URL だけを運営者のサーバに送ります(Cookie や外部の解析サービスは使いません。詳しく)。"
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "「個別には未確認」のルールは使わないほうがよいですか",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "書き方は公式ドキュメントと実機で確認したルールにそろえていますが、そのルール自体で止まるかは試していません。配る前に、ダミーのファイルやコマンドで止まることを手元で確かめてから使うことをおすすめします。"
+   }
+  }
+ ],
+ "dateModified": "2026-10-19"
 }
 </script>
 </head>
