@@ -6,12 +6,19 @@
   <url><loc>https://chuki-dx.github.io/claudecode-tools/cost-calculator/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/ai-usage-rules-claude-code/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-admin-setup/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-amazon-bedrock/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-cost-estimate/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-key-billing/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-audit-events/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-memory/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-mode/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-claude-directory/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cli-commands/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cloud-providers/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-code-review/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-common-workflows/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/</loc><lastmod>2026-10-19</lastmod></url>
@@ -21,6 +28,7 @@
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-env-protection/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-fast-mode/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-features-overview/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-first-week/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-headless/</loc><lastmod>2026-10-19</lastmod></url>
@@ -28,19 +36,25 @@
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-how-it-works/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-errors/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-windows/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-jetbrains/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-legal-compliance/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-llm-gateway/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-managed-settings/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-scopes/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-microsoft-foundry/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-output-styles/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-rules/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugin-security/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-caching/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-injection/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-proxy-network/</loc><lastmod>2026-10-19</lastmod></url>
@@ -48,10 +62,17 @@
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rewind-checkpoint/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rollout-kit/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-sandbox/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-scheduled-tasks/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-guidance/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-scan/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-server-managed-settings/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-settings-examples/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-intro/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-skills-share/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slack/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-subagents/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-terminal-config/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/</loc><lastmod>2026-10-19</lastmod></url>
@@ -60,10 +81,11 @@
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-web/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-working-directories/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-code-worktrees/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-md-how-to-write/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/claude-md-vs-settings-json/</loc><lastmod>2026-10-19</lastmod></url>
-  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/</loc><lastmod>2026-10-19</lastmod></url>
+  <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/</loc><lastmod>2026-10-21</lastmod></url>
   <url><loc>https://chuki-dx.github.io/claudecode-tools/settings-generator/</loc><lastmod>2026-10-23</lastmod></url>

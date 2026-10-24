@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のプラグインを組織で管理する:配布・必須化・インストール制限の設定 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のプラグインを組織で配る・必須化する・インストール元を制限する方法を、公式ドキュメントに沿って情シス向けに整理します。設定例と、管理設定でできないことも紹介します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のプラグインを組織で管理する:配布・必須化・インストール制限の設定">
+<meta property="og:description" content="Claude Code のプラグインを組織で配る・必須化する・インストール元を制限する方法を、公式ドキュメントに沿って情シス向けに整理します。設定例と、管理設定でできないことも紹介します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plugins-org.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のプラグインを組織で管理する:配布・必須化・インストール制限の設定">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-plugins-org.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のプラグインを組織で管理する:配布・必須化・インストール制限の設定",
+  "description": "Claude Code のプラグインを組織で配る・必須化する・インストール元を制限する方法を、公式ドキュメントに沿って情シス向けに整理します。設定例と、管理設定でできないことも紹介します。",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "プラグインの組織管理",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "ユーザーが自分でプラグインを無効にできますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "管理設定の enabledPlugins で有効にしたプラグインは、ユーザーが自分のスコープで無効にしても読み込まれます。管理設定がほかのどのスコープより優先されるためです。全スコープで止めたい場合は、管理側で false にします。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "許可リストを設定すれば --plugin-dir も止められますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "止められません。公式ドキュメントでは、許可リストは --plugin-dir を対象にせず、disableSideloadFlags が拒否するとしています。このキーは --plugin-url なども起動時に拒否します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "特定の部署だけにプラグインを配れますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "専用のキーはありません。プラグインのキーは設定を受け取る全ユーザーに適用され、サーバー管理設定は組織に1つの構成です。グループ別にはエンドポイント管理設定かゲートウェイポリシーが挙げられていますので、詳細は公式ドキュメントで確認してください。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">プラグインの組織管理</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">何ができるか:配布・必須化・制限の全体像</a></li>
+        <li><a href="#s2">管理設定をどう端末に届けるか</a></li>
+        <li><a href="#s3">プラグインを必須にする設定</a></li>
+        <li><a href="#s4">インストール元を制限する</a></li>
+        <li><a href="#s5">管理設定でできないことと確認方法</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code のプラグインを組織で管理する:配布・必須化・インストール制限の設定</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-24">2026年10月24日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のプラグインは、管理設定に <code>extraKnownMarketplaces</code> と <code>enabledPlugins</code> を一緒に書くと、全端末へ配布して有効化できます。</li>
+      <li>インストール元は <code>strictKnownMarketplaces</code>(許可リスト)と <code>blockedMarketplaces</code>(拒否リスト)で絞れます。ローカルや URL からの読み込みを止めるには <code>disableSideloadFlags</code> を併用します。</li>
+      <li>ユーザー別・グループ別の出し分けや <code>/plugin</code> の非表示にはキーがありません。執筆時点(2026年10月)の公式ドキュメントに基づくため、導入前に最新の記述をご確認ください。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">何ができるか:配布・必須化・制限の全体像</h2>
+  <p>公式ドキュメントによると、マーケットプレイスとは、Claude Code が git リポジトリ、URL、ローカルパスから取得するプラグインのカタログです。端末に登録すると、そこからプラグインをインストールできます。</p>
+  <p>多数の端末に配るには、管理設定(組織内の全端末が読むポリシーファイル、またはサーバーから配信されるポリシー)に2つのキーを同時に設定します。<code>extraKnownMarketplaces</code> が各端末にマーケットプレイスを登録し、<code>enabledPlugins</code> がそこからインストール・有効化するプラグインを指名します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s2">管理設定をどう端末に届けるか</h2>
+  <p>管理設定の届け方は次の3つです。</p>
+  <ul>
+    <li>サーバー管理設定:Organization settings &gt; Claude Code &gt; Managed settings にプラグインのキーを JSON で設定します。Claude の組織の Owner ロールが必要です。</li>
+    <li>MDM ポリシー:macOS では設定キーをトップレベルに持つ plist を配ります。Windows ではレジストリ値に JSON 文書全体を文字列で保存します。</li>
+    <li>管理設定ファイル:プラットフォームのシステムパスに <code>managed-settings.json</code> を置きます。隣の <code>managed-settings.d/</code> ディレクトリにファイルを足すこともできます。</li>
+  </ul>
+  <p>公式ドキュメントでは、claude.ai の Claude for Teams または Enterprise の組織があり、全デバイスが MDM 配下ではない場合はサーバー管理設定を、そうでなければ MDM かファイルを使うとしています。</p>
+  <h3>複数の経路を使うときの注意</h3>
+  <p>既定では、1台で適用されるのは3つのうち1つだけです。サーバー管理設定、MDM、ファイルの順に確認し、ポリシーのキーを配信した最初のものを使います。サーバー管理設定が無関係なキーを1つでも配信すると、その端末では MDM やファイル側のプラグインキーが無視されます(全ソースから読むキーを除く)。全ソースを適用するには <code>managedSourcesBehavior</code> を <code>"merge"</code> にします。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s3">プラグインを必須にする設定</h2>
+  <p>マーケットプレイスは <code>extraKnownMarketplaces</code> に、その <code>marketplace.json</code> にある <code>name</code> をキーとして追加します。プラグインは <code>enabledPlugins</code> に <code>plugin-name@marketplace-name</code> の形で追加します。次は組織のマーケットプレイスを登録し、2つのプラグインを強制的に有効にする例です。</p>
+<pre><code>{
+  "extraKnownMarketplaces": {
+    "your-marketplace": {
+      "source": { "source": "github", "repo": "your-org/your-marketplace" },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "code-formatter@your-marketplace": true,
+    "deploy-helper@your-marketplace": true
+  }
+}</code></pre>
+  <p>設定が届くと、ユーザーの次のセッション開始時にマーケットプレイスの登録とプラグインのインストールが行われ、<code>/plugin</code> に表示されます。管理設定はほかのどのスコープより優先されるため、ユーザーが自分のスコープで無効にしても読み込みは止まりません。全スコープでブロックして一覧からも隠すには、管理側の <code>enabledPlugins</code> で <code>false</code> にします。</p>
+  <p>注意点です。マーケットプレイスがプライベートな git リポジトリなら、各ユーザーに読み取り権限が必要で、クローンは各自の端末の git が保存済みの認証情報で、確認なしに実行します。<code>-p</code> や CI の実行ではインストールがバックグラウンドで進むため、最初のターンにプラグインが無いことがあります。<code>CLAUDE_CODE_SYNC_PLUGIN_INSTALL=1</code> を設定すると、最初の問い合わせの前にインストールを待たせられます。</p>
+  <p>1つのリポジトリに限るなら、そのリポジトリの <code>.claude/settings.json</code> に同じキーを書けます。ただし <code>extraKnownMarketplaces</code> は信頼済みのフォルダーでだけ適用され、未信頼のフォルダーではメッセージなしで無視されます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s4">インストール元を制限する</h2>
+  <p>許可リストと拒否リストは、プラグインの取得元であるマーケットプレイスのソースに対して照合します。マーケットプレイス内の個々のプラグインは対象ではありません。ダウンロード前(追加・インストール・更新・自動更新など)に加え、セッション開始時にもインストール済みのプラグインへ再適用され、合わなければ読み込まれません。</p>
+  <ul>
+    <li>空の許可リスト <code>[]</code> は、公式マーケットプレイスを含むすべてのソースを締め出します。</li>
+    <li>拒否リストは許可リストより先に確認され、両方に載るソースはブロックされます。</li>
+    <li>許可リストの <code>github</code> や <code>git</code> は、<code>repo</code> や <code>url</code>、<code>ref</code>、<code>path</code> が一致する必要があります。末尾のスラッシュや <code>.git</code> の有無も別の値として扱われます。複数の URL でクローンできるなら <code>hostPattern</code> が勧められています。</li>
+    <li><code>{ "source": "github", "repo": "your-org/*" }</code> のように、オーナー配下の全リポジトリをまとめて許可できます(Claude Code v2.1.223 以降)。</li>
+  </ul>
+  <p>許可リストを設定して <code>{ "source": "skills-dir" }</code> を入れないと、<code>.claude-plugin/plugin.json</code> を持つフォルダーとして <code>~/.claude/skills/</code> などに置かれたプラグインが読み込まれなくなります。</p>
+  <p>公式と自社だけを許可する一般的な構成は次のとおりです。両方の登録、2つのプラグインの強制有効化、<code>--plugin-dir</code> の拒否も含みます。</p>
+<pre><code>{
+  "strictKnownMarketplaces": [
+    { "source": "github", "repo": "anthropics/claude-plugins-official" },
+    { "source": "github", "repo": "your-org/*" },
+    { "source": "skills-dir" }
+  ],
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": { "source": "github", "repo": "anthropics/claude-plugins-official" }
+    },
+    "your-marketplace": {
+      "source": { "source": "github", "repo": "your-org/your-marketplace" }
+    }
+  },
+  "enabledPlugins": {
+    "code-formatter@your-marketplace": true,
+    "deploy-helper@your-marketplace": true
+  },
+  "disableSideloadFlags": true
+}</code></pre>
+  <p>この設定の端末では、許可外のソースの追加は <code>is blocked by enterprise policy</code> を含むメッセージで失敗します。許可リストは何も登録しないため、<code>extraKnownMarketplaces</code> での明示的な登録も必要です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s5">管理設定でできないことと確認方法</h2>
+  <p>公式ドキュメントは、セキュリティレビューでよく出る要望のうち、現在の設定スキーマに専用のキーが無いものを挙げています。</p>
+  <ul>
+    <li>ユーザー別・グループ別の適用:すべてのプラグインキーは、設定を受け取る全ユーザーに適用されます。サーバー管理設定は組織に1つの構成です。グループ別にはエンドポイント管理設定かゲートウェイポリシーを使います。</li>
+    <li>許可したマーケットプレイス内の特定プラグインの禁止:管理側の <code>enabledPlugins</code> で <code>false</code> にします。</li>
+    <li><code>/plugin</code> の非表示:無効にするキーはありません。近い構成は、自社のマーケットプレイスだけの許可リスト、配布するプラグインの <code>enabledPlugins</code>、<code>disableSideloadFlags</code> の組み合わせです。</li>
+    <li><code>--plugin-dir</code> の制御:許可リストは対象外で、<code>disableSideloadFlags</code> が拒否します。</li>
+    <li>claude.ai のプラグイン切り替え:Organization settings &gt; Plugins &amp; skills は、ここで説明したキーを設定しません。そこでの設定は同期プラグインとして CLI に届き、別の制御があります。</li>
+  </ul>
+  <h3>配布後の確認</h3>
+  <p>1台なら Claude Code を起動して <code>/plugin</code> を実行し、マーケットプレイスとプラグインが並ぶか見ます。CI では <code>claude -p</code> に <code>--output-format stream-json --verbose</code> を付け、<code>init</code> イベントの <code>plugins</code> を確認します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>ユーザーが自分でプラグインを無効にできますか?</summary>
+      <p>管理設定の <code>enabledPlugins</code> で有効にしたプラグインは、ユーザーが自分のスコープで無効にしても読み込まれます。管理設定がほかのどのスコープより優先されるためです。全スコープで止めたい場合は、管理側で <code>false</code> にします。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+    <details>
+      <summary>許可リストを設定すれば <code>--plugin-dir</code> も止められますか?</summary>
+      <p>止められません。公式ドキュメントでは、許可リストは <code>--plugin-dir</code> を対象にせず、<code>disableSideloadFlags</code> が拒否するとしています。このキーは <code>--plugin-url</code> なども起動時に拒否します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+    <details>
+      <summary>特定の部署だけにプラグインを配れますか?</summary>
+      <p>専用のキーはありません。プラグインのキーは設定を受け取る全ユーザーに適用され、サーバー管理設定は組織に1つの構成です。グループ別にはエンドポイント管理設定かゲートウェイポリシーが挙げられていますので、詳細は公式ドキュメントで確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-standard-kit-joshisu.jpg" width="1280" height="670" alt="note の有料記事「情シスが配る Claude Code 社内標準セット」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">Claude Code のプラグインの入れ方と、マーケットプレイスを選ぶときの注意</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-plugin-security/index.html">Claude Code のプラグインは安全?入れる前の確認手順と公式マーケットプレイスの見分け方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-managed-settings/index.html">Claude Code の管理者設定(managed settings)を全社に配る方法</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

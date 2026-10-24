@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のステータスライン設定方法と、表示されないときの確認点 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のステータスラインを /statusline コマンドと settings.json の statusLine で設定する方法、更新タイミング、表示されないときの確認点を公式ドキュメントに沿って整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のステータスライン設定方法と、表示されないときの確認点">
+<meta property="og:description" content="Claude Code のステータスラインを /statusline コマンドと settings.json の statusLine で設定する方法、更新タイミング、表示されないときの確認点を公式ドキュメントに沿って整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-statusline.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のステータスライン設定方法と、表示されないときの確認点">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-statusline.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のステータスライン設定方法と、表示されないときの確認点",
+  "description": "Claude Code のステータスラインを /statusline コマンドと settings.json の statusLine で設定する方法、更新タイミング、表示されないときの確認点を公式ドキュメントに沿って整理します。",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ステータスライン設定",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "ステータスラインを使うと API トークンは消費しますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、ステータスラインはローカルで動き、API トークンを消費しません。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "設定したステータスラインを消すにはどうしますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "/statusline で削除や消去を頼むか、settings.json から statusLine フィールドを手で消します。頼み方の例として /statusline delete が挙げられています。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "時刻のように時間で変わる表示を更新し続けるには?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "refreshInterval を設定します。N 秒ごとにコマンドが再実行され、最小値は 1 です。未設定の場合はイベント時だけ実行されます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">ステータスライン設定</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">ステータスラインでできること</a></li>
+        <li><a href="#s2">設定方法1:/statusline コマンドで作る</a></li>
+        <li><a href="#s3">設定方法2:settings.json に statusLine を書く</a></li>
+        <li><a href="#s4">更新タイミングと運用のコツ</a></li>
+        <li><a href="#s5">表示されないときの確認点</a></li>
+        <li><a href="#s6">値や表示がおかしいとき</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code のステータスライン設定方法と、表示されないときの確認点</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-24">2026年10月24日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のステータスラインは、<code>/statusline</code> コマンドで作るか、設定ファイルに <code>statusLine</code> を書いて設定します。</li>
+      <li>ステータスラインはスクリプトの標準出力を表示する仕組みで、ローカルで動き、API トークンは消費しないと公式ドキュメントにあります。</li>
+      <li>表示されないときは、実行権限、標準出力、ワークスペースの信頼、管理設定の順に確認します。本記事は執筆時点(2026年10月)の公式ドキュメントに基づきます。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">ステータスラインでできること</h2>
+  <p>公式ドキュメントによると、Claude Code は JSON 形式のセッションデータをスクリプトの標準入力に渡し、スクリプトが標準出力に出したものをそのまま表示します。ローカルで動作し、API トークンは消費しません。ヘルプメニューや権限確認のプロンプトの間は、一時的に非表示になります。</p>
+  <p>出力は複数行にでき、ANSI エスケープコード(文字色などを変える制御コード)で色も付けられます。色はターミナル側の対応が必要です。OSC 8 エスケープシーケンスでクリックできるリンクも作れますが、iTerm2、Kitty、WezTerm のようなハイパーリンク対応のターミナルが必要です。</p>
+  <p>端末サイズは <code>tput cols</code> では読めず、<code>COLUMNS</code> と <code>LINES</code> の環境変数を読みます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s2">設定方法1:/statusline コマンドで作る</h2>
+  <p>設定方法は大きく2つあります。1つ目は、表示したい内容を自然言語で伝える方法です。Claude Code が <code>~/.claude/</code> にスクリプトを生成し、設定も自動で更新します。公式ドキュメントの例です。</p>
+<pre><code>/statusline show model name and context percentage with a progress bar</code></pre>
+  <p>ファイル編集の許可を求められたら承認します。社内で配る前に、生成されたスクリプトの中身は確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s3">設定方法2:settings.json に statusLine を書く</h2>
+  <p>手動の場合は、ユーザー設定(<code>~/.claude/settings.json</code>)またはプロジェクト設定に <code>statusLine</code> フィールドを追加します。<code>type</code> は <code>"command"</code> にし、<code>command</code> にはスクリプトのパスかインラインのシェルコマンドを指定します。</p>
+<pre><code>{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 2
+  }
+}</code></pre>
+  <p><code>command</code> はシェルで実行されるため、公式の例のように <code>jq</code> で JSON の入力を解析し、モデル名とコンテキストの割合を表示するインラインのコマンドも書けます。任意のフィールドは次のとおりです。</p>
+  <ul>
+    <li><code>padding</code>:内容に横方向の余白を文字数で足します。既定値は <code>0</code> です。端末の端からの距離そのものではなく、相対的なインデントを調整します。</li>
+    <li><code>refreshInterval</code>:イベントによる更新に加えて、N 秒ごとにコマンドを再実行します。最小値は <code>1</code> です。時計のような時間に関わる表示向けで、未設定ならイベント時だけ実行されます。</li>
+    <li><code>hideVimModeIndicator</code>:<code>-- INSERT --</code> の組み込み表示を隠します。スクリプトで <code>vim.mode</code> を表示するとき、二重表示を避けるために <code>true</code> にします。</li>
+  </ul>
+  <p>無効にするには、<code>/statusline delete</code> のように削除を頼むか、settings.json から <code>statusLine</code> フィールドを消します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s4">更新タイミングと運用のコツ</h2>
+  <p>スクリプトはセッション開始時に1回実行され、その後は新しいアシスタントのメッセージが届いたとき、<code>/compact</code> が終わったとき、権限モードや Vim モードが変わったとき、<code>command</code> を変更したとき、<code>refreshInterval</code> のタイマーが経過したときなどに再実行されます。更新は 300ms でまとめられ、実行中に次の更新が起きると実行中のスクリプトは中止されます。スクリプトを編集した場合、変更は次の更新のきっかけで反映されます。</p>
+  <p>運用のコツは、出力を短くすること、遅い処理をキャッシュすることです。実行は頻繁なので、<code>git status</code> のようなコマンドは遅延の原因になります。コンテキストの割合は <code>used_percentage</code> を使うのが最も簡単で正確と書かれています。テスト用のモック入力の例も公式ドキュメントにあります。</p>
+  <p>ccstatusline や starship-claude というコミュニティのプロジェクトが、テーマ付きの設定を提供していると紹介されています。利用する場合は各プロジェクトの内容を確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s5">表示されないときの確認点</h2>
+  <p>公式ドキュメントのトラブルシューティングには、次の確認項目があります。</p>
+  <ul>
+    <li><code>chmod +x ~/.claude/statusline.sh</code> で実行権限を付ける</li>
+    <li>出力が標準エラーではなく標準出力に出ているか確認する</li>
+    <li>スクリプトを手で実行して出力を確認する</li>
+    <li>Windows で Git Bash を入れている場合は、<code>command</code> のパスにスラッシュを使う</li>
+    <li>設定の優先順位を適用した結果、管理設定以外で <code>disableAllHooks</code> が <code>true</code> になっていると、管理設定の <code>statusLine</code> だけが動き、無ければ無効になる</li>
+    <li>組織が <code>allowManagedHooksOnly</code> を管理設定で使っていると、独自のステータスラインは警告なしに消える。自分に当てはまるか管理者に確認する</li>
+    <li><code>claude --debug</code> で、毎回の実行時のスクリプトの標準エラー出力と、セッション内の最初の実行時の終了コードを確認する</li>
+  </ul>
+  <p>ワークスペースの信頼ダイアログを承認するまでも空白のままです。<code>statusLine</code> はシェルコマンドを実行するため、設定ファイル内のフックと同じ信頼のルールが適用されます。Claude Code を再起動し、信頼ダイアログを承認すると有効になります。また、スクリプトが終了コード 0 で終わった後にだけ表示され、非ゼロや出力なしだと空白になります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s6">値や表示がおかしいとき</h2>
+  <ul>
+    <li><code>--</code> や空の値:最初の API 応答の前は <code>null</code> のことがあります。<code>// 0</code> のようなフォールバックをスクリプトに書きます。</li>
+    <li>コンテキストの割合が違う:<code>/context</code> は直近の応答以降のメッセージの推定を足すため、次の応答まで高く出ることがあります。</li>
+    <li>表示が乱れる:複雑なエスケープシーケンスは他の UI 更新と重なると乱れることがあり、複数行ほど起きやすいです。平文に単純化して試します。</li>
+    <li>リンクがクリックできない:Terminal.app は対応していません。SSH や tmux は OSC のシーケンスを取り除くことがあります。</li>
+    <li>通知との同居:フルスクリーン表示以外では通知が同じ行に出るため、狭い端末ではステータスラインが切れることがあります。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>ステータスラインを使うと API トークンは消費しますか?</summary>
+      <p>公式ドキュメントによると、ステータスラインはローカルで動き、API トークンを消費しません。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+    <details>
+      <summary>設定したステータスラインを消すにはどうしますか?</summary>
+      <p><code>/statusline</code> で削除や消去を頼むか、settings.json から <code>statusLine</code> フィールドを手で消します。頼み方の例として <code>/statusline delete</code> が挙げられています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+    <details>
+      <summary>時刻のように時間で変わる表示を更新し続けるには?</summary>
+      <p><code>refreshInterval</code> を設定します。N 秒ごとにコマンドが再実行され、最小値は <code>1</code> です。未設定の場合はイベント時だけ実行されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-usage-cost-dept.jpg" width="1280" height="670" alt="note の有料記事「部署で使う Claude Code の使用量を把握して月額を見積もる」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-terminal-config/index.html">Claude Code で Shift+Enter が改行にならないときの設定と tmux・通知・貼り付け</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-usage-limits/index.html">Claude Code の使用量上限に達したら?表示・リセット・待つか追加するかの判断</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

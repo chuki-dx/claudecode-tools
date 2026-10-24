@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code で AGENTS.md を使う:CLAUDE.md との関係と読み込まれ方 | 中小DXラボ</title>
+<meta name="description" content="Claude Code が AGENTS.md を読む条件と、CLAUDE.md がある場合の挙動、/config での切り替え、import や symlink での共有方法を公式ドキュメントに沿って整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code で AGENTS.md を使う:CLAUDE.md との関係と読み込まれ方">
+<meta property="og:description" content="Claude Code が AGENTS.md を読む条件と、CLAUDE.md がある場合の挙動、/config での切り替え、import や symlink での共有方法を公式ドキュメントに沿って整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-agents-md.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code で AGENTS.md を使う:CLAUDE.md との関係と読み込まれ方">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-agents-md.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code で AGENTS.md を使う:CLAUDE.md との関係と読み込まれ方",
+  "description": "Claude Code が AGENTS.md を読む条件と、CLAUDE.md がある場合の挙動、/config での切り替え、import や symlink での共有方法を公式ドキュメントに沿って整理します。",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code と AGENTS.md",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "すでに @AGENTS.md を書いた CLAUDE.md がある場合、消すべきですか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、残しても構いません。Project instructions がどの値でも、AGENTS.md が二重に読まれることはありません。他に内容が無ければ削除できますが、AGENTS.md を直接読めないセッションがあるなら残します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "CLAUDE.md と AGENTS.md の両方を読ませるにはどうしますか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "/config で Project instructions を claude-md-and-agents-md にします。設定ファイルの場合は pluginConfigs の cc-plugin-agents-md@builtin に instructionFiles を指定します。各ディレクトリで CLAUDE.md が先、AGENTS.md が後に読まれます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "AGENTS.md が読まれないときは、何を確認しますか。",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "作業ディレクトリかその上に CLAUDE.md、.claude/CLAUDE.md、CLAUDE.local.md が無いかを確認します。あれば既定では AGENTS.md は読まれません。次に Claude Code が v2.1.277 以降か、組み込みプラグインを /plugin で無効にしていないかを確認します。直接読めない場合は @AGENTS.md の import が使えます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code と AGENTS.md</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">AGENTS.md は既定でどう読まれるか</a></li>
+        <li><a href="#s2">読まれる条件と、読まれないファイル</a></li>
+        <li><a href="#s3">/config で読むファイルを切り替える</a></li>
+        <li><a href="#s4">読めないセッションと、CLAUDE.md との違い</a></li>
+        <li><a href="#s5">他のツールと1ファイルを共有する</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code で AGENTS.md を使う:CLAUDE.md との関係と読み込まれ方</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-24">2026年10月24日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、Claude Code は <code>AGENTS.md</code> を直接読めます。既定では、作業ディレクトリかその上に <code>CLAUDE.md</code> 系のファイルが無いときだけ読みます。</li>
+      <li><code>CLAUDE.md</code> や <code>CLAUDE.local.md</code> があると、既定では <code>AGENTS.md</code> は読まれません。両方読ませたいときは <code>/config</code> の <strong>Project instructions</strong> を <code>claude-md-and-agents-md</code> にします。</li>
+      <li>直接読むには v2.1.277 以降が必要です。読めない環境では、<code>CLAUDE.md</code> に <code>@AGENTS.md</code> を書いて取り込みます。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">AGENTS.md は既定でどう読まれるか</h2>
+  <p>公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)は <code>AGENTS.md</code> をプロジェクトの指示として読めます。他のコーディングエージェント向けに整えたリポジトリでも、<code>CLAUDE.md</code> の追加、import、設定を足さずに使えます。本記事は執筆時点(2026年10月)の公式ドキュメントに基づきます。</p>
+  <p>既定の挙動は、リポジトリにあるファイルの組み合わせで決まります。</p>
+  <ul>
+    <li><code>AGENTS.md</code> だけがあり、作業ディレクトリとその上に <code>CLAUDE.md</code> も <code>CLAUDE.local.md</code> も無い場合は、<code>AGENTS.md</code> を読みます。</li>
+    <li><code>AGENTS.md</code> と、<code>CLAUDE.md</code> または <code>CLAUDE.local.md</code> の両方がある場合は、<code>CLAUDE.md</code> 系のファイルだけを読みます。</li>
+    <li><code>CLAUDE.md</code> が <code>AGENTS.md</code> を import している場合は、<code>CLAUDE.md</code> を読み、import を通じて <code>AGENTS.md</code> も含まれます。</li>
+  </ul>
+  <p>直接読むには Claude Code v2.1.277 以降が必要です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s2">読まれる条件と、読まれないファイル</h2>
+  <p>判定の対象になるのは、作業ディレクトリかその上にある <code>CLAUDE.md</code>、<code>.claude/CLAUDE.md</code>、<code>CLAUDE.local.md</code> です。これらがあると <code>AGENTS.md</code> の代わりにそちらが読まれます。<code>~/.claude/CLAUDE.md</code>、組織の managed <code>CLAUDE.md</code>、<code>.claude/rules/</code> のファイルは判定の対象外で、<code>AGENTS.md</code> と一緒に読み込まれます。</p>
+  <p>対象が無いとき、セッション開始時に作業ディレクトリとその上の <code>AGENTS.md</code> と <code>.claude/AGENTS.md</code> がすべて読まれます。対話セッションでは <code>no CLAUDE.md found; AGENTS.md loaded: /home/you/repo/AGENTS.md</code> のような行が出るので、読まれたかを確認できます。サブディレクトリの <code>AGENTS.md</code> は、Claude が Read ツールでそこのファイルを開き、そのサブディレクトリに3つの <code>CLAUDE.md</code> 系ファイルのどれも無いときに読まれます。</p>
+  <p><code>AGENTS.local.md</code>、<code>AGENTS.override.md</code>、<code>.agents/</code> ディレクトリ以下は読まれません。</p>
+  <p><strong>注意点</strong>:<code>CLAUDE.local.md</code> も判定の対象です。個人用の未コミットの指示を置こうとして <code>CLAUDE.local.md</code> を足すと、<code>AGENTS.md</code> が読まれなくなります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s3">/config で読むファイルを切り替える</h2>
+  <p>セッションで <code>/config</code> と入力して設定パネルを開き、<strong>Project instructions</strong> を次のいずれかにします。</p>
+  <ul>
+    <li><code>claude-md-or-agents-md</code>:既定です。<code>CLAUDE.md</code> を読み、<code>CLAUDE.md</code> も <code>CLAUDE.local.md</code> も無いときは <code>AGENTS.md</code> を読みます。</li>
+    <li><code>claude-md-and-agents-md</code>:両方を読みます。各ディレクトリで <code>CLAUDE.md</code> が先、<code>AGENTS.md</code> が後です。読み込み済みの <code>AGENTS.md</code> は飛ばすため、二重には読まれません。</li>
+    <li><code>claude-md</code>:<code>CLAUDE.md</code> だけを読みます。</li>
+    <li><code>managed-only</code>:起動時は組織の managed <code>CLAUDE.md</code> と auto memory だけです。すべての <code>AGENTS.md</code> は対象外になります。</li>
+  </ul>
+  <p>設定ファイルでも指定できます。<code>pluginConfigs</code> の <code>cc-plugin-agents-md@builtin</code> の下に書きます。読まれるのは <code>~/.claude/settings.json</code>、<code>--settings</code> ファイル、managed settings で、プロジェクトやローカルの設定ファイルでは無視されます。両方読ませる例です。</p>
+<pre><code>{
+  "pluginConfigs": {
+    "cc-plugin-agents-md@builtin": {
+      "options": { "instructionFiles": "claude-md-and-agents-md" }
+    }
+  }
+}</code></pre>
+  <p>v2.1.285 より前は ID が <code>agents-md@builtin</code> で、<code>cc-plugin-agents-md@builtin</code> は無視されます。古い版も同じファイルを読む環境では <code>agents-md@builtin</code> を使います。変更は次のメッセージから、新しいセッションすべてで有効です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s4">読めないセッションと、CLAUDE.md との違い</h2>
+  <p>次の場合は <code>CLAUDE.md</code> だけが読まれ、<code>/config</code> に <strong>Project instructions</strong> も出ません。v2.1.277 より前のバージョン、<code>/plugin</code> で組み込みプラグインを無効にした場合、場合によっては v2.1.276 以前からアップグレードした最初のセッション(次のセッションから読まれます)です。また v2.1.281 より前は、Amazon Bedrock やテレメトリ無効のセッションなどでも <code>CLAUDE.md</code> だけでした。その場合は Claude Code を更新してください。</p>
+  <h3>設定経由で読む AGENTS.md の違い</h3>
+  <ul>
+    <li><code>InstructionsLoaded</code> フックは動きません。<code>CLAUDE.md</code> が import や symlink する <code>AGENTS.md</code> では通常どおり動きます。</li>
+    <li><code>CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD</code> の設定中に <code>--add-dir</code> で足したディレクトリでは、<code>AGENTS.md</code> は読まれません。</li>
+    <li>作業ディレクトリ外への <code>@path</code> import は、このプロジェクトで外部 import をすでに承認済みの場合だけ読み込まれ、確認は表示されません。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s5">他のツールと1ファイルを共有する</h2>
+  <p>直接読まれない場合も、隣の <code>CLAUDE.md</code> に <code>@AGENTS.md</code> の import を置けば、<code>AGENTS.md</code> を全ツール共通の1ファイルにできます。プロジェクトに <code>CLAUDE.md</code> もあるとき、<code>claude-md</code> にしたとき、直接読めないセッションで使います。Claude 固有の指示は import の下に書きます。</p>
+<pre><code>@AGENTS.md
+
+## Claude Code
+
+Use plan mode for changes under `src/billing/`.</code></pre>
+  <p>Claude 固有の内容が不要なら、symlink でも構いません。</p>
+<pre><code>ln -s AGENTS.md CLAUDE.md</code></pre>
+  <p>symlink を選ぶ前に、次の点を確認してください。</p>
+  <ul>
+    <li>Edit と Write ツールは symlink 越しの書き込みを拒否し、リンク先の <code>AGENTS.md</code> を編集するよう案内します。</li>
+    <li>Windows で作業する人や clone する人がいるなら、<code>@AGENTS.md</code> の import を使います。symlink の作成に Administrator 権限か Developer Mode が必要で、<code>core.symlinks</code> が有効でないと、Git が1行だけの <code>CLAUDE.md</code> を作るためです。</li>
+  </ul>
+  <p>どちらでも、次のセッションで <code>/context</code> を実行し、<strong>Memory files</strong> に <code>CLAUDE.md</code> が出ることを確認します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>すでに <code>@AGENTS.md</code> を書いた CLAUDE.md がある場合、消すべきですか。</summary>
+      <p>公式ドキュメントによると、残しても構いません。<strong>Project instructions</strong> がどの値でも、<code>AGENTS.md</code> が二重に読まれることはありません。他に内容が無ければ削除できますが、<code>AGENTS.md</code> を直接読めないセッションがあるなら残します。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>CLAUDE.md と AGENTS.md の両方を読ませるにはどうしますか。</summary>
+      <p><code>/config</code> で <strong>Project instructions</strong> を <code>claude-md-and-agents-md</code> にします。設定ファイルの場合は <code>pluginConfigs</code> の <code>cc-plugin-agents-md@builtin</code> に <code>instructionFiles</code> を指定します。各ディレクトリで <code>CLAUDE.md</code> が先、<code>AGENTS.md</code> が後に読まれます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>AGENTS.md が読まれないときは、何を確認しますか。</summary>
+      <p>作業ディレクトリかその上に <code>CLAUDE.md</code>、<code>.claude/CLAUDE.md</code>、<code>CLAUDE.local.md</code> が無いかを確認します。あれば既定では <code>AGENTS.md</code> は読まれません。次に Claude Code が v2.1.277 以降か、組み込みプラグインを <code>/plugin</code> で無効にしていないかを確認します。直接読めない場合は <code>@AGENTS.md</code> の import が使えます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md テンプレート生成</a>: 用途と守ってほしいことを選ぶと、短い CLAUDE.md のひな形を出力します。最初の数行を決めるときに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-standard-kit-joshisu.jpg" width="1280" height="670" alt="note の有料記事「情シスが配る Claude Code 社内標準セット」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-md-how-to-write/index.html">CLAUDE.md の書き方:置き場所の違いと短く保つコツ</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-auto-memory/index.html">Claude Code の自動メモリ(auto memory)とは:保存場所・止め方・確認方法</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

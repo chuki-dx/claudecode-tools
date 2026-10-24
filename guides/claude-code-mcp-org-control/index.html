@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code の MCP を社内で制限する方法:許可・拒否リストと managed-mcp.json | 中小DXラボ</title>
+<meta name="description" content="Claude Code で使える MCP サーバーを会社で制限する方法を、公式ドキュメントに沿って整理します。managed-mcp.json、許可リスト、拒否リストの使い分けと注意点を解説します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code の MCP を社内で制限する方法:許可・拒否リストと managed-mcp.json">
+<meta property="og:description" content="Claude Code で使える MCP サーバーを会社で制限する方法を、公式ドキュメントに沿って整理します。managed-mcp.json、許可リスト、拒否リストの使い分けと注意点を解説します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-mcp-org-control.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code の MCP を社内で制限する方法:許可・拒否リストと managed-mcp.json">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-mcp-org-control.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code の MCP を社内で制限する方法:許可・拒否リストと managed-mcp.json",
+  "description": "Claude Code で使える MCP サーバーを会社で制限する方法を、公式ドキュメントに沿って整理します。managed-mcp.json、許可リスト、拒否リストの使い分けと注意点を解説します。",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "MCP サーバーの制限",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "利用者が許可リストを自分で広げることはできますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "allowManagedMcpServersOnly を付けない場合は可能です。許可リストは全スコープで統合され、利用者自身の ~/.claude/settings.json でも広げられます。allowedMcpServers と allowManagedMcpServersOnly: true を管理設定に置けば、ユーザー・プロジェクト・ローカルの許可リストは無視されます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "serverName だけで許可や拒否を管理してよいですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、serverName はセキュリティ対策ではありません。名前は利用者が付けるラベルであり、実体のサーバーではないためです。実際に動くサーバーを制御するには、serverCommand か serverUrl のエントリを追加してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "managed-mcp.json を配ると、利用者は MCP サーバーを追加できなくなりますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントでは、固定配布のパターンは全員が同じサーバーを使い、他は追加できないとされています。claude mcp add を実行すると、企業の MCP 設定が有効で排他的に制御している旨のエラーが表示されます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">MCP サーバーの制限</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">まず決めること:どこまで制限するか</a></li>
+        <li><a href="#s2">managed-mcp.json でサーバーを固定配布する</a></li>
+        <li><a href="#s3">許可リストと拒否リストの設定</a></li>
+        <li><a href="#s4">エントリの書き方と照合の注意点</a></li>
+        <li><a href="#s5">許可リストを通らないサーバーと、利用者への見え方</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code の MCP を社内で制限する方法:許可・拒否リストと managed-mcp.json</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-24">2026年10月24日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の MCP サーバーは、全面無効・固定配布・許可制・拒否のみなど、複数の制限パターンから選べます。</li>
+      <li>同じサーバーを全員に固定で配るなら <code>managed-mcp.json</code>、利用者が追加するものを絞るなら <code>allowedMcpServers</code> と <code>deniedMcpServers</code> を使います。</li>
+      <li>許可リストを利用者が広げられない決定的なものにするには、管理設定に <code>allowedMcpServers</code> と <code>allowManagedMcpServersOnly: true</code> を一緒に置きます。<code>serverName</code> はセキュリティ対策になりません。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">まず決めること:どこまで制限するか</h2>
+  <p>本記事は執筆時点(2026年10月)の公式ドキュメントに基づきます。MCP サーバー(Claude Code に追加して使う接続先のサーバー)の制限には、三つの仕組みがあります。<code>managed-mcp.json</code> は固定のサーバー一式を配り、<code>managedMcpServers</code> は利用者が追加したものに加えて会社がサーバーを提供し、<code>allowedMcpServers</code>/<code>deniedMcpServers</code> は利用者が設定したものを絞り込みます。</p>
+  <p>公式ドキュメントが挙げる制限パターンは次のとおりです。</p>
+  <ul>
+    <li>全面無効: 空のサーバー定義を入れた <code>managed-mcp.json</code>。ただし、排他的制御の下で読み込まれる一部のサーバーは例外です。</li>
+    <li>固定配布: 欲しいサーバーを書いた <code>managed-mcp.json</code>。全員が同じサーバーを使い、追加できません。</li>
+    <li>提供サーバー: <code>managedMcpServers</code>。会社が挙げたリモートサーバーを配り、利用者自身のものも残ります。</li>
+    <li>承認カタログ: <code>allowedMcpServers</code> と <code>allowManagedMcpServersOnly: true</code>。承認済み以外はブロックされます。</li>
+    <li>プラグインのサーバーのみ: <code>strictPluginOnlyCustomization</code> のリストに <code>mcp</code> を含めます。</li>
+    <li>ゆるい許可リスト: <code>allowManagedMcpServersOnly</code> なしの <code>allowedMcpServers</code>。利用者が自分の設定で広げられます。</li>
+    <li>拒否リストのみ: <code>deniedMcpServers</code>。問題のあるサーバーだけを止め、他は許可します。</li>
+  </ul>
+  <p>Claude Code には、利用者が閲覧してインストールできる組み込みの MCP サーバーレジストリはありません。承認カタログ方式では、承認済み一覧と <code>claude mcp add</code> のコマンドを社内 wiki など利用者が見つけやすい場所で共有するか、管理されたプラグインマーケットプレイスでプラグインとして配布します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s2">managed-mcp.json でサーバーを固定配布する</h2>
+  <p>公式ドキュメントの設定一覧によると、<code>managed-mcp.json</code> は <code>/Library/Application Support/ClaudeCode/</code>、<code>/etc/claude-code/</code>、<code>C:\Program Files\ClaudeCode\</code> のいずれかのシステムパスに置きます。配布は MDM、GPO、フリート管理、または管理者権限を持つプロセスで行い、サーバー管理設定(server-managed settings)では設定できません。</p>
+  <p>配布後に利用者が <code>claude mcp add</code> を実行すると、追加できない旨のメッセージが表示されます。また、Claude in Chrome を使える利用者が <code>claude --chrome</code> を実行すると、起動時に終了します。許可するには <code>allowClaudeInChromeWithManagedMcp</code> を端末側の管理設定(MDM プロファイル、HKLM レジストリ、<code>managed-settings.json</code> のみ有効)で設定します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s3">許可リストと拒否リストの設定</h2>
+  <p>許可リストと拒否リストは、読み込みを許すサーバーを絞るフィルタです。レジストリではないため、サーバーは利用者・プラグイン・組織のいずれかに追加されて初めて対象になります。</p>
+  <h3>許可リストを管理側で固定する</h3>
+  <p><code>allowedMcpServers</code> と <code>allowManagedMcpServersOnly: true</code> を、server-managed settings や配布した <code>managed-settings.json</code> などの管理設定に一緒に置きます。複数の管理ソースをまたいでロックと許可リストを読むには、Claude Code v2.1.273 以降が必要です。</p>
+<pre><code>{
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [
+    { "serverUrl": "https://api.githubcopilot.com/*" },
+    { "serverUrl": "https://*.internal.example.com/*" }
+  ]
+}</code></pre>
+  <p><code>true</code> の間、ユーザー・プロジェクト・ローカルの許可リストは無視されます。拒否リストは全スコープで統合されるため、利用者は自分用にブロックできます。</p>
+  <p><code>allowManagedMcpServersOnly</code> を付けないと、許可リストは全スコープで統合され、利用者自身の <code>~/.claude/settings.json</code> でも広げられます。なお <code>allowManagedPermissionRulesOnly</code> はパーミッションルールだけを固定するもので、MCP の許可リストは強制されません。</p>
+  <h3>未設定と空配列の違い</h3>
+  <ul>
+    <li><code>allowedMcpServers</code> が未設定なら全サーバーを許可、空配列 <code>[]</code> なら許可なし(許可リストの確認を省くサーバーを除く)、中身があれば一致したものだけ許可です。</li>
+    <li><code>deniedMcpServers</code> は未設定でも空配列でもブロックなしです。中身があれば一致したものを、他の設定に関係なくブロックします。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s4">エントリの書き方と照合の注意点</h2>
+  <p>各エントリは、次のいずれか一つのキーで書きます。</p>
+  <ul>
+    <li><code>serverUrl</code>: HTTP・SSE のリモートサーバー用。URL は完全一致か <code>*</code> のワイルドカードで書きます。</li>
+    <li><code>serverCommand</code>: stdio サーバー用。コマンドと引数が順序も含めて完全一致する必要があり、<code>env</code> は比較されません。</li>
+    <li><code>serverName</code>: 利用者が付けたラベルとの完全一致のみで、ワイルドカードは使えません。</li>
+  </ul>
+  <p>公式ドキュメントは、<code>serverName</code> はセキュリティ対策ではないと警告しています。名前は利用者が付けるラベルで、どのサーバーにも <code>github</code> と名付けられるためです。実際に動くサーバーを制御するには <code>serverCommand</code> か <code>serverUrl</code> を使います。</p>
+  <p>URL のポートにも注意が必要です。ポートを省略してホスト名を全部書くと既定ポートのみ(<code>https</code> は 443、<code>http</code> は 80)、ホスト名に <code>*</code> を含めると全ポートが対象です。拒否リストも同じで、<code>https://staging.example.com/*</code> は <code>https://staging.example.com:8443/api</code> をブロックしません。</p>
+  <p>許可リストに <code>serverUrl</code> が一つでもあれば、リモートサーバーは URL に一致する必要があり、<code>serverName</code> の一致は <code>serverUrl</code> が無い場合だけ有効です。stdio も <code>serverCommand</code> について同様です。強制に頼るエントリは、リテラルの URL とコマンドで書くよう公式ドキュメントは勧めています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s5">許可リストを通らないサーバーと、利用者への見え方</h2>
+  <p>許可リストの確認を通らないサーバーがあります。組織自身のサーバー(<code>managedMcpServers</code> のすべてと、<code>env</code> の外で <code>${VAR}</code> 展開を使わない <code>managed-mcp.json</code> のエントリ)、Claude in Chrome や <code>ide</code> サーバーなどの組み込みサーバー、Claude Tag セッションの Slack ツールです。拒否リストは、<code>type: "sdk"</code> のインプロセスのものを除き、出どころを問わず適用されます。</p>
+  <p>利用者への見え方も事前に確認してください。以前設定したサーバーがポリシーでブロックされると、<code>/mcp</code> と <code>claude mcp list</code> から消えます。理由は利用者に表示されないため、新しい制限を展開するときは、ブロック対象を周知する必要があります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>利用者が許可リストを自分で広げることはできますか?</summary>
+      <p><code>allowManagedMcpServersOnly</code> を付けない場合は可能です。許可リストは全スコープで統合され、利用者自身の <code>~/.claude/settings.json</code> でも広げられます。<code>allowedMcpServers</code> と <code>allowManagedMcpServersOnly: true</code> を管理設定に置けば、ユーザー・プロジェクト・ローカルの許可リストは無視されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+    <details>
+      <summary><code>serverName</code> だけで許可や拒否を管理してよいですか?</summary>
+      <p>公式ドキュメントによると、<code>serverName</code> はセキュリティ対策ではありません。名前は利用者が付けるラベルであり、実体のサーバーではないためです。実際に動くサーバーを制御するには、<code>serverCommand</code> か <code>serverUrl</code> のエントリを追加してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+    <details>
+      <summary><code>managed-mcp.json</code> を配ると、利用者は MCP サーバーを追加できなくなりますか?</summary>
+      <p>公式ドキュメントでは、固定配布のパターンは全員が同じサーバーを使い、他は追加できないとされています。<code>claude mcp add</code> を実行すると、企業の MCP 設定が有効で排他的に制御している旨のエラーが表示されます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code 権限設定(settings.json)ジェネレーター</a>: deny / ask / allow のルールを選ぶと、置き場所つきで settings.json を出力します。配る前の設定の下書きに使えます。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-standard-kit-joshisu.jpg" width="1280" height="670" alt="note の有料記事「情シスが配る Claude Code 社内標準セット」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code の MCP 設定:local・project・user の違いと .mcp.json</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-mcp-quickstart/index.html">Claude Code に MCP サーバーをつなぐ手順(追加・確認・削除)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-managed-settings/index.html">Claude Code の管理者設定(managed settings)を全社に配る方法</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

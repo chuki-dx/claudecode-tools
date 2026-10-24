@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のエージェントチーム(agent teams)とは:使いどころ・始め方・制限 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のエージェントチーム(agent teams)の使いどころ、サブエージェントとの違い、有効化の手順、制限を公式ドキュメントに基づいて整理します。情シスが社内で試す前の判断材料に。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のエージェントチーム(agent teams)とは:使いどころ・始め方・制限">
+<meta property="og:description" content="Claude Code のエージェントチーム(agent teams)の使いどころ、サブエージェントとの違い、有効化の手順、制限を公式ドキュメントに基づいて整理します。情シスが社内で試す前の判断材料に。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-agent-teams.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のエージェントチーム(agent teams)とは:使いどころ・始め方・制限">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-agent-teams.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のエージェントチーム(agent teams)とは:使いどころ・始め方・制限",
+  "description": "Claude Code のエージェントチーム(agent teams)の使いどころ、サブエージェントとの違い、有効化の手順、制限を公式ドキュメントに基づいて整理します。情シスが社内で試す前の判断材料に。",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code エージェントチーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "エージェントチームとサブエージェントはどう使い分けますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、結果だけが重要な焦点の絞られた作業にはサブエージェント、チームメイト同士が所見を共有し、反論し、自分たちで調整する必要がある複雑な作業にはエージェントチームです。チームはトークンの消費が高くなります。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "頼んでいないのにチームメイトが起動します。どうすればよいですか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "有効な間は、Claude が名前を付けたサブエージェントがチームメイトとして起動します。CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS を 0 にすると、サブエージェントとして起動する状態に戻ります。他の設定元で 1 になっていないかも確認してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "セッションを再開したらチームメイトはどうなりますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ドキュメントによると、/resume と /rewind ではプロセス内のチームメイトは復元されません。リードが存在しないチームメイトにメッセージを送ろうとすることがあるため、その場合は新しいチームメイトを起動するよう伝えます。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">Claude Code エージェントチーム</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">どんな作業に向くか</a></li>
+        <li><a href="#s2">サブエージェントとの違い</a></li>
+        <li><a href="#s3">有効化と最初のチームの作り方</a></li>
+        <li><a href="#s4">運用のコツ</a></li>
+        <li><a href="#s5">制限とトラブル時の対処</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code のエージェントチーム(agent teams)とは:使いどころ・始め方・制限</h1>
+  <p class="article-meta">公開: <time datetime="2026-10-24">2026年10月24日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>エージェントチームは、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の複数のセッションが役割を分けて並行し、互いにメッセージを送り合う機能です。公式ドキュメントによると実験的で、既定では無効です。</li>
+      <li>向くのは調査・レビュー、機能の分担、仮説を競わせるデバッグなどです。逐次作業や同じファイルの編集には向かず、トークンも単一セッションよりかなり多く使います。</li>
+      <li>有効化は環境変数を <code>1</code> にするだけで、依頼は自然言語で行います。最初は 3-5 人程度で、コードを書かない調査やレビューから試すのが公式の勧めです。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">どんな作業に向くか</h2>
+  <p>公式ドキュメントによると、エージェントチームは並行して探索することに実際の価値がある作業で最も効果的です。特に向くのは次の4つです。</p>
+  <ul>
+    <li>調査とレビュー：複数のチームメイトが問題の別の側面を同時に調べ、所見を共有して互いに検証します</li>
+    <li>新しいモジュールや機能：それぞれが別の部分を持ち、互いの作業を踏みません</li>
+    <li>競合する仮説でのデバッグ：異なる仮説を並行して試し、より早く答えに収束します</li>
+    <li>層をまたぐ調整：フロントエンド、バックエンド、テストにまたがる変更を別々のチームメイトが担当します</li>
+  </ul>
+  <p>一方で、調整の手間が増え、単一セッションよりトークンを大幅に多く使います。逐次的な作業、同じファイルの編集、依存関係の多い作業では、単一セッションかサブエージェント(メインのエージェントに結果を返す作業役)のほうが効果的とされています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s2">サブエージェントとの違い</h2>
+  <p>公式ドキュメントによると、どちらも作業を並列化できますが動き方が違います。サブエージェントは結果をメインのエージェントに返します。チームでは、チームメイトが共有タスクリストで作業を引き受け、互いに直接やり取りします。</p>
+  <ul>
+    <li>コンテキスト：どちらも独自のコンテキストウィンドウを持ちます</li>
+    <li>向く用途：サブエージェントは結果だけが重要な焦点の絞られた作業、チームは議論や協力が要る複雑な作業です</li>
+    <li>トークンコスト：サブエージェントは結果が要約されて戻るため低め、チームは各チームメイトが別々の Claude インスタンスなので高めです</li>
+  </ul>
+  <p>素早く報告する作業役が欲しいならサブエージェント、所見の共有や相互の反論、自律的な調整が要るならチームを使う、という整理です。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s3">有効化と最初のチームの作り方</h2>
+  <p>公式ドキュメントによると、エージェントチームは既定で無効です。環境変数 <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code> を <code>1</code> にすると有効になり、シェルの環境か settings.json のどちらでも設定できます。</p>
+<pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}</code></pre>
+  <p>注意点が2つあります。有効にすると、Claude が名前を付けたサブエージェントがチームメイトとして起動するため、頼んでいなくてもチームができることがあります。また、チームメイトの起動には対話セッションが必要で、<code>-p</code> フラグの非対話モード(Agent SDK のセッションを含む)では起動せず、通常のサブエージェントとして動きます。</p>
+  <p>使うときは、タスクとチームメイトの構成を自然言語で書きます。公式の例は、三つの役割が互いを待たずに探索できるので向いているとされています。</p>
+<pre><code>I'm designing a CLI tool that helps developers track TODO comments across
+their codebase. Spawn three teammates to explore this from different angles:
+one on UX, one on technical architecture, one playing devil's advocate.</code></pre>
+  <p>Claude は、Task ツールを持つセッションでは共有タスクリストを作り、視点ごとにチームメイトを起動し、終わると所見をまとめます。ときにはチームではなくサブエージェントが使われ、エージェントパネルには両方が並ぶため、パネルだけではチームかどうか判断できません。その場合はエージェントチームを明示して再度頼みます。チームメイトは上下矢印で選び、Enter でその記録を開いて直接メッセージを送れます。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s4">運用のコツ</h2>
+  <ul>
+    <li>文脈を渡す：チームメイトは CLAUDE.md、MCP サーバー、スキルを自動で読み込みますが、リードの会話履歴は引き継ぎません。起動時の依頼文にタスク固有の情報を入れます</li>
+    <li>人数：厳密な上限はありませんが、トークンは人数に比例して増え、調整の手間も増えます。ほとんどの場合は 3-5 人から始めます</li>
+    <li>タスクの粒度：小さすぎると調整の手間が上回り、大きすぎると確認なしで長く動いて無駄になりやすくなります。関数、テストファイル、レビューのような、成果物が明確な単位が適切です</li>
+    <li>ファイルの衝突：2人が同じファイルを編集すると上書きになります。担当ファイルを分けます</li>
+    <li>最初は調査とレビューから：PR のレビューやライブラリの調査など、コードを書かない作業から始めると、並列実装の調整の難しさなしに効果を確かめられます</li>
+    <li>見守る：長く放置すると無駄な作業になるリスクが上がります。進捗を確認し、方針を修正します</li>
+  </ul>
+  <p>リードが待たずに自分で実装を始めたときは、次の一文を伝えます。</p>
+<pre><code>Wait for your teammates to complete their tasks before proceeding</code></pre>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s5">制限とトラブル時の対処</h2>
+  <p>執筆時点(2026年10月)の公式ドキュメントでは、エージェントチームは実験的な機能で、次の制限があるとされています。</p>
+  <ul>
+    <li><code>/resume</code> と <code>/rewind</code> ではプロセス内のチームメイトが復元されません。再開後は新しいチームメイトを起動するようリードに伝えます</li>
+    <li>タスクの状態が遅れることがあり、完了が記録されないと依存するタスクが止まります。作業が済んでいるか確認し、手動で更新するかリードに促してもらいます</li>
+    <li>1セッションにつきチームは1つで、入れ子のチームや、チームメイトのリードへの昇格はできません</li>
+    <li>分割ペインは tmux か iTerm2 が必要です。既定のプロセス内モードはどの端末でも動きますが、VS Code の統合ターミナル、Windows Terminal、Ghostty では分割ペインは未対応です</li>
+  </ul>
+  <p>運用面では、チームメイトの許可要求がリードに上がって煩雑になるため、起動前に権限設定で一般的な操作を事前承認しておくと中断が減ります。チームメイトがエラーで止まったときは、パネルで選んで出力を確認し、追加の指示を出すか代わりのチームメイトを起動します。リードが全タスクの完了前に終わったと判断した場合は、続けるよう伝えます。</p>
+  <p>意図せずチームが作られるのを避けたい場合は、次のように <code>0</code> にします。</p>
+<pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
+  }
+}</code></pre>
+  <p>新しいセッションは不要で、保存すると実行中のセッションに再適用されます。ただし、プロジェクト設定やローカル設定などで <code>1</code> にしていればそちらが優先され、組織の管理設定で有効にされている場合は管理者に値の変更を頼む必要があります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>エージェントチームとサブエージェントはどう使い分けますか?</summary>
+      <p>公式ドキュメントによると、結果だけが重要な焦点の絞られた作業にはサブエージェント、チームメイト同士が所見を共有し、反論し、自分たちで調整する必要がある複雑な作業にはエージェントチームです。チームはトークンの消費が高くなります。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+    <details>
+      <summary>頼んでいないのにチームメイトが起動します。どうすればよいですか?</summary>
+      <p>有効な間は、Claude が名前を付けたサブエージェントがチームメイトとして起動します。<code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code> を <code>0</code> にすると、サブエージェントとして起動する状態に戻ります。他の設定元で <code>1</code> になっていないかも確認してください。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+    <details>
+      <summary>セッションを再開したらチームメイトはどうなりますか?</summary>
+      <p>公式ドキュメントによると、<code>/resume</code> と <code>/rewind</code> ではプロセス内のチームメイトは復元されません。リードが存在しないチームメイトにメッセージを送ろうとすることがあるため、その場合は新しいチームメイトを起動するよう伝えます。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code スキル(SKILL.md)雛形生成</a>: スキル名・説明・手順・出力の形を入れると、置き場所つきで SKILL.md のひな形を出力します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-standard-kit-joshisu.jpg" width="1280" height="670" alt="note の有料記事「情シスが配る Claude Code 社内標準セット」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-subagents/index.html">Claude Code のサブエージェントの使い方と作り方(設定・呼び出し・注意点)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-worktrees/index.html">Claude Code を worktree で並行して動かす方法と注意点</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>
