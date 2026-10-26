@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to choose and switch models in Claude Code (/model and settings) | Chuki DX Lab</title>
+<meta name="description" content="How to choose a Claude Code model and switch it with /model, --model, or settings files, based on the official docs. It also covers Fable caveats, administrator restrictions, and why a setting might not persist.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-model-select/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-model-select/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-model-select/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to choose and switch models in Claude Code (/model and settings)">
+<meta property="og:description" content="How to choose a Claude Code model and switch it with /model, --model, or settings files, based on the official docs. It also covers Fable caveats, administrator restrictions, and why a setting might not persist.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-model-select/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-model-select.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to choose and switch models in Claude Code (/model and settings)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-model-select.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to choose and switch models in Claude Code (/model and settings)",
+  "description": "How to choose a Claude Code model and switch it with /model, --model, or settings files, based on the official docs. It also covers Fable caveats, administrator restrictions, and why a setting might not persist.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-model-select/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Switching models in Claude Code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-model-select/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is the model I pick with /model used the next time I start Claude Code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pressing Enter in the picker or typing /model <name> directly saves it as your default. If you choose with s or launch with --model, it applies to that session only. Higher-priority settings such as project settings, managed settings, or ANTHROPIC_MODEL override your saved choice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I use different models in multiple terminals at the same time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs advise launching each terminal with its own --model flag rather than switching with /model. --model applies only to the session you launch."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I pin the model version?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An alias points to the recommended version and is updated over time. To pin a version, use a full model name such as claude-opus-5-5, or set the corresponding environment variable such as ANTHROPIC_DEFAULT_OPUS_MODEL."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-model-select/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Switching models in Claude Code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Models and aliases you can specify in Claude Code</a></li>
+        <li><a href="#s2">How to choose an alias by use case</a></li>
+        <li><a href="#s3">How to switch models with /model, --model, and the settings file</a></li>
+        <li><a href="#s4">What to check when it doesn&#x27;t start with the model you expected</a></li>
+        <li><a href="#s5">Notes when using Fable</a></li>
+        <li><a href="#s6">When admins set restrictions or defaults</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to choose and switch models in Claude Code (/model and settings)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Specify the model with an alias such as <code>sonnet</code>, <code>opus</code>, or <code>haiku</code>, or with a model name. In the official docs, <code>sonnet</code> is positioned for everyday coding, <code>opus</code> for complex reasoning, and <code>haiku</code> for simple tasks.</li>
+      <li>To switch models, use <code>/model</code> during a session, <code>--model</code> at startup, or the <code>model</code> field in the settings file for a permanent choice. If you pick a model with Enter in <code>/model</code>, it is saved as the default.</li>
+      <li>Before rolling it out company-wide, confirm that the alias gets updated, that Fable may be billed against usage credits, and that managed settings take precedence.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Models and aliases you can specify in Claude Code</h2>
+  <p>In Claude Code (Anthropic's AI coding agent that runs in the terminal), the <code>model</code> setting accepts a model alias (a short name you can use without remembering version numbers) or a model name. According to the official docs as of writing (October 2026), the model name format differs by provider.</p>
+  <ul>
+    <li>Anthropic API: full model names</li>
+    <li>Amazon Bedrock: the ARN of the inference profile</li>
+    <li>Microsoft Foundry: deployment name</li>
+    <li>Google Cloud Agent Platform: version names</li>
+  </ul>
+  <p>Note that <code>ANTHROPIC_BASE_URL</code> changes where requests are sent, not which model answers. To see which models suit which kinds of work, check the blog posts the official docs point to.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s2">How to choose an alias by use case</h2>
+  <ul>
+    <li><code>sonnet</code>: the latest Sonnet, for everyday coding</li>
+    <li><code>opus</code>: the latest Opus, for complex reasoning</li>
+    <li><code>haiku</code>: A fast, efficient model for simple tasks</li>
+    <li><code>opusplan</code>: a special mode that uses <code>opus</code> in plan mode and <code>sonnet</code> for execution</li>
+    <li><code>sonnet[1m]</code>, <code>opus[1m]</code>: a 1 million token context window, for long sessions. It has no effect if the model already has a 1M window by default</li>
+    <li><code>fable</code>: For the hardest, longest-running tasks. <code>best</code> is Fable if you can use it, and otherwise the same model as <code>opus</code></li>
+    <li><code>default</code>: A special value that clears the override and returns to the account default. It is not an alias itself</li>
+  </ul>
+  <h3>What it resolves to depends on the provider</h3>
+  <p><code>opus</code>, <code>sonnet</code>, and <code>haiku</code> resolve to the latest versions on the Anthropic API, but may resolve to earlier versions on other providers. For example, on Amazon Bedrock they are Opus 5.5, Sonnet 4.5, and Haiku 4.5, and on Microsoft Foundry they are Opus 4.6, Sonnet 4.5, and Haiku 4.5.</p>
+  <p>Aliases are updated over time. To pin a model, use the full model name such as <code>claude-opus-5-5</code>, or an environment variable such as <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>. Newer models also have a Claude Code version requirement. For example, Sonnet 5.5 requires v2.1.284 or later. If your version is older, update it with <code>claude update</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s3">How to switch models with /model, --model, and the settings file</h2>
+  <p>The official docs list the following methods in order of priority.</p>
+  <ol>
+    <li>During a session: switch immediately with <code>/model &lt;alias|name&gt;</code>, or run <code>/model</code> with no argument to open the picker (selection screen)</li>
+    <li>At startup: <code>claude --model &lt;alias|name&gt;</code></li>
+    <li>Environment variable: <code>ANTHROPIC_MODEL=&lt;alias|name&gt;</code></li>
+    <li>Set it permanently with the <code>model</code> field in a settings file</li>
+    <li>Default for new sessions: <code>ANTHROPIC_DEFAULT_MODEL=&lt;alias|name&gt;</code> (Claude Code v2.1.236 or later)</li>
+  </ol>
+<pre><code>claude --model opus</code></pre>
+<pre><code>/model sonnet</code></pre>
+<pre><code>{
+    "permissions": {
+        "allow": ["Bash(npm run lint)"]
+    },
+    "model": "opus"
+}</code></pre>
+  <p>In the picker, <code>Enter</code> switches and saves the model as your default, and <code>s</code> switches for this session only. Typing <code>/model &lt;name&gt;</code> directly behaves like <code>Enter</code> and saves it as the default. <code>--model</code> and <code>ANTHROPIC_MODEL</code> affect only the session they start, so if you use different models in multiple terminals, start each one with <code>--model</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s4">What to check when it doesn't start with the model you expected</h2>
+  <p>You can check the current model in the status line (if you've configured one) or with <code>/status</code>. The official docs list the following as the main reasons the next new session starts with a different model.</p>
+  <ul>
+    <li>The choice applied to this session only (<code>s</code>, <code>--model</code>, <code>/model</code> in non-interactive mode)</li>
+    <li>A higher-priority setting exists (<code>model</code> in the project or managed settings, <code>ANTHROPIC_MODEL</code> in the shell, or an organization default where an admin has enabled overrides)</li>
+    <li>Could not write to <code>~/.claude/settings.json</code>, so it was not saved</li>
+    <li>You resumed a session (<code>claude --resume</code> or <code>--continue</code> normally keeps the model from that session)</li>
+  </ul>
+  <p>Switching with <code>/model</code> also applies to subagents that inherit the main conversation's model.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s5">Notes when using Fable</h2>
+  <p>According to the official docs, Claude Fable 5.1 and Claude Fable 5 are the most capable models in Claude Code, intended for large tasks that can't be finished in one pass. They are not the default for any account type on any plan or provider, so you must select them explicitly. You can select Fable 5.1 with <code>/model fable</code> or <code>claude --model fable</code> (in Claude apps gateway sessions the alias resolves to Fable 5, so use <code>/model claude-fable-5-1</code> instead). Requires Claude Code v2.1.257 or later.</p>
+  <p>Depending on your plan and seat type, Fable usage may be billed to usage credits rather than to the limits included in your plan. In that case, the Fable row in the picker shows "Requires usage credits." In interactive sessions, a consent prompt appears before billing (except for members of organization-billed Enterprise plans), but in non-interactive mode with <code>-p</code>, you are billed without confirmation. If you use it for automated runs, check the official docs first.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+  <h2 id="s6">When admins set restrictions or defaults</h2>
+  <p>According to the official docs, <code>availableModels</code> in managed settings lets you restrict which models users can choose. On the Anthropic API and Claude Platform on AWS, if a family alias points to a model outside the allowlist, it is replaced by the latest version of that family that the list allows. Any other model outside the allowlist produces an error in <code>/model</code>, and a value given with <code>--model</code> or similar is replaced at startup, so the session starts with the default model.</p>
+<pre><code>{
+  "availableModels": ["sonnet", "haiku"]
+}</code></pre>
+  <p>With the default prefix matching, using only <code>availableModels</code> can leave Default as a model outside the allowlist. In that case, use <code>enforceAvailableModels</code> together with it (v2.1.175 and later). Also, the <code>model</code> setting is the initial selection, not an enforced one, and users can choose Default with <code>/model</code>.</p>
+  <p>On the Enterprise plan, admins can set the organization's default model in the admin console and can also disable individual models. Haiku, however, cannot be disabled. The organization default takes precedence over <code>model</code> in user, project, and local settings only when the override is enabled.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is the model I pick with <code>/model</code> used the next time I start Claude Code?</summary>
+      <p>Pressing <code>Enter</code> in the picker or typing <code>/model &lt;name&gt;</code> directly saves it as your default. If you choose with <code>s</code> or launch with <code>--model</code>, it applies to that session only. Higher-priority settings such as project settings, managed settings, or <code>ANTHROPIC_MODEL</code> override your saved choice.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+    <details>
+      <summary>How do I use different models in multiple terminals at the same time?</summary>
+      <p>The official docs advise launching each terminal with its own <code>--model</code> flag rather than switching with <code>/model</code>. <code>--model</code> applies only to the session you launch.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+    <details>
+      <summary>How do I pin the model version?</summary>
+      <p>An alias points to the recommended version and is updated over time. To pin a version, use a full model name such as <code>claude-opus-5-5</code>, or set the corresponding environment variable such as <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/model-config" rel="noopener">Model configuration</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-context-compact/index.html">Claude Code context and /compact: what stays and what is lost in a long conversation</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-prompt-caching/index.html">How Claude Code prompt caching works: what keeps it and what breaks it</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

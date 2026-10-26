@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Use Claude Code Slash Commands, and the Main Commands for Each Stage of Your Workflow | Chuki DX Lab</title>
+<meta name="description" content="Based on the official docs, this guide covers the input rules for Claude Code slash commands and the main commands for initial setup, everyday work, pre-release checks, and troubleshooting. It also covers caveats about when commands are shown.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-slash-commands/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-slash-commands/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-slash-commands/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to use Claude Code slash commands, and the main commands for each stage of your workflow">
+<meta property="og:description" content="Based on the official docs, this guide covers the input rules for Claude Code slash commands and the main commands for initial setup, everyday work, pre-release checks, and troubleshooting. It also covers caveats about when commands are shown.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-slash-commands/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-slash-commands.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to use Claude Code slash commands, and the main commands for each stage of your workflow">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-slash-commands.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to use Claude Code slash commands, and the main commands for each stage of your workflow",
+  "description": "Based on the official docs, this guide covers the input rules for Claude Code slash commands and the main commands for initial setup, everyday work, pre-release checks, and troubleshooting. It also covers caveats about when commands are shown.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-slash-commands/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Slash command list",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-slash-commands/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why don't some commands in the list appear on my screen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, which commands are available depends on the platform, plan, and environment. Unavailable commands are removed from the menu, and if nothing matches, No commands match \"/name\" is shown."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add our own commands?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say to add your own commands as skills. Prompts exposed by MCP servers also appear as commands. See the official docs for detailed steps."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose between /clear and /compact?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "/clear starts a new conversation with an empty context, and you can go back to the previous one with /resume. If you want to free up space while continuing the same conversation, use /compact, which summarizes it."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-slash-commands/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Slash command list</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What slash commands can do and the input rules</a></li>
+        <li><a href="#s2">Main commands by workflow (from initial setup to parallel execution)</a></li>
+        <li><a href="#s3">Commands for before shipping and between sessions</a></li>
+        <li><a href="#s4">Commands for when you get stuck</a></li>
+        <li><a href="#s5">Points to check before you distribute it internally</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to use Claude Code slash commands, and the main commands for each stage of your workflow</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, slash commands are a way to control Claude Code (an AI coding agent from Anthropic that runs in the terminal) from inside a session. Type <code>/</code> to see the commands available to you.</li>
+      <li>It's more practical to learn the list by workflow. For first-time setup, start with <code>/init</code>. While working, use <code>/plan</code> and <code>/compact</code>. Before shipping, use <code>/diff</code> and <code>/code-review</code>. When you're stuck, start with <code>/rewind</code> or <code>/doctor</code>.</li>
+      <li>Not every command is shown to every user. Availability varies by plan, platform, environment, and version, so check the <code>/</code> menu on a real machine and the official docs before you roll it out company-wide.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What slash commands can do and the input rules</h2>
+  <p>The following summarizes the official docs as of writing (October 2026); it is not the result of my own testing on a real machine. According to the official docs, commands are for controlling Claude Code from within a session, and they let you quickly switch models, manage permissions, tidy up context (what the AI refers to in the conversation), run workflows, and more.</p>
+  <p>Typing <code>/</code> shows the available commands, and typing more characters narrows the list. Keep the following points in mind and you won't get lost.</p>
+  <ul>
+    <li>A command is recognized only when it is at the start of the message, and any text after the command name is treated as its arguments.</li>
+    <li>Skills (commands you can write yourself) are an exception. If you chain them like <code>/skill-a /skill-b do XYZ</code>, Claude Code loads the skills listed at the start and passes the trailing text to each skill as an argument. You can chain up to six.</li>
+    <li>Commands you send while Claude is responding run after the current turn ends. However, commands such as <code>/status</code>, <code>/tasks</code>, and <code>/usage</code> run immediately without interrupting the response.</li>
+    <li>In fullscreen mode, dialog-style commands such as <code>/theme</code> and <code>/help</code> also open immediately.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s2">Main commands by workflow (from initial setup to parallel execution)</h2>
+  <h3>Use first in a repository</h3>
+  <p>Use <code>/init</code> to create a starting template for <code>CLAUDE.md</code> (a guide file for the project), then refine it with <code>/memory</code>. Use <code>/mcp</code> to set up the MCP servers you need and <code>/permissions</code> to decide approval rules. For subagents (separate agents you delegate side tasks to), ask Claude to create them.</p>
+  <h3>In progress</h3>
+  <p>Before a big change, enter plan mode with <code>/plan</code>. If you add a description, as in <code>/plan fix the auth bug</code>, it enters plan mode and starts that task right away. <code>/model</code> switches models and also saves the choice as the default for new sessions. To switch only the current session, open the picker without arguments and press <code>s</code>. <code>/effort</code> adjusts the level of reasoning. When a conversation gets long, check what is taking up space with <code>/context</code>, then summarize with <code>/compact</code> to free room. Use <code>/btw</code> for side questions you don't want added to the conversation history.</p>
+  <h3>Work in parallel</h3>
+  <p><code>/tasks</code> lists the background work in the current session. <code>/background</code> detaches the whole session and keeps it running, freeing up your terminal. <code>/batch</code> splits a large change across the entire codebase into independent units and, after you approve the plan, runs each in its own worktree. It requires a git repository or a <code>WorktreeCreate</code> hook that creates worktrees. An example is <code>/batch migrate src/ from JavaScript to TypeScript</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s3">Commands for before shipping and between sessions</h2>
+  <p>The official docs show a pre-ship flow: review changes with <code>/diff</code>, then use <code>/code-review</code> to look for correctness bugs in the current diff. Adding <code>--fix</code> applies the findings, and passing a PR number, as in <code>/code-review high 1234</code>, reviews that pull request. <code>/review</code> is an alias. <code>/code-review ultra</code> runs a multi-agent review in the cloud. The <code>/ultrareview</code> description says Pro and Max include 3 free runs, after which usage credits are required. <code>/security-review</code> checks the current branch's changes for vulnerabilities and requires an <code>origin</code> remote.</p>
+  <h3>Moving between sessions</h3>
+  <ul>
+    <li><code>/clear</code>: start new work while keeping the project's memory.</li>
+    <li><code>/resume</code>: Returns to a previous conversation.</li>
+    <li><code>/branch</code>: Branches the current conversation so you can try a different direction. You can return to the original conversation with <code>/resume</code>.</li>
+    <li><code>/fork</code>: Copies the conversation into a new background session.</li>
+    <li><code>/teleport</code>: Pulls a cloud session into this machine. Requires a claude.ai subscription.</li>
+    <li><code>/remote-control</code>: lets you continue this local session from another device.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s4">Commands for when you get stuck</h2>
+  <p><code>/rewind</code> rolls code and conversation back to a checkpoint, or summarizes part of the conversation. <code>/doctor</code> diagnoses problems with installation, settings, and <code>CLAUDE.md</code>, and suggests fixes. Claude applies the fixes after you confirm. <code>/debug</code> diagnoses runtime problems. Debug logging is off by default, so if you run it mid-session, it records only from that point on. <code>/feedback</code> reports a bug with session information attached. A consent screen appears before sending, and you can choose how much history to include.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+  <h2 id="s5">Points to check before you distribute it internally</h2>
+  <ul>
+    <li>What you see varies by person. The official docs give examples: <code>/desktop</code> appears only on macOS and x64 Windows when signed in with a Claude subscription, and <code>/upgrade</code> does not appear on Enterprise plans. Commands you can't use don't show up in the menu.</li>
+    <li>Some items have version requirements. For example, <code>/output-style</code> requires v2.1.269 or later.</li>
+    <li>Some commands have been removed. <code>/vim</code> was removed in v2.1.92; use Editor mode in <code>/config</code> instead. <code>/ultraplan</code> has been removed; use plan mode.</li>
+    <li>Watch for typos. If nothing is highlighted and you press <code>Enter</code>, your input is sent as is and you get Unknown command.</li>
+    <li>Some hidden commands don't appear in the menu, such as <code>/heapdump</code>. Type the full name to run them. When reporting a bug, attach only <code>-diagnostics.json</code>. Don't share the <code>.heapsnapshot</code>, because it contains the entire conversation and credentials.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Why don't some commands in the list appear on my screen?</summary>
+      <p>According to the official docs, which commands are available depends on the platform, plan, and environment. Unavailable commands are removed from the menu, and if nothing matches, <code>No commands match "/name"</code> is shown.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+    <details>
+      <summary>Can I add our own commands?</summary>
+      <p>The official docs say to add your own commands as skills. Prompts exposed by MCP servers also appear as commands. See the official docs for detailed steps.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+    <details>
+      <summary>How do I choose between <code>/clear</code> and <code>/compact</code>?</summary>
+      <p><code>/clear</code> starts a new conversation with an empty context, and you can go back to the previous one with <code>/resume</code>. If you want to free up space while continuing the same conversation, use <code>/compact</code>, which summarizes it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/commands" rel="noopener">Commands</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">How to install Claude Code plugins, and what to watch for when choosing a marketplace</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-features-overview/index.html">When to use CLAUDE.md, skills, hooks, MCP, and subagents in Claude Code</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Introduction to Claude Code skills (SKILL.md): teaching Claude your work procedures</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

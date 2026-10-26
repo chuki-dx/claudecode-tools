@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence | Chuki DX Lab</title>
+<meta name="description" content="This guide covers how to write Claude Code permission rules, from Bash, Read, and WebFetch patterns to allow and deny precedence. Based on the official docs, it summarizes what corporate IT should watch for in a company-wide rollout.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-rules/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-rules/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-rules/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-rules/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence">
+<meta property="og:description" content="This guide covers how to write Claude Code permission rules, from Bash, Read, and WebFetch patterns to allow and deny precedence. Based on the official docs, it summarizes what corporate IT should watch for in a company-wide rollout.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-rules/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permission-rules.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permission-rules.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence",
+  "description": "This guide covers how to write Claude Code permission rules, from Bash, Read, and WebFetch patterns to allow and deny precedence. Based on the official docs, it summarizes what corporate IT should watch for in a company-wide rollout.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-rules/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to Write Claude Code Permission Rules",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-rules/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between Bash(git *) and Bash(git log *)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bash(git log *) allows only git log, while Bash(git *) allows every git command. An allow rule with * before the subcommand triggers a warning at startup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I set allow in user settings and deny in project settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "deny takes effect. According to the official docs, a deny at any scope is evaluated before allow, and anything denied at one level cannot be allowed at another."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I deny rm with Bash(command:rm *)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Because it can be bypassed with compound commands, Claude Code ignores this rule and shows a warning at startup. Write it in the form Bash(rm *)."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-permission-rules/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to Write Claude Code Permission Rules</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Basic form of a permission rule: tool name and specifier</a></li>
+        <li><a href="#s2">Wildcards in Bash rules: where you put the * matters</a></li>
+        <li><a href="#s3">Parameter matching and tool-name wildcards</a></li>
+        <li><a href="#s4">Precedence of allow and deny</a></li>
+        <li><a href="#s5">A project&#x27;s allow rules take effect after the trust dialog</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Permission rules are written as <code>Tool</code> or <code>Tool(specifier)</code>. A tool name alone matches every use of that tool; adding a specifier in parentheses narrows it down.</li>
+      <li>In Bash rules, put <code>*</code> after the subcommand. <code>Bash(git log *)</code> matches only git log, while <code>Bash(git *)</code> matches every git command.</li>
+      <li>deny wins over allow at every level. A project's allow does not apply until you accept the workspace trust dialog.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Basic form of a permission rule: tool name and specifier</h2>
+  <p>According to the official docs as of writing (October 2026), permission rules are written in the form <code>Tool</code> or <code>Tool(specifier)</code>. Parentheses inside a specifier are treated as literal characters, so commands and paths that contain parentheses need no escaping. You use this format to specify what Claude Code (Anthropic's AI coding agent that runs in the terminal) is allowed or denied.</p>
+  <h3>Whole tools and narrowing down with specifiers</h3>
+  <ul>
+    <li>Writing only a tool name, such as <code>Bash</code>, <code>WebFetch</code>, or <code>Read</code>, matches every Bash command, every web fetch request, and every file read, respectively</li>
+    <li><code>Bash(npm run build)</code> matches the exact command <code>npm run build</code></li>
+    <li><code>Read(./.env)</code> matches reads of the <code>.env</code> file in the current directory</li>
+    <li><code>WebFetch(domain:example.com)</code> matches fetch requests to example.com</li>
+  </ul>
+  <p><code>Bash(*)</code> means the same as <code>Bash</code>. For a deny rule, either form removes that tool from Claude's context. Also, a tool's display label can differ from its official name (for example, the official name of <code>Stop Task</code> is <code>TaskStop</code>), and rules do not match the display label. Check the official tool reference for the exact names.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s2">Wildcards in Bash rules: where you put the <code>*</code> matters</h2>
+  <p>In a Bash rule, <code>*</code> matches any string including spaces, and a rule without <code>*</code> matches exactly that one command. The official docs warn you to put <code>*</code> after the subcommand. Everything before the first <code>*</code> is matched as written, so <code>Bash(git log *)</code> allows only git log, while <code>Bash(git *)</code> allows every git command. An allow rule that puts <code>*</code> before the subcommand, like <code>Bash(git * main)</code>, triggers a warning at startup.</p>
+  <p>With the following settings, npm scripts and git commit run without confirmation, and commands starting with git push are denied. However, a push written differently, such as <code>git -C . push</code>, does not match. Check the official docs for details.</p>
+<pre><code>{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git commit *)"
+    ],
+    "deny": [
+      "Bash(git push *)"
+    ]
+  }
+}</code></pre>
+  <h3>Matching examples</h3>
+  <ul>
+    <li><code>Bash(npm run *)</code> matches <code>npm run build</code> and <code>npm run</code>, but not <code>npm install</code></li>
+    <li><code>Bash(ls *)</code> matches <code>ls -la</code> and <code>ls</code>, but not <code>lsof</code>. <code>Bash(ls*)</code> also matches <code>lsof</code>.</li>
+    <li><code>Bash(* --help *)</code> matches <code>npm --help x</code>, but does not match <code>npm --help</code></li>
+  </ul>
+  <p>A trailing space plus <code>*</code> also matches the bare command only when that <code>*</code> is the only wildcard in the rule. The space before the trailing <code>*</code> is part of the rule. <code>:*</code> is an equivalent way to write a trailing wildcard, so <code>Bash(ls:*)</code> means the same as <code>Bash(ls *)</code>, but it is recognized only at the end of a pattern. In <code>Bash(git:* push)</code>, the colon is treated as a literal character, so it does not match git commands.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s3">Parameter matching and tool-name wildcards</h2>
+  <p>deny and ask rules can match top-level input parameters of built-in tools with <code>Tool(param:value)</code>. allow rules continue to use each tool's own specifier syntax, as before.</p>
+  <ul>
+    <li><code>Agent(model:opus)</code> matches Agent calls that request the Opus model tier</li>
+    <li><code>Bash(run_in_background:true)</code> matches Bash calls that run in the background</li>
+    <li>One rule can specify only one parameter. To use multiple conditions, write two rules</li>
+    <li>A <code>*</code> in the value matches any string; without a <code>*</code>, the value must match exactly</li>
+  </ul>
+  <p>Primary content fields such as Bash's <code>command</code> or Read's <code>file_path</code> cannot be specified this way. <code>Bash(command:rm *)</code> can be bypassed with compound commands, so Claude Code ignores it and shows a warning at startup. Use <code>Bash(rm *)</code>, <code>Read(./path)</code>, or <code>WebFetch(domain:host)</code> instead.</p>
+  <p>deny and ask rules can also use glob patterns in the tool name position. <code>"*"</code> matches all tools, and <code>"mcp__*"</code> matches MCP tools from all servers. The following setting denies all MCP tools.</p>
+<pre><code>{
+  "permissions": {
+    "deny": [
+      "mcp__*"
+    ]
+  }
+}</code></pre>
+  <p>In allow rules, a glob can only go after the literal <code>mcp__</code> and the server name. <code>mcp__puppeteer__*</code> matches all tools on the puppeteer server. An allow rule whose beginning isn't fixed, such as <code>"*"</code> or <code>"mcp__*"</code>, is skipped and auto-approves nothing. To narrow by MCP tool parameters, pass a deny rule with <code>--disallowedTools</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s4">Precedence of allow and deny</h2>
+  <p>According to the official docs, permission rules follow the same precedence as other settings, with managed settings at the top. No other level, including command-line arguments, can override managed permission rules.</p>
+  <p>A tool denied at any one level cannot be allowed at another. For example, a managed deny cannot be overridden by <code>--allowedTools</code>, while <code>--disallowedTools</code> can add restrictions beyond what managed settings define. If user settings allow a tool and project settings deny it, the deny wins, and conversely a user deny stops a project allow. This is because a deny in any scope is evaluated before any allow. If you need a prohibition to hold reliably, write it as a deny. For how to distribute managed settings, check the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s5">A project's allow rules take effect after the trust dialog</h2>
+  <p><code>permissions.allow</code> and <code>permissions.additionalDirectories</code> in <code>.claude/settings.json</code> are settings that widen permissions. According to the official docs, they apply only after you accept the workspace trust dialog for that folder. The dialog lists the rules and directories that the folder grants. <code>deny</code> and <code>ask</code> only restrict, so they are not affected.</p>
+  <ul>
+    <li>Inside a repository: trust is recorded per git repository root. Nested repositories such as submodules are not covered</li>
+    <li>Outside a repository: trust applies per the directory where you launched it</li>
+    <li>Launching from your home directory: trust is kept only for that session and is not written to disk</li>
+  </ul>
+  <p>The dialog appears only in interactive sessions. With <code>claude -p</code> or the SDK it isn't shown, the project's allow rules aren't used, and a warning goes to stderr. Before running <code>claude -p</code> in a repository you don't trust, you can limit what gets loaded with <code>--setting-sources user</code> or <code>--bare</code>. For rules you want to apply to every project, write them in the user settings at <code>~/.claude/settings.json</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What is the difference between <code>Bash(git *)</code> and <code>Bash(git log *)</code>?</summary>
+      <p><code>Bash(git log *)</code> allows only git log, while <code>Bash(git *)</code> allows every git command. An allow rule with <code>*</code> before the subcommand triggers a warning at startup.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+    <details>
+      <summary>What happens if I set allow in user settings and deny in project settings?</summary>
+      <p>deny takes effect. According to the official docs, a deny at any scope is evaluated before allow, and anything denied at one level cannot be allowed at another.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+    <details>
+      <summary>Can I deny rm with <code>Bash(command:rm *)</code>?</summary>
+      <p>No. Because it can be bypassed with compound commands, Claude Code ignores this rule and shows a warning at startup. Write it in the form <code>Bash(rm *)</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-settings-examples/index.html">Claude Code settings.json examples: how to read and write the 3 official samples</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

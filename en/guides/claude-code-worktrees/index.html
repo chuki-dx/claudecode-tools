@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to run Claude Code in parallel with worktrees, and what to watch out for | Chuki DX Lab</title>
+<meta name="description" content="A guide to running isolated sessions in parallel with Claude Code&#x27;s --worktree, based on the official docs. It covers environment initialization, cleanup on exit, the limits of isolation, and what is shared.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-worktrees/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-worktrees/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-worktrees/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-worktrees/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to run Claude Code in parallel with worktrees, and caveats">
+<meta property="og:description" content="A guide to running isolated sessions in parallel with Claude Code&#x27;s --worktree, based on the official docs. It covers environment initialization, cleanup on exit, the limits of isolation, and what is shared.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-worktrees/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-worktrees.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to run Claude Code in parallel with worktrees, and caveats">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-worktrees.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to run Claude Code in parallel with worktrees, and caveats",
+  "description": "A guide to running isolated sessions in parallel with Claude Code's --worktree, based on the official docs. It covers environment initialization, cleanup on exit, the limits of isolation, and what is shared.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-worktrees/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code worktrees",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-worktrees/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can a worktree session ever modify files in the main checkout?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, Edit, Write, and NotebookEdit operations that target paths in the main checkout are blocked. However, cp and shell redirects that write without running git are not denied by this check. They are handled by the permissions and sandboxing settings, so you need to review those settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a worktree started with -p deleted automatically on exit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. According to the official docs, non-interactive runs with -p have no confirmation at exit, and the worktree is not cleaned up. To delete it, run git worktree remove; if the removal is refused because of a lock, run git worktree unlock first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I bring gitignored files such as .env into a new worktree?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, adding a .worktreeinclude file lets you automatically bring files into new worktrees. The source doesn't describe the syntax in detail, so check the official docs."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-worktrees/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code worktrees</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What worktrees do: split sessions and work in parallel</a></li>
+        <li><a href="#s2">Settings and Precautions Before Launch</a></li>
+        <li><a href="#s3">Cleanup at the end and cautions about deletion</a></li>
+        <li><a href="#s4">Isolation checks and limits</a></li>
+        <li><a href="#s5">What is shared with the main checkout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to run Claude Code in parallel with worktrees, and caveats</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Start with a name for <code>--worktree</code> (or <code>-w</code>) and you get an isolated session with its own branch and directory. Run it again with a different name in another terminal and you have parallel work.</li>
+      <li>A worktree is a fresh checkout, so you need to initialize the environment, for example by installing dependencies. Gitignored files such as <code>.env</code> can be carried over with a <code>.worktreeinclude</code> file.</li>
+      <li>There are conditions around cleanup on exit, behavior with <code>-p</code>, and isolation limits such as being unable to block <code>cp</code>. Check them before you roll this out company-wide.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What worktrees do: split sessions and work in parallel</h2>
+  <p>In Claude Code (Anthropic's AI coding agent that runs in the terminal), you can run multiple sessions in parallel using worktrees (separate working directories created from the same repository). This article is based on the official docs as of writing (October 2026).</p>
+  <p>According to the official docs, passing a name to <code>--worktree</code> or <code>-w</code> creates an isolated worktree and starts Claude inside it. By default, it is created under <code>.claude/worktrees/&lt;name&gt;/</code> at the repository root, on a new branch named <code>worktree-&lt;name&gt;</code>.</p>
+<pre><code>claude --worktree feature-auth</code></pre>
+  <p>If you run the same command in another terminal with a different name, a second isolated session starts. If you omit the name, Claude generates one such as <code>bright-running-fox</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+  <h2 id="s2">Settings and Precautions Before Launch</h2>
+  <p>According to the official docs, interactive runs require workspace trust. In a directory you are using for the first time, run <code>claude</code> once first and accept the trust dialog. If you haven't accepted it, <code>--worktree</code> exits with an error. Non-interactive runs with <code>-p</code> skip the trust check, so <code>claude -p --worktree</code> proceeds as is.</p>
+  <p>If you add <code>.claude/worktrees/</code> to <code>.gitignore</code>, the contents of worktrees won't show up as untracked files in the main checkout.</p>
+  <h3>Initializing the environment</h3>
+  <p>A worktree is a fresh checkout. Ask Claude to install dependencies, or run your project setup in the worktree directory under <code>.claude/worktrees/</code>. To automatically bring gitignored files such as <code>.env</code> into a new worktree, add a <code>.worktreeinclude</code> file. Check the official docs for the syntax.</p>
+  <h3>When asking during a session</h3>
+  <p>If you ask "work in a worktree" during a session, it is created with the <code>EnterWorktree</code> tool. When entering a path outside the repository's <code>.claude/worktrees/</code>, the working directory, write permissions, and settings such as <code>CLAUDE.md</code> change, so you are asked for approval. This prompt can't be suppressed by a permission rule or "don't ask again"; only <code>bypassPermissions</code> mode skips it. Before v2.1.206, you could enter without confirmation.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+  <h2 id="s3">Cleanup at the end and cautions about deletion</h2>
+  <p>When you end an interactive session, Claude checks whether anything would be lost on deletion: changes, untracked files, uncommitted work in submodules, and new commits. This applies to worktrees created with git.</p>
+  <ul>
+    <li>If clean: an unnamed session automatically deletes the worktree and branch. A named session asks for confirmation first.</li>
+    <li>If work remains: you are asked whether to keep or remove it. If you keep it, the directory and branch stay, and you can return with the <code>claude --worktree &lt;name&gt; --resume</code> command shown on exit. If you remove it, the work is deleted with it.</li>
+    <li>If Claude Code can't verify the state: it doesn't delete anything automatically. It shows what it couldn't verify and asks you.</li>
+  </ul>
+  <p>Non-interactive runs with <code>-p</code> have no prompt on exit, so the worktree is not cleaned up. The lock created at creation also stays until a later session releases it. Delete it with <code>git worktree remove</code>, and if the lock causes a refusal, run <code>git worktree unlock</code> first.</p>
+  <p>On Windows, for links inside a worktree (NTFS junctions and directory symlinks), only the link is deleted and the target remains. Before v2.1.205, a link in a subdirectory could cause its target to be deleted.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+  <h2 id="s4">Isolation checks and limits</h2>
+  <p>In an isolated worktree session, tool calls are blocked by the following four checks. This applies whether you started with <code>--worktree</code>, used <code>EnterWorktree</code>, or resumed a session, and it also applies to subagents that Claude launches.</p>
+  <ul>
+    <li>File edits: when <code>Edit</code>, <code>Write</code>, or <code>NotebookEdit</code> target paths in the main checkout.</li>
+    <li>Command working directory: when the working directory of Bash, PowerShell, or Monitor commands becomes the main checkout, or when it cannot be confirmed that it stays outside.</li>
+    <li>Git redirection: <code>git -C</code>, <code>--git-dir</code>, the <code>GIT_DIR</code> and <code>GIT_WORK_TREE</code> variables, and Bash or Monitor commands that use <code>cd</code> to point git at the main checkout.</li>
+    <li>Command shape: Bash or Monitor commands where the text alone doesn't let you confirm that git stays inside the worktree. You cannot turn this check off.</li>
+  </ul>
+  <p>However, these do not track files written by shell commands. A <code>cp</code> or shell redirect that writes to the main checkout without running git is not rejected, and is handled like any ordinary shell command by the permissions and sandboxing settings. For PowerShell, only the working directory check applies.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+  <h2 id="s5">What is shared with the main checkout</h2>
+  <p>A worktree has its own files and branch, but it shares the following. This is the same whether you use <code>--worktree</code> or <code>git worktree add</code>.</p>
+  <ul>
+    <li>The <code>.git</code> directory: it writes to the shared <code>.git</code> and also allows sandboxing, so <code>git commit</code> works even with the sandbox enabled.</li>
+    <li>Plugins: a plugin installed at project scope in the main checkout is also loaded in worktrees of the same repository. This requires v2.1.200 or later.</li>
+    <li>Approving permissions: If you choose "Yes, and don't ask again" for a Bash command in a worktree, it is saved to <code>.claude/settings.local.json</code> in the main checkout and applies to your other worktrees too. Where the repository root isn't used, such as on Windows, it stays within that worktree. Before v2.1.211, it was saved inside the worktree and lost when the worktree was deleted.</li>
+    <li>Untracked skills, agents, and commands: If the worktree root has no <code>.claude/skills</code>, the main project's skills are loaded. For skills, v2.1.277 or later is required.</li>
+  </ul>
+  <h3>When to use a hook</h3>
+  <p><code>${CLAUDE_PROJECT_DIR}</code> stays at the project root where the session started, even after you enter a worktree. A hook that needs the worktree path should read <code>cwd</code> from the input JSON. In a worktree session started from the desktop app, settings, hooks, and similar are read from the root of the main checkout, while <code>CLAUDE.md</code> and <code>.claude/rules/</code> are read from the worktree.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can a worktree session ever modify files in the main checkout?</summary>
+      <p>According to the official docs, <code>Edit</code>, <code>Write</code>, and <code>NotebookEdit</code> operations that target paths in the main checkout are blocked. However, <code>cp</code> and shell redirects that write without running git are not denied by this check. They are handled by the permissions and sandboxing settings, so you need to review those settings.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+    </details>
+    <details>
+      <summary>Is a worktree started with <code>-p</code> deleted automatically on exit?</summary>
+      <p>No. According to the official docs, non-interactive runs with <code>-p</code> have no confirmation at exit, and the worktree is not cleaned up. To delete it, run <code>git worktree remove</code>; if the removal is refused because of a lock, run <code>git worktree unlock</code> first.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+    </details>
+    <details>
+      <summary>Can I bring gitignored files such as <code>.env</code> into a new worktree?</summary>
+      <p>According to the official docs, adding a <code>.worktreeinclude</code> file lets you automatically bring files into new worktrees. The source doesn't describe the syntax in detail, so check the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/worktrees" rel="noopener">Run parallel sessions with worktrees</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-subagents/index.html">How to use and create Claude Code subagents (configuration, invocation, and cautions)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-resume-session/index.html">How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

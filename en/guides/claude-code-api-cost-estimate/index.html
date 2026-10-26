@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Estimate Claude Code API Costs (Counting Tokens and Unit Prices) | Chuki DX Lab</title>
+<meta name="description" content="How to estimate monthly cost when using Claude Code with pay-as-you-go API billing. It covers the four token types (input, cache write, cache read, output) and their unit prices (official pricing as of 2026-10-14), the formula, how to check token counts, and how it differs from a subscription.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-api-cost-estimate/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-cost-estimate/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-api-cost-estimate/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-api-cost-estimate/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to estimate costs when using Claude Code with the API (how tokens are counted and unit prices)">
+<meta property="og:description" content="This guide covers token types and unit prices (as of 2026-10-14), the formula, how to check token counts, and how API billing differs from a subscription.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-api-cost-estimate/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-api-cost-estimate.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to estimate costs when using Claude Code with the API (how tokens are counted and unit prices)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-api-cost-estimate.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to estimate costs when using Claude Code with the API (how tokens are counted and unit prices)",
+  "description": "A guide to token types and prices, the formula, how to check token counts, and how this differs from a subscription when you use Claude Code with pay-as-you-go API billing.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-api-cost-estimate/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to estimate API costs",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-api-cost-estimate/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is the amount shown in /usage the same as my bill?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs describe these as estimates. To confirm the exact API billing amount, check the usage page in the Claude Console. For subscriptions, this is unrelated to billing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get amounts in yen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pricing is set in USD. Multiply by the exchange rate on the day of the estimate to get yen, and note the rate and date you used in the document."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many tokens does a subscription usage allowance cover?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the official pricing page as of writing, plan usage allowances are expressed in relative terms such as \"X times Pro,\" not in token counts."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-api-cost-estimate/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to estimate API costs</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#tokens">What is a token?</a></li>
+        <li><a href="#prices">Unit price (as of 2026-10-14)</a></li>
+        <li><a href="#formula">Formula</a></li>
+        <li><a href="#measure">How to check token counts</a></li>
+        <li><a href="#subscription">Differences from subscription plans</a></li>
+        <li><a href="#reduce">Ways to keep costs down</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (official pages, as of 2026-10-14)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to estimate costs when using Claude Code with the API (how tokens are counted and unit prices)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-14">October 14, 2026</time> ・ Chuki DX Lab ・ Unit prices are the values I checked on the official pricing page as of 2026-10-14</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>API cost is calculated as "number of tokens × price per million tokens," summed across each type: <strong>input, cache write, cache read, and output</strong>.</li>
+      <li>Claude Code sends the conversation history every time, so <strong>cache-read token counts tend to be large</strong>. This is where it differs from estimates for ordinary chat.</li>
+      <li>A price list alone doesn't determine a department's monthly cost. As the official docs advise, try it with a small group, measure the actual token usage, and then make your estimate.</li>
+    </ul>
+  </section>
+
+  <h2 id="tokens">What is a token?</h2>
+  <p>A token is the unit an AI model uses to process text. API (the interface for using Claude from a program) pricing is based on the number of tokens, not characters. The same applies when you use Claude Code (the AI coding agent from Anthropic that runs in the terminal) with pay-as-you-go API billing. Behind a single request, it exchanges messages with the model many times, and tokens are counted each time.</p>
+  <p>The estimate distinguishes four types of tokens (five if you split cache writes into 5-minute and 1-hour).</p>
+  <ul>
+    <li><strong>Input</strong>: the part of what you sent to the model that did not use the cache</li>
+    <li><strong>Cache write</strong>: the portion of what you sent that is stored in the cache for reuse in the next request. There are two retention periods, 5 minutes and 1 hour, with different unit prices</li>
+    <li><strong>Cache reads</strong>: The portion that reuses content already stored. The unit price is far lower than for input.</li>
+    <li><strong>Output</strong>: What the model returns. The official docs state that thinking tokens are also billed as output.</li>
+  </ul>
+
+  <h2 id="prices">Unit price (as of 2026-10-14)</h2>
+  <p>From the "Model pricing" table on the official pricing page, I pulled out the three models most commonly used with Claude Code. Units are USD per million tokens. Prices can change, so check the official page for the latest values before you estimate.</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th scope="col">Model</th><th scope="col" class="num">Input</th><th scope="col" class="num">5-minute cache write</th><th scope="col" class="num">1-hour cache write</th><th scope="col" class="num">Cache read</th><th scope="col" class="num">Output</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Claude Opus 5.5</td><td class="num">4</td><td class="num">5</td><td class="num">8</td><td class="num">0.20</td><td class="num">20</td></tr>
+        <tr><td>Claude Sonnet 5.5</td><td class="num">2</td><td class="num">2.50</td><td class="num">4</td><td class="num">0.10</td><td class="num">10</td></tr>
+        <tr><td>Claude Haiku 5.5 (prompts of 100K tokens or less)</td><td class="num">0.10</td><td class="num">0.125</td><td class="num">0.20</td><td class="num">0.01</td><td class="num">0.50</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The same page also includes the following notes (as of writing).</p>
+  <ul>
+    <li>For Haiku 5.5, if the prompt in a single request exceeds 100,000 tokens, the higher unit price applies.</li>
+    <li>If you specify US-only processing (set <code>inference_geo</code> to <code>us</code>), all unit prices are multiplied by 1.1.</li>
+    <li>Fast mode is priced separately.</li>
+  </ul>
+
+  <h2 id="formula">Formula</h2>
+  <p>The daily cost per person is calculated for each model with the following formula.</p>
+<pre><code>1日の金額(USD) = ( 入力 × 入力単価
+                 + 5分キャッシュ書込 × その単価
+                 + 1時間キャッシュ書込 × その単価
+                 + キャッシュ読込 × その単価
+                 + 出力 × 出力単価 ) ÷ 1,000,000
+
+月額(USD) = 1日の金額 × 稼働日数 × 人数
+月額(円)  = 月額(USD) × 為替レート</code></pre>
+
+  <h3 id="example">Calculation example with made-up numbers</h3>
+  <p>Suppose that with Sonnet 5.5, one person uses 1,040 input tokens, 190,000 1-hour cache write tokens, 2,170,000 cache read tokens, and 31,000 output tokens per day (these numbers are fictional).</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Type</th><th scope="col" class="num">Token count</th><th scope="col" class="num">Unit price</th><th scope="col" class="num">Amount (USD)</th></tr></thead>
+      <tbody>
+        <tr><td>Input</td><td class="num">1,040</td><td class="num">2</td><td class="num">0.00208</td></tr>
+        <tr><td>1-hour cache write</td><td class="num">190,000</td><td class="num">4</td><td class="num">0.76</td></tr>
+        <tr><td>Cache read</td><td class="num">2,170,000</td><td class="num">0.10</td><td class="num">0.217</td></tr>
+        <tr><td>Output</td><td class="num">31,000</td><td class="num">10</td><td class="num">0.31</td></tr>
+        <tr><th scope="row">Daily total</th><td class="num"></td><td class="num"></td><td class="num">1.28908</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Assuming 20 working days per month, that comes to about 25.78 USD per person per month. In this example, cache reads have by far the most tokens, but cache writes and output account for a larger share of the cost. Because token volume and cost don't line up, it is important to calculate each type separately.</p>
+
+  <h2 id="measure">How to check token counts</h2>
+  <p>The accuracy of your estimate depends on how closely you can bring the daily token count in line with actual usage. The official docs as of writing describe the following approaches.</p>
+  <ul>
+    <li><strong><code>/usage</code> command</strong>: shows the current session's token counts by type. The dollar amount shown is an estimate calculated from the token counts at list price; the official docs say to confirm the authoritative billing figure on the Claude Console usage page.</li>
+    <li><strong>Claude Console usage page</strong>: If you use the API under a contract, these are the numbers your billing is based on.</li>
+  </ul>
+  <p>Claude Code also stores conversation records on your PC (under <code>.claude</code> in your user folder), and those records contain token counts too. However, the records are deleted after 30 days by default, so if you want to measure usage, decide on a period and tally it early.</p>
+  <p>The official docs also give average figures for enterprise use: about 13 USD per developer per active day, 150 to 250 USD per month, and 90% of users under 30 USD per day. They also say to establish a baseline with a small pilot group before expanding. I recommend treating the averages as a rough guide and measuring your own usage.</p>
+
+  <h2 id="subscription">Differences from subscription plans</h2>
+  <p>If you use Claude Code through a subscription such as Pro, Max, or Team, its usage is included in the monthly fee. The official docs explain that for Pro and Max users, the session dollar amount shown by <code>/usage</code> is unrelated to billing. In that case, treat the API-equivalent amount as a yardstick for comparing who is using how much, and use it as input when thinking about plan allocations.</p>
+
+  <h2 id="reduce">Ways to keep costs down</h2>
+  <ul>
+    <li><strong>Use different models for different work</strong>: The official docs say Sonnet can handle most coding tasks and costs less than Opus, and recommend saving Opus for things like complex design decisions.</li>
+    <li><strong>Use <code>/clear</code> when you move to unrelated work</strong>: the longer the history, the more is sent with every request.</li>
+    <li><strong>Adjust effort (reasoning depth)</strong>: The official docs say that for simple tasks that don't need deep reasoning, lowering effort with <code>/effort</code> can reduce cost.</li>
+  </ul>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is the amount shown in /usage the same as my bill?</summary>
+      <p>The official docs describe these as estimates. To confirm the exact API billing amount, check the usage page in the Claude Console. For subscriptions, this is unrelated to billing.</p>
+    </details>
+    <details>
+      <summary>How do I get amounts in yen?</summary>
+      <p>Pricing is set in USD. Multiply by the exchange rate on the day of the estimate to get yen, and note the rate and date you used in the document.</p>
+    </details>
+    <details>
+      <summary>How many tokens does a subscription usage allowance cover?</summary>
+      <p>In the official pricing page as of writing, plan usage allowances are expressed in relative terms such as "X times Pro," not in token counts.</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Calculate your monthly cost in the browser</h2>
+    <p>In the <a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>, enter the number of users, tokens per day, working days, and model to calculate the monthly cost in USD and yen using this article's formula. You can also load the numbers from the example above.</p>
+  </section>
+
+  <h2 id="refs">References (official pages, as of 2026-10-14)</h2>
+  <ul>
+    <li><a href="https://platform.claude.com/docs/en/about-claude/pricing" rel="noopener">Pricing</a> (per-model rates, caching, <code>inference_geo</code>, fast mode)</li>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a> (<code>/usage</code>, average benchmarks, choosing between models, thinking tokens)</li>
+    <li><a href="https://claude.com/pricing" rel="noopener">Claude plans and pricing</a></li>
+  </ul>
+  <p class="hint">Prices can change. Before you make an estimate, check the latest rates on the official page.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permissions (deny/ask/allow): the basics</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's specifications and pricing may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

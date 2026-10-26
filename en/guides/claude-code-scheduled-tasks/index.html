@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheduled Runs in Claude Code: /loop vs. Desktop Scheduled Tasks and When to Use Each | Chuki DX Lab</title>
+<meta name="description" content="A guide to running work on a schedule with Claude Code, based on the official docs. It covers the differences between cloud, desktop, and /loop, how to write and stop /loop, and how to create desktop scheduled tasks, with cautions.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-scheduled-tasks/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-scheduled-tasks/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-scheduled-tasks/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-scheduled-tasks/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Scheduled runs in Claude Code: the differences between /loop and desktop scheduled tasks, and when to use each">
+<meta property="og:description" content="A guide to running work on a schedule with Claude Code, based on the official docs. It covers the differences between cloud, desktop, and /loop, how to write and stop /loop, and how to create desktop scheduled tasks, with cautions.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-scheduled-tasks/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-scheduled-tasks.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Scheduled runs in Claude Code: the differences between /loop and desktop scheduled tasks, and when to use each">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-scheduled-tasks.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Scheduled runs in Claude Code: the differences between /loop and desktop scheduled tasks, and when to use each",
+  "description": "A guide to running work on a schedule with Claude Code, based on the official docs. It covers the differences between cloud, desktop, and /loop, how to write and stop /loop, and how to create desktop scheduled tasks, with cautions.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-scheduled-tasks/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Running Claude Code on a schedule",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-scheduled-tasks/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Which scheduled run keeps working even after you close your PC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, only cloud scheduled tasks don't require your machine to be powered on. Desktop tasks and /loop require the machine to be running."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I stop a fixed-interval /loop?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ask Claude to cancel it, for example \"cancel the deploy check loop\". Esc and Ctrl+C don't stop it. If you don't cancel it, it ends after 7 days."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do scheduled tasks on the desktop stop partway through?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In Manual mode, if a tool without permission is needed, the run stops until you approve it. Open that run's session from the history and approve it, or choose \"always allow\" with Run now after creating it."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-scheduled-tasks/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Running Claude Code on a schedule</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">How the three scheduling methods differ</a></li>
+        <li><a href="#s2">/loop basics: specifying the interval and prompt</a></li>
+        <li><a href="#s3">Changing the default behavior with loop.md, and how to stop it</a></li>
+        <li><a href="#s4">/loop limitation: it depends on the session</a></li>
+        <li><a href="#s5">How to create desktop scheduled tasks, and what to watch for</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Scheduled runs in Claude Code: the differences between /loop and desktop scheduled tasks, and when to use each</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code (Anthropic's AI coding agent that runs in the terminal) offers three kinds of scheduled runs: cloud, desktop, and <code>/loop</code>. As a rule of thumb, use cloud to run without your machine, desktop when you need local files, and <code>/loop</code> for quick checks during a session.</li>
+      <li><code>/loop</code> works only while the session is open. A fixed-interval loop does not stop with <code>Esc</code> or <code>Ctrl+C</code>; you ask Claude to cancel it.</li>
+      <li>Desktop scheduled tasks run only while the app is open and the PC is awake. To keep them from stalling on permission prompts, test them with <strong>Run now</strong> after you create them.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">How the three scheduling methods differ</h2>
+  <p>This article is based on the official docs as of writing (October 2026). According to the official docs, there are three ways to schedule recurring or one-time tasks.</p>
+  <ul>
+    <li>Cloud: By default it runs in a cloud managed by Anthropic, so your machine doesn't need to be on and no session needs to be open. Local files are not available (it uses a fresh clone), and the minimum interval is one hour.</li>
+    <li>Desktop: runs on your own machine. The machine must be powered on, but no active session is needed. It can use local files. The minimum interval is 1 minute when Claude sets it up, and 1 hour when you use the form.</li>
+    <li><code>/loop</code>: runs on your own machine and needs both power and an open session. The minimum interval is 1 minute, and permission prompts and MCP servers are inherited from the session.</li>
+  </ul>
+  <p>As a rule of thumb, use cloud for work that must run reliably without your machine, desktop for work that needs local files or tools, and <code>/loop</code> for quick checks during a session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+  <h2 id="s2">/loop basics: specifying the interval and prompt</h2>
+  <p><code>/loop</code> is a bundled skill (a feature that ships with Claude Code) and is the quickest way to repeat the same prompt while keeping a session open. You can omit either the interval or the prompt, and what you specify changes the behavior.</p>
+  <ul>
+    <li><code>/loop 5m check the deploy</code>: specify an interval and a prompt. It runs on a fixed schedule.</li>
+    <li><code>/loop check the deploy</code>: prompt only. Claude picks the interval on each iteration.</li>
+    <li><code>/loop</code>: With only an interval, or with nothing specified, the built-in maintenance prompt runs, or <code>loop.md</code> if you have one.</li>
+  </ul>
+  <h3>Run at a fixed interval</h3>
+  <p>When you specify an interval, Claude converts it to a cron expression (a format for specifying recurring schedules), registers it, and tells you the interval and the job ID.</p>
+<pre><code>/loop 5m check if the deployment finished and tell me what happened</code></pre>
+  <p>Put the interval at the start, like <code>30m</code>, or append it at the end, like <code>every 2 hours</code>. The units are <code>s</code>, <code>m</code>, <code>h</code>, and <code>d</code>. Seconds are rounded up to 1 minute, and intervals that don't divide evenly, such as <code>7m</code> or <code>90m</code>, are rounded to a nearby value, and Claude tells you which value it chose.</p>
+  <h3>Let Claude choose the interval</h3>
+  <p>If you omit the interval, Claude picks a wait time between 1 minute and 1 hour for each iteration and shows it along with the reason.</p>
+<pre><code>/loop check whether CI passed and address any review comments</code></pre>
+  <p>You can also pass a skill (for example, <code>/loop 20m /review-pr 1234</code>). However, only skills that Claude can invoke on its own are run. Built-in commands such as <code>/model</code>, skills with <code>disable-model-invocation: true</code>, and MCP prompts are not run and are passed along as text.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+  <h2 id="s3">Changing the default behavior with loop.md, and how to stop it</h2>
+  <p>The default for <code>/loop</code> with no arguments is a maintenance prompt. It proceeds in this order: continuing unfinished work, handling the current branch's PR (review comments, failing CI, merge conflicts), and then cleanup if nothing is pending. Irreversible actions such as pushing or deleting proceed only when they continue work already authorized in the conversation.</p>
+  <p>To replace the built-in prompt with your own instructions, create a <code>loop.md</code>. <code>.claude/loop.md</code> (per project) takes precedence over <code>~/.claude/loop.md</code> (per user), and if neither exists, it falls back to the built-in prompt. It is a single default prompt, not a list of multiple tasks, and it is ignored if you give a prompt on the command line.</p>
+  <ul>
+    <li>Loops with the interval omitted: you can stop them with <code>Esc</code> while waiting for the next iteration.</li>
+    <li>Fixed-interval loops: <code>Esc</code> and <code>Ctrl+C</code> don't stop them; ask Claude to cancel instead. If you don't cancel, they end after 7 days.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+  <h2 id="s4">/loop limitation: it depends on the session</h2>
+  <p>The official docs list constraints on session-scoped schedules.</p>
+  <ul>
+    <li>It fires only while Claude Code is running and idle. If you close the terminal, it stops.</li>
+    <li>Missed runs are not made up. It runs just once when it returns to the idle state.</li>
+    <li>When you resume with <code>claude --resume</code>, tasks scheduled with <code>CronCreate</code> are restored (except things like expired recurring tasks). A <code>/loop</code> without an interval is not restored, so run it again.</li>
+  </ul>
+  <p>For unattended runs, the docs list cloud scheduled tasks, the GitHub Actions <code>schedule</code> trigger, and desktop scheduled tasks.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+  <h2 id="s5">How to create desktop scheduled tasks, and what to watch for</h2>
+  <p>According to the official docs, local scheduled tasks require Claude Desktop 1.1.5368 or later. In the <strong>Code</strong> tab, open <strong>New task</strong> from <strong>Scheduled</strong>, and if a menu appears, choose <strong>Set up manually</strong>.</p>
+  <ol>
+    <li>Enter a name in <strong>Name</strong>. It is converted to lowercase kebab-case and becomes the folder name on disk, so don't reuse the same name across tasks.</li>
+    <li>Write what to run in the instructions field.</li>
+    <li>In the <strong>General</strong> tab of <strong>Advanced settings</strong>, turn on <strong>Only on this computer</strong>. If the switch is unavailable, remove the repository, GitHub event, or API triggers. Having any of these makes it a cloud scheduled task.</li>
+    <li>Choose a folder under <strong>Local folder</strong>. <strong>Create</strong> can't be clicked until you pick one.</li>
+    <li>Choose a schedule preset under <strong>Trigger</strong>, pick a permission mode and model, then click <strong>Create</strong>.</li>
+  </ol>
+  <p>If the top of the dialog shows <strong>Only on this computer</strong>, turn it on before you enter anything.</p>
+  <p>While the app is open, Desktop checks the schedule every minute and starts due tasks in a new session. Tasks run only while the app is running and the PC is awake; if the scheduled time passes during sleep, that run is skipped. <strong>Keep computer awake</strong> under <strong>Settings &gt; This computer &gt; System</strong> prevents idle sleep, but closing a laptop lid still puts it to sleep.</p>
+  <p>Permissions are set per task. In Manual mode, if a task needs a tool it doesn't have permission for, the run pauses until you approve it. To avoid pauses, click <strong>Run now</strong> after creating the task and choose "always allow" at the permission prompt. Later runs then auto-approve the same tool, and you can revoke this on the details page. MCP tools with <code>requiresUserInteraction</code> prompt every time and pause each run.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-scheduled-tasks" rel="noopener">Schedule recurring tasks in Claude Code Desktop</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Which scheduled run keeps working even after you close your PC?</summary>
+      <p>According to the official docs, only cloud scheduled tasks don't require your machine to be powered on. Desktop tasks and <code>/loop</code> require the machine to be running.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+    </details>
+    <details>
+      <summary>How do I stop a fixed-interval /loop?</summary>
+      <p>Ask Claude to cancel it, for example "cancel the deploy check loop". <code>Esc</code> and <code>Ctrl+C</code> don't stop it. If you don't cancel it, it ends after 7 days.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a></p>
+    </details>
+    <details>
+      <summary>Why do scheduled tasks on the desktop stop partway through?</summary>
+      <p>In Manual mode, if a tool without permission is needed, the run stops until you approve it. Open that run's session from the history and approve it, or choose "always allow" with <strong>Run now</strong> after creating it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-scheduled-tasks" rel="noopener">Schedule recurring tasks in Claude Code Desktop</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/scheduled-tasks" rel="noopener">Run prompts on a schedule</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/desktop-scheduled-tasks" rel="noopener">Schedule recurring tasks in Claude Code Desktop</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-headless/index.html">How to run Claude Code from scripts with claude -p (headless mode)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-desktop-app/index.html">Getting started with the Claude Code desktop app, and admin settings for Team and Enterprise</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

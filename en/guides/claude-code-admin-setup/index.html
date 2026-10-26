@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin settings for rolling out Claude Code in an organization: how to distribute managed settings and what you can restrict | Chuki DX Lab</title>
+<meta name="description" content="For corporate IT admins at small and midsize companies rolling out Claude Code across an organization, this guide covers, based on the official docs, how to choose an API provider, how to distribute managed settings, what you can restrict, and how to check usage.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-admin-setup/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-admin-setup/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-admin-setup/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-admin-setup/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Admin setup flow for rolling out Claude Code in an organization: distributing managed settings and what you can restrict">
+<meta property="og:description" content="For corporate IT admins at small and midsize companies rolling out Claude Code across an organization, this guide covers, based on the official docs, how to choose an API provider, how to distribute managed settings, what you can restrict, and how to check usage.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-admin-setup/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-admin-setup.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Admin setup flow for rolling out Claude Code in an organization: distributing managed settings and what you can restrict">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-admin-setup.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Admin setup flow for rolling out Claude Code in an organization: distributing managed settings and what you can restrict",
+  "description": "For corporate IT admins at small and midsize companies rolling out Claude Code across an organization, this guide covers, based on the official docs, how to choose an API provider, how to distribute managed settings, what you can restrict, and how to check usage.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-admin-setup/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Organization Rollout Settings",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-admin-setup/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I also configure SSO and SCIM in these managed settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. According to the official docs, SSO, SCIM, and seat assignment are configured on the Claude account side. See the Claude Enterprise admin guide for the steps."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If we use Bedrock, can we distribute settings from the admin console?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Distribution through the admin console requires a Claude for Teams or Enterprise plan. With Bedrock and similar, the docs say you can do similar remote delivery with the Claude apps gateway, or use file-based or OS-level methods."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can developers override managed settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With a few exceptions, managed values take precedence over user settings and project settings. You can add to array settings, but you can't remove items set by the managed side. Check the official docs for details on the exceptions."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-admin-setup/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code Organization Rollout Settings</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">First, decide on an API provider</a></li>
+        <li><a href="#s2">How Managed Settings Are Delivered and Their Precedence</a></li>
+        <li><a href="#s3">What to restrict</a></li>
+        <li><a href="#s4">Usage visibility and data handling</a></li>
+        <li><a href="#s5">Post-setup checks and guidance for users</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Admin setup flow for rolling out Claude Code in an organization: distributing managed settings and what you can restrict</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, organization policies for Claude Code (Anthropic's AI coding agent that runs in the terminal) are distributed through managed settings and take precedence over users' local settings.</li>
+      <li>The order of decisions is: API provider, how settings are delivered, the scope of restrictions, visibility into usage, and data handling.</li>
+      <li>After you configure it, ask users to run <code>/status</code> to confirm that the managed settings are in effect.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">First, decide on an API provider</h2>
+  <p>According to the official docs, managed settings can be distributed through the Claude admin console, MDM (a system for managing devices in bulk), or files on disk. SSO, SCIM, and seat assignment are configured on the Claude account side and are covered in a separate admin guide.</p>
+  <p>The provider affects billing, authentication, which compliance obligations carry over, and which features are available.</p>
+  <ul>
+    <li>Claude for Teams / Enterprise: for when you want Claude Code and claude.ai under a single per-seat contract. It requires no infrastructure operations and is the default recommendation.</li>
+    <li>Claude Console: if you focus on the API or want pay-as-you-go billing.</li>
+    <li>Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry: for when you want to keep your existing cloud controls and billing.</li>
+  </ul>
+  <p>One caveat: cloud sessions, Routines, Code Review, Remote Control, and the Chrome extension require a claude.ai account. A Console API key or cloud provider credentials alone won't work. If you plan to roll out through a cloud provider, first consider whether you also need Teams / Enterprise seats.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+  <h2 id="s2">How Managed Settings Are Delivered and Their Precedence</h2>
+  <p>According to the official docs, the following four are used in order of priority.</p>
+  <ul>
+    <li>Server-managed settings (the claude.ai admin console): highest priority, and applies to all platforms.</li>
+    <li>plist / registry: <code>com.anthropic.claudecode</code> on macOS, <code>HKLM\SOFTWARE\Policies\ClaudeCode</code> on Windows.</li>
+    <li>Files: on macOS, <code>/Library/Application Support/ClaudeCode/managed-settings.json</code>; on Linux and WSL, <code>/etc/claude-code/managed-settings.json</code>; on Windows, <code>C:\Program Files\ClaudeCode\managed-settings.json</code>.</li>
+    <li>Windows user registry <code>HKCU\SOFTWARE\Policies\ClaudeCode</code>: lowest priority, Windows only.</li>
+  </ul>
+  <p>Server-managed settings are fetched at startup and refreshed hourly during a session. Delivery through the admin console requires a Claude for Teams or Enterprise plan. If you use Bedrock or similar, you can run the Claude apps gateway to get the same remote delivery, and file-based or OS-level methods also work.</p>
+  <p>When providers are mixed, combine server-managed settings with file, plist, or registry alternatives. The docs note that plist and HKLM need administrator rights to write and are harder to tamper with, while HKCU can be written without elevation, so treat it as a convenience default rather than an enforcement mechanism.</p>
+  <p>With a few exceptions, managed values take precedence over user settings and project settings. Arrays such as <code>permissions.allow</code> and <code>permissions.deny</code> merge entries from all sources, so developers can add entries but cannot remove the ones set by the managed side.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+  <h2 id="s3">What to restrict</h2>
+  <p>Managed settings can control tools, commands, MCP servers, plugin sources, hooks, and more. The main items are as follows.</p>
+  <ul>
+    <li>Permission rules: Use <code>permissions.allow</code> and <code>permissions.deny</code> to allow, ask about, or deny specific tools and commands.</li>
+    <li>Locking down permissions: <code>allowManagedPermissionRulesOnly</code> makes managed settings the only source of permission rules, and <code>permissions.disableBypassPermissionsMode</code> disables <code>--dangerously-skip-permissions</code>.</li>
+    <li>Sandbox: OS-level file and network isolation. It uses <code>sandbox.enabled</code> and <code>sandbox.network.allowedDomains</code>.</li>
+    <li>MCP servers: restrict which servers can be connected with <code>allowedMcpServers</code>, <code>deniedMcpServers</code>, and similar settings.</li>
+    <li>Models and versions: use <code>availableModels</code> to limit which models can be selected, and <code>minimumVersion</code> to keep auto-updates from dropping below a floor. <code>requiredMinimumVersion</code> refuses to start at all if the version is out of range.</li>
+  </ul>
+  <p>One caveat: permission rules and the sandbox are separate layers. Even if you deny WebFetch, <code>curl</code> and <code>wget</code> can reach any URL as long as Bash is allowed, so the docs explain that you should add a sandbox with an OS-level domain allowlist.</p>
+  <p>If users sign in through claude.ai or the Anthropic API on a Claude Enterprise plan, you can set model restrictions, the default model, and the effort cap from the organization's admin console without distributing managed settings. However, these settings do not reach Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, so for those use <code>availableModels</code>, <code>model</code>, and <code>maxEffortLevel</code> in managed settings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+  <h2 id="s4">Usage visibility and data handling</h2>
+  <p>The official docs note that the available features differ between Teams / Enterprise and Console, and advise checking the availability column before planning your reporting.</p>
+  <ul>
+    <li>Usage: OpenTelemetry can export sessions, tools, and tokens. This applies to all providers.</li>
+    <li>Analytics dashboards: Teams / Enterprise and the Console have separate screens. In Teams / Enterprise, you view per-user usage and spend in the spend report, not the dashboard.</li>
+    <li>Spend management: for Teams / Enterprise, it's an organization setting; for Console, it's the workspace limit. With third-party clouds, use the cloud provider's budget controls or the Claude apps gateway.</li>
+  </ul>
+  <p>On data, Anthropic is said not to train models on your code or prompts under the Team, Enterprise, Claude API, and cloud provider plans. Retention periods and compliance are determined by the provider. Zero Data Retention (ZDR) is available to eligible Claude for Enterprise accounts. If you need per-request audit logs, setting up a gateway is recommended, but sessions through a gateway are outside the HIPAA configuration.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+  <h2 id="s5">Post-setup checks and guidance for users</h2>
+  <p>According to the official docs, after setup you have developers run <code>/status</code> inside Claude Code. The <code>Setting sources</code> line on the Status tab shows <code>Enterprise managed settings</code>, followed by the active sources in parentheses.</p>
+  <p>There are three main fixes for login problems: switch accounts with <code>/logout</code> followed by <code>/login</code>; run <code>claude update</code> if the enterprise authentication options don't appear; and restart the terminal after updating. If you see "You haven't been added to your organization yet", your seat doesn't include Claude Code access, and an admin needs to update it in the admin console.</p>
+  <p>This article is based on the official docs as of writing (October 2026). Check the official docs for setting keys and supported versions before you deploy.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I also configure SSO and SCIM in these managed settings?</summary>
+      <p>No. According to the official docs, SSO, SCIM, and seat assignment are configured on the Claude account side. See the Claude Enterprise admin guide for the steps.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+    </details>
+    <details>
+      <summary>If we use Bedrock, can we distribute settings from the admin console?</summary>
+      <p>Distribution through the admin console requires a Claude for Teams or Enterprise plan. With Bedrock and similar, the docs say you can do similar remote delivery with the Claude apps gateway, or use file-based or OS-level methods.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+    </details>
+    <details>
+      <summary>Can developers override managed settings?</summary>
+      <p>With a few exceptions, managed values take precedence over user settings and project settings. You can add to array settings, but you can't remove items set by the managed side. Check the official docs for details on the exceptions.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-how-it-works/index.html">How Claude Code works: the agentic loop and what Claude can touch</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-devcontainer/index.html">Running Claude Code in a dev container: settings and organizational rules</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

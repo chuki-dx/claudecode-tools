@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Claude Code Prompt Caching Works: Actions That Hit and Actions That Break the Cache | Chuki DX Lab</title>
+<meta name="description" content="A summary, based on the official docs, of how Claude Code&#x27;s prompt cache works by matching from the start of the prompt, which actions break the cache (such as switching models or /compact), which don&#x27;t, and how to check.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-caching/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-caching/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-caching/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-caching/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How Claude Code prompt caching works: what keeps it and what breaks it">
+<meta property="og:description" content="A summary, based on the official docs, of how Claude Code&#x27;s prompt cache works by matching from the start of the prompt, which actions break the cache (such as switching models or /compact), which don&#x27;t, and how to check.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-caching/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-prompt-caching.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How Claude Code prompt caching works: what keeps it and what breaks it">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-prompt-caching.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How Claude Code prompt caching works: what keeps it and what breaks it",
+  "description": "A summary, based on the official docs, of how Claude Code's prompt cache works by matching from the start of the prompt, which actions break the cache (such as switching models or /compact), which don't, and how to check.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-caching/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How prompt caching works",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-caching/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does editing CLAUDE.md during a session invalidate the cache?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It won't cut the session off, but your edits won't take effect. The project-root and user-level CLAUDE.md files are read at session start, and the new content is loaded on the next /clear, /compact, or restart."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the next response slower after I switch models?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because each model has its own cache. Even if the content is the same, the next request reads the entire conversation history without the cache."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I check whether caching is working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run /usage to see the hit rate and miss count on the Prompt cache (main) line. This display requires v2.1.251 or later."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-prompt-caching/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How prompt caching works</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">How it works: the matching beginning of the request is reused</a></li>
+        <li><a href="#s2">Actions that break the cache: switching models, changing tool definitions, /compact, and more</a></li>
+        <li><a href="#s3">What can&#x27;t be cut off: CLAUDE.md edits, permission modes, /rewind, and more</a></li>
+        <li><a href="#s4">Cache lifetime (TTL) and settings</a></li>
+        <li><a href="#s5">Checking that it works, and cautions for company use</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How Claude Code prompt caching works: what keeps it and what breaks it</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Prompt caching in Claude Code (Anthropic's AI coding agent that runs in the terminal) works automatically and reuses the portion at the start of a request that matches exactly.</li>
+      <li>The cache is invalidated by switching models, <code>/compact</code>, changing tool definitions, and similar actions. It is not invalidated by editing CLAUDE.md, changing the permission mode, <code>/rewind</code>, and so on.</li>
+      <li>The basic approach is to avoid operations that can be cut off mid-task, and to check how close you are to the limit with <code>/usage</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">How it works: the matching beginning of the request is reused</h2>
+  <p>The following is a summary based on the official docs as of writing (October 2026), not the result of my own testing. According to the official docs, the model remembers nothing between requests, so Claude Code resends the entire payload every time: the system prompt, project context, past messages and tool results, and the new message. New content is appended at the end, so most of it is identical to the previous request.</p>
+  <p>The API reuses the start of a request (the prefix) by matching it against content it processed recently. The match must be exact, and if anything changes partway through, everything after that point is recomputed. There is no per-file cache. Reused portions are billed at the cached-token rate.</p>
+  <p>In order from least likely to change, they form the following 3 layers.</p>
+  <ul>
+    <li>System prompt: the base instructions and tool definitions. It changes when the set of tool definitions changes.</li>
+    <li>Project context: CLAUDE.md, auto memory, and so on. It changes at session start and after <code>/clear</code> and <code>/compact</code>.</li>
+    <li>Conversation: messages, responses, and tool results. It changes every turn.</li>
+  </ul>
+  <p>If only the conversation layer changes, the other two layers stay in the cache, but if the system prompt changes, the whole cache is invalidated. In addition, the cache is separate for each model, and for many models it is also separate for each effort level.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+  <h2 id="s2">Actions that break the cache: switching models, changing tool definitions, /compact, and more</h2>
+  <p>When the cache expires, only the next turn is slower and costs more, and after that the new prefix is cached.</p>
+  <h3>Model, effort, and fast mode</h3>
+  <p>When you switch models with <code>/model</code>, the next request reads the entire history without the cache, even if the content is the same. In the terminal, a confirmation appears only when the cache is warm and the model you are switching to is not the one that generated the previous response. With <code>opusplan</code>, each plan mode switch counts as a model switch, and so does the turn of a skill or command that specifies a different <code>model</code> in its frontmatter.</p>
+  <p>Changing effort works the same way for many models. However, if you use Opus 5.5, Sonnet 5.5, Haiku 5.5, or Fable 5.1 with an API key or a Claude subscription, the cache is preserved. This does not apply to Amazon Bedrock, Google Cloud's Agent Platform, Claude apps gateway, when <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code> is set, or to organizations with a HIPAA configuration.</p>
+  <p>When you turn on fast mode, the first request is made without cache. The cost is incurred once per conversation, so the earlier in a session you turn it on, the cheaper it is.</p>
+  <h3>Tool definitions</h3>
+  <p>Tool definitions sit in the system prompt layer, so the cache is invalidated when the set of tools changes. If MCP tool search is loading tools lazily (the default on supported models), connecting or disconnecting servers has no effect. If tools are loaded up front, for example because tool search is disabled, the cache is invalidated when definitions are added, or removed through deny rules or by disabling them in <code>/mcp</code>. If tool search is unavailable or disabled, adding a deny rule with only a tool name (such as <code>Bash</code>) removes the definition from the next request and invalidates the cache. Scoped deny rules such as <code>Bash(rm *)</code>, and allow and ask rules, have no effect.</p>
+  <h3>Compaction and other topics</h3>
+  <p><code>/compact</code> replaces the history with a summary, so the conversation layer of the cache is invalidated. However, the summarization request reads the prefix if the cache is still warm, so it costs less than the context size would suggest. Resuming an old session after the cache lifetime has expired is the most expensive case.</p>
+  <p>The conversation is also cut off when Claude Code deletes old images after they accumulate, and in the first conversation after a Claude Code upgrade. Auto-updates are applied at the next launch, not in the middle of a session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+  <h2 id="s3">What can't be cut off: CLAUDE.md edits, permission modes, /rewind, and more</h2>
+  <p>The following actions are appended to the end of the conversation or don't touch the request, so the cache is preserved.</p>
+  <ul>
+    <li>File edits: a <code>&lt;system-reminder&gt;</code> announcing the change is appended, and Claude re-reads the file if needed.</li>
+    <li>Editing CLAUDE.md: It is read once at session start, so editing it mid-session doesn't break the cache, but the changes aren't picked up either. New content is loaded on the next <code>/clear</code>, <code>/compact</code>, or restart.</li>
+    <li>Changing the permission mode: with <code>opusplan</code>, however, this counts as a model switch.</li>
+    <li>Output style changes: They apply from the next message. Before v2.1.251, they didn't take effect until <code>/clear</code> or a new session.</li>
+    <li>Skill and command invocations and <code>/recap</code>: they are appended to the history rather than replacing it.</li>
+    <li><code>/rewind</code>: hits an earlier cache entry. The official docs say to use it instead of <code>/compact</code> for work you want to abandon.</li>
+    <li>Subagents: They don't affect the parent's cache, but their first request doesn't read the parent's cache and instead builds its own.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+  <h2 id="s4">Cache lifetime (TTL) and settings</h2>
+  <p>The cache expires after a period of inactivity, and each cache hit resets the timer. The first turn after a long break can be slower. There are two TTLs, 5 minutes and 1 hour. The 1-hour TTL holds up better across long breaks, but cache writes cost more.</p>
+  <p>According to the official docs, when you don't choose a TTL yourself, a 1-hour TTL is requested only on a Claude subscription while you're within the plan's included usage. With API keys, cloud providers, and usage credits, the main conversation also uses 5 minutes.</p>
+  <p>You can set the TTL for the main conversation with the <code>promptCacheTtl</code> setting or the <code>CLAUDE_CODE_PROMPT_CACHE_TTL</code> environment variable. The only valid values are <code>5m</code> and <code>1h</code>. Requires v2.1.242 or later.</p>
+  <p>The cache is effectively scoped to one machine and one directory, so sessions in different directories do not hit each other's caches.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+  <h2 id="s5">Checking that it works, and cautions for company use</h2>
+  <p>The API returns <code>cache_creation_input_tokens</code> (writes to the cache) and <code>cache_read_input_tokens</code> (reads from the cache) with each response. High reads mean caching is working well; if writes stay high on every turn, something in the prefix keeps changing.</p>
+  <p>For a single session, run <code>/usage</code>. After the first response in the main conversation, a <code>Prompt cache (main)</code> line is added, showing the hit rate, the number of misses, and whether the cache is currently warm. This display requires v2.1.251 or later. For the whole organization, the OpenTelemetry exporter reports token counts per user and session.</p>
+  <p>On Amazon Bedrock and similar platforms, the cache lives on the cloud provider's side. Through an LLM gateway or a custom <code>ANTHROPIC_BASE_URL</code>, whether caching works depends on the gateway. If a gateway strips the <code>cache_control</code> marker while still returning success, the entire conversation history is billed as uncached input on every turn.</p>
+  <p>To disable it, set <code>DISABLE_PROMPT_CACHING</code> to <code>1</code>. The official docs say to do this only for debugging and to leave it enabled otherwise.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does editing CLAUDE.md during a session invalidate the cache?</summary>
+      <p>It won't cut the session off, but your edits won't take effect. The project-root and user-level CLAUDE.md files are read at session start, and the new content is loaded on the next <code>/clear</code>, <code>/compact</code>, or restart.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+    </details>
+    <details>
+      <summary>Why is the next response slower after I switch models?</summary>
+      <p>Because each model has its own cache. Even if the content is the same, the next request reads the entire conversation history without the cache.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+    </details>
+    <details>
+      <summary>Where can I check whether caching is working?</summary>
+      <p>Run <code>/usage</code> to see the hit rate and miss count on the <code>Prompt cache (main)</code> line. This display requires v2.1.251 or later.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/prompt-caching" rel="noopener">How Claude Code uses prompt caching</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-reduce-tokens/index.html">How to Reduce Claude Code Token Usage and Check Your Usage</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-context-compact/index.html">Claude Code context and /compact: what stays and what is lost in a long conversation</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

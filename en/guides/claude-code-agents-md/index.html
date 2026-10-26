@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using AGENTS.md with Claude Code: How It Relates to CLAUDE.md and How It's Loaded | Chuki DX Lab</title>
+<meta name="description" content="Based on the official docs, this guide covers when Claude Code reads AGENTS.md, how it behaves when CLAUDE.md also exists, switching in /config, and how to share content via import or symlink.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agents-md/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agents-md/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agents-md/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Using AGENTS.md with Claude Code: Its Relationship to CLAUDE.md and How It&#x27;s Loaded">
+<meta property="og:description" content="Based on the official docs, this guide covers when Claude Code reads AGENTS.md, how it behaves when CLAUDE.md also exists, switching in /config, and how to share content via import or symlink.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agents-md/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-agents-md.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Using AGENTS.md with Claude Code: Its Relationship to CLAUDE.md and How It&#x27;s Loaded">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-agents-md.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Using AGENTS.md with Claude Code: Its Relationship to CLAUDE.md and How It's Loaded",
+  "description": "Based on the official docs, this guide covers when Claude Code reads AGENTS.md, how it behaves when CLAUDE.md also exists, switching in /config, and how to share content via import or symlink.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agents-md/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code and AGENTS.md",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agents-md/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "I already have a CLAUDE.md that contains @AGENTS.md. Should I delete it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, you can leave it. Whatever value Project instructions has, AGENTS.md is never read twice. If nothing else is in the file you can delete it, but keep it if some sessions can't read AGENTS.md directly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I make Claude Code read both CLAUDE.md and AGENTS.md?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In /config, set Project instructions to claude-md-and-agents-md. In a settings file, specify instructionFiles under cc-plugin-agents-md@builtin in pluginConfigs. In each directory, CLAUDE.md is read first and AGENTS.md after it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should you check when AGENTS.md isn't being read?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check whether CLAUDE.md, .claude/CLAUDE.md, or CLAUDE.local.md exists in the working directory or any parent directory. If one does, AGENTS.md is not read by default. Next, check that Claude Code is v2.1.277 or later and that you haven't disabled the built-in plugin with /plugin. If it can't be read directly, you can use an @AGENTS.md import."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-agents-md/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code and AGENTS.md</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">How AGENTS.md is read by default</a></li>
+        <li><a href="#s2">When files are read, and which files are not</a></li>
+        <li><a href="#s3">Switch which files are read with /config</a></li>
+        <li><a href="#s4">Sessions that can&#x27;t be read, and how they differ from CLAUDE.md</a></li>
+        <li><a href="#s5">Sharing one file with other tools</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Using AGENTS.md with Claude Code: Its Relationship to CLAUDE.md and How It's Loaded</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code can read <code>AGENTS.md</code> directly. By default, it reads it only when there is no <code>CLAUDE.md</code>-type file in the working directory or above it.</li>
+      <li>If <code>CLAUDE.md</code> or <code>CLAUDE.local.md</code> exists, <code>AGENTS.md</code> isn't read by default. To have both read, set <strong>Project instructions</strong> in <code>/config</code> to <code>claude-md-and-agents-md</code>.</li>
+      <li>Reading it directly requires v2.1.277 or later. In environments that can't read it, write <code>@AGENTS.md</code> in <code>CLAUDE.md</code> to import it.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">How AGENTS.md is read by default</h2>
+  <p>According to the official docs, Claude Code (Anthropic's AI coding agent that runs in the terminal) can read <code>AGENTS.md</code> as project instructions. A repository already set up for other coding agents works without adding a <code>CLAUDE.md</code>, an import, or extra settings. This article is based on the official docs as of writing (October 2026).</p>
+  <p>The default behavior is determined by the combination of files in the repository.</p>
+  <ul>
+    <li>If only <code>AGENTS.md</code> exists, and there is no <code>CLAUDE.md</code> or <code>CLAUDE.local.md</code> in the working directory or above it, Claude reads <code>AGENTS.md</code>.</li>
+    <li>If both <code>AGENTS.md</code> and <code>CLAUDE.md</code> (or <code>CLAUDE.local.md</code>) exist, only the <code>CLAUDE.md</code>-family files are read.</li>
+    <li>If <code>CLAUDE.md</code> imports <code>AGENTS.md</code>, Claude reads <code>CLAUDE.md</code>, and <code>AGENTS.md</code> is included through the import.</li>
+  </ul>
+  <p>Reading it directly requires Claude Code v2.1.277 or later.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s2">When files are read, and which files are not</h2>
+  <p>The files checked are <code>CLAUDE.md</code>, <code>.claude/CLAUDE.md</code>, and <code>CLAUDE.local.md</code> in the working directory or above it. If any of them exist, they are read instead of <code>AGENTS.md</code>. <code>~/.claude/CLAUDE.md</code>, the organization's managed <code>CLAUDE.md</code>, and files in <code>.claude/rules/</code> are not part of this check and are loaded together with <code>AGENTS.md</code>.</p>
+  <p>When there is nothing to match, at session start all <code>AGENTS.md</code> and <code>.claude/AGENTS.md</code> files in the working directory and above are read. In an interactive session, a line like <code>no CLAUDE.md found; AGENTS.md loaded: /home/you/repo/AGENTS.md</code> appears, so you can confirm they were read. A subdirectory's <code>AGENTS.md</code> is read when Claude opens a file there with the Read tool and that subdirectory has none of the three <code>CLAUDE.md</code>-type files.</p>
+  <p><code>AGENTS.local.md</code>, <code>AGENTS.override.md</code>, and anything under the <code>.agents/</code> directory are not read.</p>
+  <p><strong>Caveat</strong>: <code>CLAUDE.local.md</code> is also checked. If you add <code>CLAUDE.local.md</code> to hold personal, uncommitted instructions, <code>AGENTS.md</code> is no longer read.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s3">Switch which files are read with /config</h2>
+  <p>Type <code>/config</code> in a session to open the settings panel, and set <strong>Project instructions</strong> to one of the following.</p>
+  <ul>
+    <li><code>claude-md-or-agents-md</code>: The default. It reads <code>CLAUDE.md</code>, and if neither <code>CLAUDE.md</code> nor <code>CLAUDE.local.md</code> exists, it reads <code>AGENTS.md</code>.</li>
+    <li><code>claude-md-and-agents-md</code>: reads both. In each directory, <code>CLAUDE.md</code> comes first and <code>AGENTS.md</code> second. An <code>AGENTS.md</code> that has already been loaded is skipped, so nothing is read twice.</li>
+    <li><code>claude-md</code>: reads only <code>CLAUDE.md</code>.</li>
+    <li><code>managed-only</code>: At startup, only your organization's managed <code>CLAUDE.md</code> and auto memory are loaded. All <code>AGENTS.md</code> files are excluded.</li>
+  </ul>
+  <p>You can also set it in a settings file. Write it under <code>cc-plugin-agents-md@builtin</code> in <code>pluginConfigs</code>. It is read from <code>~/.claude/settings.json</code>, a <code>--settings</code> file, and managed settings, and is ignored in project and local settings files. Here is an example that loads both.</p>
+<pre><code>{
+  "pluginConfigs": {
+    "cc-plugin-agents-md@builtin": {
+      "options": { "instructionFiles": "claude-md-and-agents-md" }
+    }
+  }
+}</code></pre>
+  <p>Before v2.1.285, the ID is <code>agents-md@builtin</code>, and <code>cc-plugin-agents-md@builtin</code> is ignored. Use <code>agents-md@builtin</code> in environments where older versions read the same file. The change takes effect from the next message, in all new sessions.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s4">Sessions that can't be read, and how they differ from CLAUDE.md</h2>
+  <p>In the following cases only <code>CLAUDE.md</code> is read, and <strong>Project instructions</strong> doesn't appear in <code>/config</code> either: versions before v2.1.277; when you've disabled the built-in plugin in <code>/plugin</code>; and, in some cases, the first session after upgrading from v2.1.276 or earlier (it's read from the next session). Also, before v2.1.281, only <code>CLAUDE.md</code> was read in sessions such as Amazon Bedrock or those with telemetry disabled. In that case, update Claude Code.</p>
+  <h3>How AGENTS.md differs when read through settings</h3>
+  <ul>
+    <li>The <code>InstructionsLoaded</code> hook does not run. It works as usual for an <code>AGENTS.md</code> that <code>CLAUDE.md</code> imports or symlinks.</li>
+    <li>While <code>CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD</code> is set, <code>AGENTS.md</code> is not read in directories added with <code>--add-dir</code>.</li>
+    <li>An <code>@path</code> import from outside the working directory is loaded only if you have already approved external imports for this project, and no confirmation is shown.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s5">Sharing one file with other tools</h2>
+  <p>Even when it isn't read directly, you can place an <code>@AGENTS.md</code> import in the adjacent <code>CLAUDE.md</code> to make <code>AGENTS.md</code> the single file shared by all tools. Use this when the project also has a <code>CLAUDE.md</code>, when you chose <code>claude-md</code>, or in sessions that can't read it directly. Write Claude-specific instructions below the import.</p>
+<pre><code>@AGENTS.md
+
+## Claude Code
+
+Use plan mode for changes under `src/billing/`.</code></pre>
+  <p>If you don't need any Claude-specific content, a symlink is fine too.</p>
+<pre><code>ln -s AGENTS.md CLAUDE.md</code></pre>
+  <p>Before choosing a symlink, check the following.</p>
+  <ul>
+    <li>The Edit and Write tools refuse to write through a symlink and direct you to edit the target <code>AGENTS.md</code> instead.</li>
+    <li>If anyone works on Windows or clones the repo there, use an <code>@AGENTS.md</code> import. Creating a symlink requires Administrator privileges or Developer Mode, and unless <code>core.symlinks</code> is enabled, Git creates a one-line <code>CLAUDE.md</code>.</li>
+  </ul>
+  <p>Either way, in the next session run <code>/context</code> and confirm that <code>CLAUDE.md</code> appears under <strong>Memory files</strong>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>I already have a CLAUDE.md that contains <code>@AGENTS.md</code>. Should I delete it?</summary>
+      <p>According to the official docs, you can leave it. Whatever value <strong>Project instructions</strong> has, <code>AGENTS.md</code> is never read twice. If nothing else is in the file you can delete it, but keep it if some sessions can't read <code>AGENTS.md</code> directly.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>How do I make Claude Code read both CLAUDE.md and AGENTS.md?</summary>
+      <p>In <code>/config</code>, set <strong>Project instructions</strong> to <code>claude-md-and-agents-md</code>. In a settings file, specify <code>instructionFiles</code> under <code>cc-plugin-agents-md@builtin</code> in <code>pluginConfigs</code>. In each directory, <code>CLAUDE.md</code> is read first and <code>AGENTS.md</code> after it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>What should you check when AGENTS.md isn't being read?</summary>
+      <p>Check whether <code>CLAUDE.md</code>, <code>.claude/CLAUDE.md</code>, or <code>CLAUDE.local.md</code> exists in the working directory or any parent directory. If one does, <code>AGENTS.md</code> is not read by default. Next, check that Claude Code is v2.1.277 or later and that you haven't disabled the built-in plugin with <code>/plugin</code>. If it can't be read directly, you can use an <code>@AGENTS.md</code> import.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-auto-memory/index.html">What Claude Code auto memory is: where it's stored, how to turn it off, and how to check it</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

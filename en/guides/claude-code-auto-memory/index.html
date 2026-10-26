@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code auto memory: where it's stored, how to turn it off, and how to check it | Chuki DX Lab</title>
+<meta name="description" content="A guide to what Claude Code&#x27;s auto memory saves, where it is stored, and how to turn it off, based on the official docs. It also covers how it differs from CLAUDE.md, the load limit, and how to check it.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-memory/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-memory/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-memory/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-memory/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code auto memory: where it&#x27;s stored, how to turn it off, and how to check it">
+<meta property="og:description" content="A guide to what Claude Code&#x27;s auto memory saves, where it is stored, and how to turn it off, based on the official docs. It also covers how it differs from CLAUDE.md, the load limit, and how to check it.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-memory/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-auto-memory.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code auto memory: where it&#x27;s stored, how to turn it off, and how to check it">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-auto-memory.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code auto memory: where it's stored, how to turn it off, and how to check it",
+  "description": "A guide to what Claude Code's auto memory saves, where it is stored, and how to turn it off, based on the official docs. It also covers how it differs from CLAUDE.md, the load limit, and how to check it.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-memory/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code auto memory",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-memory/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is auto memory shared with other PCs or team members?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, auto memory is machine-local, and its files are not shared across machines or cloud environments. It is shared only among worktrees and subdirectories within the same git repository."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I turned auto memory off and can't turn it back on.",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In background sessions and sessions started by another Claude Code session, the toggle can only be turned off, not back on. Run claude directly in a terminal and use the /memory toggle in that session."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I can't tell what auto memory has saved. How do I check?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run /memory and select the auto memory folder to see what Claude has saved. It's all plain Markdown, so you can read, edit, or delete it."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-auto-memory/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code auto memory</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What auto memory is: how it differs from CLAUDE.md</a></li>
+        <li><a href="#s2">What is stored and what is not</a></li>
+        <li><a href="#s3">Storage locations and folder structure</a></li>
+        <li><a href="#s4">How to turn it on and off</a></li>
+        <li><a href="#s5">How loading works and things to watch for</a></li>
+        <li><a href="#s6">Reviewing and editing the contents</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code auto memory: where it's stored, how to turn it off, and how to check it</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Auto memory is a mechanism where Claude keeps notes for itself. It is on by default in local sessions, and it serves a different role from the CLAUDE.md that people write.</li>
+      <li>Memory is stored in <code>~/.claude/projects/&lt;project&gt;/memory/</code> and is local to the machine. The contents are plain Markdown, so you can view, edit, and delete them from <code>/memory</code>.</li>
+      <li>To turn it off, use the <code>/memory</code> toggle, <code>autoMemoryEnabled</code>, or the environment variable <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY=1</code>. Note that some sessions can't be switched back on.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What auto memory is: how it differs from CLAUDE.md</h2>
+  <p>According to the official docs as of writing (October 2026), Claude Code (an AI coding agent from Anthropic that runs in the terminal) has two complementary memory mechanisms, both loaded at the start of a conversation. One is CLAUDE.md, a file where people write instructions and rules for Claude. The other is auto memory.</p>
+  <p>Auto memory is a mechanism where Claude accumulates learnings and patterns across sessions without you writing anything. CLAUDE.md is meant for coding conventions and workflows that you write, while auto memory is meant for your preferences, your corrections to Claude, and project background that can't be read from the code. The scope also differs: auto memory is per repository and shared across worktrees.</p>
+  <p>Note that for both, Claude treats them as context rather than enforced settings. If you need to reliably block an operation, the official docs direct you to use a PreToolUse hook.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s2">What is stored and what is not</h2>
+  <p>While working, Claude saves four types of notes for itself, and the type is recorded in the <code>type</code> field of the note file's frontmatter.</p>
+  <ul>
+    <li><code>user</code>: the user's role, expertise, and working preferences</li>
+    <li><code>feedback</code>: Corrections to Claude, and approaches you've confirmed</li>
+    <li><code>project</code>: Ongoing work, deadlines, and decisions that can't be derived from the code or git history</li>
+    <li><code>reference</code>: Where to find information outside the project, such as issue trackers and dashboards</li>
+  </ul>
+  <p>It does not save things that can be derived from the codebase, such as architecture, file paths, or debugging fixes, or anything already in CLAUDE.md. It also does not save every session; it decides based on whether the information will be useful in future conversations.</p>
+  <p>If you ask Claude to remember something, such as "always use pnpm, not npm," it is saved to auto memory. To put it in CLAUDE.md, ask it to "add this to CLAUDE.md" or edit the file via <code>/memory</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s3">Storage locations and folder structure</h2>
+  <p>Each project gets a directory named <code>~/.claude/projects/&lt;project&gt;/memory/</code>. Because <code>&lt;project&gt;</code> is derived from the git repository, worktrees and subdirectories of the same repository share one auto memory. Outside a git repository, the project root is used.</p>
+<pre><code>~/.claude/projects/&lt;project&gt;/memory/
+├── MEMORY.md           # Index, one line per memory, loaded into every session
+├── user_role.md        # One memory
+├── feedback_testing.md # One memory
+└── ...                 # Any other topic files Claude creates</code></pre>
+  <p><code>MEMORY.md</code> is an index, with one line per memory. The memory contents themselves go into separate files by topic. To change where they are stored, set <code>autoMemoryDirectory</code> in <code>settings.json</code>.</p>
+<pre><code>{
+  "autoMemoryDirectory": "~/my-custom-memory-dir"
+}</code></pre>
+  <p>The value must be a full path or start with <code>~/</code>. When it's written in a project settings file, it follows the same workspace trust rules as hooks in settings files. Also, while <code>permissions.blockReadsOutsideWorkingDirectories</code> is on, auto memory is neither loaded from nor saved to a directory chosen by a repository-level settings file.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s4">How to turn it on and off</h2>
+  <p>Auto memory is on by default in local sessions. Outside Claude Tag sessions, sessions in self-hosted environments run with it off by default.</p>
+  <p>If you open <code>/memory</code> in a session and use the auto memory toggle, <code>autoMemoryEnabled</code> is saved to the user settings file <code>~/.claude/settings.json</code>. To turn it off for just one project, add the following to that project's settings.</p>
+<pre><code>{
+  "autoMemoryEnabled": false
+}</code></pre>
+  <p>To turn it off with an environment variable, set <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY=1</code>.</p>
+  <h3>Sessions that can't be turned back on</h3>
+  <p>In the next session, you can turn it off with the toggle, but you can't turn it back on.</p>
+  <ul>
+    <li>Background sessions</li>
+    <li>A session launched by another Claude Code session (for example, when Claude runs <code>claude</code> through the Bash tool)</li>
+  </ul>
+  <p>Meanwhile, the toggle shows <code>off · can't be turned on here; use a session started outside Claude Code</code>. To turn it back on, run <code>claude</code> directly in a terminal and use the <code>/memory</code> toggle in that session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s5">How loading works and things to watch for</h2>
+  <p>At the start of a conversation, <code>MEMORY.md</code> is loaded up to the first 200 lines or the first 25KB, whichever comes first; anything beyond that is not loaded. Claude moves details into topic files to keep the index short. Topic files such as <code>user_role.md</code> are not loaded at startup; Claude reads them when needed.</p>
+  <p>If you exceed the limit, the write itself still succeeds, but Claude Code returns an error asking you to rewrite the index, because everything past the limit is dropped on the next load. This limit applies only to <code>MEMORY.md</code>. The CLAUDE.md loaded at startup is read in full as long as it is 4 MiB or less (CLAUDE.md files in subdirectories and path-scoped rules have separate, smaller per-file limits).</p>
+  <ul>
+    <li>Files are not shared across machines or across cloud environments.</li>
+    <li>Session transcripts are deleted after the retention period set by <code>cleanupPeriodDays</code>, but memory files are not affected. They stay until you or Claude edit or delete them.</li>
+    <li>Auto memory from the main conversation is not loaded into subagents (forks are the exception). A subagent's own auto memory lives in a separate directory.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s6">Reviewing and editing the contents</h2>
+  <p>Auto memory files are plain Markdown, and you can edit or delete them at any time. Running <code>/memory</code> lists locations such as CLAUDE.md and CLAUDE.local.md, and gives you options to toggle auto memory on or off and to open the auto memory folder.</p>
+  <p>GUI editors (such as VS Code) open in a separate window, while terminal editors such as Vim occupy the terminal until you exit. When you see "Saved 2 memories" or "Recalled 2 memories," Claude has updated or loaded <code>~/.claude/projects/&lt;project&gt;/memory/</code>.</p>
+  <p>Before distributing within the company, it's a good idea to check what gets saved using this method. For points not covered in the source, such as distributing settings to the whole organization, check the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is auto memory shared with other PCs or team members?</summary>
+      <p>According to the official docs, auto memory is machine-local, and its files are not shared across machines or cloud environments. It is shared only among worktrees and subdirectories within the same git repository.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>I turned auto memory off and can't turn it back on.</summary>
+      <p>In background sessions and sessions started by another Claude Code session, the toggle can only be turned off, not back on. Run <code>claude</code> directly in a terminal and use the <code>/memory</code> toggle in that session.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>I can't tell what auto memory has saved. How do I check?</summary>
+      <p>Run <code>/memory</code> and select the auto memory folder to see what Claude has saved. It's all plain Markdown, so you can read, edit, or delete it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-vs-settings-json/index.html">CLAUDE.md vs. settings.json: what to put in each</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

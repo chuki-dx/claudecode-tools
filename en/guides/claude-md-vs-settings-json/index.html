@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLAUDE.md vs. settings.json: what to write in which | Chuki DX Lab</title>
+<meta name="description" content="This guide sorts out the differences between CLAUDE.md and settings.json based on the official docs. It covers guidance versus enforcement, where each file lives, precedence, and what to write in which, aimed at corporate IT at small and midsize companies.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-md-vs-settings-json/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-md-vs-settings-json/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-md-vs-settings-json/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-md-vs-settings-json/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="CLAUDE.md vs. settings.json: what goes where">
+<meta property="og:description" content="This guide sorts out the differences between CLAUDE.md and settings.json based on the official docs. It covers guidance versus enforcement, where each file lives, precedence, and what to write in which, aimed at corporate IT at small and midsize companies.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-md-vs-settings-json/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-md-vs-settings-json.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CLAUDE.md vs. settings.json: what goes where">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-md-vs-settings-json.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "CLAUDE.md vs. settings.json: what goes where",
+  "description": "This guide sorts out the differences between CLAUDE.md and settings.json based on the official docs. It covers guidance versus enforcement, where each file lives, precedence, and what to write in which, aimed at corporate IT at small and midsize companies.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-md-vs-settings-json/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "CLAUDE.md vs. settings",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-md-vs-settings-json/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If I write prohibitions in CLAUDE.md, will Claude reliably follow them?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It isn't reliable. According to the official docs, Claude treats CLAUDE.md as context, not as an enforced setting. If you want to block an operation regardless of Claude's judgment, the docs point you to a PreToolUse hook, and rules in settings are enforced by the client."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if I don't want to commit my personal settings to the repository?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use CLAUDE.local.md for CLAUDE.md, and .claude/settings.local.json for settings. Both are personal to you and apply only to this project. If you create them by hand, add them to .gitignore yourself."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I set the same key in multiple settings.json files, which one is used?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The value from the higher level is used. The order of precedence is managed settings, command line, project local, shared project, then user. Lists such as permissions.allow are merged rather than overridden."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-md-vs-settings-json/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">CLAUDE.md vs. settings</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">The difference in one line: context or enforcement</a></li>
+        <li><a href="#s2">Where to put CLAUDE.md and what to write in it</a></li>
+        <li><a href="#s3">Where settings.json lives and which location takes precedence</a></li>
+        <li><a href="#s4">What to put where: a rough guide</a></li>
+        <li><a href="#s5">Notes for company-wide rollout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>CLAUDE.md vs. settings.json: what goes where</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>CLAUDE.md is a Markdown file where you write instructions for Claude. Claude loads it as context, but it is not an enforced setting.</li>
+      <li>settings.json is a JSON configuration file. According to the official docs, the client enforces settings rules regardless of what Claude decides.</li>
+      <li>Putting guidance such as coding conventions and work procedures in CLAUDE.md, and putting enforcement that blocks commands or files in settings, matches how the official docs organize things.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">The difference in one line: context or enforcement</h2>
+  <p>Claude Code (Anthropic's AI coding agent that runs in the terminal) has CLAUDE.md for writing instructions and settings.json for writing settings. Both affect its behavior, so before rolling them out company-wide, I sort out what belongs in which file.</p>
+  <p>According to the official docs, CLAUDE.md is a Markdown file that gives Claude persistent instructions. You write it in plain text, and Claude reads it at the start of a session. Claude treats it as context, not as an enforced setting. The more specific and concise the instructions are, the more consistently Claude is said to follow them.</p>
+  <p>The docs also say that if you want to block specific operations regardless of Claude's judgment, you should use a PreToolUse hook rather than CLAUDE.md. The split is: put requests you want followed in CLAUDE.md, and use an enforcement mechanism for operations you want stopped.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s2">Where to put CLAUDE.md and what to write in it</h2>
+  <p>The official docs describe CLAUDE.md as "a place to write down what you would otherwise have to explain every time." Put in facts you want available in every session, such as build commands, conventions, project structure, and "always do X" rules. For multi-step tasks or content relevant to only part of the codebase, the docs advise moving it to skills or path-scoped rules.</p>
+  <h3>Four places to put it</h3>
+  <ul>
+    <li>Organization managed policy: Instructions for the whole organization, placed in a fixed location for each OS. Corporate IT or DevOps manages it, and it is shared with all users in the organization. Check the official docs for the location.</li>
+    <li>User instructions: <code>~/.claude/CLAUDE.md</code>. Put your own preferences here that apply across all projects.</li>
+    <li>Project instructions: <code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code>. Because these are shared with the team through source control, write project standards rather than personal preferences.</li>
+    <li>Local instructions: <code>./CLAUDE.local.md</code>. Personal preferences for this project only; add it to <code>.gitignore</code>.</li>
+  </ul>
+  <p>The order above is the load order, from the broadest scope to the narrowest. Project instructions enter the context after user instructions. Files in directories above the working directory are loaded at startup, and files in subdirectories are loaded when they are needed.</p>
+  <h3>Writing notes</h3>
+  <p>The official docs recommend writing instructions specific enough to verify. For example, "Use 2-space indentation" instead of "Format code properly," and "Run <code>npm test</code> before committing" instead of "Test your changes." As a guideline, keep each file under 200 lines; longer files use more context and are followed less reliably. If instructions contradict each other, Claude may pick one arbitrarily, so review for outdated instructions and conflicts regularly.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s3">Where settings.json lives and which location takes precedence</h2>
+  <p>According to the official docs, settings are JSON keys that change how Claude Code behaves. They cover the model used at startup, which actions can run without confirmation, which files cannot be read, and what the organization enforces. Which file you write to determines the scope in which a setting takes effect.</p>
+  <ul>
+    <li>User (<code>~/.claude/settings.json</code>): Applies to all of your projects. Use it for personal preferences such as theme, default model, and your own permission rules.</li>
+    <li>Shared project (<code>.claude/settings.json</code>): applies to everyone who works in that folder. If it's a git repository, commit it and distribute it that way. Use it for team permissions, hooks, plugins, and environment variables the project needs.</li>
+    <li>Project local (<code>.claude/settings.local.json</code>): applies only to you, and only in this project. If you create the file by hand, add it to <code>.gitignore</code> yourself.</li>
+    <li>Managed settings: distributed by the organization. Use them for security policies and regulatory compliance requirements.</li>
+  </ul>
+  <p>When the same key appears in multiple files, the value from the higher-precedence level is used. The order of precedence is managed settings, command line, project local, shared project, and user. Lists such as <code>permissions.allow</code> are merged rather than overwritten. Some model-related keys follow different rules, so check the official docs.</p>
+  <p>The settings file is strict JSON, so <code>//</code> comments and trailing commas cause syntax errors. After saving, run <code>/status</code> to check which files were loaded. Edits to <code>permissions</code> and hooks take effect in a running session without a restart.</p>
+  <p>In the official docs' configuration example, <code>allow</code> under <code>permissions</code> contains <code>Bash(npm run lint)</code> and <code>Bash(npm run test *)</code>, and <code>deny</code> contains <code>Read(./.env)</code> and <code>Read(./.env.*)</code>. Keeping Claude from reading <code>.env</code> is done with <code>deny</code> rules, not with prose in CLAUDE.md.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/settings" rel="noopener">Settings files and precedence</a></p>
+  <h2 id="s4">What to put where: a rough guide</h2>
+  <p>The official docs include a table on when to use managed settings versus managed CLAUDE.md. The idea is: technical enforcement goes in settings, and behavioral guidance goes in CLAUDE.md.</p>
+  <ul>
+    <li>Blocking specific tools, commands, and file paths: <code>permissions.deny</code> (managed settings)</li>
+    <li>Enforcing sandbox isolation: <code>sandbox.enabled</code> (managed settings)</li>
+    <li>Environment variables and API provider routing: <code>env</code> (managed settings)</li>
+    <li>Login method and organization restriction: <code>forceLoginMethod</code>, <code>forceLoginOrgUUID</code> (managed settings)</li>
+    <li>Code style and quality guidelines, data handling and compliance notices, and behavioral instructions for Claude: managed CLAUDE.md</li>
+  </ul>
+  <p>Settings also has keys that adjust how CLAUDE.md files are loaded. <code>claudeMdExcludes</code> excludes specific files, for example when a large monorepo pulls in other teams' CLAUDE.md files. To apply it only on your own machine, put it in <code>.claude/settings.local.json</code>.</p>
+<pre><code>{
+  "claudeMdExcludes": [
+    "**/monorepo/CLAUDE.md",
+    "/home/user/monorepo/other-team/.claude/rules/**"
+  ]
+}</code></pre>
+  <p>You can't exclude the managed policy CLAUDE.md. This ensures organization-wide instructions apply regardless of individual settings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+  <h2 id="s5">Notes for company-wide rollout</h2>
+  <p>To share settings with your team, commit <code>.claude/settings.json</code>. If individuals want to override them for themselves, they can write to <code>.claude/settings.local.json</code>, which doesn't need to be committed.</p>
+  <p>Some committed settings do not take effect until each member trusts the folder. According to the official docs, this applies to <code>permissions.allow</code> rules, <code>permissions.additionalDirectories</code>, <code>extraKnownMarketplaces</code>, and most <code>env</code> values, while <code>deny</code> and <code>ask</code> rules apply immediately. Some keys also do not take effect when they come from files in the repository.</p>
+  <p>If your organization distributes managed settings, your own files and <code>--settings</code> cannot override the managed keys. Run <code>/status</code> to see which managed sources are in effect.</p>
+  <p>This content is based on the official docs as of writing (October 2026). Key names and behavior may change, so check the official docs before you distribute it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/settings" rel="noopener">Settings files and precedence</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If I write prohibitions in CLAUDE.md, will Claude reliably follow them?</summary>
+      <p>It isn't reliable. According to the official docs, Claude treats CLAUDE.md as context, not as an enforced setting. If you want to block an operation regardless of Claude's judgment, the docs point you to a PreToolUse hook, and rules in settings are enforced by the client.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a></p>
+    </details>
+    <details>
+      <summary>What should I do if I don't want to commit my personal settings to the repository?</summary>
+      <p>Use <code>CLAUDE.local.md</code> for CLAUDE.md, and <code>.claude/settings.local.json</code> for settings. Both are personal to you and apply only to this project. If you create them by hand, add them to <code>.gitignore</code> yourself.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/settings" rel="noopener">Settings files and precedence</a></p>
+    </details>
+    <details>
+      <summary>If I set the same key in multiple settings.json files, which one is used?</summary>
+      <p>The value from the higher level is used. The order of precedence is managed settings, command line, project local, shared project, then user. Lists such as <code>permissions.allow</code> are merged rather than overridden.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/settings" rel="noopener">Settings files and precedence</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Settings files and precedence</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-plan-mode/index.html">How to use plan mode in Claude Code: check the plan before editing</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-best-practices/index.html">Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

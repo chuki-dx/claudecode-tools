@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using Claude Code in the browser (cloud): what it can do, connecting GitHub, and limits | Chuki DX Lab</title>
+<meta name="description" content="This guide follows the official docs to explain the cloud environment, how to connect GitHub (the GitHub App and /web-setup), session operations, security, and limitations when using Claude Code in the browser (cloud).">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-web/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-web/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-web/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-web/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Using Claude Code in the browser (cloud): what it can do, GitHub connection, and limits">
+<meta property="og:description" content="This guide follows the official docs to explain the cloud environment, how to connect GitHub (the GitHub App and /web-setup), session operations, security, and limitations when using Claude Code in the browser (cloud).">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-web/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-web.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Using Claude Code in the browser (cloud): what it can do, GitHub connection, and limits">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-web.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Using Claude Code in the browser (cloud): what it can do, GitHub connection, and limits",
+  "description": "This guide follows the official docs to explain the cloud environment, how to connect GitHub (the GitHub App and /web-setup), session operations, security, and limitations when using Claude Code in the browser (cloud).",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-web/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Using Claude Code in the cloud",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-web/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I use it with GitLab or Bitbucket repositories?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GitHub is required for cloning repositories and creating PRs. For GitLab, Bitbucket, and others, setting CCR_FORCE_BUNDLE=1 lets you send the repository to the session as a local bundle, but you cannot push the results back to that remote."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why doesn't /web-setup appear?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On Team and Enterprise plans, Quick setup is off by default, and the command is hidden while it's off. An Owner turns it on in the organization settings. It isn't available at all to organizations with Zero Data Retention enabled or a HIPAA configuration."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use it in an organization that uses an IP allowlist?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When this is enabled, Anthropic-hosted cloud sessions fail with an authentication error. You need to contact Anthropic support to have Anthropic-hosted services excluded from the allowlist. Sessions in self-hosted environments call the API from your own network."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-web/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Using Claude Code in the cloud</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Cloud environments: where sessions run</a></li>
+        <li><a href="#s2">How to connect GitHub</a></li>
+        <li><a href="#s3">Working with sessions: reviewing diffs, commands, and sharing</a></li>
+        <li><a href="#s4">Security and isolation</a></li>
+        <li><a href="#s5">Limitations to check before adopting</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Using Claude Code in the browser (cloud): what it can do, GitHub connection, and limits</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code (Anthropic's AI coding agent that runs in the terminal) can be used as cloud-based sessions. Each session runs in a cloud environment that defines things like network access.</li>
+      <li>There are two ways to connect to GitHub: the GitHub App and <code>/web-setup</code>. They differ in which repositories they can reach, so choose according to your company's practices.</li>
+      <li>Before rolling it out, check the limitations, such as shared rate limits, the GitHub requirement, and IP allowlists. The content is based on the official docs as of writing (October 2026).</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Cloud environments: where sessions run</h2>
+  <p>According to the official docs, all cloud sessions run in a cloud environment. A cloud environment is a saved configuration that controls network access, environment variables, and setup scripts.</p>
+  <ul>
+    <li>Initial environment: If you don't have one yet, onboarding either creates a <strong>Default</strong> environment (with <strong>Trusted</strong> network access) or prompts you to create one. Which of the two happens depends on your plan, so check the official docs.</li>
+    <li>For how one is chosen when there are several, changes to where it can reach or what it runs at startup, and the tools included without any configuration, check each page of the official docs.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+  <h2 id="s2">How to connect GitHub</h2>
+  <p>Cloud sessions need access to a GitHub repository to clone code and push branches. The official docs describe the following two options.</p>
+  <ul>
+    <li><strong>GitHub App</strong>: You authorize the Claude GitHub App during web onboarding. It can reach all public repositories and any private repositories where you've installed the Claude GitHub App. It is described as intended for teams that want browser onboarding or Auto-fix.</li>
+    <li>The <code>/web-setup</code> method: run <code>/web-setup</code> in the terminal to send your local <code>gh</code> CLI token to your Claude account. Any repository your <code>gh</code> token can access is reachable, whether or not the Claude GitHub App is installed. It suits individual developers who already use <code>gh</code>.</li>
+  </ul>
+  <p>Auto-fix and Projects require the Claude GitHub App to be installed on the repository. (For Projects, it is required on each repository you clone, regardless of how you connect.)</p>
+  <p>In Anthropic-hosted environments, your GitHub credentials are encrypted on Anthropic's servers and never enter the session's VM. GitHub operations from the VM go through a GitHub proxy, which attaches the credentials on the server side.</p>
+  <h3>Quick setup for Team and Enterprise</h3>
+  <p>Quick setup is an organization setting and is off by default on the Team and Enterprise plans. When you turn it on, <code>/web-setup</code> becomes available (the command is hidden while it is off), browser onboarding skips the GitHub App installation prompt, and a Default environment is created automatically. An Owner turns it on with the <strong>Quick setup</strong> toggle under <strong>Organization settings &gt; Claude Code</strong>.</p>
+  <p>Note: Organizations with Zero Data Retention enabled, or with a HIPAA configuration applied, cannot use cloud session features, including <code>/web-setup</code>. Organizations that use customer-managed encryption keys (CMEK) also cannot start cloud sessions.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+  <h2 id="s3">Working with sessions: reviewing diffs, commands, and sharing</h2>
+  <p>Sessions are listed in the web version's sidebar, where you can review changes, share with your team, archive finished ones, and delete them permanently.</p>
+  <ul>
+    <li><strong>Diff review</strong>: Each session shows the number of added and deleted lines, such as <code>+42 -18</code>. Open it to view the diff, comment on lines, and send them to Claude along with your next message. By default it compares against the base branch. The diff is computed from raw git blobs, so the repository's diff drivers and <code>textconv</code> filters are not applied.</li>
+    <li><strong>Permission mode</strong>: Choose it from the mode dropdown, both when creating a task and while it is running.</li>
+    <li><strong>Commands</strong>: built-in commands that output text are available. Terminal-only ones such as <code>/plugin</code> and <code>/resume</code> can't be used. Some commands take a value as an argument, like <code>/model sonnet</code>.</li>
+    <li><strong>Context</strong>: <code>/compact</code> and <code>/context</code> work, but <code>/clear</code> does not. Start a new session from the sidebar.</li>
+  </ul>
+  <p>Sharing visibility depends on your account. Enterprise and Team offer <strong>Private</strong> and <strong>Team</strong>; Max and Pro offer <strong>Private</strong> and <strong>Public</strong>. Public means anyone signed in to claude.ai can view it, and a session may contain code from private repositories or credentials, so review the contents before sharing.</p>
+  <p>Deleting permanently removes the session and its data and cannot be undone. If you only want to tidy up, use archive instead.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+  <h2 id="s4">Security and isolation</h2>
+  <p>According to the official docs, sessions are isolated from your machine and from other sessions through multiple layers.</p>
+  <ul>
+    <li>Each session runs in an isolated VM managed by Anthropic. Sessions you route to your own self-hosted environment run on your own infrastructure, and isolation is the responsibility of your own configuration.</li>
+    <li>In Anthropic-hosted environments, network access is restricted by default, and you can also disable it. However, even with networking disabled, Claude Code can still communicate with the Anthropic API, so data may leave the VM.</li>
+    <li>In Anthropic-hosted environments, git credentials and signing keys stay outside the sandbox, and a proxy acts on your behalf with scoped credentials.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+  <h2 id="s5">Limitations to check before adopting</h2>
+  <ul>
+    <li><strong>Rate limits</strong>: Cloud sessions share limits with your other Claude and Claude Code usage on the same account. Running multiple tasks in parallel consumes limits that much faster.</li>
+    <li><strong>Time limits</strong>: Commands and SessionStart hooks have default timeouts that you can change. A setup script is cached only if it finishes in roughly 5 minutes.</li>
+    <li><strong>Authentication</strong>: You can bring a cloud session into your terminal only if you are authenticated with the same account.</li>
+    <li><strong>Platform</strong>: GitHub is required to clone repositories and create PRs. Self-hosted GitHub Enterprise Server is supported on Team and Enterprise plans.</li>
+    <li><strong>IP allowlist</strong>: If your organization has an IP allowlist enabled, all Anthropic-hosted cloud sessions fail with an authentication error. The same applies to Code Review and to routines that run in Anthropic-hosted environments.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I use it with GitLab or Bitbucket repositories?</summary>
+      <p>GitHub is required for cloning repositories and creating PRs. For GitLab, Bitbucket, and others, setting <code>CCR_FORCE_BUNDLE=1</code> lets you send the repository to the session as a local bundle, but you cannot push the results back to that remote.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+    </details>
+    <details>
+      <summary>Why doesn't <code>/web-setup</code> appear?</summary>
+      <p>On Team and Enterprise plans, Quick setup is off by default, and the command is hidden while it's off. An Owner turns it on in the organization settings. It isn't available at all to organizations with Zero Data Retention enabled or a HIPAA configuration.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+    </details>
+    <details>
+      <summary>Can I use it in an organization that uses an IP allowlist?</summary>
+      <p>When this is enabled, Anthropic-hosted cloud sessions fail with an authentication error. You need to contact Anthropic support to have Anthropic-hosted services excluded from the allowlist. Sessions in self-hosted environments call the API from your own network.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/claude-code-on-the-web" rel="noopener">Use Claude Code in the cloud</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-desktop-app/index.html">Getting started with the Claude Code desktop app, and admin settings for Team and Enterprise</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-slack/index.html">Using Claude Code from Slack: setup flow, permissions, and limits</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code API Cost Calculator (monthly, converted to yen) | Chuki DX Lab</title>
+<meta name="description" content="A free tool that calculates the monthly cost of using Claude Code with pay-as-you-go API pricing, based on the number of users, tokens per day, working days, and model. It calculates input, output, cache writes, and cache reads separately, and also shows the result in yen if you enter an exchange rate.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/cost-calculator/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/cost-calculator/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/cost-calculator/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/cost-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code API Cost Calculator">
+<meta property="og:description" content="A free tool that calculates the monthly API-equivalent cost of Claude Code in USD and yen from the number of users, token counts, working days, and model.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/cost-calculator/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-cost-calculator.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code API Cost Calculator">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-cost-calculator.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Code API Cost Calculator",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web browser",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/cost-calculator/",
+  "description": "A browser-based tool that calculates the monthly cost of using Claude Code with pay-as-you-go API pricing, based on the number of users, tokens per day, working days, and model.",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "How do I check the number of tokens per day?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "If you are under an API contract, you can check usage on the usage page in Claude Console. If you have no admin console, such as during a trial period, the token counts remain in the conversation records Claude Code stores on your PC, so you can total them from there. The paid article below explains the tally script and the steps."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How much does it cost on the Pro, Max, and Team plans?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Subscriptions are billed monthly per seat, so they are outside the scope of this calculator. As of writing, I could not find how many tokens a plan's usage allowance corresponds to on the official pages. Check plan prices on the official pricing page."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Why is the default exchange rate empty?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Exchange rates change daily, so I left this field blank to avoid producing yen amounts from an outdated rate. Enter the rate for the day of your estimate. If you only want to see how the calculation works, you can use \"Enter 150 as an example.\""
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Are the numbers I enter sent anywhere?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. Calculations happen only in your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. Details)."
+   }
+  }
+ ],
+ "dateModified": "2026-10-26"
+}
+</script>
+</head>
+<body class="pg-tool">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../settings-generator/index.html">Permissions Generator</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../skill-generator/index.html">Skill Generator</a>
+      <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../cost-calculator/index.html" aria-current="page">API Cost Calculator</a>
+      <a href="../guides/index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../cost-calculator/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code API Cost Calculator</h1>
+  <p class="lead">Calculate the monthly cost of using Claude Code with pay-as-you-go API billing from the number of users, tokens per day, working days, and model. What you enter is not sent outside your browser.</p>
+
+  <section class="card tool-panel" aria-labelledby="calc-heading">
+    <h2 id="calc-heading" class="visually-hidden">Add conditions</h2>
+    <div class="tool-grid">
+    <div class="tool-input">
+    <form id="calc-form" novalidate>
+      <div class="grid">
+        <div>
+          <label class="field" for="calc-model">Model</label>
+          <select id="calc-model">
+            <option value="claude-sonnet-5-5" selected>Claude Sonnet 5.5</option>
+            <option value="claude-opus-5-5">Claude Opus 5.5</option>
+            <option value="claude-haiku-5-5">Claude Haiku 5.5 (prompts of 100K tokens or less)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field" for="calc-people">Number of people</label>
+          <input type="number" id="calc-people" value="1" min="1" step="1" inputmode="numeric">
+        </div>
+        <div>
+          <label class="field" for="calc-days">Working days per month</label>
+          <input type="number" id="calc-days" value="20" min="0" max="31" step="1" inputmode="numeric">
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>Tokens per person per day</legend>
+        <div class="buttons">
+          <button type="button" id="calc-preset" class="secondary">Enter an example (fictional data, Sonnet 5.5)</button>
+        </div>
+        <p class="hint">The sample input is the Sonnet 5.5 total from the fictional log used in the paid article (1 person, 5 days), divided by 5. These are not figures from any real person or department.</p>
+        <div class="grid">
+          <div>
+            <label class="field" for="calc-input">Input</label>
+            <input type="number" id="calc-input" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-cw5m">Cache write (5 minutes)</label>
+            <input type="number" id="calc-cw5m" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-cw1h">Cache write (1 hour)</label>
+            <input type="number" id="calc-cw1h" value="0" min="0" step="1" inputmode="numeric" aria-describedby="cw1h-hint">
+            <p class="hint" id="cw1h-hint">For writes where you can't tell the 5-minute vs. 1-hour breakdown, put them here so the estimate doesn't come out too low.</p>
+          </div>
+          <div>
+            <label class="field" for="calc-cr">Cache read</label>
+            <input type="number" id="calc-cr" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+          <div>
+            <label class="field" for="calc-output">Output</label>
+            <input type="number" id="calc-output" value="0" min="0" step="1" inputmode="numeric">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="grid">
+        <div>
+          <label class="field" for="calc-fx">Exchange rate (JPY/USD)</label>
+          <input type="number" id="calc-fx" value="" min="0" step="0.01" inputmode="decimal" placeholder="Example: 150" aria-describedby="fx-hint">
+          <p class="hint" id="fx-hint">If left blank, no yen amount is shown. Enter the exchange rate on the day of the estimate.</p>
+          <div class="buttons"><button type="button" id="calc-fx-example" class="secondary">Enter 150 as an example</button></div>
+        </div>
+        <div>
+          <div class="opt" style="margin-top:2.2em"><input type="checkbox" id="calc-us-only"><label for="calc-us-only">Specify US-only processing (<code>inference_geo</code>) (unit price ×1.1)</label></div>
+        </div>
+      </div>
+    </form>
+    </div>
+    <div class="tool-output">
+
+    <div id="calc-errors" class="note" role="alert" hidden></div>
+
+    <h3>Estimate (API equivalent)</h3>
+    <ul class="result-list" aria-live="polite">
+      <li><span>Per person per day</span><span class="val" id="res-day">—</span></li>
+      <li><span>Per person per month</span><span class="val" id="res-person">—</span></li>
+      <li><span>Everyone, 1 month</span><span class="val" id="res-total">—</span></li>
+      <li><span>Monthly total for everyone (JPY)</span><span class="val" id="res-jpy">—</span></li>
+    </ul>
+    <details>
+      <summary>Breakdown per person per day</summary>
+      <ul class="result-list">
+        <li><span>Input</span><span class="val" id="res-bd-input">—</span></li>
+        <li><span>Cache write (5 min)</span><span class="val" id="res-bd-cw5m">—</span></li>
+        <li><span>Cache write (1 hour)</span><span class="val" id="res-bd-cw1h">—</span></li>
+        <li><span>Cache read</span><span class="val" id="res-bd-cr">—</span></li>
+        <li><span>Output</span><span class="val" id="res-bd-output">—</span></li>
+      </ul>
+    </details>
+    <p class="note">Subscription plans (Pro / Max / Team) are billed monthly or per seat, and Claude Code usage is included in the price. This calculator does not compute subscription fees or usage allowances. If you use a subscription, treat the amounts here as a yardstick for comparing who uses how much.</p>
+    </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="price-heading">
+    <h2 id="price-heading">Unit prices used in the calculation (as of 2026-10-14; check the official page for the latest)</h2>
+    <p>Units are USD per million tokens. I took them from the "Model pricing" table on the official pricing page (<a href="https://platform.claude.com/docs/en/about-claude/pricing" rel="noopener">Pricing</a>). Prices can change, so check the official page for the latest values before you estimate.</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th scope="col">Model</th><th scope="col" class="num">Input</th><th scope="col" class="num">5-minute cache write</th><th scope="col" class="num">1-hour cache write</th><th scope="col" class="num">Cache read</th><th scope="col" class="num">Output</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Claude Opus 5.5(<code>claude-opus-5-5</code>)</th><td class="num">4</td><td class="num">5</td><td class="num">8</td><td class="num">0.20</td><td class="num">20</td></tr>
+          <tr><th scope="row">Claude Sonnet 5.5(<code>claude-sonnet-5-5</code>)</th><td class="num">2</td><td class="num">2.50</td><td class="num">4</td><td class="num">0.10</td><td class="num">10</td></tr>
+          <tr><th scope="row">Claude Haiku 5.5 (<code>claude-haiku-5-5</code>, prompts of 100,000 tokens or less)</th><td class="num">0.10</td><td class="num">0.125</td><td class="num">0.20</td><td class="num">0.01</td><td class="num">0.50</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>For Haiku 5.5, the unit price goes up when the prompt exceeds 100,000 tokens. This calculator uses the rate for 100,000 tokens or fewer.</li>
+      <li>Fast mode is priced separately and is not covered by this calculator.</li>
+      <li>Specifying US-only processing (<code>inference_geo</code>) multiplies the unit price by 1.1. You can reflect this with the checkbox above.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">How to estimate your monthly Claude Code cost</h2>
+    <p>When you use Claude Code (Anthropic's AI coding agent that runs in the terminal) through the API, cost depends on the number of tokens (the unit AI uses to count text). Besides input and output, prompt cache writes and reads (a mechanism that reuses the same content to load it more cheaply) each have their own separate price. This calculator works out the cost per person per day with the formula below, then multiplies by working days and number of people.</p>
+    <pre><code>API換算(USD) = ( 入力 × 入力単価
+               + 5分キャッシュ書き込み × 5分キャッシュ書込単価
+               + 1時間キャッシュ書き込み × 1時間キャッシュ書込単価
+               + キャッシュ読み込み × キャッシュ読込単価
+               + 出力 × 出力単価 ) ÷ 1,000,000</code></pre>
+    <p>Claude Code sends the conversation history with every request, so cache-read tokens pile up the longer a session runs. Try entering example values and you'll see that read tokens are orders of magnitude higher than input tokens.</p>
+    <p>A number that is just the price list multiplied by headcount tends to drift from actual usage. Usage varies widely from person to person, so the official cost management page also recommends getting a baseline from a small pilot group before expanding (<a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a>, as of writing). Have a few people use it for about two weeks, measure daily token counts, and then enter them in this calculator. You'll get figures you can use for internal approval (ringi) and budget explanations.</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>How do I check the number of tokens per day?</summary>
+      <p>If you are under an API contract, you can check usage on the usage page in Claude Console. If you have no admin console, such as during a trial period, the token counts remain in the conversation records Claude Code stores on your PC, so you can total them from there. The paid article below explains the tally script and the steps.</p>
+    </details>
+    <details>
+      <summary>How much does it cost on the Pro, Max, and Team plans?</summary>
+      <p>Subscriptions are billed monthly per seat, so they are outside the scope of this calculator. As of writing, I could not find how many tokens a plan's usage allowance corresponds to on the official pages. Check plan prices on the official pricing page.</p>
+    </details>
+    <details>
+      <summary>Why is the default exchange rate empty?</summary>
+      <p>Exchange rates change daily, so I left this field blank to avoid producing yen amounts from an outdated rate. Enter the rate for the day of your estimate. If you only want to see how the calculation works, you can use "Enter 150 as an example."</p>
+    </details>
+    <details>
+      <summary>Are the numbers I enter sent anywhere?</summary>
+      <p>No. Calculations happen only in your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. <a href="../about/index.html#access">Details</a>).</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../guides/claude-code-api-cost-estimate/index.html">Guide: How to estimate costs when using Claude Code through the API</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-reduce-tokens/index.html">Guide: How to Reduce Claude Code Token Usage and Check Your Usage</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-prompt-caching/index.html">Guide: How Claude Code Prompt Caching Works: Actions That Help and Actions That Break It</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-context-compact/index.html">Guide: Claude Code context and /compact: what stays and what disappears in a long conversation</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-model-select/index.html">Guide: How to choose and switch models in Claude Code (/model and settings)</a><span class="tag">Guide (this site)</span></li>
+      <li><a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a><span class="tag">Free tool</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The unit prices and calculation results on this page are estimates based on what I could verify as of writing. Actual billing may differ. Before making contract or budget decisions, check the latest information on the official pricing page. The operator is not responsible for any damages arising from use of these tools.</p>
+  </div>
+</footer>
+
+<script src="../assets/cost-calculator.js"></script>
+<script src="../assets/cost-calculator-ui.js"></script>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

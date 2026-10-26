@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Are Claude Code plugins safe? How to check before installing and how to recognize the official marketplace | Chuki DX Lab</title>
+<meta name="description" content="Claude Code plugins can run code with your permissions. Based on the official docs, this guide covers what plugins can do, how to recognize official marketplace names, what to check before installing, and how to remove them.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugin-security/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugin-security/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugin-security/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugin-security/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Are Claude Code Plugins Safe? How to Check Before Installing and Spot the Official Marketplace">
+<meta property="og:description" content="Claude Code plugins can run code with your permissions. Based on the official docs, this guide covers what plugins can do, how to recognize official marketplace names, what to check before installing, and how to remove them.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugin-security/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugin-security.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Are Claude Code Plugins Safe? How to Check Before Installing and Spot the Official Marketplace">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugin-security.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Are Claude Code Plugins Safe? How to Check Before Installing and Spot the Official Marketplace",
+  "description": "Claude Code plugins can run code with your permissions. Based on the official docs, this guide covers what plugins can do, how to recognize official marketplace names, what to check before installing, and how to remove them.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugin-security/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Plugin safety checks",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugin-security/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If a plugin comes from the official marketplace, do I still need to check it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. According to the official docs, a marketplace's name only indicates who publishes the catalog. It says nothing about how each plugin inside behaves. I check plugins from any marketplace before installing them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a plugin enabled immediately after installation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, a plugin is enabled when you install it. The exception is when the manifest or marketplace entry sets defaultEnabled: false and the user hasn't enabled it themselves."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I uninstall a plugin, are its files removed right away?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They don't disappear right away. According to the official docs, the files stay in ~/.claude/plugins/cache/ for 14 days and are then deleted in the background (if you uninstalled the last plugin, they stay until you install another one). If you want them gone immediately, delete the directory yourself."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-plugin-security/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Plugin safety checks</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What a plugin can do on your local machine</a></li>
+        <li><a href="#s2">How to identify the official marketplace</a></li>
+        <li><a href="#s3">Steps to check before installing</a></li>
+        <li><a href="#s4">Warnings, denials, and how to remove it</a></li>
+        <li><a href="#s5">Managed settings for organization-wide rollout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Are Claude Code Plugins Safe? How to Check Before Installing and Spot the Official Marketplace</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code plugins can run arbitrary code with your permissions. Check them before you install.</li>
+      <li>A marketplace's name only tells you who publishes the catalog. It doesn't tell you how individual plugins behave, so check each one before installing, no matter where it comes from.</li>
+      <li>Verification has four stages: where it came from, the detail screen in <code>/plugin</code>, the source, and the component list. If you no longer trust a plugin, remove it with <code>claude plugin uninstall &lt;plugin&gt;</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What a plugin can do on your local machine</h2>
+  <p>This guide summarizes the official docs on plugins for Claude Code (Anthropic's AI coding agent that runs in the terminal). According to the official docs as of writing (October 2026), an installed plugin can run arbitrary code with your permissions. You install plugins from a marketplace (a catalog from which Claude Code fetches plugins).</p>
+  <p>The official docs list the following as things a plugin can do after it is installed.</p>
+  <ul>
+    <li>Hooks: run as shell commands at key points in Claude Code's behavior, such as before and after a tool call.</li>
+    <li>Monitors: background shell commands that Claude Code starts automatically at session start, when plugins are reloaded, and the first time a named skill runs.</li>
+    <li>Mod: Runs JavaScript inside Claude Code with the user's permissions.</li>
+    <li>MCP / LSP servers: connect to the servers declared by enabled plugins. stdio-type MCP servers are launched as processes on the user's machine.</li>
+    <li><code>bin/</code> directory: The <code>bin/</code> of an enabled plugin is added to the Bash tool's <code>PATH</code>, so Claude's Bash commands can run the executables there.</li>
+    <li>Skills, commands, and agents: they enter the context as instructions to Claude.</li>
+    <li>Updates: if auto-update is enabled for the marketplace, files you reviewed may change later.</li>
+  </ul>
+  <p>Installing also enables the plugin, unless the manifest or marketplace entry sets <code>defaultEnabled: false</code> and the user hasn't enabled it themselves.</p>
+  <h3>What permission rules and the sandbox do not cover</h3>
+  <p>According to the official docs, permission rules and the sandbox apply to tool calls that Claude makes, not to code a plugin runs on its own. Processes started by hooks, monitors, MCP servers, LSP servers, and Mods run outside the sandbox. Calls to a plugin's MCP tools and Bash commands that run executables in <code>bin/</code> are tool calls, so permission rules apply to them.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+  <h2 id="s2">How to identify the official marketplace</h2>
+  <p>According to the official docs, marketplace names fall into one of three tiers: official, community, or third-party. Claude Code accepts official and community names only when the source is a repository under <code>github.com/anthropics/</code>, so a third party can't pass itself off as Anthropic. Marketplaces published by your colleagues or your own company are third-party.</p>
+  <ul>
+    <li>Official: anything on the list of official names, such as <code>claude-plugins-official</code></li>
+    <li>Community: <code>claude-community</code>, <code>claude-plugins-community</code>, <code>healthcare</code></li>
+    <li>Third-party: everything else</li>
+  </ul>
+  <p>The list of official names also includes others, such as <code>claude-code-marketplace</code> and <code>anthropic-marketplace</code>. Check the official docs for the full list. Note that the <code>claude-community</code> catalog pins nearly every entry to a commit SHA (an identifier for a specific Git version), and Claude Code refuses to install a different commit.</p>
+  <p>A caveat: the name tells you who publishes the catalog, not what each plugin inside it does.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+  <h2 id="s3">Steps to check before installing</h2>
+  <ol>
+    <li>Check where it came from: run <code>claude plugin marketplace list</code> in a shell to see the source each marketplace was added from (such as a GitHub repository or a directory).</li>
+    <li>Read the details screen: run <code>/plugin</code> in a session and select a plugin. The <strong>Will install</strong> field lists its commands, agents, skills, hooks, and MCP / LSP servers. For plugins where Anthropic doesn't publish configuration data, you'll see what the marketplace entry declares, or a note.</li>
+    <li>Read the source: open it from <strong>Open homepage</strong> or <strong>View on GitHub</strong> on the detail screen. If neither is there, look at the repository you identified in step 1. <strong>Will install</strong> shows that hooks exist but not what they run, so read <code>hooks/hooks.json</code> (the command each hook runs), <code>.mcp.json</code> (each server's command or URL), and <code>bin/</code> (every file inside).</li>
+    <li>List the components: clone the repository and run <code>claude --plugin-dir &lt;plugin directory&gt; plugin details &lt;plugin name&gt;</code>. It reads the files without starting a session and displays <code>Component inventory</code>.</li>
+  </ol>
+  <p>After installing, <code>claude plugin details &lt;plugin name&gt;</code> shows the same list for the installed copy.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+  <h2 id="s4">Warnings, denials, and how to remove it</h2>
+  <p>According to the official docs, the detail view in <code>/plugin</code> shows the same trust warning for every marketplace. It says to make sure you trust a plugin before you install, update, or use it, and that Anthropic does not control the MCP servers, files, or other items a plugin includes, and cannot verify that they work as intended or won't change.</p>
+  <p>Claude Code sometimes refuses rather than just warning. If a marketplace uses an official or community name but its source is outside <code>github.com/anthropics/</code>, Claude Code blocks that marketplace and stops loading plugins installed from it. It also refuses to install when an <code>archive</code> source has a pinned <code>sha256</code> digest that doesn't match the downloaded file.</p>
+  <h3>Remove plugins you can no longer trust</h3>
+  <p>In the shell, run <code>claude plugin uninstall &lt;plugin&gt;</code> with the same <code>--scope</code> you used when installing. Then check what was removed and what remains.</p>
+  <ul>
+    <li>Persistent data: By default, it is deleted at the last scope. Check the official docs for options such as <code>--keep-data</code>.</li>
+    <li>Cache: files stay in <code>~/.claude/plugins/cache/</code> for 14 days and are then deleted in the background. If you uninstall the last plugin, though, they remain until you install another plugin. To remove them right away, delete <code>~/.claude/plugins/cache/&lt;marketplace&gt;/&lt;plugin&gt;/</code> yourself.</li>
+    <li>Marketplace: If you don't trust the owner either, remove the marketplace. All plugins installed from it will be uninstalled.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+  <h2 id="s5">Managed settings for organization-wide rollout</h2>
+  <p>According to the official docs, administrators can use managed settings to enforce allowlists and blocklists for marketplace sources, force-enable plugins, disable the <code>--plugin-dir</code> and <code>--plugin-url</code> flags and the <code>CLAUDE_CODE_PLUGIN_DIRS</code> variable, and restrict hooks. If your organization sets <code>pluginTrustMessage</code>, that text is appended to the trust warning. To see what each key covers, check the control matrix in the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If a plugin comes from the official marketplace, do I still need to check it?</summary>
+      <p>No. According to the official docs, a marketplace's name only indicates who publishes the catalog. It says nothing about how each plugin inside behaves. I check plugins from any marketplace before installing them.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+    </details>
+    <details>
+      <summary>Is a plugin enabled immediately after installation?</summary>
+      <p>According to the official docs, a plugin is enabled when you install it. The exception is when the manifest or marketplace entry sets <code>defaultEnabled: false</code> and the user hasn't enabled it themselves.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+    </details>
+    <details>
+      <summary>If I uninstall a plugin, are its files removed right away?</summary>
+      <p>They don't disappear right away. According to the official docs, the files stay in <code>~/.claude/plugins/cache/</code> for 14 days and are then deleted in the background (if you uninstalled the last plugin, they stay until you install another one). If you want them gone immediately, delete the directory yourself.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/plugins/security" rel="noopener">Plugin security and trust</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">How to install Claude Code plugins, and what to watch for when choosing a marketplace</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plugins-org/index.html">Managing Claude Code Plugins Across Your Organization: Distribution, Required Plugins, and Install Restrictions</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

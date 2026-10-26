@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to install Claude Code on Windows: native vs. WSL, and post-install checks | Chuki DX Lab</title>
+<meta name="description" content="Installing Claude Code on Windows, split into native (PowerShell and CMD) and WSL. Covers how to choose, how to handle Git for Windows, and how to verify after installation, following the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-install-windows/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-windows/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-install-windows/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-install-windows/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to install Claude Code on Windows: native vs. WSL, and checks after installation">
+<meta property="og:description" content="Installing Claude Code on Windows, split into native (PowerShell and CMD) and WSL. Covers how to choose, how to handle Git for Windows, and how to verify after installation, following the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-install-windows/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-install-windows.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to install Claude Code on Windows: native vs. WSL, and checks after installation">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-install-windows.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to install Claude Code on Windows: native vs. WSL, and checks after installation",
+  "description": "Installing Claude Code on Windows, split into native (PowerShell and CMD) and WSL. Covers how to choose, how to handle Git for Windows, and how to verify after installation, following the official docs.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-install-windows/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Installing Claude Code on Windows",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-install-windows/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need Git for Windows if I install in WSL?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, Git for Windows is not required for a WSL setup. It is recommended when you want to use the Bash tool on native Windows. Even without it, Claude Code uses PowerShell as its shell tool."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check whether the installation succeeded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Open a new terminal and run claude --version. According to the official docs, if a version number is displayed, the install is fine. For a more detailed diagnosis, use claude doctor, which shows the installation status and settings file errors in read-only mode."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use WSL in the desktop app's Code tab too?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, you can run sessions inside a WSL 2 distribution. WSL 1 is not supported, and git is required inside the distribution. Some features, such as the integrated terminal, are not available yet."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-install-windows/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Installing Claude Code on Windows</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Decide first: native Windows or WSL</a></li>
+        <li><a href="#s2">Steps to install on native Windows</a></li>
+        <li><a href="#s3">Steps to install in WSL</a></li>
+        <li><a href="#s4">Verifying after installation</a></li>
+        <li><a href="#s5">Using WSL with the desktop app</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to install Claude Code on Windows: native vs. WSL, and checks after installation</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, on Windows you can run it either natively (PowerShell or CMD) or in WSL. As a rule of thumb, use WSL 2 if you need sandboxed execution, and native for projects on the Windows side.</li>
+      <li>Commands differ by environment. PowerShell and CMD use different commands, and WSL runs Linux commands in a WSL terminal.</li>
+      <li>When it finishes, run <code>claude --version</code> in a new terminal, and run <code>claude doctor</code> to diagnose problems if needed.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Decide first: native Windows or WSL</h2>
+  <p>This article organizes the steps for installing Claude Code (an AI coding agent from Anthropic that runs in the terminal) on Windows, based on what the official docs describe. It reflects the content as of writing (October 2026) and is not the result of my own testing, so check the official docs for the latest information.</p>
+  <p>According to the official docs, supported operating systems are Windows 10 1809+ or Windows Server 2019+. You also need 4 GB+ RAM, an x64 or ARM64 processor, and an internet connection. You must also be in a country supported by Anthropic.</p>
+  <p>The official docs say to choose based on where your project lives and which features you need.</p>
+  <ul>
+    <li>Native Windows: no prerequisites (Git for Windows is optional). Sandboxing is not supported. Suited to native Windows projects and tools.</li>
+    <li>WSL 2: Requires WSL 2 to be enabled. Sandbox supported. Intended for Linux toolchains and sandboxed execution.</li>
+    <li>WSL 1: Requires WSL 1 to be enabled. The sandbox is not supported. This is an option when WSL 2 isn't available.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+  <h2 id="s2">Steps to install on native Windows</h2>
+  <p>The official docs recommend the native installation. Run it in PowerShell or CMD; you do not need to run as administrator. The only difference is the command you run: if the prompt is <code>PS C:\</code> it is PowerShell, and if it is <code>C:\</code> without <code>PS</code> it is CMD. In PowerShell, run the following.</p>
+<pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+  <p>In CMD, run the following.</p>
+<pre><code>curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</code></pre>
+  <p>No progress is shown during installation. When it finishes, open a new terminal and verify. The native version updates automatically in the background.</p>
+  <p>If you mix up the commands, the docs say you get the following error.</p>
+  <ul>
+    <li><code>The token '&amp;&amp;' is not a valid statement separator</code>: You are running a CMD command in PowerShell.</li>
+    <li><code>'irm' is not recognized as an internal or external command</code>: You are running the PowerShell command in CMD.</li>
+  </ul>
+  <p>For other errors (such as <code>403</code>), check the official installation troubleshooting for how to handle them.</p>
+  <h3>Git for Windows is optional</h3>
+  <p>Git for Windows is optional and provides Git Bash, which the Bash tool and Monitor tool use. If you don't install it, Claude Code uses PowerShell as its shell tool. If Git Bash still isn't found after you install it, specify the path in <code>env</code> in settings.json.</p>
+<pre><code>{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}</code></pre>
+  <h3>Installing with WinGet</h3>
+  <p>You can also install it with WinGet, but it does not auto-update. You need to run <code>winget upgrade Anthropic.ClaudeCode</code> periodically.</p>
+<pre><code>winget install Anthropic.ClaudeCode</code></pre>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+  <h2 id="s3">Steps to install in WSL</h2>
+  <p>Open your WSL distribution and run the Linux install command. Both the installation and launching <code>claude</code> happen inside the WSL terminal, not from PowerShell or CMD. Git for Windows is not needed in WSL.</p>
+<pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+  <p>If you need the sandbox, use WSL 2. If WSL 2 isn't available, you can choose WSL 1, but the sandbox won't work.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+  <h2 id="s4">Verifying after installation</h2>
+  <p>Open a new terminal and run the following.</p>
+<pre><code>claude --version</code></pre>
+  <p>If it works, a version number is displayed, such as <code>2.1.211 (Claude Code)</code>. If you see that <code>claude</code> is not found or not recognized, the install location is not on your PATH. See the official troubleshooting page for how to fix PATH.</p>
+  <p>For more detail, use the following command. It doesn't start a session; it shows the installation status, settings file validation errors, and warnings with suggested fixes, all read-only.</p>
+<pre><code>claude doctor</code></pre>
+  <p>If everything looks fine, open a terminal in the project you want to work on and run the following to start an interactive session.</p>
+<pre><code>claude</code></pre>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+  <h2 id="s5">Using WSL with the desktop app</h2>
+  <p>According to the official docs, the Code tab of the Windows desktop app can run sessions inside a WSL 2 distribution. The requirements are as follows.</p>
+  <ul>
+    <li>Windows 10 or 11 and WSL 2 (WSL 1 is not supported)</li>
+    <li>At least one distribution (for example, Ubuntu)</li>
+    <li><code>git</code> is already installed in the distribution</li>
+  </ul>
+  <p>This suits cases where the repository is in the distribution's file system. Accessing it from Windows goes through a network file system, which is slow and breaks file watching.</p>
+  <p>Features listed as not yet available include the integrated terminal, connectors and plugins, session branching, the file browser pane, and file suggestions when typing <code>@</code>. On organization-managed devices, WSL sessions may be unavailable, depending on the administrator's settings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-wsl" rel="noopener">Claude Code Desktop in WSL</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I need Git for Windows if I install in WSL?</summary>
+      <p>According to the official docs, Git for Windows is not required for a WSL setup. It is recommended when you want to use the Bash tool on native Windows. Even without it, Claude Code uses PowerShell as its shell tool.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+    </details>
+    <details>
+      <summary>How do I check whether the installation succeeded?</summary>
+      <p>Open a new terminal and run <code>claude --version</code>. According to the official docs, if a version number is displayed, the install is fine. For a more detailed diagnosis, use <code>claude doctor</code>, which shows the installation status and settings file errors in read-only mode.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a></p>
+    </details>
+    <details>
+      <summary>Can I use WSL in the desktop app's Code tab too?</summary>
+      <p>According to the official docs, you can run sessions inside a WSL 2 distribution. WSL 1 is not supported, and <code>git</code> is required inside the distribution. Some features, such as the integrated terminal, are not available yet.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-wsl" rel="noopener">Claude Code Desktop in WSL</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Advanced setup</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/desktop-wsl" rel="noopener">Claude Code Desktop in WSL</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-install-errors/index.html">How to investigate Claude Code installation and login errors</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Guides | Chuki DX Lab</title>
+<meta name="description" content="A list of guides for corporate IT admins and in-house SEs who use Claude Code at work. Based on the official docs and results verified on a real machine, they cover permissions (deny/ask/allow), how to write CLAUDE.md, skills (SKILL.md), estimating API costs, Windows pitfalls, checks before trying it, protecting .env files, and how to run training for non-engineers.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Guides">
+<meta property="og:description" content="Guides on permissions, CLAUDE.md, skills, API cost estimates, and Windows pitfalls, based on the official docs and results verified on a real machine.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Guides">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "Claude Code Guides",
+ "url": "https://chuki-dx.github.io/claudecode-tools/en/guides/",
+ "inLanguage": "en",
+ "dateModified": "2026-10-26",
+ "isPartOf": {
+  "@type": "WebSite",
+  "name": "Claude Code Tools for IT Admins",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/"
+ },
+ "description": "A list of guides for corporate IT admins and in-house SEs who use Claude Code at work. Based on the official docs and results verified on a real machine, they cover permissions (deny/ask/allow), how to write CLAUDE.md, skills (SKILL.md), estimating API costs, Windows pitfalls, checks before trying it, protecting .env files, and how to run training for non-engineers."
+}
+</script>
+</head>
+<body class="pg-guides">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../settings-generator/index.html">Permissions Generator</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../skill-generator/index.html">Skill Generator</a>
+      <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="index.html" aria-current="page">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../guides/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../index.html">Home</a></li>
+      <li aria-current="page">Guides</li>
+    </ol>
+  </nav>
+
+  <h1>Claude Code Guides</h1>
+  <p class="lead">This guide covers what you need to know when trying out Claude Code, rolling it out, and explaining the budget at small and midsize companies. It's based on the official docs as of writing (October 2026) and on results verified on Windows 11 with Claude Code 2.1.296. Each article links to a free tool that matches its content.</p>
+
+  <ul class="guide-list">
+    <li class="card">
+      <h2><a href="claude-code-permissions-basics/index.html">Claude Code Permissions (deny/ask/allow) Basics: What They Cover and What They Don't</a></h2>
+      <p>This guide covers the order in which rules are evaluated, where settings files live and how they take precedence, and how to write the rules. I sorted out which operations stop on deny and which do not, such as reads that go through a script.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a></h2>
+      <p>This covers the differences between organization, personal, project, and local CLAUDE.md files and how each is loaded, an example of the first three lines, how to keep the file under 200 lines, and what you should never put in it.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-skills-intro/index.html">Introduction to Claude Code skills (SKILL.md): teaching Claude your work procedures</a></h2>
+      <p>This guide covers where to put a skill, how to write name and description, the conditions under which it is used automatically, the steps and output format to write in the body, and how to check it before you distribute it.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-api-cost-estimate/index.html">How to Estimate Claude Code Costs When Using the API (Counting Tokens and Unit Prices)</a></h2>
+      <p>Covers input, cache write, cache read, and output tokens with unit prices (as of 2026-10-14), the formula and a worked example, how to find token counts, and how it differs from a subscription.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a></h2>
+      <p>Ten problems common on Windows, each explained by symptom, cause, and fix: PowerShell garbled text and execution policy, CSV BOM, allow not taking effect, reads that slip past deny, and more.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-company-checklist/index.html">What to check before trying Claude Code at your company (plan, PC, network, and internal rules)</a></h2>
+      <p>I've put together a pre-trial checklist covering the required plan, Windows requirements, destinations to allow through a proxy, how conversation data is handled, and post-install checks.</p>
+      <p class="hint">Related tools: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a> ・ <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-env-protection/index.html">Keeping Claude Code from reading .env, and the limits of that setup (verified on Windows)</a></h2>
+      <p>A deny rule blocked reading .env and cat, but it did not block reading through a Python script. This guide summarizes the results I verified on Windows 11 and the limitations described in the official docs.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h2><a href="claude-code-training-nonengineers/index.html">How to teach Claude Code to non-engineers such as general affairs and accounting staff</a></h2>
+      <p>This guide covers what tends to go wrong when you hand out tools without training, how to structure three 90-minute sessions, judging results with fictional data and clear "criteria", and how to expand the rollout and record the effects.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+  </ul>
+  <h2 id="more-guides">Guides by topic (summary of the official docs)</h2>
+  <p class="hint">The 74 guides below are summaries and restructured versions based on the official docs and other sources as of writing (October 2026), with the source shown at the end of each section.</p>
+  <h2 id="g-settings-generator">Settings, permissions, and safety</h2>
+  <ul class="guide-list">
+    <li class="card">
+      <h3><a href="claude-code-hooks-intro/index.html">What are hooks in Claude Code: how to configure them and when to use them</a></h3>
+      <p>A guide for corporate IT to what Claude Code hooks can do, how to write them in settings.json, blocking via exit codes, and what to watch for when rolling them out.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-mcp-scopes/index.html">Claude Code MCP Settings: local vs. project vs. user, and .mcp.json</a></h3>
+      <p>Should an MCP server be personal or shared with the team? This guide covers the three scopes and how .mcp.json is handled, focusing on what corporate IT needs to decide.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-permission-modes/index.html">Claude Code permission modes compared: choosing between default, acceptEdits, plan, and auto</a></h3>
+      <p>This guide explains how the range of actions that can run without approval differs by mode, how to set the mode at launch or switch with Shift+Tab, and what to watch out for with auto and bypassPermissions.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-data-usage/index.html">Is Claude Code conversation data used for training? Retention periods and where to check settings</a></h3>
+      <p>A plan-by-plan summary of the conditions under which Claude Code data is used for training and how long it is retained. Covers personal settings, commercial handling, and the scope of zero data retention.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-prompt-injection/index.html">How Claude Code Security Works and Defending Against Prompt Injection</a></h3>
+      <p>This guide organizes the official docs for corporate IT, covering permission modes, sandboxing, prompt injection protections, and MCP considerations.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-admin-setup/index.html">Admin setup flow for rolling out Claude Code in your organization: distributing managed settings and restriction options</a></h3>
+      <p>This guide covers how to deliver managed settings, what you can restrict, how to see usage, and how to verify settings after applying them, in the order an admin makes these decisions, based on the official docs.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-how-it-works/index.html">How Claude Code works: the agent loop and what Claude can touch</a></h3>
+      <p>Following the official docs, I've summarized how Claude Code works through its three-phase loop, which tools it can use and what it can touch, and which operations can be undone and which cannot.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-devcontainer/index.html">Running Claude Code in a dev container: settings and organizational rules</a></h3>
+      <p>This guide walks through setting up Claude Code in a dev container, following the official docs, including persisting authentication, organization policies, network restrictions, and permission checks.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-legal-compliance/index.html">Claude Code terms of use and compliance: terms by plan and what to check</a></h3>
+      <p>For corporate IT, this organizes the terms for each plan, conditions for building it into your own services, when to use each authentication method, and the scope of the BAA, based on the official docs.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="ai-usage-rules-claude-code/index.html">How to think about the generative AI usage rules to set before using Claude Code at a small or midsize company</a></h3>
+      <p>A summary of the usage rules corporate IT should decide before using Claude Code internally. It covers where to draw permission lines, where to keep secrets, and how data is handled under each plan.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-managed-settings/index.html">How to roll out Claude Code managed settings company-wide</a></h3>
+      <p>A rundown of how to distribute Claude Code admin settings to company machines: the differences between the four distribution methods, how to deploy with files, how to verify, and what to watch out for.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-mcp-quickstart/index.html">How to connect an MCP server to Claude Code (add, verify, remove)</a></h3>
+      <p>This covers everything from adding a server with claude mcp add to checking the connection, choosing a scope, removing it, and common pitfalls, written for corporate IT at small and midsize companies.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-audit-events/index.html">How to keep Claude Code activity logs for audits: OpenTelemetry and SIEM integration</a></h3>
+      <p>An overview of how to keep an audit trail of Claude Code operations. I check event types, user attribution, sending data to a SIEM, and handling of sensitive information against the official docs.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-settings-examples/index.html">Claude Code settings.json examples: how to read and write the 3 official samples</a></h3>
+      <p>A walkthrough for IT staff at small and midsize companies on how to read the three official sample settings (personal, team, organization) and what to watch for when copying them.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-auto-mode/index.html">Configuring Claude Code auto mode: what the classifier blocks and how to add permissions</a></h3>
+      <p>This guide explains, for corporate IT, which operations the auto mode classifier blocks and how to add allow or confirm rules with autoMode and permissions.ask.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-permission-rules/index.html">How to write Claude Code permission rules: Bash and Read patterns, and allow/deny precedence</a></h3>
+      <p>This guide covers, based on the official docs, the Tool(specifier) format, where to put * in Bash rules, how deny takes precedence, and the trust conditions for project-level allow rules.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-working-directories/index.html">Letting Claude Code work outside the working folder: --add-dir and additionalDirectories</a></h3>
+      <p>For corporate IT, this lays out three ways to have Claude Code work with a different folder, plus caveats on permissions, settings loading, and network paths.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-mcp-org-control/index.html">How to restrict MCP in Claude Code across your company: allow and deny lists and managed-mcp.json</a></h3>
+      <p>Should you disable MCP servers entirely, distribute a fixed set, use an allowlist, or use a denylist only? This summary for corporate IT covers the restriction patterns in the official docs and points to note when configuring them.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-sandbox/index.html">What the Claude Code sandbox is: what it can restrict, organization settings, and limits</a></h3>
+      <p>A summary for corporate IT of the default restrictions on writes, reads, and network access, what runs outside the sandbox, and the settings for enforcing it across an organization, along with their limits.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-server-managed-settings/index.html">How to distribute Claude Code settings from the admin console (server-managed settings)</a></h3>
+      <p>This guide explains how to distribute Claude Code settings from the claude.ai admin console. It covers the required plans, how to write the JSON, how to confirm delivery, and the conditions under which settings don't take effect.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plugins-org/index.html">Managing Claude Code plugins across your organization: distribution, required plugins, and install restrictions</a></h3>
+      <p>This guide covers how to distribute plugins to all devices and make them mandatory through managed settings, how to restrict install sources with an allowlist, and how to handle requests for which no key exists.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-security-guidance/index.html">What the Claude Code Security Guidance Plugin Is: What It Checks When You Edit</a></h3>
+      <p>For corporate IT, this guide follows the official docs to explain how the plugin that has Claude review code Claude wrote works, how to set it up, its limits, and how to stop it.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-security-scan/index.html">How to find code vulnerabilities with the Claude Security plugin and turn them into patches</a></h3>
+      <p>A guide for corporate IT on using a Claude Code plugin to scan code for vulnerabilities and produce reviewed patches, along with the prerequisites and cautions.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+  </ul>
+  <h2 id="g-claude-md-generator">CLAUDE.md and usage basics</h2>
+  <ul class="guide-list">
+    <li class="card">
+      <h3><a href="claude-md-vs-settings-json/index.html">CLAUDE.md vs. settings.json: what to put in each</a></h3>
+      <p>CLAUDE.md is instructions for Claude, while settings.json is enforced configuration. This guide lays out where each file goes, which takes precedence, and a rule of thumb for what to put where, as a check before company distribution.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plan-mode/index.html">How to use Claude Code plan mode: check the plan before it edits</a></h3>
+      <p>Plan mode lets Claude Code investigate and produce a plan without making edits. This guide covers how to enter it, the approval flow, the default setting, and when to use it.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-best-practices/index.html">Claude Code best practices: the key points of the official docs, organized for corporate IT</a></h3>
+      <p>I've organized the key points of the official Claude Code best practices in this order: what you can do, how to configure it, and what to watch out for. Use it as a check before trying it internally.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-common-workflows/index.html">Examples of Using Claude Code: Official Task Recipes and Basic Workflows</a></h3>
+      <p>Using prompt examples taken as-is from the official Claude Code docs, this guide introduces everyday uses such as understanding code, fixing bugs, testing, PRs, and parallel work.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-output-styles/index.html">What Claude Code output styles are: how to change and create them</a></h3>
+      <p>This guide covers the four built-in output styles in Claude Code, how to switch between them, how to create custom styles, and when to use them versus hooks or CLAUDE.md.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="nocode-or-claude-code/index.html">No-code or Claude Code: 3 criteria before building an internal tool</a></h3>
+      <p>Should you build an internal tool with no-code, or write it as code with Claude Code? This guide introduces a way to decide using three criteria: who will maintain it, where the data lives, and how often it changes.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-first-week/index.html">What to do in your first week after installing Claude Code (for part-time corporate IT)</a></h3>
+      <p>In the first week, don't aim for results; build a 30-minute daily routine and a three-line CLAUDE.md. This guide explains the approach and cautions for part-time IT admins.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-worktrees/index.html">How to run Claude Code in parallel with worktrees, and what to watch out for</a></h3>
+      <p>How to use Claude Code's worktree feature to run parallel sessions on the same repository, plus cleanup, the limits of isolation, and what settings are shared.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-auto-memory/index.html">What Claude Code auto memory is: where it is stored, how to stop it, and how to check it</a></h3>
+      <p>An overview of how Claude's self-written notes work: where they are stored, how to turn them off, how to check their contents, and the load limit, written for corporate IT.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-agents-md/index.html">Using AGENTS.md with Claude Code: How It Relates to CLAUDE.md and How It Gets Loaded</a></h3>
+      <p>For corporate IT: when Claude Code reads AGENTS.md, how it takes precedence relative to CLAUDE.md, and how to switch and share it with /config.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-claude-directory/index.html">The structure of Claude Code's .claude folder: what to write in which file</a></h3>
+      <p>The structure of Claude Code's .claude folder, organized by what you want to do. You'll see which file, such as CLAUDE.md or settings.json, holds what.</p>
+      <p class="hint">Related tool: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></p>
+    </li>
+  </ul>
+  <h2 id="g-skill-generator">Skills, subagents, and extensions</h2>
+  <ul class="guide-list">
+    <li class="card">
+      <h3><a href="claude-code-subagents/index.html">How to use and create Claude Code subagents (configuration, invocation, and caveats)</a></h3>
+      <p>I've organized, based on the official docs, what Claude Code subagents can do, how to create your first one, and what to watch for in configuration and operation.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-slash-commands/index.html">How to use Claude Code slash commands, and the main commands for each stage of your workflow</a></h3>
+      <p>For corporate IT, this guide covers the basic rules of slash commands, the main commands for each stage of work, and points to note before using them internally, based on the official docs.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plugins/index.html">How to install Claude Code plugins, and what to watch for when choosing a marketplace</a></h3>
+      <p>This guide explains how to install plugins in Claude Code, including how to choose a scope, how to tell marketplaces apart, and what to check before you install.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-features-overview/index.html">When to use CLAUDE.md, skills, hooks, MCP, and subagents in Claude Code</a></h3>
+      <p>Based on the official docs, this guide sorts out the roles of CLAUDE.md, skills, hooks, MCP, and subagents, and which one to add for which problem.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-headless/index.html">How to run Claude Code from scripts with claude -p (headless mode)</a></h3>
+      <p>This guide covers the basics of running Claude Code from scripts and CI with claude -p, including --bare, output formats, permission settings, and caveats, following the official docs.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-slack/index.html">Using Claude Code from Slack: setup flow, permissions, and limits</a></h3>
+      <p>A guide to the feature that lets you ask @Claude in Slack to do code work. It covers Pro and Max, setup steps, permissions, limits, and how to handle the retirement notice, to the extent corporate IT needs for a decision.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plugin-security/index.html">Are Claude Code Plugins Safe? How to Check Before Installing and Tell Official Marketplaces Apart</a></h3>
+      <p>Based on the official docs, this guide covers what a plugin can do on your local machine, how to recognize official marketplace names, four checks to make before installing, and how to remove a plugin.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-code-review/index.html">How Claude Code Code Review (automatic PR review) works, how to get started, and pricing</a></h3>
+      <p>This guide explains, for corporate IT, how Code Review, which automatically reviews GitHub pull requests, works, which plans it is available on, the setup steps, and how to think about cost.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-agent-teams/index.html">What are Claude Code agent teams? When to use them, how to start, and limits</a></h3>
+      <p>This guide summarizes, following the official docs, when to use agent teams, where multiple Claude Code sessions share the work, how to get started, and the limitations that come with an experimental feature.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-skills-share/index.html">How to share Claude Code skills with your team, and the order to check when they don't work</a></h3>
+      <p>This guide covers, based on the official docs, the three scopes for distributing Claude Code skills and the order to check when a skill isn't invoked, isn't followed, or has its description cut off.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-scheduled-tasks/index.html">Scheduling in Claude Code: the differences between /loop and desktop scheduled tasks, and when to use each</a></h3>
+      <p>A summary of the differences between the three ways to schedule work (cloud, desktop, and /loop), how to use /loop, and how to create desktop scheduled tasks, with caveats.</p>
+      <p class="hint">Related tool: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></p>
+    </li>
+  </ul>
+  <h2 id="g-troubleshooting">Installation, troubleshooting, and Windows</h2>
+  <ul class="guide-list">
+    <li class="card">
+      <h3><a href="claude-code-proxy-network/index.html">Using Claude Code Behind a Proxy or Internal Certificate (Environment Variables and How to Verify)</a></h3>
+      <p>A guide to running Claude Code in environments with a corporate proxy or TLS inspection. It covers setting environment variables, trusting a custom CA, mTLS, and how to verify the setup, following the official docs.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-resume-session/index.html">How to Resume a Previous Conversation in Claude Code: --continue, --resume, and Naming Sessions</a></h3>
+      <p>Following the official docs, this guide explains when to use --continue, --resume, and /resume, how to name sessions, and what is restored on resume along with caveats.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-rewind-checkpoint/index.html">How to undo Claude Code changes: what checkpoints and /rewind can restore</a></h3>
+      <p>A guide to Claude Code checkpoints and /rewind. It explains how to roll back code and conversation, and what can't be rolled back, such as Bash commands and subagents.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-vscode/index.html">Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a></h3>
+      <p>This guide covers what to know before a company-wide rollout: installing the VS Code extension, signing in, reviewing diffs, permission mode caveats, and how it differs from the CLI.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-debug-config/index.html">How to Check Why Your Claude Code Settings Aren't Taking Effect</a></h3>
+      <p>Steps for when Claude Code settings aren't taking effect: check what was loaded, then isolate the cause across hooks, MCP, and settings precedence.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-excel-automation/index.html">How to Automate Excel Aggregation with Claude Code: 3 Steps to Replace Manual Work with a Script</a></h3>
+      <p>Three steps to replace a monthly Excel aggregation with a script using Claude Code. This guide covers how to choose the task, how to phrase the request, and how to hand it off to the person in charge, with the information corporate IT needs to decide.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-install-windows/index.html">How to install Claude Code on Windows: native vs. WSL, and checks after installation</a></h3>
+      <p>Windows installation, split into native and WSL. Covers the command differences, how Git for Windows is handled, and checking with claude --version.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-install-errors/index.html">How to troubleshoot Claude Code installation and login errors</a></h3>
+      <p>Steps for investigating install and login errors from the wording on the screen. It covers re-authentication, 403 errors, access permissions, API key overrides, and other points corporate IT will want to check.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-rollout-kit/index.html">How to Roll Out Claude Code in Your Company: The Official Communication Kit and the Champion's Role</a></h3>
+      <p>Based on the official announcement kit and champion kit, this guide covers preparing the announcement, running a pilot rollout, and a champion's time allocation and 30-day plan, organized for corporate IT.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-terminal-config/index.html">Settings for when Shift+Enter doesn't insert a newline in Claude Code, plus tmux, notifications, and pasting</a></h3>
+      <p>This guide covers common sticking points around the Claude Code terminal, following the official docs: entering line breaks, tmux settings, notifications, pasting, and Backspace on Windows.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-web/index.html">Using Claude Code in the browser (cloud): what it can do, connecting GitHub, and limits</a></h3>
+      <p>A guide for corporate IT to the two ways of connecting GitHub when you run Claude Code in the cloud from a browser, how sessions work, and limits such as rate limits and IP allowlists.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-desktop-app/index.html">Getting started with the Claude Code desktop app, and admin settings for Team and Enterprise</a></h3>
+      <p>This guide covers the Claude Code desktop app, which you can use without a terminal: installation, first steps, and the managed settings for distributing it in an organization.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-jetbrains/index.html">Using Claude Code in JetBrains IDEs: installation, settings, and cautions</a></h3>
+      <p>This guide covers, based on the official docs, how to set up Claude Code in IntelliJ IDEA and other IDEs, how to configure diff display, what to watch for with WSL and remote development, and the risks of using acceptEdits.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-cli-commands/index.html">Claude Code CLI commands: when to use claude, claude -p, and claude update</a></h3>
+      <p>This guide organizes the official CLI commands such as claude, claude -p, claude update, and claude mcp by use case, with conditions and notes.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
+  </ul>
+  <h2 id="g-cost-calculator">Pricing, usage, and models</h2>
+  <ul class="guide-list">
+    <li class="card">
+      <h3><a href="claude-code-reduce-tokens/index.html">How to reduce Claude Code token usage, and how to check your usage</a></h3>
+      <p>How to check Claude Code usage with /usage and reduce tokens with /clear, model selection, extended thinking adjustments, and more, following the official docs.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-prompt-caching/index.html">How Claude Code prompt caching works: actions that help and actions that break it</a></h3>
+      <p>Based on the official docs, this guide sorts out when Claude Code's prompt cache takes effect, which actions break it and which don't, the TTL, and how to check with /usage.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-context-compact/index.html">Claude Code context and /compact: what stays and what disappears in a long conversation</a></h3>
+      <p>A guide for corporate IT, based on the official docs, on what goes into the context window and what remains after /compact or auto-compaction. Read it before long conversations become a problem.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-model-select/index.html">How to choose and switch models in Claude Code (/model and settings)</a></h3>
+      <p>This guide covers how to choose between sonnet, opus, haiku and other models, how to switch with /model or settings files, and admin-enforced restrictions, written for corporate IT.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-usage-monitoring/index.html">How to See Claude Code Usage: Choosing Between Analytics and OpenTelemetry</a></h3>
+      <p>This guide covers the separate dashboards for Teams / Enterprise and the API, export settings for OpenTelemetry, and points to note when distributing through admin settings.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-plans-compare/index.html">Claude Code pricing and plan comparison: differences between Pro, Max, Team, Enterprise, and Console, and how to choose</a></h3>
+      <p>This guide follows the official explanations to sort out the differences between the plans that include Claude Code, where the line falls between those plans and API billing, and the feature differences. Use it as a checklist before trying it internally.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-usage-limits/index.html">What to do when you hit your Claude Code usage limit: what you see, resets, and whether to wait or add more</a></h3>
+      <p>For corporate IT, this covers what you see when you hit a limit, how to check the reset time, and how to decide between waiting, switching models, or continuing with usage credits.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-api-key-billing/index.html">Does having ANTHROPIC_API_KEY set switch Claude Code to API billing? How to check and remove it</a></h3>
+      <p>If ANTHROPIC_API_KEY is set as an environment variable, you are billed pay-as-you-go through the API even when you're signed in with a subscription. This guide covers how to check with /status, how to remove it, and what to watch for when distributing to the company.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-login-auth/index.html">Claude Code login methods and authentication setup for teams</a></h3>
+      <p>A summary of the Claude Code login procedure and the differences among Teams, Console, and cloud authentication methods, plus the settings and cautions when you distribute it to a team.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-microsoft-foundry/index.html">Using Claude Code via Microsoft Foundry (Azure): setup steps and caveats</a></h3>
+      <p>A walkthrough of using a model you created in Microsoft Foundry on Azure from Claude Code. It explains how to choose an authentication method and what to check before distribution, such as pinning models.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-cloud-providers/index.html">Adopting Claude Code in a company: choosing a provider route such as Bedrock or Google Cloud</a></h3>
+      <p>When using Claude Code at work, should you go directly through Anthropic or through Bedrock, Google Cloud, or Foundry? Based on the official docs, I've summarized how to choose and which features differ or aren't available.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-statusline/index.html">How to configure the Claude Code status line, and what to check when it doesn't appear</a></h3>
+      <p>A summary for corporate IT of how to set up the Claude Code status line, when it updates, and what to check when it doesn't appear, based on the official docs.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-fast-mode/index.html">What is Claude Code fast mode? How pricing works and when to use it</a></h3>
+      <p>Based on the official docs, this guide covers how pricing works for Claude Code's fast mode, which tasks it suits, the prerequisites for enabling it, and points to watch when rolling it out in your company.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-amazon-bedrock/index.html">Using Claude Code with Amazon Bedrock: Sign-in, IAM, and Troubleshooting</a></h3>
+      <p>A walkthrough of using Claude Code through Amazon Bedrock. It covers prerequisites, signing in with the wizard, IAM, regions, and troubleshooting, written for corporate IT.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-llm-gateway/index.html">Using Claude Code Through an LLM Gateway: What It Can Do and How to Roll It Out</a></h3>
+      <p>This guide covers what a gateway can centrally manage, how to choose between an Anthropic-provided option and an existing product, and the order and cautions for rollout.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+  </ul>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information in each guide reflects what I confirmed as of writing. Claude Code's specifications and pricing may change. Before you use it, check the official docs for the latest information. The operator is not responsible for any damages resulting from the use of information in these guides.</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is the Claude Code security guidance plugin? What it checks when editing | Chuki DX Lab</title>
+<meta name="description" content="A guide, based on the official docs, to what Claude Code&#x27;s security-guidance plugin checks at three points (on edit, at the end of a turn, and at commit), along with setup steps, custom rules, and cost caveats.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-guidance/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-guidance/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-guidance/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-guidance/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="What the Claude Code security guidance plugin is: what it checks when you edit">
+<meta property="og:description" content="A guide, based on the official docs, to what Claude Code&#x27;s security-guidance plugin checks at three points (on edit, at the end of a turn, and at commit), along with setup steps, custom rules, and cost caveats.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-guidance/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-security-guidance.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="What the Claude Code security guidance plugin is: what it checks when you edit">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-security-guidance.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What the Claude Code security guidance plugin is: what it checks when you edit",
+  "description": "A guide, based on the official docs, to what Claude Code's security-guidance plugin checks at three points (on edit, at the end of a turn, and at commit), along with setup steps, custom rules, and cost caveats.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-guidance/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Security guidance",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-guidance/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If I install the plugin, are commits I make from my own shell also reviewed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. According to the official docs, commit-time review covers only the git commit and git push commands that Claude runs through the Bash tool. Commits you run in your own shell are not reviewed, including those run with the ! shell escape inside a session."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I check when reviews don't appear?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, start with the diagnostic log at ~/.claude/security/log.txt. Reasons given for a silent skip include: not being in a git repository; a session with neither Anthropic authentication nor a third-party provider (in that case only pattern matching on edit runs); and having a YAML pattern file without PyYAML installed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a plugin stop dangerous code from being written?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It can't stop them. According to the official docs, no layer blocks writes or commits, and findings are passed to Claude as instructions. If you want to block and enforce, combine it with a hook that blocks edits or a CI check."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-security-guidance/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Security guidance</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What it does: Claude reviews the code it wrote</a></li>
+        <li><a href="#s2">Getting started: prerequisites and installation</a></li>
+        <li><a href="#s3">What each check does and its limits</a></li>
+        <li><a href="#s4">Adding your own rules, and their limits</a></li>
+        <li><a href="#s5">Cost, how to stop it, and limits</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>What the Claude Code security guidance plugin is: what it checks when you edit</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The security-guidance plugin for Claude Code (Anthropic's AI coding agent that runs in the terminal) reviews code Claude writes at edit time, at the end of a turn, and at commit time, and has it fixed within the same session.</li>
+      <li>None of the layers stops writes or commits, and some things can slip through. The official docs say to use it as one layer of defense in depth.</li>
+      <li>Before adopting it, check the Python and git repository requirements, and note that reviews at the end of a turn and at commit time incur additional model usage.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What it does: Claude reviews the code it wrote</h2>
+  <p>According to the official docs as of writing (October 2026), this plugin has Claude review its own code changes for vulnerabilities and fix any issues it finds in the same session. It catches things like injection and insecure deserialization before they reach a pull request.</p>
+  <p>After installation it runs automatically, and there is no command to invoke. Its role differs from Code Review, which runs on PRs: the plugin reduces what reaches the PR, while Code Review catches what does arrive. It checks three places.</p>
+  <ul>
+    <li>On every file edit: pattern matching for dangerous calls. It doesn't call the model, so it adds no cost.</li>
+    <li>End of each turn: All changes from that turn are run through a background model review.</li>
+    <li>When Claude commits or pushes: a deeper agentic review (one that investigates on its own as it goes) that reads the surrounding code as well.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+  <h2 id="s2">Getting started: prerequisites and installation</h2>
+  <p>The official docs list these prerequisites: Python 3.7 or later on your <code>PATH</code>, and a working directory that is a git repository. Outside a git repository, end-of-turn and commit-time reviews are skipped without notice, and only edit-time pattern matching runs.</p>
+  <p>Agentic commit review requires Python 3.10 or later. If you use a third-party provider such as Amazon Bedrock, every model-based review requires 3.10 or later. On first launch, it creates a virtual environment under <code>~/.claude/security/</code> and installs the Claude Agent SDK, so you need <code>pip</code> and a network connection.</p>
+  <p>In a Claude Code session in the terminal, install it from the official Anthropic marketplace.</p>
+<pre><code>/plugin install security-guidance@claude-plugins-official</code></pre>
+  <p>You are asked for a scope. If you choose user scope, the plugin is loaded in every new local session you start on this machine. Cloud sessions do not load plugins from user settings or from the repository's <code>.claude/settings.json</code>, so check the official docs for how they are handled.</p>
+  <p>To use this across a team, add the following to the project settings you check in to the repository. Admins can also enable it organization-wide through <code>enabledPlugins</code> in managed settings.</p>
+<pre><code>{
+  "enabledPlugins": {
+    "security-guidance@claude-plugins-official": true
+  }
+}</code></pre>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+  <h2 id="s3">What each check does and its limits</h2>
+  <p>Examples of what matches on edit include dynamic code execution such as <code>eval(</code> or <code>os.system</code>, <code>pickle</code>, <code>dangerouslySetInnerHTML</code>, <code>.innerHTML =</code>, and edits under <code>.github/workflows/</code>. A warning appears only once per file per session for the same pattern.</p>
+  <p>The end-of-turn review sends that turn's git diff to a separate, security-focused Claude. It targets issues that string matching can't catch, such as authorization bypasses and server-side request forgery. It covers up to 30 files per turn and runs at most 3 times in a row.</p>
+  <p>Commit review runs only when Claude runs <code>git commit</code> or <code>git push</code> with the Bash tool. Commits you run in your own shell, including the <code>!</code> shell escape inside a session, are not reviewed. The limit is 20 per rolling hour.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+  <h2 id="s4">Adding your own rules, and their limits</h2>
+  <p>There are two extension points, and both are additive only. You cannot remove the built-in checks through these files.</p>
+  <ul>
+    <li>For model-based review: write your threat model and review points in plain prose in <code>.claude/claude-security-guidance.md</code>.</li>
+    <li>For edit-time patterns: write regex or substring rules in <code>.claude/security-patterns.yaml</code>. The same format in <code>.claude/security-patterns.yml</code> and <code>.claude/security-patterns.json</code> is also read.</li>
+  </ul>
+  <p>Guidance is direction for the reviewer and is not enforced. Writing that a certain type of vulnerability should be ignored will not suppress findings. If you need enforcement, combine it with a hook that blocks edits or with CI.</p>
+  <p>The YAML format requires PyYAML to be importable, and the plugin doesn't install it for you. If it's missing, the file is ignored, so <code>security-patterns.json</code> works regardless of your Python environment. You can have up to 50 custom rules.</p>
+  <p>The files go in three places: <code>~/.claude/claude-security-guidance.md</code> for the user, a project-level file, and <code>.claude/claude-security-guidance.local.md</code> for personal use. All files that exist are concatenated, and the guidance is limited to 8 KB in total.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+  <h2 id="s5">Cost, how to stop it, and limits</h2>
+  <p>Reviews at turn end and at commit time use additional model capacity, and count toward your usage like regular requests. A commit review may use multiple model turns for a single commit. The default is a Claude Opus model, which you can change with <code>SECURITY_REVIEW_MODEL</code> and <code>SG_AGENTIC_MODEL</code>. The plugin is available on all plans. Check the official pricing page for amounts and usage limits.</p>
+  <p>Each layer can be disabled with environment variables.</p>
+  <ul>
+    <li><code>ENABLE_PATTERN_RULES=0</code>: Turns off pattern matching at edit time.</li>
+    <li><code>ENABLE_STOP_REVIEW=0</code>: turns off the end-of-turn review.</li>
+    <li><code>ENABLE_COMMIT_REVIEW=0</code>: Turns off review at commit time.</li>
+    <li><code>ENABLE_CODE_SECURITY_REVIEW=0</code>: Turns off all reviews that use a model.</li>
+    <li><code>SECURITY_GUIDANCE_DISABLE=1</code>: turns the whole thing off without uninstalling.</li>
+  </ul>
+  <p>None of the layers blocks writes or commits, and the review model can miss things. The official docs say to treat this as one layer of defense in depth, not a complete safeguard, so you still need your existing CI, such as static analysis and dependency scanners.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If I install the plugin, are commits I make from my own shell also reviewed?</summary>
+      <p>No. According to the official docs, commit-time review covers only the <code>git commit</code> and <code>git push</code> commands that Claude runs through the Bash tool. Commits you run in your own shell are not reviewed, including those run with the <code>!</code> shell escape inside a session.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+    </details>
+    <details>
+      <summary>What should I check when reviews don't appear?</summary>
+      <p>According to the official docs, start with the diagnostic log at <code>~/.claude/security/log.txt</code>. Reasons given for a silent skip include: not being in a git repository; a session with neither Anthropic authentication nor a third-party provider (in that case only pattern matching on edit runs); and having a YAML pattern file without PyYAML installed.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+    </details>
+    <details>
+      <summary>Can a plugin stop dangerous code from being written?</summary>
+      <p>It can't stop them. According to the official docs, no layer blocks writes or commits, and findings are passed to Claude as instructions. If you want to block and enforce, combine it with a hook that blocks edits or a CI check.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/security-guidance" rel="noopener">Catch security issues as Claude writes code</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-security-scan/index.html">How to find code vulnerabilities with the Claude Security plugin and turn them into patches</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-prompt-injection/index.html">How Claude Code security works and how to defend against prompt injection</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

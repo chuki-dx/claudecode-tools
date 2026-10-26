@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to reduce Claude Code token usage and how to check it | Chuki DX Lab</title>
+<meta name="description" content="How to reduce Claude Code token usage, organized around the official docs. Covers checking with /usage, /clear, model selection, extended thinking, and reviewing MCP, written for corporate IT.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to reduce Claude Code token usage and how to check it">
+<meta property="og:description" content="How to reduce Claude Code token usage, organized around the official docs. Covers checking with /usage, /clear, model selection, extended thinking, and reviewing MCP, written for corporate IT.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-reduce-tokens.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to reduce Claude Code token usage and how to check it">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-reduce-tokens.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to reduce Claude Code token usage and how to check it",
+  "description": "How to reduce Claude Code token usage, organized around the official docs. Covers checking with /usage, /clear, model selection, extended thinking, and reviewing MCP, written for corporate IT.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Saving tokens and checking usage",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does the dollar figure in /usage match my bill?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They won't necessarily match. According to the official docs, the dollar amount is an estimate calculated locally from token counts at list prices. For organizations that pay contract rates, an admin can enter the rates in modelPricing in managed settings, and the display will then be based on contract rates (v2.1.242 and later). Even so, it's an estimate, not an invoice, and you confirm the actual billing on the Usage page in the Claude Console."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I turn off extended thinking on any model?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, you can't. Extended thinking is on by default, and for simple tasks you can lower the effort level with /effort or /model, or turn it off in /config. However, according to the official docs, Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable models always use extended thinking and it can't be turned off."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does usage spike on the first message after I step away?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the first message after a break longer than the cache lifetime is a cache miss, and the entire context is reprocessed. The lifetime is 1 hour on a subscription, 5 minutes once you start using usage credits, and 5 minutes by default with an API key or a cloud provider."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-reduce-tokens/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Saving tokens and checking usage</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Check your usage first (/usage and the display next to the spinner)</a></li>
+        <li><a href="#s2">Keep the context small</a></li>
+        <li><a href="#s3">Review your model and extended thinking settings</a></li>
+        <li><a href="#s4">MCP, hooks, subagents, and how to write requests</a></li>
+        <li><a href="#s5">When usage tends to grow, and managing it across an organization</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to reduce Claude Code token usage and how to check it</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code is billed by API token consumption. You can check usage in the Session block of <code>/usage</code>, but the dollar amounts are estimates. Check the Usage page in the Claude Console for official billing.</li>
+      <li>The basic way to save is to keep the context small. The docs suggest using <code>/clear</code> between unrelated tasks, and reviewing the model and the extended-thinking effort level for simple tasks.</li>
+      <li>Sessions left open for a long time, cache misses, scheduled tasks, and subagents all push usage up. The docs recommend taking a baseline with a small pilot before rolling out company-wide.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Check your usage first (/usage and the display next to the spinner)</h2>
+  <p>According to the official docs as of writing (October 2026), Claude Code (an AI coding agent from Anthropic that runs in the terminal) is billed by API token consumption. Costs vary widely depending on which model you choose, the size of your codebase, and usage patterns such as multiple instances or automation.</p>
+  <p>Across enterprise deployments, the average is about $13 per developer per active day, or $150-250 per month, and the docs state that 90% of users stay under $30 per active day. For your own estimate, the docs recommend measuring with a small pilot before expanding.</p>
+  <p>The Session block in <code>/usage</code> shows the current session's token usage. The dollar amount is a local estimate calculated from token counts at list prices; check the Usage page in the Claude Console for official billing. For Max and Pro users, usage is included in the subscription, so this cost figure doesn't matter for billing. The total resets when you start a new session with <code>/clear</code>.</p>
+  <p>In v2.1.251 and later, a <code>Prompt cache (main)</code> row is added, showing the share of input tokens served from the cache and the number of cache misses. It covers only the main conversation, not subagents. The token count next to the spinner while Claude works is a rough estimate of that turn's output and does not match the total in <code>/usage</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s2">Keep the context small</h2>
+  <p>The official docs explain that token costs grow as the context gets larger. Claude Code optimizes automatically with prompt caching and auto-compaction (summarizing the conversation history), but the following habits can reduce costs further.</p>
+  <ul>
+    <li>When you move to unrelated work, start fresh with <code>/clear</code>. Old context consumes tokens with every later message. If you'll come back to it, use <code>/rename</code> first and <code>/resume</code> later.</li>
+    <li>You can tell Claude what to keep when summarizing, as in <code>/compact Focus on code samples and API usage</code>.</li>
+    <li>You can also write guidance for summarization in the CLAUDE.md at the project root.</li>
+  </ul>
+<pre><code># Compact instructions
+
+When you are using compact, please focus on test output and code changes</code></pre>
+  <p>CLAUDE.md is loaded at the start of a session. Moving detailed steps for specific tasks, such as PR reviews or database migrations, into skills that load only when invoked keeps the base context small. Keep CLAUDE.md to the key points; under 200 lines is the recommended guideline.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s3">Review your model and extended thinking settings</h2>
+  <p>According to the official docs, Sonnet handles most coding work and costs less than Opus. Save Opus for complex design decisions and multi-step reasoning. You can switch models mid-session with <code>/model</code> and set the default with <code>/config</code>. Switching to Opus also applies to subagents that inherit the session's model. For simple subagent tasks, you can specify <code>model: haiku</code>.</p>
+  <p>Extended thinking is enabled by default, and thinking tokens are billed as output tokens. Depending on the model, the default budget can reach tens of thousands of tokens per request. For simple tasks, lower the effort level with <code>/effort</code> or <code>/model</code>, or disable thinking with <code>/config</code>. However, Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable-family models always use extended thinking and can't turn it off.</p>
+  <p>For models with a fixed thinking budget, you can lower the budget with the <code>MAX_THINKING_TOKENS</code> environment variable (for example, <code>MAX_THINKING_TOKENS=8000</code>). Models with adaptive reasoning ignore any nonzero budget, so use the effort level instead.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s4">MCP, hooks, subagents, and how to write requests</h2>
+  <ul>
+    <li>MCP: Tool definitions are loaded lazily by default. Until a specific tool is used, only its name and the server's instructions enter the context. Run <code>/context</code> to see what is using space, and <code>/mcp</code> to disable servers you don't use.</li>
+    <li>CLI tools such as <code>gh</code>, <code>aws</code>, <code>gcloud</code>, and <code>sentry-cli</code> are said to be more context-efficient than MCP servers because they don't add to the tool list.</li>
+    <li>hooks: Instead of having Claude read a 10,000-line log, a hook can grep for <code>ERROR</code> and return only the matching lines, cutting context from tens of thousands of tokens to a few hundred. The official docs include an example PreToolUse hook that narrows test output to failures only.</li>
+    <li>Subagents: if you hand off high-output work such as running tests or processing logs, only a summary returns to the main conversation. However, the subagent's own requests also count toward usage.</li>
+    <li>How you phrase requests: Vague requests like "improve this codebase" lead to broad scanning. Being specific about the target means fewer files get read.</li>
+  </ul>
+  <p>For complex tasks, press Shift+Tab to switch to plan mode and review the approach before implementing; this helps you avoid rework. If Claude heads in the wrong direction, stop it with Escape and roll back with <code>/rewind</code>. Note that agent teams are said to use about 7 times as many tokens as a standard session when teammates are in plan mode.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s5">When usage tends to grow, and managing it across an organization</h2>
+  <p>The official docs list the following as causes of rising usage in sessions that stay open for a long time.</p>
+  <ul>
+    <li>Long context: the entire conversation is sent with every request, so even a one-line question uses as much as the whole conversation.</li>
+    <li>Cache miss: The first message after a break longer than the cache lifetime reprocesses the entire context. The lifetime is 1 hour on a subscription and 5 minutes once you start using usage credits. With API keys or cloud providers, it is 5 minutes by default.</li>
+    <li>Scheduled tasks send the full context at each interval, even when the session is idle. Subagents and teammates also send their own separate requests.</li>
+    <li>Compact: <code>/compact</code> reads the conversation it summarizes, so with a large context it becomes a large request. <code>/clear</code>, which you use when you want a fresh start, costs nothing.</li>
+  </ul>
+  <p>On Pro, Max, Team, and Enterprise, <code>/usage</code> flags behaviors that account for 10% or more of your recent usage (such as long context or cache misses), with tips for reducing them.</p>
+  <p>When you manage usage at the organization level, Teams and Enterprise rely mainly on the spend reports and limit settings in the admin console, Console on workspace spend limits, and cloud-provider setups on each cloud's billing console. OpenTelemetry works with any setup. Check the official docs for detailed setup steps.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does the dollar figure in <code>/usage</code> match my bill?</summary>
+      <p>They won't necessarily match. According to the official docs, the dollar amount is an estimate calculated locally from token counts at list prices. For organizations that pay contract rates, an admin can enter the rates in <code>modelPricing</code> in managed settings, and the display will then be based on contract rates (v2.1.242 and later). Even so, it's an estimate, not an invoice, and you confirm the actual billing on the Usage page in the Claude Console.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+    <details>
+      <summary>Can I turn off extended thinking on any model?</summary>
+      <p>No, you can't. Extended thinking is on by default, and for simple tasks you can lower the effort level with <code>/effort</code> or <code>/model</code>, or turn it off in <code>/config</code>. However, according to the official docs, Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable models always use extended thinking and it can't be turned off.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+    <details>
+      <summary>Why does usage spike on the first message after I step away?</summary>
+      <p>According to the official docs, the first message after a break longer than the cache lifetime is a cache miss, and the entire context is reprocessed. The lifetime is 1 hour on a subscription, 5 minutes once you start using usage credits, and 5 minutes by default with an API key or a cloud provider.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-caching/index.html">How Claude Code prompt caching works: what keeps it and what breaks it</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-context-compact/index.html">Claude Code context and /compact: what stays and what is lost in a long conversation</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto | Chuki DX Lab</title>
+<meta name="description" content="This guide covers the differences between Claude Code&#x27;s permission modes (default, acceptEdits, plan, auto, dontAsk, bypassPermissions), how to switch between them, and what to watch for when choosing one, based on the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-modes/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-modes/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permission-modes/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Permission Modes Compared: Choosing Between default, acceptEdits, plan, and auto">
+<meta property="og:description" content="This guide covers the differences between Claude Code&#x27;s permission modes (default, acceptEdits, plan, auto, dontAsk, bypassPermissions), how to switch between them, and what to watch for when choosing one, based on the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-modes/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permission-modes.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Permission Modes Compared: Choosing Between default, acceptEdits, plan, and auto">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permission-modes.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Permission Modes Compared: Choosing Between default, acceptEdits, plan, and auto",
+  "description": "This guide covers the differences between Claude Code's permission modes (default, acceptEdits, plan, auto, dontAsk, bypassPermissions), how to switch between them, and what to watch for when choosing one, based on the official docs.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-modes/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code permission modes",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permission-modes/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Manual mode different from default?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are the same mode. The UI calls it Manual, while settings values, hooks, and the SDK call it default. In the CLI, manual also works as an alias."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which mode does it start in if I configure nothing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, in the interactive terminal and VS Code on Claude Code v2.1.283 or later, the built-in default is auto. If auto is not available, it starts in Manual. Check the official docs for the detailed conditions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it OK to let people use bypassPermissions internally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs describe this as a mode to use only in isolated environments such as containers or VMs. If you don't want people to use it, an admin can set permissions.disableBypassPermissionsMode to \"disable\" in managed settings."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-permission-modes/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code permission modes</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What changes with permission modes: the differences among the six modes</a></li>
+        <li><a href="#s2">Starting mode and how to switch</a></li>
+        <li><a href="#s3">When to use acceptEdits and plan</a></li>
+        <li><a href="#s4">The convenience and caveats of auto mode</a></li>
+        <li><a href="#s5">dontAsk, bypassPermissions, and what stays the same in every mode</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Permission Modes Compared: Choosing Between default, acceptEdits, plan, and auto</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>A permission mode is a setting that determines what Claude can do without asking for confirmation. The official docs list <code>default</code>, <code>acceptEdits</code>, <code>plan</code>, <code>auto</code>, <code>dontAsk</code>, and <code>bypassPermissions</code>.</li>
+      <li>Choose by purpose: <code>acceptEdits</code> if you'll review changes afterward, <code>plan</code> if you want to inspect before changes are made. <code>bypassPermissions</code> is only for isolated containers or VMs.</li>
+      <li><code>auto</code> can reduce confirmation prompts, but it doesn't guarantee safety, and it has conditions tied to the model and organization settings. This is based on the official docs as of writing (October 2026), so check the latest documentation before adopting it.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What changes with permission modes: the differences among the six modes</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) has permission modes. According to the official docs, a permission mode sets which actions can run during a session without confirmation. It changes whether Claude stops to ask before editing files, running shell commands, or accessing the network.</p>
+  <ul>
+    <li><code>default</code>: Only reads can run without confirmation. Suited to work where you want to review everything yourself, and to sensitive work.</li>
+    <li><code>acceptEdits</code>: reads, file edits, and common file operation commands such as <code>mkdir</code>, <code>touch</code>, <code>mv</code>, and <code>cp</code>. It suits reviewing and fixing code as you go.</li>
+    <li><code>plan</code>: Mostly read-only. It's meant for cases where you want to explore the codebase before making changes.</li>
+    <li><code>auto</code>: Runs everything, with safety checks running in the background. It suits long tasks and situations where you want fewer repeated confirmations.</li>
+    <li><code>dontAsk</code>: runs only reads within the working directory and pre-approved tools, and denies any action that would require confirmation. Intended for CI and scripts.</li>
+    <li><code>bypassPermissions</code>: runs everything. Use it only in isolated containers or VMs.</li>
+  </ul>
+  <p><code>default</code> is displayed as <strong>Manual</strong> in the CLI, VS Code, the desktop app, and other places. The setting value is <code>default</code>, and in the CLI you can also use the alias <code>manual</code>.</p>
+  <p>The mode is the baseline, and you can layer permission rules on top to pre-approve or block specific tools. Deny rules take effect in every mode, including <code>bypassPermissions</code>, but allow rules have no effect in <code>bypassPermissions</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s2">Starting mode and how to switch</h2>
+  <p>The official docs explain that when you start a new session in the terminal, the first item below that applies is used.</p>
+  <ol>
+    <li>The <code>--permission-mode</code> flag, or <code>--dangerously-skip-permissions</code></li>
+    <li><code>permissions.defaultMode</code> in a settings file</li>
+    <li>Built-in defaults</li>
+  </ol>
+  <p>The built-in default is <code>auto</code> in the interactive terminal and VS Code on Claude Code v2.1.283 or later. In earlier versions it applied to the Pro, Max, and Team plans, and it also varies with <code>claude -p</code> and organization settings. If you specify nothing, sessions may start in <code>auto</code>, which asks for fewer confirmations, so it is safer to set the startup mode explicitly before you distribute.</p>
+  <p>This is an example of specifying it just once.</p>
+<pre><code>claude --permission-mode plan</code></pre>
+  <p>To make <code>default</code> the default for all sessions, write the following in <code>~/.claude/settings.json</code>.</p>
+<pre><code>{
+  "permissions": {
+    "defaultMode": "default"
+  }
+}</code></pre>
+  <p>In a terminal, <code>permissions.defaultMode</code> in the project's <code>.claude/settings.json</code> accepts any value other than <code>auto</code> and <code>bypassPermissions</code>. The VS Code extension doesn't read project settings for the starting mode.</p>
+  <h3>Switching during a session</h3>
+  <p>In the CLI, switch modes with <code>Shift+Tab</code>. From <code>auto</code>, the first press goes to <code>default</code>, and after that the order is <code>default</code>, <code>acceptEdits</code>, <code>plan</code>. <code>dontAsk</code> is not part of the cycle; specify it with <code>--permission-mode dontAsk</code>. In VS Code, choose the mode from the mode indicator below the prompt box.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s3">When to use acceptEdits and plan</h2>
+  <p><code>acceptEdits</code> creates and edits files in the working directory without asking for confirmation. <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>rmdir</code>, <code>mv</code>, <code>cp</code>, and <code>sed</code> are also auto-approved, but only for paths inside the working directory or <code>additionalDirectories</code>. Writes to protected paths and any Bash commands other than the built-in read-only ones still prompt for confirmation. It suits a workflow where you review changes afterward with something like <code>git diff</code>.</p>
+  <p><code>plan</code> only investigates and writes a plan, and doesn't edit source. Edits are blocked until you approve the plan. However, in an interactive terminal where bypass permissions is available, this block isn't enforced. Enter it with <code>Shift+Tab</code>, or by putting <code>/plan</code> at the start of a single prompt.</p>
+  <p>When you approve a plan, you choose from <strong>Yes, and use auto mode</strong>, <strong>Yes, manually approve edits</strong>, and <strong>No, keep planning</strong>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s4">The convenience and caveats of auto mode</h2>
+  <p>In <code>auto</code> mode, a separate model (a classifier) reviews each action before it runs and blocks actions that go beyond what you asked for, as well as actions that appear to have been steered by content Claude read. The official docs note that this reduces prompts but does not guarantee safety, and that it should not replace review of sensitive operations.</p>
+  <p>There are model requirements: older models such as Sonnet 4.5, Opus 4.5, and Haiku 4.5 are not supported on any provider. It is available by default on Team and Enterprise, but an admin can disable it by setting <code>permissions.disableAutoMode</code> to <code>"disable"</code> in managed settings. If it is unavailable, the session starts in Manual mode.</p>
+  <p>Examples blocked by default include downloading and running code, sending sensitive data externally, production deployments, and force pushes. File operations inside the working directory and read-only HTTP requests are allowed. After 3 blocks in a row, or 20 in total, auto mode pauses and returns to asking for confirmation.</p>
+  <p>Boundaries you state in conversation, such as "don't push," are referenced by the classifier, but they are not saved as rules and may be lost when the context is compacted. If you need to block something reliably, use a deny rule.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s5">dontAsk, bypassPermissions, and what stays the same in every mode</h2>
+  <p><code>dontAsk</code> automatically denies every operation that would normally prompt for confirmation. It's meant for CI, where you decide the allowed scope in advance. The example from the official docs is below.</p>
+<pre><code>claude -p "run the test suite" --permission-mode dontAsk --allowedTools "Bash(npm test)" "Read"</code></pre>
+  <p><code>bypassPermissions</code> disables permission prompts and safety checks. The official docs warn to use it only in isolated environments, and note that it offers no protection against prompt injection or unintended actions. A session can't switch into it unless it was enabled at startup, and on Linux and macOS Claude Code refuses to start as root or with sudo (this check is skipped inside a recognized sandbox). Administrators can block it by setting <code>permissions.disableBypassPermissionsMode</code> to <code>"disable"</code>.</p>
+  <p>Some things are never auto-approved in any mode. Examples are tools that match an ask rule, and <code>rm</code> or <code>rmdir</code> targeting important paths such as the root or home directory. Writes to protected paths such as <code>.git</code> and <code>.claude</code> are also not auto-approved, except in <code>bypassPermissions</code> mode and in plan mode sessions running in an interactive terminal where bypass permissions is available.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is Manual mode different from default?</summary>
+      <p>They are the same mode. The UI calls it Manual, while settings values, hooks, and the SDK call it <code>default</code>. In the CLI, <code>manual</code> also works as an alias.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>Which mode does it start in if I configure nothing?</summary>
+      <p>According to the official docs, in the interactive terminal and VS Code on Claude Code v2.1.283 or later, the built-in default is <code>auto</code>. If <code>auto</code> is not available, it starts in Manual. Check the official docs for the detailed conditions.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>Is it OK to let people use bypassPermissions internally?</summary>
+      <p>The official docs describe this as a mode to use only in isolated environments such as containers or VMs. If you don't want people to use it, an admin can set <code>permissions.disableBypassPermissionsMode</code> to <code>"disable"</code> in managed settings.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-data-usage/index.html">Does Claude Code use your conversation data for training? Retention periods and where to check your settings</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code MCP configuration: local vs. project vs. user scope, and .mcp.json</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

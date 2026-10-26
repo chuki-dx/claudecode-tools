@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Claude Code Fast Mode Is: How Pricing Works and When to Use It | Chuki DX Lab</title>
+<meta name="description" content="This guide organizes Claude Code fast mode pricing based on the official docs. It covers the difference in unit prices, usage credits billing, when to use it, and the settings and cautions for rolling it out across an organization, written for corporate IT.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-fast-mode/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-fast-mode/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-fast-mode/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-fast-mode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="What Claude Code fast mode is: how pricing works and when to use it">
+<meta property="og:description" content="This guide organizes Claude Code fast mode pricing based on the official docs. It covers the difference in unit prices, usage credits billing, when to use it, and the settings and cautions for rolling it out across an organization, written for corporate IT.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-fast-mode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-fast-mode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="What Claude Code fast mode is: how pricing works and when to use it">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-fast-mode.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What Claude Code fast mode is: how pricing works and when to use it",
+  "description": "This guide organizes Claude Code fast mode pricing based on the official docs. It covers the difference in unit prices, usage credits billing, when to use it, and the settings and cautions for rolling it out across an organization, written for corporate IT.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-fast-mode/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code fast mode",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-fast-mode/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is fast mode included in my Pro or Max usage allowance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, it isn't included. According to the official docs, on subscriptions (Pro/Max/Team/Enterprise), this feature in Claude Code runs on usage credits only and does not count toward the plan's rate limits. Even if you have allowance left on your plan, charges come directly from usage credits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to turn on fast mode in the middle of a conversation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can use it, but when you first enable it, the fast mode rate for uncached input tokens is charged on the entire context of that conversation. The deeper the conversation, the higher the cost, so enabling it at the start of a session is the cheapest."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What causes \"Fast mode has been disabled by your organization\" when I run /fast?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs list these cases: fast mode isn't enabled for your organization; fastMode: false is set in managed settings; or /fast on was run outside an interactive terminal while fastModePerSessionOptIn: true is set in managed settings. Check with your admin."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-fast-mode/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code fast mode</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What fast mode is and what it can do</a></li>
+        <li><a href="#s2">How pricing works: unit prices and billing</a></li>
+        <li><a href="#s3">Where to check what you&#x27;ve used</a></li>
+        <li><a href="#s4">When to use it: splitting work between fast mode and standard mode</a></li>
+        <li><a href="#s5">Steps to enable it and prerequisites</a></li>
+        <li><a href="#s6">Notes for company-wide rollout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>What Claude Code fast mode is: how pricing works and when to use it</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Fast mode is a setting that makes Claude Opus responses up to 2.5x faster. Quality is the same, but the price per token is higher. As of writing (October 2026), it is a research preview, and features, pricing, and availability may change.</li>
+      <li>On subscriptions (Pro/Max/Team/Enterprise), it runs on usage credits only and does not count toward the plan's rate limits. For Team and Enterprise, an Owner must enable it first.</li>
+      <li>It suits quick iteration and live debugging, while standard mode is better for long autonomous tasks and CI/CD. If you roll it out company-wide, you can keep costs down with a per-session enablement setting.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What fast mode is and what it can do</h2>
+  <p>According to the official docs, fast mode is a setting in Claude Code (Anthropic's AI coding agent that runs in the terminal) for using Claude Opus at higher speed. It is up to 2.5x faster, in exchange for a higher price per token.</p>
+  <p>This uses Claude Opus with a different API configuration that prioritizes speed, rather than a different model. Quality and capabilities are the same. It is supported on Opus 5.5, Opus 5, and Opus 4.8, and not on models such as Sonnet or Haiku. Opus 4.7 is not supported, and fast mode turns off if you switch to it.</p>
+  <p>Because this is a research preview, features, pricing, and availability may change. Mention this when you announce it internally.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+  <h2 id="s2">How pricing works: unit prices and billing</h2>
+  <p>According to the official docs, fast mode has a higher per-token price than standard Opus. The prices per MTok are as follows.</p>
+  <ul>
+    <li>Opus 5.5: $8 input, $40 output</li>
+    <li>Opus 5: $10 input, $50 output</li>
+    <li>Opus 4.8: $10 input, $50 output</li>
+  </ul>
+  <p>The price is flat across the entire 1M-token context window. For a comparison with standard Opus, check the official pricing page.</p>
+  <p>One thing to note: when you first enable it in a conversation, the fast mode rate for uncached input tokens is charged on the entire context of that conversation. The deeper the conversation, the higher the cost, so enabling it at the start of a session is the cheapest. This cost applies once per conversation and is not repeated if you turn it off and on again.</p>
+  <p>On a subscription, fast mode is charged directly to usage credits even if your plan still has allowance remaining. In the Claude Console, your organization pays per token, as with other API usage.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+  <h2 id="s3">Where to check what you've used</h2>
+  <p>The official docs say to run <code>/status</code> first. If you see a <code>Login method</code> line, you're on a Claude subscription; if you see an <code>API key</code> line, you're billed through a Claude Console organization.</p>
+  <ul>
+    <li>Pro and Max: the Usage credits section under Settings &gt; Usage on claude.ai shows this month's spending. It includes fast mode usage, but that is not shown separately.</li>
+    <li>Team and Enterprise: paid from your organization's usage credits. You can check your own usage with <code>/usage</code>.</li>
+    <li>Claude Console: On the Usage and Cost pages, choose Speed (Research Preview) in the Group by menu to view them separately. You can select it only if there was fast mode usage during the period.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+  <h2 id="s4">When to use it: splitting work between fast mode and standard mode</h2>
+  <p>The official docs say it suits interactive work where response wait time matters more than cost.</p>
+  <ul>
+    <li>Fast iteration on code changes</li>
+    <li>Live debugging</li>
+    <li>Work with tight deadlines</li>
+  </ul>
+  <p>Standard mode suits long autonomous tasks where speed matters less, batch processing and CI/CD pipelines, and cost-sensitive work.</p>
+  <h3>How it differs from effort level</h3>
+  <p>Lowering the effort level reduces thinking time and speeds up responses, but quality may drop on complex tasks. Fast mode keeps the same quality and lowers latency, at a higher cost. You can also combine the two to get maximum speed on simple tasks.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+  <h2 id="s5">Steps to enable it and prerequisites</h2>
+  <h3>How to switch</h3>
+  <p>In the CLI, run <code>/fast</code>, press Space to toggle it on or off, and press Enter to confirm. You can also write <code>"fastMode": true</code> in your user settings file. While it's on, a small <code>↯</code> icon appears next to the prompt.</p>
+  <p>In the VS Code extension, the Toggle fast mode command is available if the selected model supports it. Turning it off keeps you on Opus, so use <code>/model</code> when you want to go back to a different model.</p>
+  <h3>Prerequisites</h3>
+  <ul>
+    <li>Only the Anthropic API or a subscription. It can't be used with Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS.</li>
+    <li>On subscriptions, you need to turn on usage credits. Until they are on, <code>/fast</code> reports "Fast mode requires usage credits". On Pro and Max, turn them on in the Usage credits field under Settings &gt; Usage or with <code>/usage-credits</code>. On Team and Enterprise, a member with billing permissions turns them on in Organization settings &gt; Usage.</li>
+    <li>Console requires a paid organization and can't be used on the free Evaluation plan. You also need to configure access provisioning.</li>
+    <li>On Team and Enterprise, this is disabled by default and can't be used until an Owner enables it.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+  <h2 id="s6">Notes for company-wide rollout</h2>
+  <p>To enable it, go to Claude Code preferences as an admin in Console, or Organization settings &gt; Claude Code as an Owner in Team and Enterprise. To disable it entirely, set <code>CLAUDE_CODE_DISABLE_FAST_MODE=1</code>.</p>
+  <p>By default, a setting you turn on in an interactive session persists across sessions. To keep costs down in organizations that run many sessions at once, set <code>fastModePerSessionOptIn</code> to <code>true</code> in the settings file. Each session then starts with it off, and you enable it explicitly with <code>/fast</code>.</p>
+<pre><code>{
+  "fastModePerSessionOptIn": true
+}</code></pre>
+  <p>Owners on Team and Enterprise can distribute this across the whole organization through server-managed settings. When you set this key in managed settings, <code>/fast on</code> is rejected outside interactive terminal sessions.</p>
+  <p>There are also limits and network caveats. Fast mode has its own rate limits separate from standard Opus, and the supported Opus models share one pool. When you hit the limit, it automatically falls back to standard speed and pricing, then becomes active again after a cooldown. In environments that block direct access to api.anthropic.com through an LLM gateway, the availability check can fail and you get standard speed. See the official docs for workarounds.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is fast mode included in my Pro or Max usage allowance?</summary>
+      <p>No, it isn't included. According to the official docs, on subscriptions (Pro/Max/Team/Enterprise), this feature in Claude Code runs on usage credits only and does not count toward the plan's rate limits. Even if you have allowance left on your plan, charges come directly from usage credits.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+    </details>
+    <details>
+      <summary>Is it safe to turn on fast mode in the middle of a conversation?</summary>
+      <p>You can use it, but when you first enable it, the fast mode rate for uncached input tokens is charged on the entire context of that conversation. The deeper the conversation, the higher the cost, so enabling it at the start of a session is the cheapest.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+    </details>
+    <details>
+      <summary>What causes "Fast mode has been disabled by your organization" when I run <code>/fast</code>?</summary>
+      <p>The official docs list these cases: fast mode isn't enabled for your organization; <code>fastMode: false</code> is set in managed settings; or <code>/fast on</code> was run outside an interactive terminal while <code>fastModePerSessionOptIn: true</code> is set in managed settings. Check with your admin.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/fast-mode" rel="noopener">Speed up responses with fast mode</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-model-select/index.html">How to choose and switch models in Claude Code (/model and settings)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-reduce-tokens/index.html">How to Reduce Claude Code Token Usage and Check Your Usage</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

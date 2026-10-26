@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Use Claude Code Plan Mode: Review the Plan Before Any Edits | Chuki DX Lab</title>
+<meta name="description" content="Based on the official docs, this guide covers how to enter Claude Code&#x27;s plan mode, how to approve and edit a plan, how to make it the default, and when to use it, as points to settle before you try it at your company.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plan-mode/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plan-mode/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plan-mode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to Use Claude Code Plan Mode: Review the Plan Before Any Edits">
+<meta property="og:description" content="Based on the official docs, this guide covers how to enter Claude Code&#x27;s plan mode, how to approve and edit a plan, how to make it the default, and when to use it, as points to settle before you try it at your company.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plan-mode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plan-mode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to Use Claude Code Plan Mode: Review the Plan Before Any Edits">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plan-mode.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Use Claude Code Plan Mode: Review the Plan Before Any Edits",
+  "description": "Based on the official docs, this guide covers how to enter Claude Code's plan mode, how to approve and edit a plan, how to make it the default, and when to use it, as points to settle before you try it at your company.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plan-mode/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to use plan mode",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plan-mode/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does Claude edit source files while in plan mode?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, Claude reads files, runs shell commands for investigation, and writes a plan, but does not edit source. Edits are blocked until you approve the plan. The exception is an interactive terminal session where bypass permissions are available."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I exit plan mode without approving the plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Press Shift+Tab again. Approving a plan also exits plan mode, but in that case it switches to the permission mode that the option you chose indicates, and Claude starts making edits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use plan mode even for small fixes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official best practices say to ask directly when the scope is clear and the fix is small (fixing a typo, adding a log line, renaming a variable). If you can describe the diff in one sentence, they say to skip the plan."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-plan-mode/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to use plan mode</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do in plan mode</a></li>
+        <li><a href="#s2">How to enter and exit plan mode</a></li>
+        <li><a href="#s3">Reviewing, approving, and editing plans</a></li>
+        <li><a href="#s4">Setting plan mode as the default</a></li>
+        <li><a href="#s5">What kinds of changes to use it for: the approach the official docs recommend</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to Use Claude Code Plan Mode: Review the Plan Before Any Edits</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, plan mode is a mode in which Claude Code (an AI coding agent from Anthropic that runs in the terminal) reads and investigates files, then presents proposed changes as a plan. Source edits are blocked until you approve the plan (except in interactive terminal sessions where bypass permissions are available).</li>
+      <li>You can enter it with <code>Shift+Tab</code>, <code>/plan</code> at the start of the prompt, or <code>claude --permission-mode plan</code> at launch. Before approving, you can press <code>Ctrl+G</code> to edit the plan directly in a text editor.</li>
+      <li>Planning also adds effort, so the official docs say to use it when the approach is uncertain or the change spans multiple files, and to skip it for small fixes whose diff you can describe in one sentence.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do in plan mode</h2>
+  <p>This article is based on the official docs as of writing (October 2026). Displays and behavior may vary by environment, so check the latest official docs before rolling this out.</p>
+  <p>According to the official docs, plan mode is for investigating and proposing without making changes. Claude reads files, runs shell commands for research, and writes a plan, but does not edit source files. Edits stay blocked until you approve the plan. The exception is an interactive terminal session where bypass permissions are available.</p>
+  <h3>How shell commands are handled during planning</h3>
+  <p>The official docs state that how shell commands in a plan are handled varies by session, and the first of the following that applies is used.</p>
+  <ol>
+    <li>Interactive terminal sessions where bypass permissions is available: neither the classifier (a separate model that vets actions before they run) nor confirmation prompts apply to planned commands.</li>
+    <li>When auto mode (a mode that runs without routine permission prompts) is available and the <code>useAutoModeDuringPlan</code> setting is on (the default): a classifier reviews shell commands, except deletions of critical paths, instead of showing a confirmation prompt. Approved commands run, and rejected ones are blocked.</li>
+    <li>If auto mode is unavailable or <code>useAutoModeDuringPlan</code> is off, you get an approval prompt for anything other than the built-in read-only commands. The same applies when sandbox auto-allow mode is enabled.</li>
+  </ol>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s2">How to enter and exit plan mode</h2>
+  <p>According to the official docs, you enter plan mode by pressing <code>Shift+Tab</code> or by putting <code>/plan</code> at the start of a single prompt. You can also start in plan mode from the CLI.</p>
+<pre><code>claude --permission-mode plan</code></pre>
+  <p>While in plan mode, the status bar shows <code>⏸ plan mode on</code>. To exit without approving, press <code>Shift+Tab</code> again.</p>
+  <p>The <code>Shift+Tab</code> cycle order is: the first press from <code>auto</code> goes to <code>default</code>, then it continues <code>default</code> → <code>acceptEdits</code> → <code>plan</code>.</p>
+  <h3>Differences by interface</h3>
+  <ul>
+    <li>VS Code: click the mode indicator at the bottom of the prompt box and select Plan.</li>
+    <li>JetBrains: It runs in the IDE's terminal, so it works the same way as the CLI.</li>
+    <li>Web and mobile: the mode selection for cloud sessions includes Plan.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s3">Reviewing, approving, and editing plans</h2>
+  <p>Once the plan is ready, Claude presents it and asks how to proceed. You can choose from the following three options.</p>
+  <ul>
+    <li><strong>Yes, and use auto mode</strong>: Approves and starts in auto mode. If auto mode is unavailable, for example because your organization has disabled it, this appears as <strong>Yes, auto-accept edits</strong>. If you started with bypass permissions enabled, it appears as <strong>Yes, and switch to BYPASS PERMISSIONS (no further prompts) for this session</strong>.</li>
+    <li><strong>Yes, manually approve edits</strong>: Approve and review the edits one by one.</li>
+    <li><strong>No, keep planning</strong>: Stays in plan mode, and you tell Claude what you want changed.</li>
+  </ul>
+  <p>When you approve, Claude exits plan mode, switches to the permission mode indicated by the option you chose, and starts editing. To have it plan again, return to plan mode with <code>Shift+Tab</code>, or start your next prompt with <code>/plan</code>.</p>
+  <p>Press <code>Ctrl+G</code> to open the proposed plan in your default text editor and edit it directly before Claude proceeds. When <code>showClearContextOnPlanAccept</code> is enabled, an option to approve the plan and clear the planning context is added at the top.</p>
+  <p>When you approve a plan, the session gets a title generated from the plan, unless you have already named the session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s4">Setting plan mode as the default</h2>
+  <p>To make plan mode the project default in a terminal session, set <code>defaultMode</code> to <code>plan</code> in <code>.claude/settings.json</code>. Follow the example in "Start in a different permission mode" in the official docs for the exact syntax.</p>
+  <p>Conversations started by the VS Code extension do not read the project settings for the starting permission mode. In that case, set <code>claudeCode.initialPermissionMode</code> to <code>plan</code> in your VS Code user settings.</p>
+  <h3>Notes when you select Plan from the UI</h3>
+  <ul>
+    <li>VS Code: If you pick Plan from the mode indicator, it applies only to that conversation.</li>
+    <li>Desktop app: If you choose Plan, it applies only to the current session.</li>
+  </ul>
+  <p>For details on the other places where settings can live, check the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s5">What kinds of changes to use it for: the approach the official docs recommend</h2>
+  <p>The official best practices explain that having Claude write code right away can produce code that solves the wrong problem, so you should separate investigation from execution using plan mode. The flow has four stages.</p>
+  <ol>
+    <li>Explore: Enter plan mode and have Claude read files to answer your questions. It makes no changes.</li>
+    <li>Plan: Claude creates a detailed implementation plan. You can edit it directly with <code>Ctrl+G</code>.</li>
+    <li>Implementation: approve the plan or press <code>Shift+Tab</code> to leave plan mode, then have Claude write the code while you check it against the plan.</li>
+    <li>Commit: Ask Claude to commit with a clear message and create a PR.</li>
+  </ol>
+  <p>However, the official docs note that plan mode also has overhead. For small fixes with a clear scope, such as correcting a typo, adding log output, or renaming a variable, ask directly. A plan helps when you're unsure how to proceed, when changing multiple files, or when working in unfamiliar code. If you can describe the diff in one sentence, skip the plan.</p>
+  <p>The official common workflows also explain that you should switch to plan mode for changes you want to review before they are applied to disk. If you are corporate IT rolling this out company-wide, communicating the criteria for when to use each mode helps avoid confusion.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does Claude edit source files while in plan mode?</summary>
+      <p>According to the official docs, Claude reads files, runs shell commands for investigation, and writes a plan, but does not edit source. Edits are blocked until you approve the plan. The exception is an interactive terminal session where bypass permissions are available.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>How do I exit plan mode without approving the plan?</summary>
+      <p>Press <code>Shift+Tab</code> again. Approving a plan also exits plan mode, but in that case it switches to the permission mode that the option you chose indicates, and Claude starts making edits.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>Should I use plan mode even for small fixes?</summary>
+      <p>The official best practices say to ask directly when the scope is clear and the fix is small (fixing a typo, adding a log line, renaming a variable). If you can describe the diff in one sentence, they say to skip the plan.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-md-vs-settings-json/index.html">CLAUDE.md vs. settings.json: what to put in each</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-best-practices/index.html">Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

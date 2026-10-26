@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 Common Problems When Using Claude Code on Windows, and How to Fix Them | Chuki DX Lab</title>
+<meta name="description" content="This guide explains 10 common pitfalls when using Claude Code on Windows or rolling it out company-wide, with symptoms, causes, and fixes. It covers garbled PowerShell scripts (BOM), execution policy, garbled CSVs in Excel, allow rules not taking effect, reads that slip past deny, and whether Git for Windows is installed.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-windows-pitfalls/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-windows-pitfalls/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-windows-pitfalls/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="10 common problems when using Claude Code on Windows, and how to fix them">
+<meta property="og:description" content="This guide covers 10 problems that commonly come up on Windows, each with symptom, cause, and fix: garbled PowerShell output, execution policy, CSV BOM, allow rules not taking effect, and more.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-windows-pitfalls/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-windows-pitfalls.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="10 common problems when using Claude Code on Windows, and how to fix them">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-windows-pitfalls.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "10 common problems when using Claude Code on Windows, and how to fix them",
+  "description": "A guide to 10 common stumbling blocks when using Claude Code on Windows or rolling it out company-wide, with symptoms, causes, and fixes.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-windows-pitfalls/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "10 Windows pitfalls",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-windows-pitfalls/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does installation require administrator privileges?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, on Windows you can install from PowerShell or CMD, and you don't need to run it as administrator. However, check separately whether your company requires an application for installing software."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use WSL or native Windows?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you want to use the sandbox, choose WSL 2. If you mainly work with Excel and PowerShell business files, native Windows combined with Git for Windows is an easy setup to start with. Decide based on the conditions of the PCs you distribute within your company."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I have a symptom that isn't listed here",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "First, run claude doctor to check for installation or configuration problems. Also see the cheat sheet, where you can look things up by symptom."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-windows-pitfalls/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">10 Windows pitfalls</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#shell">Shell and PowerShell</a></li>
+        <li><a href="#encoding">Character encoding and Excel</a></li>
+        <li><a href="#permissions">Permissions</a></li>
+        <li><a href="#usage">Usage and environment</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (official docs, as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>10 common problems when using Claude Code on Windows, and how to fix them</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-14">October 14, 2026</time> ・ Chuki DX Lab ・ Verified on a real machine with Windows 11 and Claude Code 2.1.296 (October 2026)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Most Windows problems come down to three things: <strong>character encoding (BOM)</strong>, the <strong>PowerShell execution policy</strong>, and the <strong>folder you launch from</strong>.</li>
+      <li>For permission settings, keep two points in mind: allow doesn't take effect until you accept the folder trust prompt, and deny doesn't block reads made through scripts.</li>
+      <li>Before you distribute it company-wide, try the 10 items in this article once on your own PC. It will cut down on questions.</li>
+    </ul>
+  </section>
+
+  <p>Claude Code (Anthropic's AI coding agent that runs in the terminal) also runs on Windows, but if you follow guides written for macOS or Linux, you can get stuck in unexpected places. This article covers 10 items, limited to things that actually happened in Chuki DX Lab's testing and training preparation or that I confirmed in the official docs, organized as symptom, cause, and fix.</p>
+
+  <h2 id="shell">Shell and PowerShell</h2>
+
+  <h3 id="p1">1. Commands run in PowerShell instead of Bash</h3>
+  <p><strong>Cause</strong>: According to the official docs, on a PC without Git for Windows, Claude Code runs shell commands in PowerShell. Once you install Git for Windows, they run in Git Bash.</p>
+  <p><strong>Fix</strong>: If you use Bash-based procedures, install Git for Windows. The official docs also state that even when Git for Windows is present, the PowerShell tool is available by default alongside it for claude.ai and Console accounts. So in your permission settings, write PowerShell rules such as <code>PowerShell(Invoke-WebRequest *)</code> as well as <code>Bash(curl *)</code>. Standardizing the requirements of the PCs you distribute internally reduces mismatches in procedures.</p>
+
+  <h3 id="p2">2. Japanese text in PowerShell scripts is garbled or causes syntax errors</h3>
+  <p><strong>Cause</strong>: Windows PowerShell 5.1 reads UTF-8 scripts without a BOM (a byte order mark, a marker at the start of a file that identifies its encoding) as a different character encoding.</p>
+  <p><strong>Fix</strong>: Re-save the script as UTF-8 with BOM. When you have Claude Code create a script, include "save as UTF-8 with BOM" in your request.</p>
+
+  <h3 id="p3">3. You see "running scripts is disabled on this system"</h3>
+  <p><strong>Cause</strong>: It is blocked by the PowerShell execution policy.</p>
+  <p><strong>Fix</strong>: Run the script in the form <code>powershell -NoProfile -ExecutionPolicy Bypass -File script-name.ps1</code>. This setting applies only to that single run and does not change the PC's settings.</p>
+
+  <h2 id="encoding">Character encoding and Excel</h2>
+
+  <h3 id="p4">4. CSV files it generates show garbled text when opened in Excel</h3>
+  <p><strong>Cause</strong>: The CSV was saved as UTF-8 without a BOM. Even if it displayed correctly once, re-saving it in another tool can remove the BOM.</p>
+  <p><strong>Fix</strong>: In your request, say "save as UTF-8 with BOM so it opens in Excel." If writing that every time is a hassle, add one line to the rules section of CLAUDE.md.</p>
+
+  <h3 id="p5">5. The first column name of a CSV read in Python doesn't match</h3>
+  <p><strong>Cause</strong>: The BOM at the start of the file is read as part of the first column's name. You can't see it by looking at the file.</p>
+  <p><strong>Fix</strong>: Ask it to read the file with <code>encoding="utf-8-sig"</code> specified in the script. It helps to think of cases 4 and 5 as combinations of "write with a BOM" and "skip the BOM when reading."</p>
+
+  <h2 id="permissions">Permissions</h2>
+
+  <h3 id="p6">6. A command is in allow, but I still get a confirmation prompt every time</h3>
+  <p><strong>Cause</strong>: You have not yet accepted the workspace trust prompt for that folder. According to the official docs, allow rules in the project's <code>.claude/settings.json</code> are not used until you accept, while deny and ask rules take effect regardless of trust. When you run <code>claude -p</code>, you may see a warning that allow rules were ignored.</p>
+  <p><strong>Fix</strong>: Start <code>claude</code> once in that folder in an interactive screen and approve the trust prompt. After you distribute the settings, have each user do this once.</p>
+
+  <h3 id="p7">7. A .env file listed in deny can still be read through a script</h3>
+  <p><strong>Cause</strong>: A Read deny applies to Claude's read tool and to commands like <code>cat</code>, but not to scripts that open files on their own. This is documented behavior in the official docs. Also, as of writing, the sandbox that blocks access at the OS level is not available on native Windows, and is described as available on WSL 2.</p>
+  <p><strong>What to do</strong>: As a baseline, don't put real API keys or real data in your working folder. If you need a stronger block, consider sandboxing with WSL 2 or managed settings that users cannot override.</p>
+
+  <h2 id="usage">Usage and environment</h2>
+
+  <h3 id="p8">8. "File not found" errors</h3>
+  <p><strong>Cause</strong>: You started Claude Code outside the folder you want to work in. Claude Code works from the folder where it was started.</p>
+  <p><strong>Fix</strong>: Use <code>cd</code> to move to the folder you want to work in, then restart. For training sessions, make sure everyone starts from the same folder.</p>
+
+  <h3 id="p9">9. Response tendencies differ between your PC and other people's PCs</h3>
+  <p><strong>Cause</strong>: Your personal <code>~/.claude/CLAUDE.md</code> (personal instructions that apply to every project) is loaded as well. This can show up as an extra sentence you never asked for at the end of a reply.</p>
+  <p><strong>What to do</strong>: Before training or rollout, run your checks with an account that has the same conditions as the end users. Move anything you want the team to share into the project's CLAUDE.md.</p>
+
+  <h3 id="p10">10. Running the script shows "python not found"</h3>
+  <p><strong>Cause</strong>: Python is not installed, or it is not in your PATH (the list of places the shell searches for commands).</p>
+  <p><strong>Fix</strong>: Try running the script with the Windows Python launcher, as in <code>py -3 script_name.py</code>. If that still doesn't work, install Python. Before you distribute it, it's a good idea to check that your users' PCs have Python.</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does installation require administrator privileges?</summary>
+      <p>According to the official docs, on Windows you can install from PowerShell or CMD, and you don't need to run it as administrator. However, check separately whether your company requires an application for installing software.</p>
+    </details>
+    <details>
+      <summary>Should I use WSL or native Windows?</summary>
+      <p>If you want to use the sandbox, choose WSL 2. If you mainly work with Excel and PowerShell business files, native Windows combined with Git for Windows is an easy setup to start with. Decide based on the conditions of the PCs you distribute within your company.</p>
+    </details>
+    <details>
+      <summary>I have a symptom that isn't listed here</summary>
+      <p>First, run <code>claude doctor</code> to check for installation or configuration problems. Also see the cheat sheet, where you can look things up by symptom.</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">A cheat sheet you can look up by symptom</h2>
+    <p>The <a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet (for Windows and corporate IT)</a> lets you filter issues, including the 10 in this article, by keyword and category. Each row has a source and a note on whether it happened on a real machine or was confirmed in the official docs.</p>
+  </section>
+
+  <h2 id="refs">References (official docs, as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Set up Claude Code</a> (installing on Windows, and whether Git for Windows is present and which shell is used)</li>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (trust verification, and the scope where allow and deny don't take effect)</li>
+    <li><a href="https://code.claude.com/docs/en/sandboxing" rel="noopener">Sandboxing</a> (supported environments)</li>
+    <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (how <code>~/.claude/CLAUDE.md</code> is handled)</li>
+  </ul>
+  <p class="hint">Specifications can change. Before you roll this out company-wide, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-training-nonengineers/index.html">How to teach Claude Code to non-engineers such as general affairs and accounting staff</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

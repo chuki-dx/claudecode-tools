@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Teach Claude Code to Non-Engineers Such as General Affairs and Accounting Staff | Chuki DX Lab</title>
+<meta name="description" content="This guide explains how to teach Claude Code to general affairs and accounting staff who don&#x27;t program. It covers three things that tend to happen when you hand it over without training, how to structure three 90-minute sessions, judging results with fictional data and clear criteria, and the order in which to expand usage and how to record the results.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-training-nonengineers/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-training-nonengineers/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-training-nonengineers/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to teach Claude Code to non-engineers such as general affairs and accounting staff">
+<meta property="og:description" content="This covers what tends to happen when you hand out the tool without training, how to structure three 90-minute sessions, judging with fictional data and &quot;criteria,&quot; and the order of expansion and how to record the results.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-training-nonengineers/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-training-nonengineers.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to teach Claude Code to non-engineers such as general affairs and accounting staff">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-training-nonengineers.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to teach Claude Code to non-engineers such as general affairs and accounting staff",
+  "description": "A guide to structuring Claude Code training for employees who don't program, including how to judge results, the order in which to expand, and how to record the effects.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-training-nonengineers/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to teach non-engineers",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-training-nonengineers/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "I can't spare time for three sessions. Can you combine them into one?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can combine them, but I recommend not skipping the practice of reading confirmation screens and the practice of checking results. For the third session, \"build one for your own work,\" you could also move it to an individual consultation later."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I install on attendees' PCs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A template for Claude Code and a working folder shared by everyone. On Windows, it's easy to get tripped up by garbled characters, execution policy, and the like, so before the training, verify that it works with the same steps as the instructor's PC. That way you can spend the day itself on practice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do you do if a trainee tries to use real data during training?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Stop right there and review together the one-page internal rule on information that must not be shared. Deciding up front that it won't be used outside the practice folder makes it easier to stop."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-training-nonengineers/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to teach non-engineers</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#problem">Distributing settings alone won&#x27;t keep people using it</a></li>
+        <li><a href="#why-not-once">Why a single training session isn&#x27;t enough</a></li>
+        <li><a href="#plan">How to structure three 90-minute sessions</a></li>
+        <li><a href="#prepare">What the instructor should prepare in advance</a></li>
+        <li><a href="#spread">The order to expand after training</a></li>
+        <li><a href="#measure">Record perceived effects and measured effects separately</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (official docs, as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to teach Claude Code to non-engineers such as general affairs and accounting staff</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-14">October 14, 2026</time> · Chuki DX Lab · Parts that touch on product specifications are based on the official docs as of writing (October 2026)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>When handing this to people who don't program, don't just distribute the settings. Have them practice <strong>how to ask, how to read confirmation prompts, and how to check results</strong>.</li>
+      <li>Split the training into <strong>three 90-minute sessions</strong> (basic operations and safe folders → organizing and summarizing work files → building one thing for your own work), and practice using only fictional data.</li>
+      <li>Judge the exercise by <strong>verifiable conditions</strong> such as counts and totals, not by the AI's wording. When you expand, go in this order: yourself → a small group → the department.</li>
+    </ul>
+  </section>
+
+  <h2 id="problem">Distributing settings alone won't keep people using it</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) is starting to be used by people who don't program. As corporate IT, it's tempting to think you're ready once you've standardized and distributed permission settings and CLAUDE.md (a file of instructions read at startup).</p>
+  <p>Settings can block files you don't want read and commands you don't want run. But some things settings can't stop. When you hand Claude Code over with no training, these three problems are the most likely to occur.</p>
+  <ol>
+    <li><strong>Approving without reading the confirmation prompt</strong>: Claude Code asks for confirmation before actions such as modifying files. If you keep approving without understanding what it means, you won't notice when an original file gets overwritten.</li>
+    <li><strong>Handing over real data as-is</strong>: Letting it read real invoice or attendance data "just to try." Settings can only block the folders and files you have decided on in advance.</li>
+    <li><strong>Using results without checking them</strong>: Using totals or lists produced by AI without comparing them to the source data. You only notice a mistake when someone points it out later.</li>
+  </ol>
+  <p>Once people get stuck like this, they tend to decide "it's scary after all" and stop using it. Many of you may recognize situations like this in your own company.</p>
+
+  <h2 id="why-not-once">Why a single training session isn't enough</h2>
+  <p>A common format is a single study session that introduces all the features. However, how to read confirmation screens and how to check results are not skills you pick up just by listening. You need hands-on experience operating it yourself and catching mistakes.</p>
+  <p>To do that, you need practice materials that participants can try as many times as they like without bringing in real data, and criteria that let the instructor judge on the spot whether they did it correctly.</p>
+
+  <h2 id="plan">How to structure three 90-minute sessions</h2>
+  <p>The training is split into three 90-minute sessions so it can run on three consecutive days or once a week.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">times</th><th scope="col">Topic</th><th scope="col">What to practice</th><th scope="col">Takeaways</th></tr></thead>
+      <tbody>
+        <tr><td>Session 1</td><td>Basic operations and safe folders</td><td>Starting and quitting, having it read files, reading confirmation screens</td><td>A one-page set of internal rules</td></tr>
+        <tr><td>Second time</td><td>Organizing and tallying business files</td><td>Checking CSVs, aggregating, matching records, and organizing file names</td><td>How the tally works and how to verify the results</td></tr>
+        <tr><td>Third time</td><td>Build one for your own work</td><td>Turn work notes into a request and build one mechanism</td><td>Your own work notes and request text</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="rule-fake-data">Practice only with fictional data</h3>
+  <p>Make the training folder and sample files re-creatable, for example with a script. If participants can restore the initial state after a failure, they can try declining and redoing without worry. Keeping real data out of the exercise also doubles as practice for your internal rules.</p>
+
+  <h3 id="rule-conditions">Judge the right answer by "conditions"</h3>
+  <p>AI responses are not the same every time. If you define the correct answer by exact wording, the instructor will struggle to judge. Instead, judge by conditions that participants can check themselves, such as "there are 4 departments," "the total is ¥X," or "the original file is unchanged." This also builds the habit of checking results against the original data.</p>
+
+  <h3 id="rule-own-work">For the third try, use your own work as the subject</h3>
+  <p>Ask participants beforehand to write down one task they repeat every month, and use it as the material. When the exercise is based on their own work, they're more likely to keep using the tool after the training. Also have them note in the work memo whether the data is OK to give to an AI, which doubles as a check of the rules.</p>
+
+  <h2 id="prepare">What the instructor should prepare in advance</h2>
+  <ul>
+    <li><strong>A one-page internal rule sheet</strong>: which accounts are OK to use, what information must never be handed over, and who to ask when unsure. Read it together at the start and make the message clear: "when in doubt, don't hand it over; ask first."</li>
+    <li><strong>A working-folder template</strong>: a folder containing a <code>.claude/settings.json</code> that defines things like which files Claude shouldn't read, plus a short <code>CLAUDE.md</code>. If everyone starts from the same template, you avoid ending up with different settings for each person.</li>
+    <li><strong>Fictional sample data</strong>: files shaped like real work data, such as rosters, billing and payments, and attendance records.</li>
+    <li><strong>Where to log stumbling points</strong>: Write down the problems that come up during training, and use them to improve the next session and the template.</li>
+  </ul>
+
+  <h2 id="spread">The order to expand after training</h2>
+  <p>If you announce it to the whole company at once, inquiries pile up and corporate IT cannot keep up. Roll it out in stages instead: corporate IT uses it first, then 2 to 3 interested people, then their departments. This way a small group becomes approachable go-to people. For the first small group, choosing people who have repetitive manual work makes the results easier to see.</p>
+  <p>To keep people using it, decide on one place for them to post questions. When the same question comes up again, reflect the answer in the procedure document or template. If you fix a template, the change won't automatically reach folders you've already distributed, so announce what changed in the question channel.</p>
+  <p>If your organization has rules that must always be followed, the official docs describe distributing them through managed settings, which users cannot override. With a small team, it's fine to start with a template and consider managed settings once headcount grows.</p>
+
+  <h2 id="measure">Record perceived effects and measured effects separately</h2>
+  <p>As you expand usage, people will ask how much it helped. Don't mix up perceived benefit with measured results. "It got easier" is true for the person saying it, but if you convert that into a time figure with no basis, you'll struggle when someone asks you to explain it.</p>
+  <p>If you want to measure it, record the manual time two or three times before replacing the task. For the time after replacement, include the time to check the results and the time to deal with failures. Put effects that are hard to quantify in a separate column, noting clearly that they are subjective impressions.</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>I can't spare time for three sessions. Can you combine them into one?</summary>
+      <p>You can combine them, but I recommend not skipping the practice of reading confirmation screens and the practice of checking results. For the third session, "build one for your own work," you could also move it to an individual consultation later.</p>
+    </details>
+    <details>
+      <summary>What should I install on attendees' PCs?</summary>
+      <p>A template for Claude Code and a working folder shared by everyone. On Windows, it's easy to get tripped up by garbled characters, execution policy, and the like, so before the training, verify that it works with the same steps as the instructor's PC. That way you can spend the day itself on practice.</p>
+    </details>
+    <details>
+      <summary>What do you do if a trainee tries to use real data during training?</summary>
+      <p>Stop right there and review together the one-page internal rule on information that must not be shared. Deciding up front that it won't be used outside the practice folder makes it easier to stop.</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Tools for preparing training</h2>
+    <p>For the <code>CLAUDE.md</code> you put in your working-folder template, the <a href="../../claude-md-generator/index.html">CLAUDE.md Template Generator</a> builds a draft from your selections. For common stumbling blocks during training (garbled characters, prompts appearing even though you allowed something, and so on), the <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a> lets you look up causes and fixes by symptom.</p>
+  </section>
+
+  <h2 id="refs">References (official docs, as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (actions that ask for confirmation, permission rules)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a> (where settings files go, and managed settings)</li>
+  </ul>
+  <p class="hint">Specifications can change. Before you plan training, check the official docs for the latest information.</p>
+  <p>The prompts and pass criteria for all 10 exercises, the setup script that creates the sample data, the instructor's schedule, and the troubleshooting table are collected here: <a href="https://note.com/chuki_dx_note/n/n77dcb062f5fc" rel="noopener">3-day training kit before handing Claude Code to general affairs and accounting staff (paid article, ¥1,480; Japanese)</a></p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-company-checklist/index.html">What to check before trying Claude Code at work (plan, PC, network, company rules)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Agent Teams: When to Use Them, How to Start, and Limits | Chuki DX Lab</title>
+<meta name="description" content="This guide summarizes, based on the official docs, when to use Claude Code agent teams, how they differ from subagents, how to enable them, and their limitations. It is meant as input for corporate IT before trying them internally.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agent-teams/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agent-teams/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-agent-teams/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="What Claude Code agent teams are: when to use them, how to start, and limitations">
+<meta property="og:description" content="This guide summarizes, based on the official docs, when to use Claude Code agent teams, how they differ from subagents, how to enable them, and their limitations. It is meant as input for corporate IT before trying them internally.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agent-teams/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-agent-teams.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="What Claude Code agent teams are: when to use them, how to start, and limitations">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-agent-teams.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What Claude Code agent teams are: when to use them, how to start, and limitations",
+  "description": "This guide summarizes, based on the official docs, when to use Claude Code agent teams, how they differ from subagents, how to enable them, and their limitations. It is meant as input for corporate IT before trying them internally.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agent-teams/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Agent Teams",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-agent-teams/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I choose between agent teams and subagents?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, use subagents for focused tasks where only the result matters, and agent teams for complex work where teammates need to share findings, challenge each other, and coordinate on their own. Teams consume more tokens."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A teammate starts up even though I didn't ask for one. What should I do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While it's enabled, subagents that Claude gives names to start as teammates. Setting CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS to 0 returns to starting them as subagents. Also check that it isn't set to 1 in another settings source."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to teammates when I resume a session?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, /resume and /rewind do not restore in-process teammates. The lead may try to message teammates that no longer exist, so in that case tell it to start new teammates."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-agent-teams/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code Agent Teams</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What kinds of tasks it suits</a></li>
+        <li><a href="#s2">Differences from subagents</a></li>
+        <li><a href="#s3">Enabling it and creating your first team</a></li>
+        <li><a href="#s4">Operating tips</a></li>
+        <li><a href="#s5">Limits and troubleshooting</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>What Claude Code agent teams are: when to use them, how to start, and limitations</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Agent teams are a feature of Claude Code (Anthropic's AI coding agent that runs in the terminal) in which multiple sessions split up roles, work in parallel, and send messages to each other. According to the official docs, it is experimental and disabled by default.</li>
+      <li>It suits research and review, splitting up features, and debugging where competing hypotheses are tested. It is a poor fit for sequential work or editing the same file, and it uses considerably more tokens than a single session.</li>
+      <li>To enable it, you just set the environment variable to <code>1</code>, and you make requests in natural language. The official recommendation is to start with about 3-5 people and try research and review tasks that don't involve writing code.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What kinds of tasks it suits</h2>
+  <p>According to the official docs, agent teams are most effective for work where exploring in parallel adds real value. The four best-suited cases are:</p>
+  <ul>
+    <li>Research and review: multiple teammates investigate different aspects of a problem at the same time, share their findings, and check each other's work</li>
+    <li>New modules or features: each one has its own part, so they don't step on each other's work</li>
+    <li>Debugging with competing hypotheses: try different hypotheses in parallel to converge on an answer faster</li>
+    <li>Coordination across layers: separate teammates handle changes that span the frontend, backend, and tests</li>
+  </ul>
+  <p>On the other hand, coordination takes more effort and uses significantly more tokens than a single session. For sequential work, edits to the same file, or work with many dependencies, a single session or a subagent (a worker that returns results to the main agent) is said to be more effective.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s2">Differences from subagents</h2>
+  <p>According to the official docs, both can parallelize work, but they behave differently. Subagents return their results to the main agent. In teams, teammates pick up work from a shared task list and communicate directly with each other.</p>
+  <ul>
+    <li>Context: each has its own context window</li>
+    <li>Best uses: subagents suit focused tasks where only the result matters; teams suit complex work that needs discussion and collaboration.</li>
+    <li>Token cost: subagents are lower because their results are summarized before being returned; teams are higher because each teammate is a separate Claude instance</li>
+  </ul>
+  <p>The distinction is: use a subagent if you want a worker that reports back quickly, and use a team if you need to share findings, challenge each other, or coordinate autonomously.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s3">Enabling it and creating your first team</h2>
+  <p>According to the official docs, agent teams are disabled by default. Setting the environment variable <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code> to <code>1</code> enables them, and you can set it either in the shell environment or in settings.json.</p>
+<pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}</code></pre>
+  <p>There are two caveats. When this is enabled, subagents that Claude names are launched as teammates, so a team can appear even if you didn't ask for one. Also, launching teammates requires an interactive session. In non-interactive mode with the <code>-p</code> flag (including Agent SDK sessions), they don't launch and run as regular subagents instead.</p>
+  <p>To use it, describe the task and the team composition in natural language. The official example is described as a good fit because the three roles can explore without waiting for one another.</p>
+<pre><code>I'm designing a CLI tool that helps developers track TODO comments across
+their codebase. Spawn three teammates to explore this from different angles:
+one on UX, one on technical architecture, one playing devil's advocate.</code></pre>
+  <p>In a session that has the Task tool, Claude creates a shared task list, starts a teammate for each perspective, and summarizes their findings when they finish. Sometimes it uses subagents instead of a team, and the agent panel lists both, so you can't tell from the panel alone whether you have a team. In that case, ask again and explicitly request an agent team. Select a teammate with the up and down arrow keys, then press Enter to open its transcript and send it a message directly.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s4">Operating tips</h2>
+  <ul>
+    <li>Pass context: Teammates automatically load CLAUDE.md, MCP servers, and skills, but they do not inherit the lead's conversation history. Put task-specific information in the request you give them when they start</li>
+    <li>Number of people: There is no strict limit, but tokens grow in proportion to headcount and coordination effort increases too. In most cases, start with 3-5 people</li>
+    <li>Task granularity: if tasks are too small, the coordination overhead outweighs the benefit; if they are too large, agents can run for a long time without checking in and waste effort. Units with a clear deliverable, such as a function, a test file, or a review, work well.</li>
+    <li>File conflicts: if two people edit the same file, one overwrites the other. Assign files to each person separately</li>
+    <li>Start with research and review: Starting with tasks that don't involve writing code, such as reviewing PRs or researching libraries, lets you see the benefits without the coordination difficulty of parallel implementation</li>
+    <li>Watch: if you leave it running too long, the risk of wasted work goes up. Check progress and correct course as needed.</li>
+  </ul>
+  <p>If the lead starts implementing on its own instead of waiting, tell it the following sentence.</p>
+<pre><code>Wait for your teammates to complete their tasks before proceeding</code></pre>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+  <h2 id="s5">Limits and troubleshooting</h2>
+  <p>As of writing (October 2026), the official docs describe agent teams as an experimental feature with the following limitations.</p>
+  <ul>
+    <li><code>/resume</code> and <code>/rewind</code> do not restore in-process teammates. After resuming, tell the lead to start new teammates.</li>
+    <li>Task status can lag, and if a completion isn't recorded, dependent tasks get stuck. Check whether the work is actually done, then update the status manually or ask the lead to nudge it.</li>
+    <li>Each session can have only one team. You cannot nest teams or promote a teammate to lead.</li>
+    <li>Split panes require tmux or iTerm2. The default in-process mode works in any terminal, but split panes are not supported in the VS Code integrated terminal, Windows Terminal, or Ghostty</li>
+  </ul>
+  <p>Operationally, teammates' permission requests bubble up to the lead and get cumbersome, so pre-approving common operations in your permission settings before launch reduces interruptions. When a teammate stops on an error, select it in the panel to check its output, then give additional instructions or start a replacement teammate. If the lead decides it is finished before all tasks are complete, tell it to continue.</p>
+  <p>If you want to avoid teams being created unintentionally, set it to <code>0</code> as follows.</p>
+<pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
+  }
+}</code></pre>
+  <p>You don't need a new session; saving re-applies it to the running session. However, if it is set to <code>1</code> in project settings, local settings, or similar, that value takes precedence, and if your organization's managed settings enable it, you need to ask an administrator to change the value.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>How do I choose between agent teams and subagents?</summary>
+      <p>According to the official docs, use subagents for focused tasks where only the result matters, and agent teams for complex work where teammates need to share findings, challenge each other, and coordinate on their own. Teams consume more tokens.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+    <details>
+      <summary>A teammate starts up even though I didn't ask for one. What should I do?</summary>
+      <p>While it's enabled, subagents that Claude gives names to start as teammates. Setting <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code> to <code>0</code> returns to starting them as subagents. Also check that it isn't set to <code>1</code> in another settings source.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+    <details>
+      <summary>What happens to teammates when I resume a session?</summary>
+      <p>According to the official docs, <code>/resume</code> and <code>/rewind</code> do not restore in-process teammates. The lead may try to message teammates that no longer exist, so in that case tell it to start new teammates.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/agent-teams" rel="noopener">Orchestrate teams of Claude Code sessions</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-subagents/index.html">How to use and create Claude Code subagents (configuration, invocation, and cautions)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-worktrees/index.html">How to run Claude Code in parallel with worktrees, and what to watch for</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

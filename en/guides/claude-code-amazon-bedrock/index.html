@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setting Up Claude Code with Amazon Bedrock: Sign-in, IAM, and Troubleshooting | Chuki DX Lab</title>
+<meta name="description" content="A summary of the prerequisites, sign-in steps, IAM policy, region prefixes, and troubleshooting in proxy environments for using Claude Code through Amazon Bedrock, based on the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-amazon-bedrock/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-amazon-bedrock/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-amazon-bedrock/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-amazon-bedrock/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Setting up Claude Code with Amazon Bedrock: sign-in, IAM, and troubleshooting">
+<meta property="og:description" content="A summary of the prerequisites, sign-in steps, IAM policy, region prefixes, and troubleshooting in proxy environments for using Claude Code through Amazon Bedrock, based on the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-amazon-bedrock/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-amazon-bedrock.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Setting up Claude Code with Amazon Bedrock: sign-in, IAM, and troubleshooting">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-amazon-bedrock.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Setting up Claude Code with Amazon Bedrock: sign-in, IAM, and troubleshooting",
+  "description": "A summary of the prerequisites, sign-in steps, IAM policy, region prefixes, and troubleshooting in proxy environments for using Claude Code through Amazon Bedrock, based on the official docs.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-amazon-bedrock/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Configuration via Bedrock",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-amazon-bedrock/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I have to install the AWS CLI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs describe this as optional. You need it only when there is no other way to obtain credentials."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "You are already signed in, so the wizard screen doesn't appear.",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If the chat screen is showing, run /setup-bedrock to open the wizard. It doesn't appear in the command menu until CLAUDE_CODE_USE_BEDROCK=1 is set, so type the full command."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "The browser opens many tabs during AWS SSO. What should I do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Remove awsAuthRefresh from your settings file. If your network environment blocks the automatic browser SSO, run aws sso login manually before starting Claude Code."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-amazon-bedrock/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Configuration via Bedrock</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Prerequisites to check first</a></li>
+        <li><a href="#s2">Sign in to Bedrock with the wizard</a></li>
+        <li><a href="#s3">Configuring IAM policies</a></li>
+        <li><a href="#s4">Region and model ID prefixes</a></li>
+        <li><a href="#s5">Common pitfalls and troubleshooting</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Setting up Claude Code with Amazon Bedrock: sign-in, IAM, and troubleshooting</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, the prerequisites are an AWS account with Amazon Bedrock enabled, access to Claude models, and appropriate IAM permissions.</li>
+      <li>To start with your own credentials, you can launch <code>claude</code>, choose <strong>3rd-party platform</strong> and then <strong>Amazon Bedrock</strong>, and follow the wizard.</li>
+      <li>If you're rolling this out to a team, do the manual setup and pin the model versions first, then cover the caveats around IAM, regions, and proxies.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Prerequisites to check first</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) can also be used through Amazon Bedrock (an AWS service). According to the official docs, you need to prepare the following in advance.</p>
+  <ul>
+    <li>An AWS account with access to Amazon Bedrock enabled</li>
+    <li>Access to the Claude model you want to use on Amazon Bedrock (e.g., Claude Sonnet 4.6)</li>
+    <li>Installing and configuring the AWS CLI (optional; needed only if you have no other way to get credentials)</li>
+    <li>Appropriate IAM (AWS's permission management system) permissions</li>
+  </ul>
+  <p>If you sign in with your own Bedrock credentials, use the wizard in the next section. For a team rollout, the official docs say to follow the manual setup steps and pin the model versions before rolling out. This article does not cover the manual setup in detail, so check the official docs. Note that, as of writing (October 2026), the only source for this is the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+  <h2 id="s2">Sign in to Bedrock with the wizard</h2>
+  <p>The official docs say that if you have AWS credentials, you can configure it through the login wizard. The AWS-side preparation is done once per account, and the wizard handles the Claude Code side.</p>
+  <ol>
+    <li>In the Amazon Bedrock console, select an Anthropic model in the Model catalog and submit the use case form. Access is granted immediately after you submit. If you use AWS Organizations, check the relevant section of the official docs.</li>
+    <li>Run <code>claude</code>, then on the login screen choose <strong>3rd-party platform</strong>, then <strong>Amazon Bedrock</strong>. If you are already signed in and see the chat screen, run <code>/setup-bedrock</code>. This command does not appear in the command menu until <code>CLAUDE_CODE_USE_BEDROCK=1</code> is set, so type the full command.</li>
+    <li>In the wizard, you choose how to authenticate to AWS: an AWS profile detected from <code>~/.aws</code>, an Amazon Bedrock API key, an access key and secret, or credentials already in your environment. Then you enter a region, and the wizard checks which Claude models your account can call and lets you pin one.</li>
+  </ol>
+  <p>The results are saved in the <code>env</code> block of your user settings file, so you do not need to export the environment variables yourself. Even after signing in, you can change credentials, the Region, and model pinning with <code>/setup-bedrock</code>. It writes to <code>~/.claude/settings.json</code>, or to <code>$CLAUDE_CONFIG_DIR/settings.json</code> if you have set <code>CLAUDE_CONFIG_DIR</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+  <h2 id="s3">Configuring IAM policies</h2>
+  <p>The official docs say to create an IAM policy with the following permissions for Claude Code.</p>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowModelAndInferenceProfileAccess",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream",
+        "bedrock:ListInferenceProfiles",
+        "bedrock:GetInferenceProfile"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*:*:inference-profile/*",
+        "arn:aws:bedrock:*:*:application-inference-profile/*",
+        "arn:aws:bedrock:*:*:foundation-model/*"
+      ]
+    },
+    {
+      "Sid": "AllowMarketplaceSubscription",
+      "Effect": "Allow",
+      "Action": [
+        "aws-marketplace:ViewSubscriptions",
+        "aws-marketplace:Subscribe"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:CalledViaLast": "bedrock.amazonaws.com"
+        }
+      }
+    }
+  ]
+}</code></pre>
+  <ul>
+    <li>To restrict access more tightly, you can limit Resource to the ARN of a specific inference profile.</li>
+    <li><code>bedrock:GetInferenceProfile</code> is used to identify the underlying model from an application inference profile ARN. If the token lacks this permission, Claude Code retries automatically and still works, but each new model costs one extra round trip. Granting the permission avoids the retry, and this is said to occur most often in setups that use <code>AWS_BEARER_TOKEN_BEDROCK</code>.</li>
+    <li>The docs advise that creating a dedicated AWS account for Claude Code makes cost tracking and access control easier.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+  <h2 id="s4">Region and model ID prefixes</h2>
+  <p>According to the official docs, with the Invoke API, the built-in default model resolves to a cross-region inference profile ID. The preferred prefix for each resolved region is as follows.</p>
+  <ul>
+    <li><code>us-gov-*</code>(AWS GovCloud):<code>us-gov.</code></li>
+    <li><code>us-*</code>:<code>us.</code></li>
+    <li><code>eu-*</code>:<code>eu.</code></li>
+    <li><code>ap-*</code>:<code>apac.</code></li>
+    <li>Other regions: <code>global.</code></li>
+  </ul>
+  <p>You can choose the prefix to try first with <code>ANTHROPIC_BEDROCK_REGION_PREFIX</code>. Valid values are <code>us</code>, <code>eu</code>, <code>apac</code>, <code>jp</code>, <code>au</code>, and <code>global</code>, and v2.1.224 or later is required. Use it, for example, when your account has a <code>global.</code> profile enabled but the region causes a different prefix to be selected.</p>
+<pre><code>export ANTHROPIC_BEDROCK_REGION_PREFIX=global
+# In a us-* region, the primary model now resolves to
+# global.anthropic.claude-opus-5-5 instead of us.anthropic.claude-opus-5-5</code></pre>
+  <p>Note that this prefix is a preference, not a guarantee. If the profile list can't be retrieved, the prefix is applied without verification, and you get a 400 error if a profile with that prefix isn't enabled for your account. GovCloud always uses <code>us-gov.</code>, and if you set an invalid value, it falls back to the prefix determined by the region.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+  <h2 id="s5">Common pitfalls and troubleshooting</h2>
+  <h3>The SSO sign-in tab keeps opening</h3>
+  <p>Remove <code>awsAuthRefresh</code> from your settings file. If a corporate VPN or TLS-inspecting proxy interrupts the browser step of SSO, it is treated as an authentication failure, and if the credentials stay expired, <code>awsAuthRefresh</code> runs again and opens another tab. In environments that block browser-based SSO, run <code>aws sso login</code> manually before starting.</p>
+  <h3>Certificate errors behind a TLS-inspecting proxy</h3>
+  <p>Internal root certificates in the OS trust store or in <code>NODE_EXTRA_CA_CERTS</code> are used without any Bedrock-specific configuration. Before v2.1.261, if you chose <strong>Use credentials already in my environment</strong> in the wizard and the root certificate existed only in the OS store, fetching the credentials used for the model check failed with <code>unable to get local issuer certificate</code>, or models showed as <code>unreachable</code> (inference requests themselves succeeded). Updating to v2.1.261 or later is recommended.</p>
+  <h3>Region issues</h3>
+  <ul>
+    <li>Check model availability with <code>aws bedrock list-inference-profiles --region your-region</code>.</li>
+    <li>You can switch to a supported region with <code>export AWS_REGION=us-east-1</code>.</li>
+    <li>If you see "on-demand throughput isn't supported", specify the model by its inference profile ID.</li>
+    <li>Claude Code uses the Invoke API and does not support the Converse API.</li>
+  </ul>
+  <h3>Streaming fails through a gateway</h3>
+  <p>Any gateway or proxy in between must forward responses, including <code>Content-Type</code>, unmodified. If it is rewritten, you get an error starting with <code>Bedrock streaming response has content-type</code>. If the headers are dropped and the response is converted to server-sent events, every turn falls back to non-streaming and gets slower, and the docs suggest setting <code>CLAUDE_CODE_DISABLE_BEDROCK_CONTENT_TYPE_DEFAULT=1</code>. The real fix is to make the gateway forward responses unmodified.</p>
+  <h3>Other</h3>
+  <p>The issue where each tool group in <code>/context</code> shows 0 tokens occurs in versions before v2.1.196. Update to fix it. For Mantle endpoint configuration and errors, check the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I have to install the AWS CLI?</summary>
+      <p>The official docs describe this as optional. You need it only when there is no other way to obtain credentials.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+    </details>
+    <details>
+      <summary>You are already signed in, so the wizard screen doesn't appear.</summary>
+      <p>If the chat screen is showing, run <code>/setup-bedrock</code> to open the wizard. It doesn't appear in the command menu until <code>CLAUDE_CODE_USE_BEDROCK=1</code> is set, so type the full command.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+    </details>
+    <details>
+      <summary>The browser opens many tabs during AWS SSO. What should I do?</summary>
+      <p>Remove <code>awsAuthRefresh</code> from your settings file. If your network environment blocks the automatic browser SSO, run <code>aws sso login</code> manually before starting Claude Code.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/amazon-bedrock" rel="noopener">Claude Code on Amazon Bedrock</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-cloud-providers/index.html">How Do You Roll Out Claude Code in a Company? Choosing Between Bedrock, Google Cloud, and Other Providers</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-microsoft-foundry/index.html">Using Claude Code via Microsoft Foundry (Azure): setup steps and caveats</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

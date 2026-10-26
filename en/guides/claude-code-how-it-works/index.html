@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Claude Code Works: The Agent Loop and What Claude Can Touch | Chuki DX Lab</title>
+<meta name="description" content="Based on the official docs, this guide summarizes for corporate IT at small and midsize companies the key points of Claude Code&#x27;s agentic loop (gathering context, acting, and verifying), its available tools, what it can touch, and sessions and permissions.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-how-it-works/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-how-it-works/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-how-it-works/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-how-it-works/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How Claude Code works: the agent loop and what Claude can touch">
+<meta property="og:description" content="Based on the official docs, this guide summarizes for corporate IT at small and midsize companies the key points of Claude Code&#x27;s agentic loop (gathering context, acting, and verifying), its available tools, what it can touch, and sessions and permissions.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-how-it-works/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-how-it-works.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How Claude Code works: the agent loop and what Claude can touch">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-how-it-works.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How Claude Code works: the agent loop and what Claude can touch",
+  "description": "Based on the official docs, this guide summarizes for corporate IT at small and midsize companies the key points of Claude Code's agentic loop (gathering context, acting, and verifying), its available tools, what it can touch, and sessions and permissions.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-how-it-works/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How Claude Code works",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-how-it-works/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the \"agent loop\" in Claude Code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, it works by repeating three phases while using tools: gathering context, taking action, and verifying results. The phases blend together, and how the loop runs varies with the request. You can interrupt at any point."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I do if I want to change direction midway?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, Esc stops Claude, cancels any running tool call, and waits for your next instruction. If you type a correction without stopping and press Enter, the message is queued. It is read in the same turn after the running tool call finishes, and it adjusts the work before the next step."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I undo changes Claude made?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "File edits can be undone using snapshots taken before each edit, by pressing Esc twice or asking Claude. However, this covers file changes only, and restoring skips symlinked and hard-linked files. Operations on external systems such as databases, APIs, and deployments can't be checkpointed, so control them with permission modes and permission rules."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-how-it-works/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How Claude Code works</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">The agent loop: gather context, act, and verify</a></li>
+        <li><a href="#s2">Tools: what Claude can actually do</a></li>
+        <li><a href="#s3">What Claude can touch: files, commands, git, and CLAUDE.md</a></li>
+        <li><a href="#s4">Sessions and context: what Claude remembers and what it forgets</a></li>
+        <li><a href="#s5">Safety: checkpoints and permission modes</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How Claude Code works: the agent loop and what Claude can touch</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code (an AI coding agent from Anthropic that runs in the terminal) works by repeating three steps: gather context, take action, and verify results. You can interrupt it at any time.</li>
+      <li>Claude Code can reach the files in the directory where you run it, any command you can run in the terminal, the state of git, CLAUDE.md, and similar. Before you try it, decide which directory you will launch it from.</li>
+      <li>You can roll back file edits with checkpoints, but you can't undo operations on external systems such as databases, APIs, and deployments. Control these with permission modes and permission rules.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">The agent loop: gather context, act, and verify</h2>
+  <p>According to the official docs, Claude Code is an agentic assistant that runs in the terminal. It excels at coding, but it can also help with anything you can do on the command line, such as writing documents, building, searching files, and research.</p>
+  <p>When you hand over a task, Claude works in three phases: gather context, take action, and verify results. The phases blend together, and Claude uses tools throughout, whether searching, editing, or running tests.</p>
+  <p>The loop adapts to your request. A question about the codebase may need only context gathering, while a bug fix cycles through all three phases repeatedly. Claude decides the next step based on what it learned in the previous one. You are part of the loop too: you can interrupt at any point to redirect it or supply more context.</p>
+  <p>The loop consists of a model that reasons and tools that actually act. Claude Code is the surrounding layer that gives the model its tools and manages the context the model sees. The official docs call it an agentic harness (the layer that handles tools and context around the model). You can choose from several models and switch with <code>/model</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+  <h2 id="s2">Tools: what Claude can actually do</h2>
+  <p>The official docs explain that tools are what let Claude Code act as an agent. Without tools it can only reply with text, but with them it can read, edit, run commands, search the web, and interact with external services. The built-in tools fall into five broad categories.</p>
+  <ul>
+    <li>File operations: reading files, editing code, creating new files, renaming and organizing</li>
+    <li>Search: finding files by pattern, searching contents with regular expressions, and exploring a codebase</li>
+    <li>Execution: shell commands, starting servers, tests, git</li>
+    <li>Web: web search, fetching documentation, and investigating error messages</li>
+    <li>Code intelligence: checking type errors and warnings after edits, jumping to definitions, and finding references (requires code intelligence plugins)</li>
+  </ul>
+  <p>If you ask it to "fix the failing tests," it may run the tests, read the error output, search for and read related files, edit them, and run the tests again to confirm. The result of each tool becomes input for the next step.</p>
+  <p>As extensions, you can add knowledge with skills, connect to external services with MCP, automate workflows with hooks, and delegate tasks to subagents. All of them are layers that sit on top of the basic loop.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+  <h2 id="s3">What Claude can touch: files, commands, git, and CLAUDE.md</h2>
+  <p>According to the official docs, when you run <code>claude</code> in a directory, it gets access to the following.</p>
+  <ul>
+    <li>Project: files in the directory and its subdirectories. Files elsewhere, if you grant permission</li>
+    <li>Terminal: build tools, git, package managers, scripts, and anything else you can do from the command line</li>
+    <li>Git state: the current branch, uncommitted changes, and recent commit history</li>
+    <li>CLAUDE.md: a markdown file where you write project-specific instructions and conventions. In repositories that have an AGENTS.md for other coding agents, Claude Code can read that instead</li>
+    <li>Auto memory: learnings saved automatically while you work. Whichever comes first, the first 200 lines or 25KB of MEMORY.md, is loaded at the start of a session.</li>
+    <li>Extensions you configured: MCP servers, skills, subagents, Claude in Chrome</li>
+  </ul>
+  <p>Claude looks at the whole project, so it can work across files. If you ask it to "fix the authentication bug," it finds the related files, reads several of them, edits them together, verifies with tests, and even commits if you ask. This differs from an inline code assistant that only sees the current file.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+  <h2 id="s4">Sessions and context: what Claude remembers and what it forgets</h2>
+  <p>According to the official docs, conversations are stored locally. Each message, tool use, and result is written as a plain-text JSONL file under <code>~/.claude/projects/</code>. This is what makes rewind, resume, and branching possible. For storage location, retention period, and how to delete data, check the official docs.</p>
+  <p>Sessions are independent, and a new session starts without the previous conversation history. What carries over is auto memory and the contents of CLAUDE.md. <code>claude --continue</code> or <code>claude --resume</code> resumes with the same session ID, while <code>--fork-session</code> or <code>/branch</code> copies the history into a new session ID.</p>
+  <p>The context window (the working space Claude can hold at once) contains the conversation history, file contents, command output, CLAUDE.md, auto memory, loaded skills, and system instructions. When it fills up, it is compacted automatically, and instructions from early in the conversation may be lost. Put rules you want followed in CLAUDE.md, and check usage with <code>/context</code>.</p>
+  <p>There are three places to run it: local (your own machine, the default), cloud (Anthropic-managed VMs, or self-hosted environments run by your organization), and Remote Control (runs on your machine and is operated from a browser). The loop is the same no matter which interface you use.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+  <h2 id="s5">Safety: checkpoints and permission modes</h2>
+  <p>The official docs list two safety mechanisms: checkpoints that let you undo file changes, and permissions that decide what Claude can do without asking. A snapshot is taken before each edit, and you can roll back by pressing <code>Esc</code> twice or asking Claude to rewind. Checkpoints are separate from git and cover file changes only. Operations on external systems such as databases, APIs, and deployments cannot be undone.</p>
+  <p>Press <code>Shift+Tab</code> to switch permission modes.</p>
+  <ul>
+    <li>Auto: A classifier reviews many actions in the background and blocks risky ones without asking for confirmation. In Claude Code v2.1.283 and later, it is a built-in starting mode in interactive terminals and VS Code sessions; in earlier versions, it is limited to Pro, Max, and Team plans</li>
+    <li>Manual: asks for confirmation before file edits and shell commands</li>
+    <li>Accept edits: Runs file edits and common filesystem commands such as <code>mkdir</code> and <code>mv</code> without asking, and asks about other commands</li>
+    <li>Plan: researches and proposes a plan without editing source files</li>
+  </ul>
+  <p>You can also allow trusted commands such as <code>npm test</code> and <code>git status</code> in <code>.claude/settings.json</code>. Settings can be scoped from organization-wide policy down to personal settings. See Permissions in the official docs for details.</p>
+  <p>This article is based on the official docs as of writing (October 2026). Differences by version or plan should be checked in the official docs before you adopt it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What is the "agent loop" in Claude Code?</summary>
+      <p>According to the official docs, it works by repeating three phases while using tools: gathering context, taking action, and verifying results. The phases blend together, and how the loop runs varies with the request. You can interrupt at any point.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+    </details>
+    <details>
+      <summary>What do I do if I want to change direction midway?</summary>
+      <p>According to the official docs, <code>Esc</code> stops Claude, cancels any running tool call, and waits for your next instruction. If you type a correction without stopping and press <code>Enter</code>, the message is queued. It is read in the same turn after the running tool call finishes, and it adjusts the work before the next step.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+    </details>
+    <details>
+      <summary>Can I undo changes Claude made?</summary>
+      <p>File edits can be undone using snapshots taken before each edit, by pressing <code>Esc</code> twice or asking Claude. However, this covers file changes only, and restoring skips symlinked and hard-linked files. Operations on external systems such as databases, APIs, and deployments can't be checkpointed, so control them with permission modes and permission rules.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/how-claude-code-works" rel="noopener">How Claude Code works</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-admin-setup/index.html">Setting up Claude Code for an organization: how to distribute managed settings and which items to restrict</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-devcontainer/index.html">Running Claude Code in a dev container: settings and organizational rules</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

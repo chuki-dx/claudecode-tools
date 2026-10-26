@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to connect an MCP server to Claude Code (add, verify, remove) | Chuki DX Lab</title>
+<meta name="description" content="A guide to connecting MCP servers to Claude Code, following the official docs. It covers adding with claude mcp add, checking with list, differences between scopes, removal, and what to check when the connection fails.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-quickstart/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-quickstart/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-quickstart/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to connect an MCP server to Claude Code (add, check, remove)">
+<meta property="og:description" content="A guide to connecting MCP servers to Claude Code, following the official docs. It covers adding with claude mcp add, checking with list, differences between scopes, removal, and what to check when the connection fails.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-quickstart/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-mcp-quickstart.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to connect an MCP server to Claude Code (add, check, remove)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-mcp-quickstart.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to connect an MCP server to Claude Code (add, check, remove)",
+  "description": "A guide to connecting MCP servers to Claude Code, following the official docs. It covers adding with claude mcp add, checking with list, differences between scopes, removal, and what to check when the connection fails.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-quickstart/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code MCP connections",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-quickstart/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why can't I use a server I added in a different project?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the default local scope is active only in the project where you added the server. To use it in all projects, register it again with --scope user."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If it shows Added, is the server connected?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the stdio server example, the docs explain that Added only means the configuration was saved, not that the command is guaranteed to run. Check for ✔ Connected with claude mcp list. On the first run, it may show a failure while npx is still downloading."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if it says a server with the same name can't be added?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A server with the same name already exists in the same scope. Delete it with claude mcp remove claude-code-docs, or use a different name. If the same name exists in multiple scopes, you'll see exists in multiple scopes, so use --scope to choose which one to remove."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-mcp-quickstart/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code MCP connections</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What MCP is and what you need before you start</a></li>
+        <li><a href="#s2">Add a server and verify the connection</a></li>
+        <li><a href="#s3">Use / Delete</a></li>
+        <li><a href="#s4">Scopes and settings file locations</a></li>
+        <li><a href="#s5">Local servers and servers that require sign-in</a></li>
+        <li><a href="#s6">What to check when you can&#x27;t connect</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to connect an MCP server to Claude Code (add, check, remove)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, you register an MCP server with <code>claude mcp add</code> and check its connection status with <code>claude mcp list</code>.</li>
+      <li>The default registration scope is <code>local</code>, which makes the server available only to you in the current project. Use <code>--scope user</code> for all your projects, or <code>--scope project</code> to share it with the team.</li>
+      <li>Connected servers consume context window, so remove the ones you don't use with <code>claude mcp remove</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What MCP is and what you need before you start</h2>
+  <p>MCP (Model Context Protocol) is a mechanism that lets Claude Code (Anthropic's AI coding agent that runs in the terminal) use capabilities beyond its built-in features, such as searching issue trackers, querying databases, and controlling a browser. These tools are provided by MCP servers, which can run on your local machine or as hosted services.</p>
+  <p>The official docs assume you have already installed and authenticated Claude Code and have a terminal open in your project directory (an empty directory is fine). This article covers the CLI steps in the official docs as of writing (October 2026). For adding it from the desktop app, VS Code, or the web, see the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s2">Add a server and verify the connection</h2>
+  <p>The official example is a hosted server that lets you run full-text search over the Claude Code docs with no authentication. Run it in a regular terminal, not inside a <code>claude</code> session.</p>
+<pre><code>claude mcp add --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p><code>--transport http</code> indicates a server exposed at a URL. <code>claude-code-docs</code> is a name you choose freely, and you use it in operations such as <code>claude mcp remove</code>. When you run the command, a <code>File modified:</code> line is shown, indicating the configuration file it wrote to.</p>
+  <p>Next, check the connection status.</p>
+<pre><code>claude mcp list</code></pre>
+  <p>According to the official docs, the main indicators mean the following.</p>
+  <ul>
+    <li><code>✔ Connected</code>: The server is ready to use.</li>
+    <li><code>! Needs authentication</code>: Requires signing in through the browser, or a token passed with <code>--header</code>.</li>
+    <li><code>✘ Failed to connect</code>: The server is not responding.</li>
+    <li><code>! Connected · tools fetch failed</code>: The connection succeeded, but the tool list could not be retrieved. Run <code>claude mcp get &lt;name&gt;</code> to see the error details.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s3">Use / Delete</h2>
+  <p>Start a session and make your request, naming the server.</p>
+<pre><code>claude</code></pre>
+<pre><code>Use the claude-code-docs server to look up what MCP_TIMEOUT does</code></pre>
+  <p>Normally Claude picks the right tool without you naming the server. If you are asked for permission on the first call, approve it. If the tool call in the output includes the server name, you can confirm the answer came from the MCP server.</p>
+  <p>You can delete it when you're done.</p>
+<pre><code>claude mcp remove claude-code-docs</code></pre>
+  <p>The tool names and instructions of connected servers are loaded in every session and use up the context window (the amount of information Claude can handle at once). Removing servers you don't use keeps that space free.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s4">Scopes and settings file locations</h2>
+  <p><code>claude mcp add</code> registers to <code>local</code> by default. The storage location for each scope is as follows.</p>
+  <ul>
+    <li><code>local</code>: The entry for that project in <code>~/.claude.json</code>. Only you, only this project (default).</li>
+    <li><code>project</code>: the <code>.mcp.json</code> at the project root. It applies to everyone who clones the repository.</li>
+    <li><code>user</code>: The top-level <code>mcpServers</code> in <code>~/.claude.json</code>. Only you, across all projects.</li>
+  </ul>
+  <p>On Windows, <code>~/.claude.json</code> corresponds to <code>%USERPROFILE%\.claude.json</code>. Run <code>claude mcp get claude-code-docs</code> to see which scope defines the server.</p>
+  <p>The scope is fixed when you add a server, so to change it, remove it and register it again. For example, remove the local definition and then add it at user scope.</p>
+<pre><code>claude mcp remove claude-code-docs --scope local</code></pre>
+<pre><code>claude mcp add --scope user --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p>To share with your team, add it at project scope and commit <code>.mcp.json</code> to version control.</p>
+<pre><code>claude mcp add --scope project --transport http claude-code-docs https://code.claude.com/docs/mcp</code></pre>
+  <p>When a member starts Claude Code, an approval prompt appears, and the server connects once they approve. This prevents a cloned repository from launching processes without the user's consent. <code>.mcp.json</code> is read at startup, so start a new session after editing it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s5">Local servers and servers that require sign-in</h2>
+  <h3>Local server (stdio)</h3>
+  <p>A stdio server is a program that Claude Code launches as a subprocess on your local machine. The official example is the Playwright MCP server, which runs through <code>npx</code> and therefore requires Node.js 18 or later.</p>
+<pre><code>claude mcp add playwright -- npx -y @playwright/mcp@latest</code></pre>
+  <p>Don't add <code>--transport</code>; the launch command goes after <code>--</code>. Even if you see <code>Added</code>, it has only been saved, so confirm with <code>claude mcp list</code>. On the first run, you may see <code>✘ Failed to connect</code> while <code>npx</code> is still downloading; wait a moment and run it again, and it becomes <code>✔ Connected</code>.</p>
+  <h3>Servers that require sign-in</h3>
+  <p>Hosted services such as Sentry, Linear, and Notion are protected with OAuth. The official example is Sentry.</p>
+<pre><code>claude mcp add --transport http sentry https://mcp.sentry.dev/mcp</code></pre>
+  <p>Right after you add a server, it shows <code>! Needs authentication</code>. This is expected. In a session, open <code>/mcp</code>, select <code>sentry</code> and press Enter, then choose <code>Authenticate</code> and a sign-in screen opens in your browser. For servers that authenticate with a fixed token, pass the token when you add the server with <code>--header "Authorization: Bearer &lt;token&gt;"</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+  <h2 id="s6">What to check when you can't connect</h2>
+  <p>Check the status with <code>/mcp</code> inside a session, or <code>claude mcp list</code> from the shell. The main causes listed in the official docs are as follows.</p>
+  <ul>
+    <li><code>No MCP servers configured</code>: A local server added in a different project is tied to that project. Register it again in the current project or use <code>--scope user</code>. Other causes are looking at the wrong config file path (the correct ones are <code>~/.claude.json</code> and <code>&lt;project&gt;/.mcp.json</code>) or a mistake in <code>.mcp.json</code>.</li>
+    <li><code>Failed to connect</code> or <code>Connection error</code>: the server isn't running or the URL isn't responding. For HTTP servers, check reachability with curl; for stdio servers, run the configured command directly and look at the error.</li>
+    <li>Startup timeout: If startup exceeds the default 30 seconds, extend it with the <code>MCP_TIMEOUT</code> environment variable (in milliseconds).</li>
+    <li>Tools don't appear: a required environment variable (such as an API key) may be missing. Pass it with <code>--env KEY=value</code>.</li>
+    <li>Changes to <code>.mcp.json</code> are not applied: restart the session. If you previously declined approval, run <code>claude mcp reset-project-choices</code>.</li>
+  </ul>
+<pre><code>MCP_TIMEOUT=60000 claude</code></pre>
+  <p>What error details show can vary by version, so check the official docs for specifics.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Why can't I use a server I added in a different project?</summary>
+      <p>According to the official docs, the default <code>local</code> scope is active only in the project where you added the server. To use it in all projects, register it again with <code>--scope user</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+    <details>
+      <summary>If it shows <code>Added</code>, is the server connected?</summary>
+      <p>In the stdio server example, the docs explain that <code>Added</code> only means the configuration was saved, not that the command is guaranteed to run. Check for <code>✔ Connected</code> with <code>claude mcp list</code>. On the first run, it may show a failure while <code>npx</code> is still downloading.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+    <details>
+      <summary>What should I do if it says a server with the same name can't be added?</summary>
+      <p>A server with the same name already exists in the same scope. Delete it with <code>claude mcp remove claude-code-docs</code>, or use a different name. If the same name exists in multiple scopes, you'll see <code>exists in multiple scopes</code>, so use <code>--scope</code> to choose which one to remove.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/mcp-quickstart" rel="noopener">Connect to MCP servers</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code MCP configuration: local vs. project vs. user scope, and .mcp.json</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

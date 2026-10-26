@@ -339,6 +339,31 @@ strong { font-weight: 700; color: var(--text); }
   filter: none;
 }
 .theme-toggle[hidden], .nav-toggle[hidden] { display: none; }
+
+/* 言語の切り替え(日本語版 ⇄ 英語版 /en/)。配色ボタンと同じ小さなピル */
+.lang-switch {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-2);
+  box-shadow: var(--card-hi);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.lang-switch:hover { color: var(--text); background: var(--surface-3); border-color: color-mix(in srgb, var(--accent) 45%, var(--border-strong)); text-decoration: none; }
+.lang-switch::before { content: ""; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--grad); grid-area: 1 / 1; display: none; }
+html[lang="en"] .paid-cta h2::before { content: "Paid"; content: "Paid" / ""; }
+.eyebrow-free { white-space: nowrap; flex: none; }
 .theme-toggle:hover, .nav-toggle:hover { color: var(--text); background: var(--surface-3); transform: none; box-shadow: var(--card-hi); filter: none; }
 .theme-toggle svg { grid-area: 1 / 1; transition: transform 0.6s var(--spring), opacity 0.3s var(--ease); }
 .theme-toggle .i-moon { opacity: 0; transform: rotate(-90deg) scale(0.4); }

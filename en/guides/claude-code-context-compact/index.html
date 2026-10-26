@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code context and /compact: what stays and what is lost in a long conversation | Chuki DX Lab</title>
+<meta name="description" content="This guide follows the official docs to explain what goes into Claude Code&#x27;s context window, what happens with /compact and auto-compaction, and what survives or is lost after compaction. Useful as a check before using it internally.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-context-compact/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-context-compact/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-context-compact/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code context and /compact: what stays and what is lost in a long conversation">
+<meta property="og:description" content="This guide follows the official docs to explain what goes into Claude Code&#x27;s context window, what happens with /compact and auto-compaction, and what survives or is lost after compaction. Useful as a check before using it internally.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-context-compact/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-context-compact.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code context and /compact: what stays and what is lost in a long conversation">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-context-compact.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code context and /compact: what stays and what is lost in a long conversation",
+  "description": "This guide follows the official docs to explain what goes into Claude Code's context window, what happens with /compact and auto-compaction, and what survives or is lost after compaction. Useful as a check before using it internally.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-context-compact/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Context and /compact",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-context-compact/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does the session stop when the context is full?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the context is compacted automatically as it nears the limit, so a full context doesn't end the session. Auto-compaction works the same way as /compact, and the point at which it runs depends on the model and settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are CLAUDE.md instructions lost when the conversation is compacted?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The CLAUDE.md in the project root is re-injected from disk. Rules with paths: frontmatter and CLAUDE.md files in subdirectories, on the other hand, are summarized during compaction and reloaded when they are needed again. To keep a rule after compaction, remove paths: or move the rule into the project-root CLAUDE.md."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I specify what to keep when compacting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can run /compact with instructions. For example, with /compact focus on the auth bug fix, the summary keeps the content you chose instead of what auto-compaction guesses is important."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-context-compact/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Context and /compact</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What&#x27;s in the context window</a></li>
+        <li><a href="#s2">What happens with /compact and auto-compaction</a></li>
+        <li><a href="#s3">What remains and what doesn&#x27;t after compaction</a></li>
+        <li><a href="#s4">What you can do before the context fills up</a></li>
+        <li><a href="#s5">In-session commands and how to check</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code context and /compact: what stays and what is lost in a long conversation</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The context window of Claude Code (Anthropic's AI coding agent that runs in the terminal) holds your instructions, the files it has read, Claude's responses, and even content that isn't shown in the terminal.</li>
+      <li>According to the official docs, sessions don't end when you approach the limit because they are compacted automatically. <code>/compact</code> is a command that replaces the conversation with a structured summary.</li>
+      <li>What happens after compaction depends on how the content was loaded. Pay attention to where you put instructions you want to keep (CLAUDE.md, whether <code>paths:</code> is set, the top of a skill).</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What's in the context window</h2>
+  <p>According to the official docs, the context window (the area that holds what Claude knows during a session) contains your instructions, the files Claude has read, Claude's own responses, and content that is not displayed in the terminal.</p>
+  <p>What gets loaded before you type anything is CLAUDE.md, auto memory, MCP tool names, and skill descriptions. In some cases AGENTS.md is loaded instead of CLAUDE.md.</p>
+  <p>As you work, context grows every time a file is read. Rules that have <code>paths:</code> are loaded automatically along with the files they match.</p>
+  <p>The timeline in the official docs says file reads account for most of the usage, and explains that specifying targets concretely in your prompt reduces the number of files read. The token counts are illustrative examples; actual values vary with the size of CLAUDE.md, MCP servers, and file length.</p>
+  <p>The docs advise keeping CLAUDE.md under 200 lines and moving reference material into skills or path-scoped rules, so it is loaded only when needed.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s2">What happens with /compact and auto-compaction</h2>
+  <p>Running <code>/compact</code> replaces the conversation with a structured summary. According to the timeline description, the terminal shows only a "Conversation compacted" message, and the summarization work itself is not displayed in the terminal.</p>
+  <p>The same document says the summary keeps your requests and intent, key technical concepts, files examined or changed and important code snippets, errors and fixes, pending tasks, and current work. Full tool output and intermediate reasoning are not kept, so Claude does not retain the exact contents.</p>
+  <p>As the context approaches its limit, it is compacted automatically, so a full context does not end the session. Auto-compact works the same way as <code>/compact</code>. The point at which compaction runs depends on the model and settings, so check Default auto-compact thresholds in the official docs.</p>
+  <p>As of v2.1.198, a summarization request inherits the session's extended thinking setting. If it is enabled in the session, the summary is made with it enabled; if disabled, it stays disabled. The only effect is on how the summary is produced.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s3">What remains and what doesn't after compaction</h2>
+  <p>Summarizing the table in the official docs, this is how each item is handled after compaction.</p>
+  <ul>
+    <li>System prompt and output style: both still apply.</li>
+    <li>The project-root CLAUDE.md and rules without a scope: these are re-injected from disk.</li>
+    <li>Auto memory and plans Claude wrote in plan mode: these are re-injected from disk.</li>
+    <li>Git status snapshot: if one existed at session start, it is re-read from the repository to get the latest state.</li>
+    <li>Rules with <code>paths:</code> frontmatter and CLAUDE.md files in subdirectories: reloaded when they become needed.</li>
+    <li>Files Claude has read or edited: up to the 5 most recently updated are reloaded.</li>
+    <li>Body of invoked skills: re-injected up to 5,000 tokens per skill and 25,000 tokens in total, with the oldest dropped first.</li>
+    <li>Context previously added by a hook: it is summarized along with the rest of the conversation.</li>
+    <li>A SessionStart hook with the <code>compact</code> source matcher runs, and its output is added to the context after compaction.</li>
+    <li>Background commands and background subagents: They keep running.</li>
+  </ul>
+  <p>Files over 5,000 tokens become path references without their contents, and show as <code>Referenced file</code> instead of <code>Read</code>. The skill description list is not re-injected after compaction; only skills you actually invoked remain.</p>
+  <p>Rules with <code>paths:</code> and nested CLAUDE.md files enter the message history when loaded, so they get summarized along with everything else during compaction. To keep a rule after compaction, the docs advise removing the <code>paths:</code> frontmatter or moving the rule into the project root CLAUDE.md. Large skills are truncated and the beginning is kept, so put important instructions near the top of <code>SKILL.md</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s4">What you can do before the context fills up</h2>
+  <p>The official docs say you can do the following before automatic compaction runs.</p>
+  <ul>
+    <li>Run it with instructions, like <code>/compact focus on the auth bug fix</code>. Used before a long new task, it keeps the content you chose in the summary instead of relying on auto-compaction's guesses.</li>
+    <li>Pick a message with <code>/rewind</code>, then choose <strong>Summarize from here</strong> or <strong>Summarize up to here</strong>. This lets you summarize only part of the conversation.</li>
+    <li>Specify a token count, as in <code>/autocompact 500k</code>, to change roughly when auto-compaction runs. Check the official docs for the accepted values.</li>
+    <li>Use <code>/clear</code> when you move to unrelated work. Old conversation pushes out the files you need next and consumes tokens with every message.</li>
+    <li>Hand large investigations off to a subagent. The file contents go into the subagent's context, and only a summary of the results comes back.</li>
+  </ul>
+  <p>If you need a larger window, some models support a 1 million token context window. For supported models and availability by plan, see Extended context in the official docs. Compaction works the same way with the larger limit.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+  <h2 id="s5">In-session commands and how to check</h2>
+  <p>The session management page in the official docs lists the following three commands for managing context without leaving the session.</p>
+  <ul>
+    <li><code>/clear</code>: Starts over with an empty context. The previous session is saved and can be resumed with <code>/resume</code>.</li>
+    <li><code>/compact [instructions]</code>: replaces the history with a summary. You can also specify what to focus on.</li>
+    <li><code>/context</code>: Shows what is currently consuming context.</li>
+  </ul>
+  <p>According to the context window page, <code>/context</code> shows a breakdown by category along with optimization suggestions, and it also shows which CLAUDE.md and auto memory files were loaded. You can open and edit them with <code>/memory</code>. This is based on the official docs as of writing (October 2026), and behavior and versions may change.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does the session stop when the context is full?</summary>
+      <p>According to the official docs, the context is compacted automatically as it nears the limit, so a full context doesn't end the session. Auto-compaction works the same way as <code>/compact</code>, and the point at which it runs depends on the model and settings.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+    <details>
+      <summary>Are CLAUDE.md instructions lost when the conversation is compacted?</summary>
+      <p>The CLAUDE.md in the project root is re-injected from disk. Rules with <code>paths:</code> frontmatter and CLAUDE.md files in subdirectories, on the other hand, are summarized during compaction and reloaded when they are needed again. To keep a rule after compaction, remove <code>paths:</code> or move the rule into the project-root CLAUDE.md.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+    <details>
+      <summary>Can I specify what to keep when compacting?</summary>
+      <p>You can run <code>/compact</code> with instructions. For example, with <code>/compact focus on the auth bug fix</code>, the summary keeps the content you chose instead of what auto-compaction guesses is important.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/context-window" rel="noopener">Explore the context window</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-caching/index.html">How Claude Code prompt caching works: what keeps it and what breaks it</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-model-select/index.html">How to choose and switch models in Claude Code (/model and settings)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

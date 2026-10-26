@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Letting Claude Code work outside the working folder: --add-dir and additionalDirectories | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, based on the official docs, how to let Claude Code work outside the working folder. It explains the differences between --add-dir, /add-dir, and additionalDirectories, and what to watch out for.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-working-directories/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-working-directories/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-working-directories/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-working-directories/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Letting Claude Code work outside the working folder: --add-dir and additionalDirectories">
+<meta property="og:description" content="This guide covers, based on the official docs, how to let Claude Code work outside the working folder. It explains the differences between --add-dir, /add-dir, and additionalDirectories, and what to watch out for.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-working-directories/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-working-directories.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Letting Claude Code work outside the working folder: --add-dir and additionalDirectories">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-working-directories.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Letting Claude Code work outside the working folder: --add-dir and additionalDirectories",
+  "description": "This guide covers, based on the official docs, how to let Claude Code work outside the working folder. It explains the differences between --add-dir, /add-dir, and additionalDirectories, and what to watch out for.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-working-directories/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "--add-dir and the working directory",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-working-directories/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between --add-dir and permissions.additionalDirectories?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both give access to files in another folder, but they load settings differently. According to the official docs, directories added with --add-dir or /add-dir have their skills, commands, subagents, and so on loaded. Directories listed in permissions.additionalDirectories in a settings file get file access only."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add a company network share to the working directories?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, most network paths, including UNC shares, cannot be added. On Windows, the docs advise mapping the share to a drive letter and passing that drive with --add-dir at startup. For other environments, check the official docs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the CLAUDE.md in an added folder loaded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, CLAUDE.md and similar files in directories added with --add-dir or /add-dir are loaded only if you set CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1. CLAUDE.local.md additionally requires the local settings source, which is enabled by default."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-working-directories/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">--add-dir and the working directory</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Three ways to let Claude Code work outside the working folder</a></li>
+        <li><a href="#s2">Added folders get the same permissions as the original folder</a></li>
+        <li><a href="#s3">Paths you can&#x27;t add, and notes for macOS</a></li>
+        <li><a href="#s4">Settings that are and are not loaded from additional directories</a></li>
+        <li><a href="#s5">Use /cd to move instead of add</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Letting Claude Code work outside the working folder: --add-dir and additionalDirectories</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>By default, Claude Code (Anthropic's AI coding agent that runs in the terminal) accesses files in the folder where you started it. There are three ways to let it work with folders outside: <code>--add-dir</code> at startup, <code>/add-dir</code> during a session, and <code>additionalDirectories</code> in the settings file.</li>
+      <li>Added folders are handled under the same permission rules as the original working directory. Reads work without confirmation (except for network path confirmations), and edits follow the current permission mode.</li>
+      <li>Adding a directory extends file access, not where settings are loaded from. A folder you add with <code>permissions.additionalDirectories</code> in a settings file gets file access only.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Three ways to let Claude Code work outside the working folder</h2>
+  <p>According to the official docs as of writing (October 2026), Claude Code can access files in the directory where you launched it by default. That directory is the session's primary working directory, and it stays the primary working directory until you move with <code>/cd</code>.</p>
+  <p>There are three ways to widen this access scope.</p>
+  <ul>
+    <li>At startup: use the <code>--add-dir &lt;path&gt;</code> CLI argument</li>
+    <li>During a session: use the <code>/add-dir</code> command</li>
+    <li>Persistent setting: Add it to <code>additionalDirectories</code> in a settings file</li>
+  </ul>
+  <p>The settings that get loaded depend on how you add it. I explain the details in a later section.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s2">Added folders get the same permissions as the original folder</h2>
+  <p>The official docs explain that files in additional directories follow the same permission rules as the original working directory. Reads work without confirmation, except for network path checks. File edit permissions follow the current permission mode.</p>
+  <p>To block reads outside the working directory, set <code>permissions.blockReadsOutsideWorkingDirectories</code>. File tools will then deny those paths in every permission mode. In auto mode, the first time Claude reads outside the working directory, Claude Code offers to enable this setting.</p>
+  <p>Read operations in added folders no longer prompt for confirmation, so decide which folders to give access to with that in mind.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s3">Paths you can't add, and notes for macOS</h2>
+  <p>According to the official docs, most network paths, including UNC shares, can't be added as working directories, because checking the path may connect to the specified host. On Windows, the docs advise mapping the share to a drive letter and passing that drive with <code>--add-dir</code> at startup.</p>
+  <p>In macOS background sessions, when Claude reads or writes protected folders such as <code>~/Desktop</code>, <code>~/Documents</code>, and <code>~/Downloads</code>, the session host requests access separately from the terminal. If reads there fail with <code>Operation not permitted</code>, see the background sessions section of the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s4">Settings that are and are not loaded from additional directories</h2>
+  <p>The official docs explain that adding a directory widens what Claude can read and write, but that directory does not become a configuration root. Most settings under <code>.claude/</code> are not discovered, and only a few are loaded as exceptions.</p>
+  <p>Note the conditions. The exception applies only to directories you add with the <code>--add-dir</code> flag or the <code>/add-dir</code> command. Directories listed in <code>permissions.additionalDirectories</code> get file access only, and the settings below are not loaded from them.</p>
+  <p>The following are loaded from directories added with <code>--add-dir</code>.</p>
+  <ul>
+    <li>Skills in <code>.claude/skills/</code>: Loaded (with live reload)</li>
+    <li>Command files in <code>.claude/commands/</code>: These are loaded (no live reload). If an added directory and the project have a command with the same name, the project's command runs.</li>
+    <li>Subagents in <code>.claude/agents/</code>: Loaded (no live reload)</li>
+    <li><code>.claude/settings.json</code> and <code>.claude/settings.local.json</code>: only the <code>enabledPlugins</code> and <code>extraKnownMarketplaces</code> keys</li>
+    <li><code>CLAUDE.md</code>, <code>.claude/rules/</code>, <code>CLAUDE.local.md</code>: Only when you set <code>CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1</code></li>
+  </ul>
+  <p>To share settings across multiple projects, the official docs list user-level settings, distribution through plugins, and launching from the directory that contains the settings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+  <h2 id="s5">Use /cd to move instead of add</h2>
+  <p>If you want to change the main working directory itself rather than add a folder, use <code>/cd</code>. According to the official docs, the conversation carries over and the new directory's <code>CLAUDE.md</code> is loaded. The first time you work in a directory, you are asked whether to trust it.</p>
+  <p>When you move, the new directory's project settings (including permission rules and hooks) apply immediately. Additional directories switch to those from the new directory's settings, but ones you added with <code>--add-dir</code> or <code>/add-dir</code> are kept. For an untrusted directory, the confirmation screen lists the permission rules, additional directories, and other items that its settings would enable. If you decline, the session stays where it is.</p>
+  <p>Before v2.1.246, after moving with <code>/cd</code>, the new directory's settings, hooks, MCP servers, and skills didn't apply until you resumed the session. Check which version your company uses. You can restrict or disable where users can move with the <code>Cd</code> permission rule.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What is the difference between <code>--add-dir</code> and <code>permissions.additionalDirectories</code>?</summary>
+      <p>Both give access to files in another folder, but they load settings differently. According to the official docs, directories added with <code>--add-dir</code> or <code>/add-dir</code> have their skills, commands, subagents, and so on loaded. Directories listed in <code>permissions.additionalDirectories</code> in a settings file get file access only.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+    <details>
+      <summary>Can I add a company network share to the working directories?</summary>
+      <p>According to the official docs, most network paths, including UNC shares, cannot be added. On Windows, the docs advise mapping the share to a drive letter and passing that drive with <code>--add-dir</code> at startup. For other environments, check the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+    <details>
+      <summary>Is the <code>CLAUDE.md</code> in an added folder loaded?</summary>
+      <p>According to the official docs, <code>CLAUDE.md</code> and similar files in directories added with <code>--add-dir</code> or <code>/add-dir</code> are loaded only if you set <code>CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1</code>. <code>CLAUDE.local.md</code> additionally requires the <code>local</code> settings source, which is enabled by default.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permission-rules/index.html">How to write Claude Code permission rules: Bash and Read patterns and allow/deny precedence</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

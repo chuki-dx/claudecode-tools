@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Code Review (Automated PR Review): How It Works, Getting Started, and Pricing | Chuki DX Lab</title>
+<meta name="description" content="Code Review in Claude Code automatically reviews GitHub pull requests. Following the official docs, this guide covers eligible plans, how to get started, how usage-based billing works, and how to set a monthly spending cap.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-code-review/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-code-review/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-code-review/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-code-review/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Code Review (automated PR review): how it works, how to start, and pricing">
+<meta property="og:description" content="Code Review in Claude Code automatically reviews GitHub pull requests. Following the official docs, this guide covers eligible plans, how to get started, how usage-based billing works, and how to set a monthly spending cap.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-code-review/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-code-review.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Code Review (automated PR review): how it works, how to start, and pricing">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-code-review.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Code Review (automated PR review): how it works, how to start, and pricing",
+  "description": "Code Review in Claude Code automatically reviews GitHub pull requests. Following the official docs, this guide covers eligible plans, how to get started, how usage-based billing works, and how to set a monthly spending cap.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-code-review/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How Code Review works and what it costs",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-code-review/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does Code Review approve pull requests or block merges?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, a review neither approves nor blocks, and its check run never ends as failed. The merge decision stays with your team."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use it on plans other than Team and Enterprise?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Code Review itself is available on Team and Enterprise, and an Owner enables it. However, /code-review runs inside a Claude Code session on any plan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does one review cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, there is no flat rate; billing is based on token usage. The source gives no amounts, so check the official pricing page. You can see your own average in the Average cost column of the admin console."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-code-review/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How Code Review works and what it costs</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What Code Review can do: how it works and its output</a></li>
+        <li><a href="#s2">Availability: plans, code hosts, and excluded organizations</a></li>
+        <li><a href="#s3">Getting started: setup steps in the admin console</a></li>
+        <li><a href="#s4">How costs work: what determines the amount</a></li>
+        <li><a href="#s5">Estimates and limits: what to do before you expand</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Code Review (automated PR review): how it works, how to start, and pricing</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Code Review is a feature where multiple agents read a GitHub pull request and return the findings that pass verification as inline comments. It does not approve or block, so the merge decision stays with a person.</li>
+      <li>This applies to organizations on a Team or Enterprise plan, and the Claude organization Owner enables it. It is not available to organizations with Zero Data Retention or a HIPAA configuration.</li>
+      <li>Pricing is not a flat fee per item. It is pay-as-you-go, based on token usage. The safe approach is to set a monthly spending limit first, start small, check the average cost, and then expand.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What Code Review can do: how it works and its output</h2>
+  <p>Claude Code (Anthropic's AI coding agent that runs in the terminal) includes Code Review, which automatically reviews GitHub pull requests (review requests made before changes are merged). According to the official docs, multiple agents read the changes and the surrounding code, look for logic errors, vulnerabilities, and similar problems, and check each finding against the code in a verification step before reporting it.</p>
+  <p>It runs on Anthropic's infrastructure in the following four stages.</p>
+  <ol>
+    <li>Search: multiple agents investigate the diff and surrounding code in parallel</li>
+    <li>Verification: compare the flagged candidates against the code and remove false positives</li>
+    <li>Ranking: remove duplicates and sort by importance</li>
+    <li>Post: post the results to a pull request</li>
+  </ol>
+  <p>Results are left as inline comments on the relevant lines, a summary, and a check run named <strong>Claude Code Review</strong> (the check result shown on the PR). The check run does not finish as a failure, and when there are no findings its title is <strong>Code review found no issues</strong>.</p>
+  <p>By default, it focuses on correctness, such as bugs that would break production, rather than formatting or missing tests. To tune this, use <code>REVIEW.md</code> and <code>CLAUDE.md</code>; the <code>REVIEW.md</code> on the base branch or default branch is the one that is read.</p>
+  <p>Because this is an AI review, it can miss things. The official docs caution that if it reports no findings, that does not mean there are no errors or that the code is safe.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review" rel="noopener">Code Review</a></p>
+  <h2 id="s2">Availability: plans, code hosts, and excluded organizations</h2>
+  <p>According to the official docs, the requirements are as follows.</p>
+  <ul>
+    <li>Plan: Team or Enterprise</li>
+    <li>Code hosts: GitHub (including GitHub Enterprise Server and GitHub Enterprise Cloud with data residency)</li>
+    <li>Not available to organizations with Zero Data Retention enabled or a HIPAA configuration applied, and not covered by Anthropic's Business Associate Agreement (BAA)</li>
+    <li>Not yet available to organizations that use customer-managed encryption keys (CMEK)</li>
+    <li>Even if you use Claude Code through Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry, you need a Claude organization on one of the plans above</li>
+  </ul>
+  <p>Even if none of these apply, you can run <code>/code-review</code> inside a Claude Code session on any plan. For other methods, check the comparison table in the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review" rel="noopener">Code Review</a></p>
+  <h2 id="s3">Getting started: setup steps in the admin console</h2>
+  <p>According to the official docs, the following three permissions are required.</p>
+  <ul>
+    <li>The Owner role in a Claude organization (all admin console steps)</li>
+    <li>A GitHub organization Owner (needed to install and connect the Claude GitHub App; if you are not an Owner, ask one first)</li>
+    <li>Write access to each repository you add</li>
+  </ul>
+  <p>The steps are as follows.</p>
+  <ol>
+    <li>Turn on <strong>Allow code review</strong> under <strong>Code review</strong> in <strong>Admin settings &gt; Claude Code</strong></li>
+    <li>When <strong>Connect GitHub</strong> appears, click <strong>Connect</strong> and authorize in GitHub</li>
+    <li>If the target repository doesn't appear, install it with <strong>Install GitHub App</strong> and approve the permissions</li>
+    <li>Select the repository and click <strong>Continue</strong>, then click <strong>Finish</strong> on the next screen, <strong>Code review is set up</strong></li>
+    <li>Open a non-draft test PR and check that a <strong>Claude Code Review</strong> check run appears within a few minutes</li>
+  </ol>
+  <p>A few caveats. The app's permission set is broader than review needs, and it is shared with other features such as GitHub Actions. Repository access inside a review is read-only, and code is neither built nor run. Also, if you close the dialog any way other than <strong>Finish</strong>, the repository stays added but <strong>Allow code review</strong> remains off.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review-setup" rel="noopener">Set up Code Review</a></p>
+  <h2 id="s4">How costs work: what determines the amount</h2>
+  <p>In the official docs as of writing (October 2026), Code Review has no flat per-review fee. It is billed through usage credits based on token usage, separate from the usage included in your plan. Billing goes to the organization, not to the developer who opened the PR. Because this article's sources don't give a price, check the official pricing page for the latest amounts.</p>
+  <p>Cost is determined by the cost per review times the number of reviews. The cost per review varies with the review level, the size of the change, the complexity of the surrounding code, and the number of candidates that need verification. The number of reviews is set by the per-repository <strong>Review runs</strong> setting.</p>
+  <h3>Review level</h3>
+  <p>Quick is the fastest and cheapest, Standard is the balanced default, and Deep is the most thorough but takes the most time and costs the most. An Owner picks one for the organization, and you can also change it per repository.</p>
+  <h3>Setting the number of times</h3>
+  <ul>
+    <li><strong>Once after PR creation</strong>: runs when a PR is opened, reopened, or marked ready for review</li>
+    <li><strong>After every push</strong>: Runs on every push, so the cost is multiplied by the number of pushes</li>
+    <li><strong>Manual (@claude review)</strong>: no review when a PR is opened or when commits are pushed</li>
+  </ul>
+  <p>Right after you add a repository, it is set to After every push, which produces the most reviews. <code>@claude review</code> runs just once, while <code>@claude review always</code> is also billed for later pushes when the setting is Once after PR creation or Manual. PRs from drafts and forks are not eligible for automatic review.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review-costs" rel="noopener">Code Review costs and usage</a></p>
+  <h2 id="s5">Estimates and limits: what to do before you expand</h2>
+  <p>The official docs recommend running a small pilot before expanding.</p>
+  <ol>
+    <li>Set a monthly spending limit</li>
+    <li>Enable it on a handful of representative repositories, with <strong>Review runs</strong> set to <strong>Once after PR creation</strong> or <strong>Manual (@claude review)</strong></li>
+    <li>After a few reviews, check the average cost in the <strong>Average cost</strong> column of the <strong>Repositories</strong> table</li>
+    <li>Multiply the average by the number of PRs per month. For <strong>After every push</strong>, also multiply by the number of pushes per PR.</li>
+  </ol>
+  <p>Set the limit on the Claude Code Review service in the usage admin screen (it applies to the whole organization). If the monthly Code Review limit, the organization-wide monthly limit, or the usage credit balance runs out, or the remainder falls below the estimated cost of one review, the review is skipped and developers see a comment on the PR explaining why.</p>
+  <p>You can view usage on the Code Review dashboard in analytics, but the cost figures may differ from your invoice. Per-repository figures are estimates at list price, before discounts or credits, so check your Anthropic invoice for exact amounts.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review-costs" rel="noopener">Code Review costs and usage</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does Code Review approve pull requests or block merges?</summary>
+      <p>According to the official docs, a review neither approves nor blocks, and its check run never ends as failed. The merge decision stays with your team.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review" rel="noopener">Code Review</a></p>
+    </details>
+    <details>
+      <summary>Can I use it on plans other than Team and Enterprise?</summary>
+      <p>Code Review itself is available on Team and Enterprise, and an Owner enables it. However, <code>/code-review</code> runs inside a Claude Code session on any plan.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review" rel="noopener">Code Review</a></p>
+    </details>
+    <details>
+      <summary>How much does one review cost?</summary>
+      <p>According to the official docs, there is no flat rate; billing is based on token usage. The source gives no amounts, so check the official pricing page. You can see your own average in the <strong>Average cost</strong> column of the admin console.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/code-review-costs" rel="noopener">Code Review costs and usage</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/code-review" rel="noopener">Code Review</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/code-review-costs" rel="noopener">Code Review costs and usage</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/code-review-setup" rel="noopener">Set up Code Review</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-common-workflows/index.html">Examples of using Claude Code: official recipes and basic workflows</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

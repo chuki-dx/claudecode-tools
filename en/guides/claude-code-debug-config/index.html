@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Check Why Claude Code Settings Aren't Taking Effect | Chuki DX Lab</title>
+<meta name="description" content="When CLAUDE.md, settings, hooks, or MCP in Claude Code aren&#x27;t being applied, this guide walks corporate IT through the verification commands and isolation steps from the official docs, step by step.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-debug-config/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-debug-config/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-debug-config/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-debug-config/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to check when your Claude Code settings aren&#x27;t taking effect">
+<meta property="og:description" content="When CLAUDE.md, settings, hooks, or MCP in Claude Code aren&#x27;t being applied, this guide walks corporate IT through the verification commands and isolation steps from the official docs, step by step.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-debug-config/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-debug-config.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to check when your Claude Code settings aren&#x27;t taking effect">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-debug-config.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to check when your Claude Code settings aren't taking effect",
+  "description": "When CLAUDE.md, settings, hooks, or MCP in Claude Code aren't being applied, this guide walks corporate IT through the verification commands and isolation steps from the official docs, step by step.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-debug-config/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "When settings don't take effect",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-debug-config/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need to restart Claude Code after editing settings.json?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, changes are applied to the running session after a short delay, so no restart is needed. However, before v2.1.257, edits to a .claude/ folder created after the session started aren't detected. If /hooks still shows the old definitions after you save, run /hooks again to refresh the view."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check whether a setting I configured is being overridden by another setting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run /status to see where the active settings were loaded from and whether managed settings are present. According to the official docs, managed settings are applied first, and for everything else the nearer scope takes precedence, in the order local, project, user. Environment variables and command-line flags also act as override layers. You can check for invalid settings files with claude doctor."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why doesn't the MCP server I wrote in .mcp.json show up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say to check that you haven't left the one-time approval dismissed, and that .mcp.json is at the repository root with entries under the mcpServers key. If a server fails to start, relative paths in command or args can also be the cause. Start by checking the status with /mcp."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-debug-config/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">When settings don't take effect</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">First, check what was loaded</a></li>
+        <li><a href="#s2">Check settings precedence and where they are stored</a></li>
+        <li><a href="#s3">When hooks don&#x27;t appear or don&#x27;t run</a></li>
+        <li><a href="#s4">When MCP server tools don&#x27;t appear</a></li>
+        <li><a href="#s5">Isolating the problem with a clean configuration</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to check when your Claude Code settings aren't taking effect</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>When settings in Claude Code (Anthropic's AI coding agent that runs in the terminal) don't take effect, first check what was actually loaded with <code>/context</code>.</li>
+      <li>The cause is often said to be one of these: it was not loaded, it was loaded from a different location, or it was overridden by another setting. Check in order: precedence, the hook matcher, MCP approval, and so on.</li>
+      <li>If you have no idea what's wrong, isolate whether the problem persists by running <code>claude --safe-mode</code>, or by starting in an empty directory with a clean settings directory.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">First, check what was loaded</h2>
+  <p>According to the official docs, when instructions are ignored or a feature you configured doesn't appear, the cause is most often one of these: the file wasn't loaded, it was loaded from a different location than you expected, or it was overridden by another file.</p>
+  <p>Start by running <code>/context</code>. It breaks down what is taking up the context window (the amount of information the AI can reference at once) in the current session, split into the system prompt, MCP tools, memory files, skills, conversation messages, and so on. You can check whether your <code>CLAUDE.md</code> and skill descriptions are loaded. To look closer at a specific item, use the commands below.</p>
+  <ul>
+    <li><code>/memory</code>: Shows where the memory files are located.</li>
+    <li><code>/skills</code>: shows the available skills.</li>
+    <li><code>/hooks</code>: Shows the active hook configuration.</li>
+    <li><code>/mcp</code>: Shows MCP servers and their connection status.</li>
+    <li><code>/permissions</code>: Shows the active allow and deny rules.</li>
+    <li><code>/doctor</code>: checks for problems such as invalid settings files and suggests fixes.</li>
+    <li><code>/status</code>: Shows where the active settings were loaded from and whether managed settings are present.</li>
+  </ul>
+  <p>A <code>CLAUDE.md</code> in a subdirectory is loaded only when needed, so it does not appear in the <code>/context</code> breakdown. When a file is loaded but not followed, the usual causes are said to be vague instructions, contradictions between files, or an overly long file. For things that must never happen, use permissions or hooks instead of CLAUDE.md.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+  <h2 id="s2">Check settings precedence and where they are stored</h2>
+  <p>The official docs explain that settings are merged across the managed, user, project, and local scopes. If managed settings exist, they are applied first; otherwise the nearest scope wins, in the order local, project, user. Command-line flags and environment variables act as one more overriding layer.</p>
+  <p>You can diagnose an invalid settings file read-only by running <code>claude doctor</code> in a terminal. Proposing a fix and confirming it before applying is done with <code>/doctor</code> inside a session.</p>
+  <ul>
+    <li>Writing <code>permissions</code>, <code>hooks</code>, or <code>env</code> in <code>~/.claude.json</code> has no effect. That file is for app state; put these in <code>~/.claude/settings.json</code>.</li>
+    <li><code>settings.local.json</code> overrides <code>settings.json</code>, and both override <code>~/.claude/settings.json</code>.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+  <h2 id="s3">When hooks don't appear or don't run</h2>
+  <p><code>/hooks</code> lists the hooks in the current session (processes that run automatically, for example before or after a tool runs). If you defined one and it doesn't appear, it hasn't been loaded.</p>
+  <ul>
+    <li>Writing them in a standalone file: hooks go under the <code>"hooks"</code> key in a settings file. Only plugins read a separate <code>hooks/hooks.json</code> file.</li>
+    <li><code>matcher</code> is an array: it is shown as an invalid setting, and if it is under <code>PreToolUse</code> or <code>PermissionRequest</code>, the other hooks in that file are not loaded either.</li>
+  </ul>
+  <p>If it appears but doesn't run, check the matcher.</p>
+  <ul>
+    <li>To match multiple tools, join them with <code>|</code> in a single string, for example <code>"Edit|Write"</code>.</li>
+    <li>Comma (<code>,</code>) separators have the same meaning from v2.1.191 onward. Before that they don't match, so use <code>|</code>.</li>
+    <li>Tool names are case-sensitive. They start with a capital letter, as in <code>Bash</code>, <code>Edit</code>, <code>Write</code>, and <code>Read</code>. If you misspell one, it matches nothing and fails silently.</li>
+  </ul>
+  <p>If you can't find the cause, start with <code>claude --debug</code> and trigger a tool call. The matchers that were checked and the hook exit codes are written to the log.</p>
+  <p>According to the official docs as of writing (October 2026), edits to <code>settings.json</code> are applied to a running session after a short delay, without a restart. However, before v2.1.257, edits to a <code>.claude/</code> folder created after the session started were not detected.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+  <h2 id="s4">When MCP server tools don't appear</h2>
+  <p>Use <code>/mcp</code> to check the servers, their connection status, and whether they are approved in the current project. The main reasons tools don't appear even when the definition is correct are as follows.</p>
+  <ul>
+    <li>Project-scoped servers in <code>.mcp.json</code> require a one-time approval. If you dismiss the prompt, the servers stay disabled until you approve them from <code>/mcp</code>.</li>
+    <li>If startup fails, the usual cause is a relative path in <code>command</code> or <code>args</code>. Paths are resolved from the directory where you launched Claude Code, not from the location of <code>.mcp.json</code>. Use full paths for local scripts.</li>
+    <li>If the server shows connected but has 0 tools, run <code>/mcp</code> and choose <strong>Reconnect</strong>. If that doesn't help, run <code>claude --debug=mcp</code> and read the server's stderr in the debug log.</li>
+  </ul>
+  <p>Pay attention to where the file goes, too. Project settings go in <code>.mcp.json</code> at the repository root, not inside <code>.claude/</code>, under the <code>mcpServers</code> key. <code>settings.json</code> does not read the <code>mcpServers</code> key.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+  <h2 id="s5">Isolating the problem with a clean configuration</h2>
+  <p>If you can't narrow down the cause, start with <code>claude --safe-mode</code>. This disables <code>CLAUDE.md</code>, skills, plugins, hooks, MCP servers, custom commands and agents, and more, while authentication, model selection, built-in tools, and permissions work as usual. If the problem goes away, one of the disabled items is the cause. Your organization's managed hooks and settings policies still apply in safe mode.</p>
+  <p>If the problem persists, confirm whether you can reproduce it in a session that doesn't use your own settings. First, in a shell where Claude Code isn't running, create an empty directory and move into it (example for Bash or Zsh).</p>
+<pre><code>mkdir -p ~/claude-clean/empty &amp;&amp; cd ~/claude-clean/empty</code></pre>
+  <p>Next, in the same shell, point to a new config directory and start Claude Code with <code>--setting-sources user</code> to disable project settings. The initial setup screen appears on first launch.</p>
+<pre><code>CLAUDE_CONFIG_DIR=~/claude-clean/config claude --setting-sources user</code></pre>
+  <p>Finally, try to reproduce the problem. If it goes away, the cause is in your user or project settings, so copy the files in <code>~/.claude.json</code> and <code>~/.claude</code> one at a time to narrow it down. If it persists, check managed settings with <code>/status</code> and also check the environment variables in your shell.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I need to restart Claude Code after editing settings.json?</summary>
+      <p>According to the official docs, changes are applied to the running session after a short delay, so no restart is needed. However, before v2.1.257, edits to a <code>.claude/</code> folder created after the session started aren't detected. If <code>/hooks</code> still shows the old definitions after you save, run <code>/hooks</code> again to refresh the view.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+    </details>
+    <details>
+      <summary>How do I check whether a setting I configured is being overridden by another setting?</summary>
+      <p>Run <code>/status</code> to see where the active settings were loaded from and whether managed settings are present. According to the official docs, managed settings are applied first, and for everything else the nearer scope takes precedence, in the order local, project, user. Environment variables and command-line flags also act as override layers. You can check for invalid settings files with <code>claude doctor</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+    </details>
+    <details>
+      <summary>Why doesn't the MCP server I wrote in .mcp.json show up?</summary>
+      <p>The official docs say to check that you haven't left the one-time approval dismissed, and that <code>.mcp.json</code> is at the repository root with entries under the <code>mcpServers</code> key. If a server fails to start, relative paths in <code>command</code> or <code>args</code> can also be the cause. Start by checking the status with <code>/mcp</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/debug-your-config" rel="noopener">Debug your configuration</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-vscode/index.html">Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-rewind-checkpoint/index.html">How to roll back Claude Code changes: what checkpoints and /rewind can restore</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

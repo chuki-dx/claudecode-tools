@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No-code vs. Claude Code: three criteria before building an internal tool | Chuki DX Lab</title>
+<meta name="description" content="No-code tools like Power Automate, or code with Claude Code? For corporate IT at small and midsize companies, this summarizes three criteria (who will maintain it, where the data lives, how often it changes) and checkpoints to avoid failure, based on Chuki DX Lab&#x27;s article.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/nocode-or-claude-code/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/nocode-or-claude-code/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/nocode-or-claude-code/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="No-code vs. Claude Code: 3 criteria to check before building an internal tool">
+<meta property="og:description" content="No-code tools like Power Automate, or code with Claude Code? For corporate IT at small and midsize companies, this summarizes three criteria (who will maintain it, where the data lives, how often it changes) and checkpoints to avoid failure, based on Chuki DX Lab&#x27;s article.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/nocode-or-claude-code/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-nocode-or-claude-code.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="No-code vs. Claude Code: 3 criteria to check before building an internal tool">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-nocode-or-claude-code.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "No-code vs. Claude Code: 3 criteria to check before building an internal tool",
+  "description": "No-code tools like Power Automate, or code with Claude Code? For corporate IT at small and midsize companies, this summarizes three criteria (who will maintain it, where the data lives, how often it changes) and checkpoints to avoid failure, based on Chuki DX Lab's article.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/nocode-or-claude-code/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "When to use no-code and when to use code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/nocode-or-claude-code/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What problems come up when you build tools in code for people on the front line?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Chuki DX Lab article explains that every small change ends up as a request to corporate IT. For that reason, it says the key is to choose based on whether the people who will maintain it can actually reach it, rather than on how fast it is to build."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is code a better fit for tasks with many branches and exceptions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This is because with no-code tools, it tends to get hard to follow the whole flow on screen as branches multiply. With code, you can keep the changed locations and reasons as history, so the article explains that you can later check when and why a condition was added."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "In what order should I proceed when rolling out Claude Code across the company?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A retrospective by a part-time in-house SE says they first used it only for their own work and set rules before spreading it across the company. For the rollout, the approach described is to try it small first, in one department and one task, record the benefit and the effort, and then decide whether to expand. The source doesn't describe the specific content of the rules, so check the official docs or other references."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/nocode-or-claude-code/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">When to use no-code and when to use code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">The short answer: sort it out with three questions</a></li>
+        <li><a href="#s2">Criterion 1: Who fixes it after it&#x27;s built</a></li>
+        <li><a href="#s3">Criterion 2: Where the data lives</a></li>
+        <li><a href="#s4">Criterion 3: how much it changes</a></li>
+        <li><a href="#s5">A common mistake: &quot;AI can write it, so make everything code&quot;</a></li>
+        <li><a href="#s6">What to check before trying it: lessons from a part-time in-house SE</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>No-code vs. Claude Code: 3 criteria to check before building an internal tool</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>For small internal business tools, three questions decide between no-code and code written with Claude Code (an AI coding agent that runs in the terminal): who will fix it after it's built, where the data lives, and how much it will change.</li>
+      <li>If the person on the front line fixes it, or it can be handled entirely within Microsoft 365 or a SaaS tool, go no-code. If it spans multiple systems or has many exceptions, code is a better fit.</li>
+      <li>"AI can write it, so make everything code" just moves the key-person dependency over to corporate IT. Use no-code for the parts that business users touch and code for the heavy back-end processing, and when in doubt, first decide who will fix it a year from now.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">The short answer: sort it out with three questions</h2>
+  <p>This article organizes the decision criteria described in the Chuki DX Lab article "Build It No-Code, or Write Code with Claude Code?" It is based on what was publicly available as of writing (October 2026), and presents the criteria the author uses for their own decisions.</p>
+  <p>An article from Chuki DX Lab says that since AI made it possible to write code, the question of whether to build with no-code or with code has actually become harder. "You can build anything in code just by asking AI," but the people who struggle after it is built are you and your team.</p>
+  <p>The article lists the following three questions.</p>
+  <ol>
+    <li>Who fixes it after it's built</li>
+    <li>Where the data lives</li>
+    <li>How much it changes</li>
+  </ol>
+  <p>Use the following as a rule of thumb for sorting work into these three.</p>
+  <ul>
+    <li>Staff on the front line fix it → no-code</li>
+    <li>Work that stays within Microsoft 365 or a SaaS product → no-code</li>
+    <li>Spans multiple systems or has many exceptions → code (Claude Code)</li>
+  </ul>
+  <p>Here, no-code means building a process flow on screen, as in Power Automate.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+  <h2 id="s2">Criterion 1: Who fixes it after it's built</h2>
+  <p>The Chuki DX Lab article treats this as the most important criterion. <strong>If the person on the front line will fix it themselves, no-code is the better fit.</strong> They can see the flow on screen, so small changes like "change the approver" or "add a notification recipient" can be done without going through corporate IT.</p>
+  <p>On the other hand, <strong>if corporate IT will maintain it, code is also fine</strong>. The idea is that if you have Claude Code read the code, it can explain what to fix even when the person who built it is gone.</p>
+  <p>Conversely, if you build a tool in code that you intend to hand over to the people on the front line, corporate IT gets a request for every small change. The key is to choose based not on how fast you can build it, but on <strong>whether the people who will fix it can actually reach it</strong>. Before you roll it out company-wide, decide who will own fixes; that keeps your choice of tool from wavering.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+  <h2 id="s3">Criterion 2: Where the data lives</h2>
+  <p><strong>If everything stays within Microsoft 365 or SaaS, no-code is easier</strong>, as the explanation goes. With Power Automate, connections to Outlook, Teams, SharePoint, and so on (connectors) are ready out of the box, so you rarely struggle with authentication setup.</p>
+  <p><strong>Code suits cases that span internal file servers or multiple systems.</strong> For example, a task like "compare a CSV exported from the core system with an Excel ledger and list only the differences" can be built with no-code tools, but the screens get more complex as conditions grow. With code, you can write the conversion and matching rules in detail.</p>
+  <p>If you work in corporate IT, check first where the relevant business data is normally stored, which makes this criterion easier to apply.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+  <h2 id="s4">Criterion 3: how much it changes</h2>
+  <p><strong>If the steps are nearly fixed, no-code is enough</strong>, the docs say. If you just send the same kind of data to the same place every month, you can build it once and be done.</p>
+  <p><strong>If conditions and exceptions keep growing every month, choose code.</strong> With no-code tools, the whole flow tends to become hard to follow on screen as branches multiply. With code, you can keep a history of what changed and why, so you can later check when and why a condition was added.</p>
+  <p>The idea is that the more changes a task involves, the more it matters whether you can trace what happened afterward.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+  <h2 id="s5">A common mistake: "AI can write it, so make everything code"</h2>
+  <p>What the Chuki DX Lab article warns against in particular is "building everything in code because AI can write code." It explains that doing so leaves only corporate IT able to fix things, so the dependence on a single person (a state where only specific people can fix it) simply shifts from "the person who wrote the macro" to "corporate IT."</p>
+  <p>The author says the following way of splitting things up has worked best for them so far.</p>
+  <ul>
+    <li>Use no-code for the parts that staff touch (input forms, approvals, notifications)</li>
+    <li>Heavy back-end processing (aggregation, matching, conversion) goes to code</li>
+  </ul>
+  <p>If you are still undecided, the advice is to first decide who will fix it a year from now, then choose. Once that person is settled, criteria 2 and 3 can be considered in light of the tools they are best at.</p>
+  <h3>Notes before you read</h3>
+  <p>The criteria introduced here are simply an approach based on one IT admin's experience. The article does not cover costs, licensing, security settings, or specific ways to use Claude Code. When you apply this to your own environment, check each product's official docs.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+  <h2 id="s6">What to check before trying it: lessons from a part-time in-house SE</h2>
+  <p>In another Chuki DX Lab article (a retrospective by a part-time in-house IT admin), the author writes that internal DX stumbles tended to come from the order of steps and how responsibilities were assigned, more than from tool performance. The following points are useful both before and after you decide between no-code and code.</p>
+  <h3>Don't choose the tool first</h3>
+  <p>The article gives an example where the product was chosen first and applied to the work afterward, so the tool's assumptions didn't match the actual workflow and data entry became more work. As a next step, it describes asking people on the floor "what is the current procedure, who does it, and what is difficult" before choosing a tool, and writing the answers on a single sheet of paper.</p>
+  <h3>Checklist before and after you build it</h3>
+  <p>The author of that article checks the following before trying a new mechanism.</p>
+  <ul>
+    <li>Have you seen the current procedure on the floor with your own eyes?</li>
+    <li>Who is struggling, and what has to decrease for you to call it a success</li>
+    <li>Who does what first when you're not available</li>
+    <li>Is it small enough to try in one department or one workflow?</li>
+    <li>Have you decided when to stop?</li>
+  </ul>
+  <p>You don't need to satisfy every item before you start, but simply knowing which ones are missing is said to make recovery faster when you get stuck. Criterion 1, "who fixes it," also overlaps with "who does what first when you're not there."</p>
+  <p>It also says that when trying Claude Code, the order is to start by using it only for your own work and set the rules before expanding it company-wide.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">Patterns Where In-House DX Stumbled at a Small Company, and What I Did Next — A Part-Time In-House SE's Retrospective</a> (Japanese)</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What problems come up when you build tools in code for people on the front line?</summary>
+      <p>A Chuki DX Lab article explains that every small change ends up as a request to corporate IT. For that reason, it says the key is to choose based on whether the people who will maintain it can actually reach it, rather than on how fast it is to build.</p>
+      <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+    </details>
+    <details>
+      <summary>Why is code a better fit for tasks with many branches and exceptions?</summary>
+      <p>This is because with no-code tools, it tends to get hard to follow the whole flow on screen as branches multiply. With code, you can keep the changed locations and reasons as history, so the article explains that you can later check when and why a condition was added.</p>
+      <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a></p>
+    </details>
+    <details>
+      <summary>In what order should I proceed when rolling out Claude Code across the company?</summary>
+      <p>A retrospective by a part-time in-house SE says they first used it only for their own work and set rules before spreading it across the company. For the rollout, the approach described is to try it small first, in one department and one task, record the benefit and the effort, and then decide whether to expand. The source doesn't describe the specific content of the rules, so check the official docs or other references.</p>
+      <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">Patterns Where In-House DX Stumbled at a Small Company, and What I Did Next — A Part-Time In-House SE's Retrospective</a> (Japanese)</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://note.com/chuki_dx_note/n/nb640cbbbd956" rel="noopener">No-code or code with Claude Code? Three criteria for deciding how to build internal tools (Japanese)</a> (a Chuki DX Lab article)</li>
+    <li><a href="https://note.com/chuki_dx_note/n/nc8393752ada8" rel="noopener">Patterns where in-house DX stumbled at small and midsize companies, and what I did next — a part-time IT admin's retrospective</a> (Japanese; an article by Chuki DX Lab)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-first-week/index.html">What to do in your first week after installing Claude Code (for part-time corporate IT)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-output-styles/index.html">What Are Claude Code Output Styles? How to Change and Create Them</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

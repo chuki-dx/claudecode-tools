@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rolling Out Claude Code Company-Wide: The Official Rollout Kit and the Champion Role | Chuki DX Lab</title>
+<meta name="description" content="A guide for corporate IT on what you can use from the official docs&#x27; announcement kit and champion kit when rolling out Claude Code company-wide. It covers pre-send checks, a pilot, a 30-day plan, and cautions.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-rollout-kit/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rollout-kit/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-rollout-kit/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-rollout-kit/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to spread Claude Code internally: the official rollout kit and the champion&#x27;s role">
+<meta property="og:description" content="A guide for corporate IT on what you can use from the official docs&#x27; announcement kit and champion kit when rolling out Claude Code company-wide. It covers pre-send checks, a pilot, a 30-day plan, and cautions.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-rollout-kit/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-rollout-kit.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to spread Claude Code internally: the official rollout kit and the champion&#x27;s role">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-rollout-kit.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to spread Claude Code internally: the official rollout kit and the champion's role",
+  "description": "A guide for corporate IT on what you can use from the official docs' announcement kit and champion kit when rolling out Claude Code company-wide. It covers pre-send checks, a pilot, a 30-day plan, and cautions.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-rollout-kit/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Rolling out Claude Code company-wide and announcing it",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-rollout-kit/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I send the official announcement text to the company as is?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs ask you to treat the sample text as a draft, not a finished product. Rewrite it in your own words, replace the example tasks with real bugs or modules from your own code, and replace the [bracketed placeholders] before you send it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much time does the project lead need?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs give these estimates: about 15 minutes a week for posting, about 20 minutes for answering questions, about 5 minutes for running a weekly thread, and 0 to 30 minutes for optional pairing or explanations. It is meant to fit within a normal work week without becoming extra support work."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you answer when someone asks, \"Where does our code go?\"",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the one-line answer from the rollout kit, the CLI runs in the terminal and sends context to Anthropic's API for inference. On Team or Enterprise plans, your code and prompts are not used to train models. The champions' kit tells them to refer this question to an admin, so having an answer ready on the corporate IT side makes things go more smoothly."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-rollout-kit/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Rolling out Claude Code company-wide and announcing it</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What the official rollout kit can do</a></li>
+        <li><a href="#s2">Pre-send checklist and announcement template</a></li>
+        <li><a href="#s3">When to use executive sponsorship, a pilot, and tip distribution</a></li>
+        <li><a href="#s4">The champion&#x27;s role and weekly workload</a></li>
+        <li><a href="#s5">A 30-day plan, and how to respond to concerns and security questions</a></li>
+        <li><a href="#s6">Notes for company-wide rollout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to spread Claude Code internally: the official rollout kit and the champion's role</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The official docs include two kits: one for admins (draft announcements, tip delivery, and an FAQ) and one for champions who promote adoption on the user side.</li>
+      <li>The announcement text is a draft, not a finished product. Rewrite it in your company's own words, replace the examples with real examples from your own code, and fill in the <code>[bracketed placeholders]</code> before you send it.</li>
+      <li>The official docs recommend not just posting an announcement but appointing a champion who gets good at using it and shares what they learn, keeping the weekly burden small.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What the official rollout kit can do</h2>
+  <p>According to the official docs, the Communications kit is a page for administrators and engineering leads rolling out Claude Code (an AI coding agent from Anthropic that runs in the terminal) to engineering organizations. It includes rollout announcement text, a collection of tips to share gradually after rollout, and one-line answers to frequently asked questions.</p>
+  <p>The note says the text provided is a draft. It asks you to rewrite it in your own words, replace the example tasks with real bugs or modules from your own code, and replace the <code>[bracketed placeholders]</code> before sending. The reasoning is that an announcement that reads as if someone inside the company wrote it helps adoption stick.</p>
+  <p>The intended audience is engineering organizations. If corporate IT is driving a company-wide rollout, check that the wording suits your readers. Also, because Claude Code is released frequently, the docs note that you should check the official docs home page for version-dependent details before distributing anything internally.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+  <h2 id="s2">Pre-send checklist and announcement template</h2>
+  <p>The official docs list the following items to complete before the announcement. Each item closes a gap that would otherwise turn into a pile of support requests on the day.</p>
+  <ul>
+    <li>Create a <code>#claude-code</code> channel and link to it from the announcement (so questions go to one place)</li>
+    <li>Try the install command on at least one machine in your own environment (to catch proxy and firewall issues early)</li>
+    <li>Prepare a link to your security and data handling information (the first question is usually "where does the code go?")</li>
+    <li>Pick one first concrete task, such as a real bug or file in your own code</li>
+    <li>Assign someone to the channel for the first 48 hours</li>
+    <li>Ask an executive (C-suite) to send the announcement or co-sign it</li>
+  </ul>
+  <p>The standard announcement is structured as: what Claude Code is, setup steps you can finish in 2 minutes, specific tasks to try, and an answer to "where does my code go?" On data handling, the official docs state that it runs in the terminal and communicates directly with Anthropic's API, and that on Team or Enterprise plans Anthropic does not use your code or prompts to train models. Do not drop the condition "on Team or Enterprise plans" from internal messaging. Check your company's contract plan in the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+  <h2 id="s3">When to use executive sponsorship, a pilot, and tip distribution</h2>
+  <h3>Executive-name version</h3>
+  <p>This version is sent under the name and account of the sponsoring executive. According to the official docs, a rollout sent in an executive's name gets a higher open rate than the same message sent by an admin or tools team, and people start using it earlier in the first week. The request is narrowed to one thing, "install it and run it on one real task," and the how-to is left to the standard announcement and <code>#claude-code</code>.</p>
+  <h3>Pilot</h3>
+  <p>This is for a phased rollout and goes only to pilot members. It asks them to use Claude Code on at least one real task this week and post in <code>#claude-code-pilot</code> what worked, what was annoying, and what was surprising. The docs explain that this feedback determines how you roll it out to everyone else. It also includes a tip: for the first multi-file change, press <code>Shift+Tab</code> until "plan" appears, and Claude will present a plan without editing any source.</p>
+  <h3>Tip delivery</h3>
+  <p>After rollout, the docs suggest distributing paste-ready Slack or Teams messages to <code>#claude-code</code> at a pace of one or two a week. There's no required order, and you can pick only the ones that fit your team's weak spots. Topics include <code>/init</code> and <code>CLAUDE.md</code>, plan mode, and <code>/rewind</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+  <h2 id="s4">The champion's role and weekly workload</h2>
+  <p>The Champion kit is a page for individual engineers who already use Claude Code and want to help it take hold on their team. The official docs explain that adoption of a developer tool happens less through announcements and more through someone using it well, talking about it publicly, and making it easy for others to copy. Your role is these three actions.</p>
+  <ul>
+    <li>Share what you find: post prompts and screenshots from your own work in a place your team already reads</li>
+    <li>Become the person people ask: when someone asks a question, send back the prompt you actually used before you explain anything</li>
+    <li>Widen the circle: build light habits, such as a dedicated channel or a weekly thread, so the momentum continues even when you're away</li>
+  </ul>
+  <p>This is one of the example posts (in English) in the official docs. It is included as a sample of the right length: short sentences and a concrete example are enough.</p>
+<pre><code>Plan mode is the reason I am comfortable using this on code that matters.
+Press Shift+Tab until you see "plan"; it lays out the changes it proposes
+without editing your source.</code></pre>
+  <p>The time burden is described as fitting within a normal work week: about 15 minutes a week for posting, about 20 minutes answering questions in the shared channel, about 5 minutes for a weekly thread, and 0 to 30 minutes for optional pairing or explanations. The docs say to keep the champion role as support for existing work rather than additional support duty. The announcement kit also includes a sample DM for reaching out to two or three active people in <code>#claude-code</code> after rollout.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/champion-kit" rel="noopener">Champion kit</a></p>
+  <h2 id="s5">A 30-day plan, and how to respond to concerns and security questions</h2>
+  <p>The 30-day playbook in the official docs is a loose plan you can adjust to your situation. Each week includes a sign that things are going well.</p>
+  <ol>
+    <li>Week 1: Create the channel, pin the Quickstart, and post two or three of your own examples with their prompts. A good target is a few people reacting and at least one question coming in</li>
+    <li>Week 2: Start a weekly show-and-tell thread, answer questions publicly, and share one custom skill or <code>CLAUDE.md</code> snippet. A good sign is that other people start posting their own examples.</li>
+    <li>Week 3: Do two or three short pairing sessions and pin common questions as an FAQ. A good sign is the same people using it repeatedly.</li>
+    <li>Week 4: Find a second champion, and tell your manager or administrators what is working and what is not. A good benchmark is that someone other than you answers questions.</li>
+  </ol>
+  <p>When responding to concerns, the recommended approach is to avoid general debate, acknowledge the concern, restate it briefly, and propose one concrete demo using that person's own code. For "I don't want AI touching production code," agree that no change should be merged without being read, then suggest reviewing proposals first in plan mode and reviewing the diff to the same standard as a normal pull request.</p>
+  <p>For questions about security and data handling, the official docs say the rollout champion shouldn't make up an answer on the spot and should route it to an administrator. This is a part where corporate IT should have a point of contact ready.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/champion-kit" rel="noopener">Champion kit</a></p>
+  <h2 id="s6">Notes for company-wide rollout</h2>
+  <ul>
+    <li>The wording is a draft. Don't send it company-wide as is; rewrite it in your own company's language and with your own examples.</li>
+    <li>The explanation of data handling applies only under a Team or Enterprise plan. Check it against your own contract.</li>
+    <li>The "Best practices" section of the tips collection says to check the diff before committing and to verify changes that touch critical paths. It also notes that Claude can be confidently wrong.</li>
+    <li>Pricing and plan conditions are not covered in this article's sources. Check the official pricing page for the latest information.</li>
+  </ul>
+  <p>This article only summarizes what the official docs said as of writing (October 2026). It is not based on my own testing. The official docs are updated frequently, so check the latest wording before you roll anything out company-wide.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I send the official announcement text to the company as is?</summary>
+      <p>The official docs ask you to treat the sample text as a draft, not a finished product. Rewrite it in your own words, replace the example tasks with real bugs or modules from your own code, and replace the <code>[bracketed placeholders]</code> before you send it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+    </details>
+    <details>
+      <summary>How much time does the project lead need?</summary>
+      <p>The official docs give these estimates: about 15 minutes a week for posting, about 20 minutes for answering questions, about 5 minutes for running a weekly thread, and 0 to 30 minutes for optional pairing or explanations. It is meant to fit within a normal work week without becoming extra support work.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/champion-kit" rel="noopener">Champion kit</a></p>
+    </details>
+    <details>
+      <summary>How do you answer when someone asks, "Where does our code go?"</summary>
+      <p>In the one-line answer from the rollout kit, the CLI runs in the terminal and sends context to Anthropic's API for inference. On Team or Enterprise plans, your code and prompts are not used to train models. The champions' kit tells them to refer this question to an admin, so having an answer ready on the corporate IT side makes things go more smoothly.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/communications-kit" rel="noopener">Communications kit</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/champion-kit" rel="noopener">Champion kit</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-training-nonengineers/index.html">How to teach Claude Code to non-engineers such as general affairs and accounting staff</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-first-week/index.html">What to do in your first week after installing Claude Code (for part-time corporate IT)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

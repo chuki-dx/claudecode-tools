@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using Claude Code in VS Code: Installing the extension and how it differs from the CLI | Chuki DX Lab</title>
+<meta name="description" content="A guide for corporate IT to the Claude Code VS Code extension, based on the official docs, covering prerequisites, installation, first steps, permission mode cautions, and differences from the CLI.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Using Claude Code in VS Code: how to install the extension and how it differs from the CLI">
+<meta property="og:description" content="A guide for corporate IT to the Claude Code VS Code extension, based on the official docs, covering prerequisites, installation, first steps, permission mode cautions, and differences from the CLI.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-vscode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Using Claude Code in VS Code: how to install the extension and how it differs from the CLI">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-vscode.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Using Claude Code in VS Code: how to install the extension and how it differs from the CLI",
+  "description": "A guide for corporate IT to the Claude Code VS Code extension, based on the official docs, covering prerequisites, installation, first steps, permission mode cautions, and differences from the CLI.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to use the VS Code extension",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need an API key for the Claude Code VS Code extension?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say it is not required. You sign in with a paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I installed the extension, but claude isn't found in the terminal.",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This is because the extension does not add claude to your PATH. To use it in the integrated terminal, you need to install the standalone CLI."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I continue a conversation started in the extension in the CLI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The extension and the CLI share the same conversation history. Run claude --resume in the terminal to pick a conversation from the list and continue it."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-vscode/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to use the VS Code extension</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What it can do and what you need</a></li>
+        <li><a href="#s2">From launch to your first request</a></li>
+        <li><a href="#s3">Permission modes and cautions for company use</a></li>
+        <li><a href="#s4">Differences from the CLI, and what to do when it doesn&#x27;t work</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Using Claude Code in VS Code: how to install the extension and how it differs from the CLI</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, the VS Code extension lets you use Claude Code (the AI coding agent from Anthropic that runs in the terminal) in a graphical panel inside VS Code, and it is the recommended way to use Claude Code in VS Code.</li>
+      <li>The prerequisites are VS Code 1.94.0 or later and an Anthropic account. The extension includes the CLI (the command-line version), but to use <code>claude</code> in the integrated terminal you need to install the CLI separately.</li>
+      <li>Auto-edit permissions can also modify VS Code settings files, so when working with untrusted code, consider using Manual mode together with restricted mode.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What it can do and what you need</h2>
+  <p>The following is based on the official docs I referenced as of writing (October 2026). With the extension, you can review and edit Claude's plan before accepting it, automatically accept edits, pass files with line numbers for the selected range using @-mentions (the syntax of adding @ to specify a file), open conversation history, and open multiple conversations in separate tabs or windows.</p>
+  <p>There are two prerequisites.</p>
+  <ul>
+    <li>VS Code 1.94.0 or later</li>
+    <li>An Anthropic account. You can use a paid Claude subscription (Pro, Max, Team, Enterprise) or a Claude Console account, and no API key is needed. If you go through a third-party provider such as Amazon Bedrock, there is a separate setup procedure.</li>
+  </ul>
+  <p>To install, press <code>Ctrl+Shift+X</code> (<code>Cmd+Shift+X</code> on Mac) in VS Code to open the Extensions view, search for "Claude Code," and click <strong>Install</strong>. If it doesn't appear, restart VS Code or run "Developer: Reload Window" from the Command Palette.</p>
+  <p>There is also a link for Cursor, and you can install it in other VS Code forks such as Devin Desktop and Kiro. For editors where you can't install the extension, the docs describe running the CLI <code>claude</code> in the integrated terminal.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s2">From launch to your first request</h2>
+  <p>The quickest way to open it is to click the Spark icon in the toolbar at the top right of the editor. It appears only while a file is open. The <strong>✻ Claude Code</strong> item in the status bar works even when no file is open.</p>
+  <p>On first launch a sign-in screen appears, so click <strong>Sign in</strong> and authorize in your browser. If the sign-in screen appears even though you set <code>ANTHROPIC_API_KEY</code> in your shell, VS Code may not have inherited your shell's environment variables. Launch it from a terminal with <code>code .</code>, or sign in with your Claude account.</p>
+  <p>Selected text is automatically visible to Claude. <code>Option+K</code> (<code>Alt+K</code> on Windows/Linux) inserts a reference like <code>@file.ts#5-10</code> into your prompt. You can specify files and folders by typing a name after @, and fuzzy matching is supported.</p>
+<pre><code>Explain the logic in @auth (fuzzy matches auth.js, AuthService.ts, etc.)</code></pre>
+  <p>How file edits behave depends on the permission mode. In Manual mode, you see a side-by-side comparison of the original and the proposed change, and you can approve, reject, or give different instructions. The per-change <strong>Accept this change</strong> / <strong>Reject this change</strong> buttons require Claude Code v2.1.275 or later and don't appear for diffs with more than 100 changes, so review those file by file.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s3">Permission modes and cautions for company use</h2>
+  <p>You can switch the permission mode from the mode indicator below the prompt box.</p>
+  <ul>
+    <li><strong>Auto</strong>: A classifier reviews most actions in place of per-action prompts. In Claude Code v2.1.283 and later it is a built-in starting mode; before that, it is available only on Pro, Max, and Team plans.</li>
+    <li><strong>Manual</strong>: Asks for permission before file edits and most shell commands.</li>
+    <li><strong>Plan</strong>: Explains what it will do and waits for your approval. VS Code opens the plan as a Markdown document, and you can respond with inline comments before it runs.</li>
+    <li><strong>Edit automatically</strong>: Edits without asking for confirmation.</li>
+  </ul>
+  <p>The official docs warn that with auto-edit permissions, Claude Code can also modify files such as <code>settings.json</code> and <code>tasks.json</code>, which VS Code may run automatically. When working with untrusted code, the docs suggest enabling VS Code Restricted Mode, using Manual mode instead of Auto or Edit automatically, and reviewing changes carefully before approving them.</p>
+  <p>Excluding selected text also has conditions. For files inside the workspace that match <code>files.exclude</code> or <code>search.exclude</code>, at most the path is passed to Claude. However, this applies only to the chat panel; the CLI in the integrated terminal sends selected text regardless of the file. The docs advise adding a deny rule for <code>Read</code> to files you want to protect.</p>
+  <p>On the handling of code, the official docs state that Claude Code processes your code but does not use it to train models. For details, see the official Data and privacy page.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s4">Differences from the CLI, and what to do when it doesn't work</h2>
+  <p>Installing the extension does not add <code>claude</code> to your PATH. The extension bundles a copy of the CLI for the chat panel, so to run <code>claude</code> in the integrated terminal, install the standalone CLI separately.</p>
+  <ul>
+    <li>Commands and skills: the CLI supports all of them; the extension supports a subset. The <code>!</code> Bash shortcut and tab completion are CLI-only.</li>
+    <li>MCP (a mechanism for connecting Claude to external tools and APIs) server settings and checkpoints (a feature that records Claude's file edits so you can restore an earlier state) work in either case.</li>
+  </ul>
+  <p>The extension and the CLI share the same conversation history, and you can continue an extension conversation from the CLI with <code>claude --resume</code>.</p>
+  <p>If you don't see the Spark icon, check that a file is open, that VS Code is version 1.94.0 or later, and that no other AI extension conflicts with it. The extension doesn't run in Restricted Mode. Even if you uninstall the extension, running <code>claude</code> in the integrated terminal reinstalls it automatically, so to stop that, turn off <strong>Auto-install IDE extension</strong> in <code>/config</code>.</p>
+  <p>For settings or behavior not described here, check the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I need an API key for the Claude Code VS Code extension?</summary>
+      <p>The official docs say it is not required. You sign in with a paid Claude subscription (Pro, Max, Team, or Enterprise) or a Claude Console account.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+    <details>
+      <summary>I installed the extension, but claude isn't found in the terminal.</summary>
+      <p>This is because the extension does not add <code>claude</code> to your PATH. To use it in the integrated terminal, you need to install the standalone CLI.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+    <details>
+      <summary>Can I continue a conversation started in the extension in the CLI?</summary>
+      <p>The extension and the CLI share the same conversation history. Run <code>claude --resume</code> in the terminal to pick a conversation from the list and continue it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-rewind-checkpoint/index.html">How to roll back Claude Code changes: what checkpoints and /rewind can restore</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-resume-session/index.html">How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

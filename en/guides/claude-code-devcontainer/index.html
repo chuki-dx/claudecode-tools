@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Running Claude Code in a dev container: settings and organizational rules | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, based on the official docs, how to run Claude Code in a dev container. It summarizes what corporate IT can use to make decisions, including persisting authentication, applying organization policies, restricting network access, and handling permission prompts.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-devcontainer/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-devcontainer/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-devcontainer/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Running Claude Code in a dev container: settings and organizational rules">
+<meta property="og:description" content="This guide covers, based on the official docs, how to run Claude Code in a dev container. It summarizes what corporate IT can use to make decisions, including persisting authentication, applying organization policies, restricting network access, and handling permission prompts.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-devcontainer/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-devcontainer.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Running Claude Code in a dev container: settings and organizational rules">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-devcontainer.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Running Claude Code in a dev container: settings and organizational rules",
+  "description": "This guide covers, based on the official docs, how to run Claude Code in a dev container. It summarizes what corporate IT can use to make decisions, including persisting authentication, applying organization policies, restricting network access, and handling permission prompts.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-devcontainer/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code dev container",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-devcontainer/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do I have to sign in again every time I rebuild?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "By default, the container's home directory is discarded on rebuild. If you mount a named volume at ~/.claude and set CLAUDE_CONFIG_DIR to the same path, .claude.json is also written inside the volume. GitHub Codespaces also loses it on rebuild, so the same setup is needed there."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I install managed-settings.json in a Dockerfile, can users no longer change the settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Dockerfile lives in the repository, so anyone with write access can change or delete the steps. If you want rules that can't be bypassed by editing repository files, the official docs point to server-managed settings or distribution via MDM."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to use --dangerously-skip-permissions in a dev container?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is not safe. It cannot stop a malicious project from exfiltrating information from inside the container, and changes in the workspace are reflected on the host. Use it only with trusted repositories, and combine it with network restrictions. There is also a setting that prohibits the flag itself."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-devcontainer/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code dev container</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do with a dev container</a></li>
+        <li><a href="#s2">Add Claude Code to a dev container</a></li>
+        <li><a href="#s3">A setup that keeps authentication across rebuilds</a></li>
+        <li><a href="#s4">Add your organization&#x27;s rules</a></li>
+        <li><a href="#s5">Handling network restrictions and permission prompts</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Running Claude Code in a dev container: settings and organizational rules</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>When you install Claude Code in a dev container, the commands Claude runs execute inside the container, and file edits are reflected in your local repository.</li>
+      <li>To install, add the feature to <code>devcontainer.json</code> and rebuild. Because a rebuild clears authentication, you need to persist <code>~/.claude</code>.</li>
+      <li>You can apply organization rules with <code>managed-settings.json</code>, but note that when it is delivered through a Dockerfile, anyone with write access to the repository can change it.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do with a dev container</h2>
+  <p>According to the official docs as of writing (October 2026), a dev container is a definition that lets everyone on a team run the same isolated environment. If you install Claude Code (Anthropic's AI coding agent that runs in the terminal) inside it, the commands Claude runs execute in the container instead of on the host, and edits to project files are reflected in your local repository.</p>
+  <p>You can connect from editors that support the Dev Containers specification, such as VS Code, GitHub Codespaces, JetBrains IDEs, and Cursor. Unsupported editors, such as plain Vim, are not covered.</p>
+  <p>The official docs warn that running with <code>--dangerously-skip-permissions</code> does not prevent a malicious project from exfiltrating data inside the container (including the credentials in <code>~/.claude</code>). They recommend using it only with trusted repositories, monitoring Claude's actions, and not mounting host secrets such as <code>~/.ssh</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s2">Add Claude Code to a dev container</h2>
+  <p>According to the official docs, the Claude Code Dev Container Feature lets you install Claude Code in any dev container. The steps use VS Code as the example. Save the following in <code>.devcontainer/devcontainer.json</code>, or add a <code>features</code> block to an existing file.</p>
+<pre><code>{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  }
+}</code></pre>
+  <p>A version tag like <code>:1.0</code> at the end pins the Feature's install script, not Claude Code itself. The Feature installs the latest Claude Code, which auto-updates by default inside the container. Replace the <code>image</code> line with your own base image, or delete it if you use a Dockerfile.</p>
+  <ol>
+    <li>Save the content above to <code>devcontainer.json</code></li>
+    <li>In the Command Palette, run <strong>Dev Containers: Rebuild Container</strong></li>
+    <li>Run <code>claude</code> in the terminal of the rebuilt container and follow the authentication prompts</li>
+  </ol>
+  <p>If the base image has no Node.js, the feature installs it. If that fails and the build stops with <code>Failed to install Node.js and npm</code>, add <code>"ghcr.io/devcontainers/features/node:1": {}</code> above the Claude Code feature and rebuild. With cloud providers such as Amazon Bedrock, the docs recommend not mounting the host's credentials file and instead passing credentials as environment variables, for example through <code>containerEnv</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s3">A setup that keeps authentication across rebuilds</h2>
+  <p>According to the official docs, by default the container's home is discarded on rebuild, so you have to sign in again each time. Auth tokens and session history live in <code>~/.claude</code>, but OAuth account data and similar are in a separate file, <code>~/.claude.json</code>, so mounting a volume alone isn't enough. Mount a named volume at <code>~/.claude</code> and set <code>CLAUDE_CONFIG_DIR</code> to the same path. The following is an example where <code>remoteUser</code> is <code>node</code>.</p>
+<pre><code>"mounts": [
+  "source=claude-code-config,target=/home/node/.claude,type=volume"
+],
+"containerEnv": {
+  "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+}</code></pre>
+  <p>Replace <code>/home/node</code> with the home directory of your own <code>remoteUser</code>, and if you already have a <code>containerEnv</code>, add the entry there. To keep volumes separate per project, include <code>${devcontainerId}</code> in the volume name. In GitHub Codespaces, the data persists across stop and start but is lost on a rebuild, so you need the same setup. To carry credentials across codespaces, save either <code>ANTHROPIC_API_KEY</code> or a <code>CLAUDE_CODE_OAUTH_TOKEN</code> obtained with <code>claude setup-token</code> as a Codespaces secret.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s4">Add your organization's rules</h2>
+  <p>According to the official docs, Claude Code reads <code>/etc/claude-code/managed-settings.json</code> on Linux and applies it with the highest priority in the settings hierarchy. It takes precedence over values in <code>~/.claude</code> and the project's <code>.claude/</code>, and you copy it in from a Dockerfile as follows.</p>
+<pre><code>RUN mkdir -p /etc/claude-code
+COPY managed-settings.json /etc/claude-code/managed-settings.json</code></pre>
+  <p>However, because the Dockerfile is in the repository, anyone with write access can change or delete this step. To make it impossible for engineers to bypass, the docs recommend server-managed settings or distribution through MDM.</p>
+  <p>Environment variables for the whole container go in <code>containerEnv</code>. The following example disables telemetry and error reporting and turns off auto-updates.</p>
+<pre><code>"containerEnv": {
+  "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+  "DISABLE_AUTOUPDATER": "1"
+}</code></pre>
+  <p><code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> also disables the feature-flag evaluation that Remote Control and similar features depend on, so they won't work in the container. To pin a version, run <code>npm install -g @anthropic-ai/claude-code@X.Y.Z</code> in the Dockerfile instead of using the feature, and set <code>DISABLE_AUTOUPDATER</code> to <code>1</code>. Define MCP servers at project scope in <code>.mcp.json</code> at the repository root, and you can check them in along with the configuration.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+  <h2 id="s5">Handling network restrictions and permission prompts</h2>
+  <p>You can limit outbound traffic to only the domains you need. Check the domains on the network requirements page in the official docs. The reference container's <code>init-firewall.sh</code> restricts traffic to allowed destinations only. A firewall inside the container needs extra privileges, so <code>runArgs</code> adds <code>NET_ADMIN</code> and <code>NET_RAW</code>. These aren't required by Claude Code itself, and you can instead rely on your own network controls.</p>
+  <p>Because the container runs as a non-root user, you can pass <code>--dangerously-skip-permissions</code> for unattended operation. The CLI refuses to start as root, so check that <code>remoteUser</code> is non-root. However, confirmation before tool execution is gone, and Claude can modify files in the bind-mounted workspace, with changes applied directly to the host. Combine this with network restrictions.</p>
+  <p>If you want fewer prompts while keeping safety checks, auto mode has a classifier that reviews actions before they run. To prohibit this flag itself, set <code>permissions.disableBypassPermissionsMode</code> to <code>"disable"</code> in managed settings. To try it out, the <code>anthropics/claude-code</code> repository includes a reference dev container. It is described as a working example, not a maintained base image.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Why do I have to sign in again every time I rebuild?</summary>
+      <p>By default, the container's home directory is discarded on rebuild. If you mount a named volume at <code>~/.claude</code> and set <code>CLAUDE_CONFIG_DIR</code> to the same path, <code>.claude.json</code> is also written inside the volume. GitHub Codespaces also loses it on rebuild, so the same setup is needed there.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+    <details>
+      <summary>If I install managed-settings.json in a Dockerfile, can users no longer change the settings?</summary>
+      <p>The Dockerfile lives in the repository, so anyone with write access can change or delete the steps. If you want rules that can't be bypassed by editing repository files, the official docs point to server-managed settings or distribution via MDM.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+    <details>
+      <summary>Is it safe to use <code>--dangerously-skip-permissions</code> in a dev container?</summary>
+      <p>It is not safe. It cannot stop a malicious project from exfiltrating information from inside the container, and changes in the workspace are reflected on the host. Use it only with trusted repositories, and combine it with network restrictions. There is also a setting that prohibits the flag itself.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/devcontainer" rel="noopener">Development containers</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-legal-compliance/index.html">Claude Code terms of use and compliance: terms by plan and what to check</a><span class="tag">Guide</span></li>
+      <li><a href="../ai-usage-rules-claude-code/index.html">How to think about generative AI usage rules before using Claude Code at a small or midsize company</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to find code vulnerabilities and turn them into patches with the Claude Security plugin | Chuki DX Lab</title>
+<meta name="description" content="Using the Claude Security plugin for Claude Code, this guide walks through scanning a repository or diff for vulnerabilities, generating a patch, and applying it yourself, along with cautions, following the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-scan/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-scan/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-scan/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-security-scan/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Steps to check code for vulnerabilities and turn the findings into patches with the Claude Security plugin">
+<meta property="og:description" content="Using the Claude Security plugin for Claude Code, this guide walks through scanning a repository or diff for vulnerabilities, generating a patch, and applying it yourself, along with cautions, following the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-scan/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-security-scan.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Steps to check code for vulnerabilities and turn the findings into patches with the Claude Security plugin">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-security-scan.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Steps to check code for vulnerabilities and turn the findings into patches with the Claude Security plugin",
+  "description": "Using the Claude Security plugin for Claude Code, this guide walks through scanning a repository or diff for vulnerabilities, generating a patch, and applying it yourself, along with cautions, following the official docs.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-scan/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Security plugin",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-security-scan/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can it scan uncommitted changes too?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The change scan covers committed changes only. For edits in progress, commit them, stash them, or use a full scan that reads the working tree."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are there any findings that don't come with a patch?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If a review by a separate agent cannot guarantee three things (that the finding is addressed, that no new vulnerability is introduced, and that no other behavior changes), a note explaining why is produced instead of a patch. Even when a patch is produced, it is not applied automatically."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if a Python warning appears in the menu?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "python3 3.9 or later must be on your PATH. If it isn't found, you get a warning that it won't work; if the first python3 is too old, you get a warning showing the version that was found. Install Python 3 or put a newer python3 first, then start a new session."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-security-scan/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Security plugin</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What the Claude Security plugin can do</a></li>
+        <li><a href="#s2">Prerequisites to check before running it</a></li>
+        <li><a href="#s3">Installing plugins</a></li>
+        <li><a href="#s4">How scanning works and how to narrow its scope</a></li>
+        <li><a href="#s5">How to read the scan results</a></li>
+        <li><a href="#s6">Turn review findings into a patch and apply it</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Steps to check code for vulnerabilities and turn the findings into patches with the Claude Security plugin</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, the Claude Security plugin runs inside a Claude Code session, where multiple agents scan an entire repository or a diff of changes for vulnerabilities, and then turn the findings you select into patches.</li>
+      <li>The prerequisites are one of a paid plan, the Anthropic API, or a third-party provider, plus <code>python3</code> 3.9 or later and Git (needed for change scanning and patch creation).</li>
+      <li>Patches are not applied automatically. The user applies them with <code>git apply</code> and reviews them one at a time in separate pull requests.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What the Claude Security plugin can do</h2>
+  <p>The following is based on the official docs as of writing (October 2026). According to the official docs, the Claude Security plugin runs inside a Claude Code session (Claude Code is an AI coding agent from Anthropic that runs in the terminal). Multiple agents map the configuration, build a threat model, and search for vulnerabilities, and every finding is independently verified before it goes into the report.</p>
+  <p>Besides a whole repository, you can target a branch, a PR diff, or a single commit. You can turn selected findings into patches, and the user reviews and applies them. It runs in a local session, and scans count toward your usage. The source gives no amounts or counts, so check the official pricing page for current figures.</p>
+  <p>The official docs say it is meant to be used alongside your existing static analysis and dependency scanning, not to replace them. Claude Security, the managed version that monitors your repositories, is a separate product on the Enterprise plan.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+  <h2 id="s2">Prerequisites to check before running it</h2>
+  <p>These are the prerequisites for running, as listed in the official docs.</p>
+  <ul>
+    <li>A paid plan, the Anthropic API, or a third-party provider (because the scan uses dynamic workflows). On Pro, turn it on in the Dynamic workflows row of <code>/config</code>.</li>
+    <li>Python 3.9 or later available on your <code>PATH</code> as <code>python3</code>. No additional installation is needed.</li>
+    <li>Linux, macOS, or Windows.</li>
+    <li>Git. It is required for change scanning and patch creation, and other version control systems are not supported. A full scan works without version control.</li>
+  </ul>
+  <p>The plugin itself doesn't call a model, so you don't need a separate API key. Exploration, verification, and patch creation run on the session's model, which you change with <code>/model</code>. With third-party providers, the <code>sonnet</code> alias may point to a different version, and if it isn't available you need to pin the model. Check the official docs for the steps.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+  <h2 id="s3">Installing plugins</h2>
+  <p>In the terminal, run <code>claude</code> and enter the following at the prompt. In the VS Code extension and the desktop app, follow the official "Install a plugin" steps.</p>
+<pre><code>/plugin install claude-security@claude-plugins-official</code></pre>
+  <p>The plugin details open, so choose an installation scope and continue. If it fails, use the message shown to resolve it.</p>
+  <ul>
+    <li><code>Marketplace "claude-plugins-official" not found</code>: run <code>/plugin marketplace add anthropics/claude-plugins-official</code> and try again.</li>
+    <li><code>Plugin "claude-security" not found in marketplace "claude-plugins-official"</code>: the catalog may be out of date, so run <code>/plugin marketplace update claude-plugins-official</code> and try again.</li>
+  </ul>
+  <p>If the result shows <code>Run /reload-plugins to apply.</code>, check the official docs for how to enable the plugin without restarting. To remove it, run <code>claude plugin uninstall claude-security</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+  <h2 id="s4">How scanning works and how to narrow its scope</h2>
+  <p>It adds one command, <code>/claude-security</code>, and from its menu you choose one of three options: full scan, change scan, or patch suggestions. The basic flow is as follows.</p>
+  <ol>
+    <li>Run <code>/claude-security</code> and choose <strong>Scan codebase</strong>.</li>
+    <li>Choose either the whole repository or a specific area. If you answer "I don't know", a default that fits the project's size is selected.</li>
+    <li>It asks you to confirm the run. It can use a lot of time and tokens, and you need to keep Claude Code open until it finishes. Nothing runs until you confirm.</li>
+    <li>You can follow progress with <code>/workflows</code>, and results are written to a timestamped directory.</li>
+    <li>Run <code>/claude-security</code> again, choose <strong>Suggest patches</strong>, and select the finding you want to address.</li>
+    <li>Apply the patches you want to adopt with <code>git apply</code>, one per pull request.</li>
+  </ol>
+  <p>You can also ask with an argument, such as <code>/claude-security scan my branch</code>. The official docs say auto mode, which doesn't ask for permission at each step, is a good fit.</p>
+  <h3>Inspect only the changes</h3>
+  <p>On a branch with commits that aren't in the base, you can scan only that diff. It covers committed changes only, so commit or stash your work-in-progress edits, or use the full scan that reads the working tree. A change scan requires a git repository. The only step that touches the network is finding the pull request, and it is offered only when the session has permission to run the GitHub CLI and you're signed in to <code>gh</code>.</p>
+  <h3>Large repositories</h3>
+  <p>You pick one area at a time to investigate. The report's coverage section lists what was examined and what was not.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+  <h2 id="s5">How to read the scan results</h2>
+  <p>Results are written to a timestamped directory inside the repository.</p>
+  <ul>
+    <li><code>CLAUDE-SECURITY-RESULTS.md</code>: the report. It includes finding IDs (such as <code>F1</code>), impact, exploit scenario, severity, confidence, and recommended action.</li>
+    <li><code>CLAUDE-SECURITY-RESULTS.jsonl</code>: The same findings, one JSON object per line.</li>
+    <li><code>CLAUDE-SECURITY-RESULTS.sarif</code>: a log in SARIF 2.1.0 format that you can use with tools such as GitHub code scanning. Findings include CWE classifications.</li>
+    <li>Revision stamp JSON: records details such as which commit was scanned, tying the report to the code it covers.</li>
+  </ul>
+  <p>This directory is the only place the scan changes, and it contains its own <code>.gitignore</code>, so it won't be committed even if you run <code>git add</code> by mistake. If you want to keep it in history as an audit trail, delete that <code>.gitignore</code> and commit. Only findings that passed independent verification are listed. Scans are non-deterministic, and results can differ even on the same code, so run them regularly and check the stamp to confirm what was scanned.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+  <h2 id="s6">Turn review findings into a patch and apply it</h2>
+  <p>Choose <strong>Suggest patches</strong>, or ask something like "fix finding F3," and then select the corresponding finding. Patches are generated against the committed code; findings whose code has changed are skipped with a note, and a new scan is suggested. Drafting happens in a working copy, so your source doesn't change until you apply the patch.</p>
+  <p>A separate agent from the one that wrote the patch runs the tests, if any, and reviews the diff. A patch is written only when it can guarantee three things: it addresses the finding, it introduces no new vulnerability, and it changes no other behavior. When it can't guarantee them, it leaves a note explaining why.</p>
+  <p>Patches are written to the <code>patches/</code> folder as <code>F&lt;n&gt;.patch</code>, one per finding, with an explanatory note. Apply them as follows.</p>
+<pre><code>git apply CLAUDE-SECURITY-&lt;timestamp&gt;/patches/F1.patch</code></pre>
+  <p>If the code has no tests, the notes say so. Each item goes into its own pull request, and you review and test them individually.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can it scan uncommitted changes too?</summary>
+      <p>The change scan covers committed changes only. For edits in progress, commit them, stash them, or use a full scan that reads the working tree.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+    </details>
+    <details>
+      <summary>Are there any findings that don't come with a patch?</summary>
+      <p>Yes. If a review by a separate agent cannot guarantee three things (that the finding is addressed, that no new vulnerability is introduced, and that no other behavior changes), a note explaining why is produced instead of a patch. Even when a patch is produced, it is not applied automatically.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+    </details>
+    <details>
+      <summary>What should I do if a Python warning appears in the menu?</summary>
+      <p><code>python3</code> 3.9 or later must be on your <code>PATH</code>. If it isn't found, you get a warning that it won't work; if the first <code>python3</code> is too old, you get a warning showing the version that was found. Install Python 3 or put a newer <code>python3</code> first, then start a new session.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/claude-security" rel="noopener">Scan your codebase for vulnerabilities</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-security-guidance/index.html">What the Claude Code security guidance plugin is: what it checks when you edit</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-prompt-injection/index.html">How Claude Code security works and how to defend against prompt injection</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

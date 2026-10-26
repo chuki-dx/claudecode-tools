@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Troubleshooting Cheat Sheet (for Windows and Corporate IT) | Chuki DX Lab</title>
+<meta name="description" content="A cheat sheet of pitfalls when using Claude Code on Windows or rolling it out company-wide, organized as a table of symptom, cause, and fix. It covers only things that actually happened on a real machine, with sources: allow not taking effect, deny being bypassed, garbled PowerShell output, CSV BOMs, and more.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/troubleshooting/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/troubleshooting/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/troubleshooting/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/troubleshooting/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Troubleshooting Cheat Sheet (for Windows and corporate IT)">
+<meta property="og:description" content="A cheat sheet to look up Claude Code problems with permissions, CLAUDE.md, skills, and character encoding by symptom. It lists what happened on a real machine, with sources.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/troubleshooting/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-troubleshooting.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Troubleshooting Cheat Sheet (for Windows and corporate IT)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-troubleshooting.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "Claude Code Troubleshooting Cheat Sheet (for Windows and corporate IT)",
+ "url": "https://chuki-dx.github.io/claudecode-tools/en/troubleshooting/",
+ "description": "A cheat sheet of problems you may hit when using Claude Code on Windows or rolling it out company-wide, organized by symptom, cause, and fix.",
+ "inLanguage": "en",
+ "isAccessibleForFree": true,
+ "publisher": {
+  "@type": "Organization",
+  "name": "Chuki DX Lab"
+ },
+ "dateModified": "2026-10-26"
+}
+</script>
+</head>
+<body class="pg-tool">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../settings-generator/index.html">Permissions Generator</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../skill-generator/index.html">Skill Generator</a>
+      <a href="../troubleshooting/index.html" aria-current="page">Troubleshooting Cheat Sheet</a>
+      <a href="../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../guides/index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../troubleshooting/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code Troubleshooting Cheat Sheet (for Windows and corporate IT)</h1>
+  <p class="lead">This is a symptom-first list of what actually happened in my testing and training preparation when using Claude Code on Windows and rolling it out across a company. Each row links to its source guide.</p>
+
+  <section class="card tool-panel" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">Filter by symptom</h2>
+    <form id="ts-form" role="search" novalidate>
+      <div class="grid">
+        <div>
+          <label class="field" for="ts-query">Keywords (separate with spaces to match lines containing all of them)</label>
+          <input type="text" id="ts-query" autocomplete="off" placeholder="Examples: allow, garbled text, BOM">
+        </div>
+        <div>
+          <label class="field" for="ts-category">Category</label>
+          <select id="ts-category">
+            <option value="" selected>All</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <p id="ts-status" class="status" role="status" aria-live="polite">Enable JavaScript to see the table here.</p>
+    <div class="table-scroll">
+      <table class="ts-table">
+        <thead><tr><th scope="col">Symptom</th><th scope="col">Cause</th><th scope="col">Fix</th><th scope="col">Source</th></tr></thead>
+        <tbody id="ts-rows"></tbody>
+      </table>
+    </div>
+    <p class="hint">"Happened on a real machine" means it occurred on Windows 11 with Claude Code 2.1.296 while I was verifying articles and preparing training (October 2026). "Confirmed in the official docs" means I checked the content in the official docs while writing the article and did not try it on a real machine.</p>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">About this cheat sheet</h2>
+    <p>This site includes only what happened in practice or what I verified against the official docs, drawn from Chuki DX Lab articles and books. Even commonly heard claims online are left out if I haven't verified them myself. So naturally, some symptoms are not covered here.</p>
+    <p>The deny rules in your permissions settings (settings.json) are a net that prevents accidental reads and sends, not a wall that stops every method. CLAUDE.md is a set of instructions that Claude reads and tries to follow, and it is not enforced. Many stumbling points come from confusing these two roles.</p>
+    <ul>
+      <li>Create the rules you want to block: <a href="../settings-generator/index.html">Permissions Generator</a></li>
+      <li>Write the assumptions Claude should read every time: <a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a></li>
+      <li>Turn frequent tasks into procedures: <a href="../skill-generator/index.html">Skill (SKILL.md) Scaffold Generator</a></li>
+    </ul>
+
+    <h3>The official docs (as of writing)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (scope where deny takes effect, and how trust verification relates to allow)</li>
+      <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (where to put CLAUDE.md, the 200-line guideline)</li>
+      <li><a href="https://code.claude.com/docs/en/skills" rel="noopener">Extend Claude with skills</a> (where to put SKILL.md, and frontmatter)</li>
+    </ul>
+    <p class="hint">This page reflects information as of October 2026. Specifications may change, so verify against the official docs and on your own machine.</p>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../guides/claude-code-windows-pitfalls/index.html">Guide: 10 Common Pitfalls When Using Claude Code on Windows, and How to Fix Them</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-proxy-network/index.html">Guide: Using Claude Code behind a proxy or with an internal certificate (environment variables and how to verify)</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-resume-session/index.html">Guide: How to Resume a Previous Conversation in Claude Code: --continue, --resume, and Naming Sessions</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-rewind-checkpoint/index.html">Guide: How to roll back Claude Code changes: what checkpoints and /rewind can restore</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-vscode/index.html">Guide: Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a><span class="tag">Guide (this site)</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n8eea75ce93e9" rel="noopener">Start CLAUDE.md with three lines</a> (Japanese)<span class="tag">Free article (note)</span></li>
+      <li><a href="../cost-calculator/index.html">Claude Code API Cost Calculator</a><span class="tag">Free tool</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page reflects what I verified as of writing. Claude Code's behavior may change. Before trying any fix, check the official docs for the latest information. The operator accepts no liability for damages arising from the use of this information.</p>
+  </div>
+</footer>
+
+<script src="../assets/troubleshooting.js"></script>
+<script src="../assets/troubleshooting-ui.js"></script>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

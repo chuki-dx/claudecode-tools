@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started with the Claude Code desktop app and admin settings for Team and Enterprise | Chuki DX Lab</title>
+<meta name="description" content="Based on the official docs, this guide covers how to install the Claude Code desktop app, how to run your first session, how permission modes work, and the key points of the admin console, managed settings, and MDM on Team and Enterprise plans.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-desktop-app/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-desktop-app/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-desktop-app/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-desktop-app/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Getting Started with the Claude Code Desktop App, and Management Settings for Team and Enterprise">
+<meta property="og:description" content="Based on the official docs, this guide covers how to install the Claude Code desktop app, how to run your first session, how permission modes work, and the key points of the admin console, managed settings, and MDM on Team and Enterprise plans.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-desktop-app/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-desktop-app.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Getting Started with the Claude Code Desktop App, and Management Settings for Team and Enterprise">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-desktop-app.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Getting Started with the Claude Code Desktop App, and Management Settings for Team and Enterprise",
+  "description": "Based on the official docs, this guide covers how to install the Claude Code desktop app, how to run your first session, how permission modes work, and the key points of the admin console, managed settings, and MDM on Team and Enterprise plans.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-desktop-app/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Desktop",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-desktop-app/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need to install Node.js or the CLI separately?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the desktop app includes Claude Code, so you don't need Node.js or the CLI installed to use the Code tab. If you want to use claude in a terminal, install the CLI separately."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if we don't want people to use the desktop Code app at work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On Team and Enterprise, the Desktop setting in the admin console controls whether people in your organization can use Claude Code in the desktop app. To block only on-device sessions, set disableDesktopLocalSessions to true in the managed settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if the Code tab asks me to upgrade or sign in?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, if you are prompted to upgrade, you need a paid plan. If you are prompted to sign in online, complete the sign-in and restart the app. For 403 errors, see the authentication troubleshooting in the official docs."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-desktop-app/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code Desktop</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do in the desktop app</a></li>
+        <li><a href="#s2">Installation and sign-in</a></li>
+        <li><a href="#s3">Your first session and permission modes</a></li>
+        <li><a href="#s4">Organization settings: admin console and managed settings</a></li>
+        <li><a href="#s5">Distribution, network, and data handling</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Getting Started with the Claude Code Desktop App, and Management Settings for Team and Enterprise</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Claude Code (Anthropic's AI coding agent that runs in the terminal) can be used without a terminal from the <strong>Code</strong> tab of the desktop app. You need a Pro, Max, Team, or Enterprise plan.</li>
+      <li>Start by choosing a small project with <strong>Local</strong>, and set how much approval is required with the permission mode.</li>
+      <li>On Team and Enterprise, you can control the desktop app's behavior through the admin console, managed settings, MDM, and similar tools.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do in the desktop app</h2>
+  <p>According to the official docs, the desktop app lets you use Claude Code through a graphical interface. You can ask Claude to work on code in a folder on your computer and review the changes without a terminal. As of writing (October 2026), the official docs state that it requires a Pro, Max, Team, or Enterprise subscription. Check the official pricing page for amounts.</p>
+  <p>The app has three tabs.</p>
+  <ul>
+    <li><strong>Chat</strong>: General conversation with no file access.</li>
+    <li><strong>Cowork</strong>: An agent that runs autonomously in the background while you work on other things.</li>
+    <li><strong>Code</strong>: Interactive coding assistance with direct access to your local files. Depending on the permission mode, you approve each proposed change, or review changes after they are made.</li>
+  </ul>
+  <p>Chat and Cowork are covered in Claude's Help Center, so this article focuses on the Code tab.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a></p>
+  <h2 id="s2">Installation and sign-in</h2>
+  <p>According to the official docs, the steps are as follows.</p>
+  <ol>
+    <li>On macOS and Windows, you run the downloaded installer. Linux is described as beta, and apt or .deb is documented for Ubuntu and Debian.</li>
+    <li>Launch the app and sign in with your Anthropic account.</li>
+    <li>Click the <strong>Code</strong> tab at the top center.</li>
+  </ol>
+  <p>The macOS build supports both Intel and Apple Silicon. The Windows build targets x64, and Windows ARM64 has a separate installer. Because the app includes Claude Code, you reportedly don't need Node.js or a CLI install to use the Code tab.</p>
+  <p>If the Code tab prompts you to upgrade, you need a paid plan. If it prompts you to sign in online, restart the app after you finish. For 403 errors, see the authentication troubleshooting in the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a></p>
+  <h2 id="s3">Your first session and permission modes</h2>
+  <ol>
+    <li>Choose <strong>Local</strong>, then pick your project folder with <strong>Select folder</strong>. The official docs recommend starting with a small project you know well.</li>
+    <li>Choose a model from the dropdown next to the send button. You can change it later.</li>
+    <li>Type what you want to do. For example, <code>Find a TODO comment and fix it</code>.</li>
+    <li>Review the changes and approve them.</li>
+  </ol>
+  <p>Besides Local, you can choose <strong>Cloud</strong>, which keeps running after you close the app; <strong>SSH</strong>, which connects to a remote machine; and <strong>WSL</strong>, which runs inside WSL 2 on Windows. With SSH, a running task may stop if your Claude account sign-in expires.</p>
+  <h3>Differences between permission modes</h3>
+  <ul>
+    <li><strong>Auto</strong>: A classifier reviews actions in the background and blocks risky ones without asking you.</li>
+    <li><strong>Manual</strong>: Asks for confirmation before editing files or running commands.</li>
+    <li><strong>Accept edits</strong>: Automatically accepts file edits.</li>
+    <li><strong>Plan</strong>: proposes how to proceed without editing any files.</li>
+  </ul>
+  <p>In Manual, a diff view with Accept/Reject buttons appears, and files are not changed until you approve. In Auto and Accept edits, a display like <code>+12 -1</code> appears after the change, and you can review it in the diff view.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a></p>
+  <h2 id="s4">Organization settings: admin console and managed settings</h2>
+  <p>According to the official docs, organizations on a Team or Enterprise plan can manage desktop app behavior through the admin console, managed settings files, and device management policies.</p>
+  <h3>Admin console</h3>
+  <ul>
+    <li><strong>Desktop</strong>: Whether people in your organization can use Claude Code in the desktop app</li>
+    <li><strong>Cloud sessions</strong>: Enable or disable cloud sessions</li>
+    <li><strong>Remote Control</strong>: enable or disable Remote Control</li>
+  </ul>
+  <p>In Enterprise organizations with HIPAA enabled, the <strong>Desktop</strong> toggle is off by default, and an Owner can turn it on. However, applying the HIPAA configuration turns it off again, so an Owner has to turn it on once more. <strong>Cloud sessions</strong> and <strong>Remote Control</strong> are also off by default, and after the HIPAA configuration is applied, even an Owner cannot turn them on.</p>
+  <h3>Managed settings</h3>
+  <p>Managed settings take precedence over project settings and user settings. You can write them in a settings file or deliver them remotely from the admin console. The main keys are as follows.</p>
+  <ul>
+    <li><code>permissions.disableBypassPermissionsMode</code>: set to <code>"disable"</code> to prevent use of Bypass permissions mode.</li>
+    <li><code>disableAutoMode</code>: Set to <code>"disable"</code> to remove Auto mode from the available options.</li>
+    <li><code>disableDesktopLocalSessions</code>: Setting it to <code>true</code> disables on-device Code sessions while leaving SSH to other hosts and cloud sessions available. It is read only from managed settings and requires Claude Desktop v1.37937.0 or later.</li>
+    <li><code>sshHostAllowlist</code>: limits SSH session destinations to hosts whose hostnames match.</li>
+  </ul>
+  <p>The first two also work in user settings and project settings, but if you put them in managed settings, users cannot override them. How far the settings reach depends on the session type, so check the official docs for details.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop" rel="noopener">Desktop application</a></p>
+  <h2 id="s5">Distribution, network, and data handling</h2>
+  <p>According to the official docs, device management uses MDM on macOS, Group Policy on Windows, and policy files on Linux. You can enable or disable Claude Code features, control automatic updates on macOS and Windows, and set a custom deployment URL.</p>
+  <ul>
+    <li>macOS: the <code>com.anthropic.claudefordesktop</code> preference domain (Jamf, Kandji, etc.)</li>
+    <li>Windows: <code>SOFTWARE\Policies\Claude</code> in the registry</li>
+    <li>Linux: root-owned <code>/etc/claude-desktop/managed-settings.json</code> (the app rejects this file if anyone other than root can write to it)</li>
+  </ul>
+  <p>Distribution is via MDM and <code>.dmg</code> on macOS, and an MSIX package on Windows.</p>
+  <p>Your firewall must allow traffic to the following hosts. Traffic uses HTTPS on port 443 unless you set a custom port for OTLP, an LLM gateway, or an MCP server.</p>
+<pre><code>anthropic.com
+*.anthropic.com
+claude.ai
+*.claude.ai
+claude.com
+*.claude.com
+claude.app
+*.claude.app
+*.claudeusercontent.com
+*.claudemcpcontent.com</code></pre>
+  <p>For how to reduce wildcards, IP allowlists, and proxy handling, check the official docs. As for data, local sessions process code locally, while in cloud sessions the conversation and code context are sent to Anthropic's API.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop" rel="noopener">Desktop application</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Do I need to install Node.js or the CLI separately?</summary>
+      <p>According to the official docs, the desktop app includes Claude Code, so you don't need Node.js or the CLI installed to use the Code tab. If you want to use <code>claude</code> in a terminal, install the CLI separately.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a></p>
+    </details>
+    <details>
+      <summary>What if we don't want people to use the desktop Code app at work?</summary>
+      <p>On Team and Enterprise, the <strong>Desktop</strong> setting in the admin console controls whether people in your organization can use Claude Code in the desktop app. To block only on-device sessions, set <code>disableDesktopLocalSessions</code> to <code>true</code> in the managed settings.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop" rel="noopener">Desktop application</a></p>
+    </details>
+    <details>
+      <summary>What should I do if the Code tab asks me to upgrade or sign in?</summary>
+      <p>According to the official docs, if you are prompted to upgrade, you need a paid plan. If you are prompted to sign in online, complete the sign-in and restart the app. For 403 errors, see the authentication troubleshooting in the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/desktop-quickstart" rel="noopener">Get started with the desktop app</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/desktop" rel="noopener">Desktop application</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-web/index.html">Using Claude Code in the browser (cloud): what it can do, connecting GitHub, and limits</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-vscode/index.html">Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

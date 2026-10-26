@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Best Practices: Key Points from the Official Docs for Corporate IT | Chuki DX Lab</title>
+<meta name="description" content="The official Claude Code best practices, organized for corporate IT at small and midsize companies in this order: context management, ways to verify, plan mode, CLAUDE.md, permission settings, session management, and automation.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-best-practices/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-best-practices/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-best-practices/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT">
+<meta property="og:description" content="The official Claude Code best practices, organized for corporate IT at small and midsize companies in this order: context management, ways to verify, plan mode, CLAUDE.md, permission settings, session management, and automation.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-best-practices/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-best-practices.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-best-practices.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT",
+  "description": "The official Claude Code best practices, organized for corporate IT at small and midsize companies in this order: context management, ways to verify, plan mode, CLAUDE.md, permission settings, session management, and automation.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-best-practices/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Best Practices",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-best-practices/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What should I put in CLAUDE.md?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, include things Claude can't infer: Bash commands, code style that differs from the default, test procedures, branch naming and PR conventions, and project-specific design decisions. Leave out anything that can be learned by reading the code and information that changes often. If the file is too long, instructions are more likely to be ignored."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if Claude can't fix an issue even after I point it out repeatedly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you've corrected the same issue more than twice, the context is cluttered with failed attempts. The official docs say that running /clear and starting over with a specific prompt that includes what you learned almost always gives better results than a long session."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do checkpoints replace git?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The official docs state that only changes made through Claude's file editing tools are covered; changes made by Bash commands or external processes are not recorded."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-best-practices/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code Best Practices</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Foundational constraints, and giving Claude a way to verify its work</a></li>
+        <li><a href="#s2">Work in the order of explore, plan, and implement, and give specific instructions</a></li>
+        <li><a href="#s3">Environment setup: CLAUDE.md, permissions, hooks</a></li>
+        <li><a href="#s4">Session management: correct early and keep context tidy</a></li>
+        <li><a href="#s5">Automation, parallel runs, and failure patterns to avoid</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Many of the official best practices for Claude Code (Anthropic's AI coding agent that runs in the terminal) rest on one constraint: the context window fills up quickly, and performance drops as it fills.</li>
+      <li>Start by setting up a way for Claude to verify its own work, such as tests, a short CLAUDE.md, and pre-approved permissions.</li>
+      <li>Use <code>/clear</code> between unrelated tasks, and if you can't fix the same problem after more than two attempts, start fresh with a more specific prompt.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Foundational constraints, and giving Claude a way to verify its work</h2>
+  <p>According to the official docs, Claude Code is an agentic environment that can read files, run commands, make changes, and work through problems autonomously. That comes with constraints you should understand.</p>
+  <p>The core is the context window (the area that holds the entire conversation). Messages, loaded files, and command output all go into it, and a single investigation can consume tens of thousands of tokens. The fuller it gets, the more it "forgets" earlier instructions and the more mistakes it makes.</p>
+  <p>The first recommendation is to give Claude a way to verify its work on its own, such as tests or a build. Without one, all you have to go on is that it "looks done," and you end up as the verifier. You can choose how strict the verification is as follows.</p>
+  <ul>
+    <li>In a single prompt, ask Claude to run the checks and repeat fixes as needed.</li>
+    <li>For a whole session, use a <code>/goal</code> condition. A separate evaluator rechecks it every turn, and if Claude stalls, execution may stop while the goal remains set.</li>
+    <li>For a deterministic gate, use a Stop hook. It runs your check as a script and blocks the turn from ending until the check passes.</li>
+    <li>As a second pair of eyes, have a verification subagent or similar try to disprove the results.</li>
+  </ul>
+  <p>Rather than having Claude declare success, asking it to produce evidence such as test output or execution results is reportedly faster to verify, and it also works for sessions you weren't watching.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s2">Work in the order of explore, plan, and implement, and give specific instructions</h2>
+  <p>If you have Claude write code right away, it sometimes solves the wrong problem. Plan mode separates research from implementation. Press <code>Shift+Tab</code> until the status bar shows <code>⏸ plan mode on</code>, or start a session with <code>claude --permission-mode plan</code>.</p>
+  <ol>
+    <li>Explore: Have it read files and answer questions. It makes no changes.</li>
+    <li>Plan: have Claude draft an implementation plan. You can edit it directly in your editor with <code>Ctrl+G</code>.</li>
+    <li>Implement: Exit plan mode and have Claude write the code, checking it against the plan as it goes.</li>
+    <li>Commits: Have Claude commit with a descriptive message and create a PR.</li>
+  </ol>
+  <p>However, for small tasks with a clear scope, such as fixing a typo or adding one log line, I ask directly. If you can describe the diff in one sentence, skip the plan.</p>
+  <h3>Be specific in your instructions</h3>
+  <p>The official docs recommend specifying the target files, the constraints, and an existing pattern to follow. For a bug, describe the symptom, the suspected location, and what "fixed" looks like.</p>
+  <ul>
+    <li>When you reference a file with <code>@</code>, Claude reads that file before answering.</li>
+    <li>You can provide images by pasting or by drag &amp; drop.</li>
+    <li>You can pipe data in, as in <code>cat error.log | claude -p "explain this error"</code>.</li>
+  </ul>
+  <p>If you're still exploring and can course-correct, a vague prompt can sometimes be useful.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s3">Environment setup: CLAUDE.md, permissions, hooks</h2>
+  <h3>CLAUDE.md</h3>
+  <p>CLAUDE.md is a special file that Claude reads at the start of every conversation. Create a starting template with <code>/init</code> and build on it over time. There is no required format; keep it short and easy to read. Here is an example from the official docs.</p>
+<pre><code># Code style
+- Use ES modules (import/export) syntax, not CommonJS (require)
+- Destructure imports when possible (eg. import { foo } from 'bar')
+
+# Workflow
+- Be sure to typecheck when you're done making a series of code changes
+- Prefer running single tests, and not the whole test suite, for performance</code></pre>
+  <p>Because this file is read every time, limit it to content that applies broadly, and move knowledge you only need occasionally into skills (knowledge and procedures loaded only when needed). For each line, ask "If I delete this, will Claude make mistakes?" and cut it if not. If the file is too long, the instructions that matter get buried. Don't include anything Claude can learn by reading the code, information that changes often, or the full text of API documentation. Check it into git and improve it as a team.</p>
+  <h3>Permissions</h3>
+  <p>Manual mode asks for confirmation often, and approvals tend to become habitual. Use <code>/permissions</code> to pre-approve tools you trust, and <code>/sandbox</code> to run commands inside the sandbox without confirmation.</p>
+  <p>According to the official docs, in Claude Code v2.1.283 and later, auto mode (a method where a separate classifier model blocks only the actions that look dangerous) is the initial permission mode in interactive terminal and VS Code sessions. In earlier versions, it is available only on the Pro, Max, and Team plans. Check the version and plan before you roll it out company-wide.</p>
+  <h3>Hooks and extensions</h3>
+  <p>Instructions in CLAUDE.md are advisory, but hooks run deterministically every time. Configure them by editing <code>.claude/settings.json</code> and check them with <code>/hooks</code>. Procedures you repeat can go in a <code>SKILL.md</code> under <code>.claude/skills/</code>, and delegated work can go in <code>.claude/agents/</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s4">Session management: correct early and keep context tidy</h2>
+  <p>Conversations are saved and can be rewound.</p>
+  <ul>
+    <li>Press <code>Esc</code> to interrupt the work. The context is preserved.</li>
+    <li>Press <code>Esc + Esc</code> or run <code>/rewind</code> to restore the conversation and code to an earlier state.</li>
+    <li>Use <code>/clear</code> to reset the context between unrelated tasks.</li>
+    <li>You can also compact with instructions, such as <code>/compact Focus on the API changes</code>.</li>
+  </ul>
+  <p>If you have corrected the same problem more than twice, the context is cluttered with failed attempts. Run <code>/clear</code> and start over with a specific prompt that includes what you learned. Delegating broad investigation to subagents keeps it out of your main conversation.</p>
+  <p>Checkpoints record only changes made through Claude's file-editing tools. Changes from Bash commands or external processes aren't recorded, so checkpoints are no substitute for git. You can resume interrupted work with <code>claude --continue</code>, or pick from a list with <code>claude --resume</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+  <h2 id="s5">Automation, parallel runs, and failure patterns to avoid</h2>
+  <p>With <code>claude -p "prompt"</code>, you can run non-interactively from CI or scripts.</p>
+<pre><code># One-off queries
+claude -p "Explain what this project does"</code></pre>
+  <p>For parallel execution, there are options such as worktrees (a mechanism that uses separate git checkouts to avoid editing conflicts). Agent view is a research preview, and Agent teams is experimental and disabled by default. Having a review run in a fresh context avoids bias toward code that was just written, so the docs also describe splitting sessions into one that writes and one that reviews.</p>
+  <p>To run the same task over many files, call <code>claude -p</code> in a loop. When running unattended, pre-approve only the tools you need with <code>--allowedTools</code>, and deny everything else with <code>--permission-mode dontAsk</code>. Try the first two or three files before expanding to the whole set.</p>
+  <p>A reviewer who is asked to look for issues will usually report something even when the work is sound. Chasing every finding leads to over-engineering, so have it raise only findings that affect correctness or requirements.</p>
+  <p>The failure patterns the official docs list are: kitchen-sink sessions that mix unrelated tasks, repeated rounds of corrections, an overly long CLAUDE.md, shipping without verification, and investigations with no defined scope.</p>
+  <p>This article is based on the official docs as of writing (October 2026). Check the latest official docs before adopting.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What should I put in CLAUDE.md?</summary>
+      <p>According to the official docs, include things Claude can't infer: Bash commands, code style that differs from the default, test procedures, branch naming and PR conventions, and project-specific design decisions. Leave out anything that can be learned by reading the code and information that changes often. If the file is too long, instructions are more likely to be ignored.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+    <details>
+      <summary>What if Claude can't fix an issue even after I point it out repeatedly?</summary>
+      <p>If you've corrected the same issue more than twice, the context is cluttered with failed attempts. The official docs say that running <code>/clear</code> and starting over with a specific prompt that includes what you learned almost always gives better results than a long session.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+    <details>
+      <summary>Do checkpoints replace git?</summary>
+      <p>No. The official docs state that only changes made through Claude's file editing tools are covered; changes made by Bash commands or external processes are not recorded.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/best-practices" rel="noopener">Best practices for Claude Code</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-common-workflows/index.html">Examples of using Claude Code: official recipes and basic workflows</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-output-styles/index.html">What Are Claude Code Output Styles? How to Change and Create Them</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Login Methods and Team Authentication Settings | Chuki DX Lab</title>
+<meta name="description" content="This guide organizes Claude Code login methods by subscription, Console, and cloud. Based on the official docs, it covers authentication setup for teams, Console sign-in without an API key, and managed settings that restrict login to your organization.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-login-auth/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-login-auth/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-login-auth/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Login Methods and Authentication Setup for Teams">
+<meta property="og:description" content="This guide organizes Claude Code login methods by subscription, Console, and cloud. Based on the official docs, it covers authentication setup for teams, Console sign-in without an API key, and managed settings that restrict login to your organization.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-login-auth/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-login-auth.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Login Methods and Authentication Setup for Teams">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-login-auth.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Login Methods and Authentication Setup for Teams",
+  "description": "This guide organizes Claude Code login methods by subscription, Console, and cloud. Based on the official docs, it covers authentication setup for teams, Console sign-in without an API key, and managed settings that restrict login to your organization.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-login-auth/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code authentication",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-login-auth/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What should I do if the browser doesn't open, or a login code is displayed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Press c to copy the login URL and paste it into your browser. If a code is shown, paste it at Paste code here if prompted in the terminal. The official docs say this is more likely to happen in WSL2, SSH sessions, and containers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which authentication method is recommended for teams?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs recommend Claude for Teams or Enterprise for most teams. Organizations that want API-based billing choose Claude Console, and organizations that use a cloud provider choose that provider's setup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I sign in to the Console without creating an API key?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If you choose a Console account with /login, you are asked which method to use (Claude Code v2.1.242 or later). However, an API key is created in some cases, such as when using a cloud provider or when forceLoginOrgUUID is set."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-login-auth/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code authentication</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">The login flow and the accounts you can choose</a></li>
+        <li><a href="#s2">When the browser doesn&#x27;t open, and when you need to separate accounts</a></li>
+        <li><a href="#s3">Authentication methods to distribute to the team</a></li>
+        <li><a href="#s4">Sign in to the Console without an API key</a></li>
+        <li><a href="#s5">Restrict sign-in to your organization</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Login Methods and Authentication Setup for Teams</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The official docs recommend Claude for Teams or Enterprise for teams. For API billing, choose the Claude Console; for cloud usage, choose something like Bedrock.</li>
+      <li>On first run, <code>claude</code> opens a browser for login. The official docs also explain what to do if the browser doesn't open or if a code is shown instead.</li>
+      <li>You can restrict the login destination to your organization with the managed settings <code>forceLoginMethod</code> and <code>forceLoginOrgUUID</code>, but some paths are not covered. Check the official docs before you distribute.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">The login flow and the accounts you can choose</h2>
+  <p>This article is based on the official docs as of writing (October 2026). After you install Claude Code (an AI coding agent from Anthropic that runs in the terminal) and run <code>claude</code>, a browser opens on first launch and asks you to log in. If you have already set the environment variable <code>ANTHROPIC_API_KEY</code> and approved that key at the prompt, the login screen is skipped. On success, <code>Login successful</code> is displayed.</p>
+  <p>According to the official docs, the following accounts can be used.</p>
+  <ul>
+    <li>Claude Pro or Max: Sign in with your claude.ai account.</li>
+    <li>Claude for Teams or Enterprise: Log in with the claude.ai account your admin invited you with.</li>
+    <li>Claude Console: Sign in with your Console credentials. An administrator must invite you first.</li>
+    <li>Cloud providers (Bedrock, Agent Platform, Foundry): set the environment variables before running <code>claude</code>, or choose <strong>3rd-party platform</strong> on the login screen (the interactive setup wizard this launches is for Bedrock and Vertex AI). No browser login is needed.</li>
+    <li>Cloud gateway: organizations with their own Claude apps gateway sign in through company SSO from <code>/login</code>.</li>
+  </ul>
+  <p>To start over, enter <code>/logout</code>. This also resets the first-launch setup state.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s2">When the browser doesn't open, and when you need to separate accounts</h2>
+  <p>If the browser doesn't open automatically, press <code>c</code> to copy the login URL. After you sign in, when a login code is displayed, paste it at the <code>Paste code here if prompted</code> prompt in the terminal. According to the official docs, this is common in WSL2, SSH sessions, and containers.</p>
+  <p>If you use work and personal accounts at the same time, separate the configuration directories per account with <code>CLAUDE_CONFIG_DIR</code>. For Bash or Zsh, the docs show an example of adding the following aliases to <code>~/.bashrc</code> or <code>~/.zshrc</code>.</p>
+<pre><code>alias claude-work='CLAUDE_CONFIG_DIR=~/.claude-work claude'</code></pre>
+  <p>However, a Console sign-in without an API key is stored outside the configuration directory, so splitting directories does not keep them separate.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s3">Authentication methods to distribute to the team</h2>
+  <p>According to the official docs, the methods for teams are Claude for Teams or Enterprise, Claude Console, Claude apps gateway, Amazon Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry. Of these, Teams or Enterprise is recommended for most teams.</p>
+  <h3>Claude for Teams or Enterprise</h3>
+  <p>Teams is a self-service plan with admin tools, SSO, billing management, and server-managed settings, aimed at smaller teams. Enterprise adds domain capture, role-based permissions, and a compliance API, and is aimed at larger organizations. The flow is: subscribe (for Enterprise, contact sales), invite members from the admin console, and each member signs in with their claude.ai account. Check the official pricing page for prices.</p>
+  <h3>Claude Console</h3>
+  <p>This is for organizations that want API-based billing. Add users through bulk invitations from the Members page or through SSO. You choose between the <strong>Claude Code</strong> role, which can only create API keys for Claude Code, and the <strong>Developer</strong> role, which can create any kind of API key. Each user accepts the invitation, installs Claude Code, and logs in with their Console credentials.</p>
+  <h3>Cloud providers</h3>
+  <p>Configure each provider following its own documentation, and distribute instructions to users on how to set up environment variables and cloud credentials.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s4">Sign in to the Console without an API key</h2>
+  <p>According to the official docs, you can sign in to the Console without a key even if your organization doesn't allow API key creation. Choose an Anthropic Console account with <code>/login</code> and you'll be asked which method to use. Claude Code v2.1.242 or later is required. The <code>(recommended)</code> method stores an OAuth token as a profile and does not create an API key. The <code>(legacy)</code> method creates and stores an API key.</p>
+  <p>In the following cases, no choice is offered and an API key is created.</p>
+  <ul>
+    <li>If you run it on a cloud provider</li>
+    <li>When the settings file has <code>forceLoginOrgUUID</code>, or <code>forceLoginMethod</code> is <code>"claudeai"</code> or <code>"console"</code></li>
+    <li>When a managed settings source exists but Claude Code can't read it, and no other source provides a policy</li>
+  </ul>
+  <p>Before signing in without a key, unset <code>ANTHROPIC_API_KEY</code>. Signing in this way signs you out of the claude.ai login on that machine. To undo it, use <code>/logout</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+  <h2 id="s5">Restrict sign-in to your organization</h2>
+  <p>Setting <code>forceLoginMethod</code> and <code>forceLoginOrgUUID</code> in managed settings restricts claude.ai login to a specific organization. Put the organization ID in <code>forceLoginOrgUUID</code>. The example from the official docs is below.</p>
+<pre><code>{
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"],
+  "allowedProviders": ["anthropic", "bedrock"]
+}</code></pre>
+  <p>In this example, <code>allowedProviders</code> (Claude Code v2.1.285 or later) lists the services that connections are allowed to. Settings for developers signed in to a claude.ai organization or for Bedrock can start, and any other provider is rejected.</p>
+  <p>Keep the following points in mind.</p>
+  <ul>
+    <li>The <code>/login</code> and first-run onboarding screens only preselect the method; they don't enforce it. Even if you specify <code>"claudeai"</code>, you can still complete a Console login.</li>
+    <li><code>claude setup-token</code> and <code>/install-github-app</code> enforce only <code>forceLoginMethod</code>, and they can create tokens for a different organization.</li>
+    <li>Server-managed settings only reach authenticated accounts, and you can't guide the first login. Distribute settings with a device management tool, and if you use both, put the same keys in each.</li>
+    <li>Credentials in environment variables such as <code>ANTHROPIC_API_KEY</code> are blocked at startup when you set these keys.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What should I do if the browser doesn't open, or a login code is displayed?</summary>
+      <p>Press <code>c</code> to copy the login URL and paste it into your browser. If a code is shown, paste it at <code>Paste code here if prompted</code> in the terminal. The official docs say this is more likely to happen in WSL2, SSH sessions, and containers.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+    <details>
+      <summary>Which authentication method is recommended for teams?</summary>
+      <p>The official docs recommend Claude for Teams or Enterprise for most teams. Organizations that want API-based billing choose Claude Console, and organizations that use a cloud provider choose that provider's setup.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+    <details>
+      <summary>Can I sign in to the Console without creating an API key?</summary>
+      <p>Yes. If you choose a Console account with <code>/login</code>, you are asked which method to use (Claude Code v2.1.242 or later). However, an API key is created in some cases, such as when using a cloud provider or when <code>forceLoginOrgUUID</code> is set.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-api-key-billing/index.html">Does Having ANTHROPIC_API_KEY Set Switch Claude Code to API Billing? How to Check and Remove It</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code Pricing and Plans Compared: Pro, Max, Team, Enterprise, and Console, and How to Choose</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

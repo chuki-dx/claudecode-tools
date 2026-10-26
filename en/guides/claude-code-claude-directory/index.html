@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structure of Claude Code's .claude Folder: What to Write in Which File | Chuki DX Lab</title>
+<meta name="description" content="Organizes the files in Claude Code&#x27;s .claude folder into project-level and global ones. Based on the official docs, it explains which file to write to, such as CLAUDE.md or settings.json, depending on what you want to change.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-claude-directory/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-claude-directory/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-claude-directory/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-claude-directory/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="The structure of Claude Code&#x27;s .claude folder: what to write in which file">
+<meta property="og:description" content="Organizes the files in Claude Code&#x27;s .claude folder into project-level and global ones. Based on the official docs, it explains which file to write to, such as CLAUDE.md or settings.json, depending on what you want to change.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-claude-directory/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-claude-directory.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The structure of Claude Code&#x27;s .claude folder: what to write in which file">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-claude-directory.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The structure of Claude Code's .claude folder: what to write in which file",
+  "description": "Organizes the files in Claude Code's .claude folder into project-level and global ones. Based on the official docs, it explains which file to write to, such as CLAUDE.md or settings.json, depending on what you want to change.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-claude-directory/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Structure of the .claude folder",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-claude-directory/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Where should I put personal settings if I don't want to share them with the team?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, personal setting overrides go in settings.local.json (project only). Personal instruction preferences go in CLAUDE.local.md at the project root. You create this file manually and add it to .gitignore."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I enforce settings across the organization?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs explain that managed settings distributed by an organization take precedence over all settings files and the --settings value, with a limited set of exceptions. The location of managed-settings.json differs by OS, so check the official managed settings page for where to put it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I check when something I wrote in settings.json has no effect?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your organization's managed settings, CLI flags, or some environment variables may be overriding it. The full order is in the official settings precedence page, and the commands for checking are in Debug your configuration."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-claude-directory/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Structure of the .claude folder</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Where to put the .claude folder: project-level vs. global</a></li>
+        <li><a href="#s2">Choose which file to edit based on what you want to change</a></li>
+        <li><a href="#s3">What the other files not in the table above do</a></li>
+        <li><a href="#s4">Files and fields you configure in frontmatter</a></li>
+        <li><a href="#s5">Files outside .claude, and overriding settings</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>The structure of Claude Code's .claude folder: what to write in which file</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code (Anthropic's AI coding agent that runs in the terminal) settings files are split into project settings placed in the repository's <code>.claude/</code> and global settings placed in <code>~/.claude/</code> that apply to all projects.</li>
+      <li>If you're unsure where to write something, choose by what you want to do. Conventions go in <code>CLAUDE.md</code>; permissions, hooks, and environment variables go in <code>settings.json</code>; personal overrides go in <code>settings.local.json</code>.</li>
+      <li>With a few exceptions, your organization's managed settings take precedence over individual settings files and <code>--settings</code>. If a setting isn't taking effect, check the override order and the official debugging steps.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Where to put the .claude folder: project-level vs. global</h2>
+  <p>The official docs as of writing (October 2026) explain that project files go under <code>.claude/</code> in the repository. The exceptions are <code>CLAUDE.md</code>, <code>.mcp.json</code>, and <code>.worktreeinclude</code>, which go in the repository root. Global files go in <code>~/.claude/</code> and apply to all projects.</p>
+  <p>Depending on the file, it can live in both the project and global locations, only in the project, or only globally. For example, <code>.mcp.json</code> and <code>settings.local.json</code> are project-only, while <code>keybindings.json</code> and <code>themes/*.json</code> are global-only.</p>
+  <p>In the table, the Commit column has a ✓ for files such as <code>CLAUDE.md</code>, <code>settings.json</code>, and <code>skills/&lt;name&gt;/SKILL.md</code>. <code>settings.local.json</code> has no ✓; the docs say it is gitignored when Claude Code saves settings there.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+  <h2 id="s2">Choose which file to edit based on what you want to change</h2>
+  <p>The official docs include a table showing where to edit for each kind of change. The main ones are as follows.</p>
+  <ul>
+    <li>Give project context and conventions: <code>CLAUDE.md</code> (project or global)</li>
+    <li>Allowing or blocking tool calls: <code>permissions</code> or <code>hooks</code> in <code>settings.json</code></li>
+    <li>Run scripts before and after tool calls: <code>hooks</code> in <code>settings.json</code></li>
+    <li>Set session environment variables: <code>env</code> in <code>settings.json</code></li>
+    <li>Keep personal overrides out of git: <code>settings.local.json</code> (project only)</li>
+    <li>Add prompts or features you invoke with <code>/name</code>: <code>skills/&lt;name&gt;/SKILL.md</code></li>
+    <li>Define a subagent with its own dedicated tools: <code>agents/*.md</code></li>
+    <li>Coordinate many subagents from a script: <code>workflows/*.js</code></li>
+    <li>Connect external tools with MCP: <code>.mcp.json</code> (project only)</li>
+    <li>Change how responses are formatted: <code>output-styles/*.md</code></li>
+  </ul>
+  <p><code>settings.json</code> is a file that holds permissions, hooks, environment variables, and model defaults together. It helps to keep them organized by putting team-shared settings in <code>settings.json</code> and personal overrides in <code>settings.local.json</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+  <h2 id="s3">What the other files not in the table above do</h2>
+  <p>Some files in the file list don't appear in the editing-target table. The official docs explain it as follows.</p>
+  <ul>
+    <li><code>rules/*.md</code>: Topic-specific instructions, which can also be limited to target paths (project and global)</li>
+    <li><code>commands/*.md</code>: a single-file prompt that works the same way as skills</li>
+    <li><code>.worktreeinclude</code>: specifies gitignored files to copy into new worktrees (project only)</li>
+    <li><code>agent-memory/&lt;name&gt;/</code>: persistent memory for a subagent</li>
+    <li><code>~/.claude.json</code>: holds app state, account information, UI toggles, and your personal MCP servers (global only)</li>
+    <li><code>projects/&lt;project&gt;/memory/</code>: notes Claude keeps for itself across sessions (auto memory). Global only.</li>
+    <li><code>keybindings.json</code>: keyboard shortcut settings (global only)</li>
+    <li><code>themes/*.json</code>: color theme settings (global only)</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+  <h2 id="s4">Files and fields you configure in frontmatter</h2>
+  <p>Skills, commands, subagents, output styles, and rules read their settings from the YAML frontmatter (the header section that holds settings) at the top of the file. The fields each one accepts differ from file to file.</p>
+  <ul>
+    <li><code>skills/&lt;name&gt;/SKILL.md</code>: <code>name</code>, <code>description</code>, <code>allowed-tools</code>, <code>model</code>, <code>paths</code>, and more</li>
+    <li><code>commands/*.md</code>: the skills fields minus <code>name</code> and <code>paths</code></li>
+    <li><code>agents/*.md</code>: <code>name</code>, <code>description</code>, <code>tools</code>, <code>permissionMode</code>, and so on</li>
+    <li><code>output-styles/*.md</code>:<code>name</code>、<code>description</code>、<code>keep-coding-instructions</code>、<code>force-for-plugin</code></li>
+    <li><code>rules/*.md</code>:<code>paths</code></li>
+  </ul>
+  <p>For agents distributed through plugins, only some of the subagent fields are valid. Check each reference for the meaning of every field.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+  <h2 id="s5">Files outside .claude, and overriding settings</h2>
+  <p>According to the official docs, the following files are stored in a different location.</p>
+  <ul>
+    <li><code>managed-settings.json</code>: Placed at the system level, with a location that varies by OS. These are settings enforced by the organization, and your own settings files or <code>--settings</code> values cannot override them, with limited exceptions</li>
+    <li><code>CLAUDE.local.md</code>: Your personal preferences for that project, placed in the project root. It is loaded together with <code>CLAUDE.md</code>. Create it manually and add it to <code>.gitignore</code></li>
+    <li><code>AGENTS.md</code>: You can place it in the project root, in <code>.claude/</code>, or in any directory. It can be loaded in place of <code>CLAUDE.md</code></li>
+    <li>Installed plugins: stored in <code>~/.claude/plugins</code> and managed with the <code>claude plugin</code> command</li>
+  </ul>
+  <p><code>~/.claude</code> also holds data that Claude Code writes while you work: conversation transcripts, prompt history, file snapshots, caches, and logs.</p>
+  <p>Overrides also need attention. Your organization's managed settings take precedence over all settings files and <code>--settings</code> values, except for the exceptions listed in Settings precedence. CLI flags such as <code>--permission-mode</code> and <code>--settings</code> override <code>settings.json</code> for that session. Some environment variables take precedence over the corresponding settings, but this differs by variable, so check the environment variable reference. If a setting isn't taking effect, the official Debug your configuration page has diagnostic commands and a symptom-based cheat sheet.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Where should I put personal settings if I don't want to share them with the team?</summary>
+      <p>According to the official docs, personal setting overrides go in <code>settings.local.json</code> (project only). Personal instruction preferences go in <code>CLAUDE.local.md</code> at the project root. You create this file manually and add it to <code>.gitignore</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+    </details>
+    <details>
+      <summary>Can I enforce settings across the organization?</summary>
+      <p>The official docs explain that managed settings distributed by an organization take precedence over all settings files and the <code>--settings</code> value, with a limited set of exceptions. The location of <code>managed-settings.json</code> differs by OS, so check the official managed settings page for where to put it.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+    </details>
+    <details>
+      <summary>What should I check when something I wrote in <code>settings.json</code> has no effect?</summary>
+      <p>Your organization's managed settings, CLI flags, or some environment variables may be overriding it. The full order is in the official settings precedence page, and the commands for checking are in Debug your configuration.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/claude-directory" rel="noopener">Explore the .claude directory</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-md-vs-settings-json/index.html">CLAUDE.md vs. settings.json: what to put in each</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-features-overview/index.html">When to use CLAUDE.md, skills, hooks, MCP, and subagents in Claude Code</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

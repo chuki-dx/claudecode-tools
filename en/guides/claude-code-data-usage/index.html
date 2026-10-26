@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is Claude Code conversation data used for training? Retention periods and where to check your settings | Chuki DX Lab</title>
+<meta name="description" content="This guide explains the conditions under which Claude Code conversation data is used for training, by consumer and commercial plan. Based on the official docs, it also covers retention periods, zero data retention, caveats about sending feedback, and where to check.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-data-usage/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-data-usage/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-data-usage/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Is Claude Code conversation data used for training? Retention periods and where to check settings">
+<meta property="og:description" content="This guide explains the conditions under which Claude Code conversation data is used for training, by consumer and commercial plan. Based on the official docs, it also covers retention periods, zero data retention, caveats about sending feedback, and where to check.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-data-usage/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-data-usage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Is Claude Code conversation data used for training? Retention periods and where to check settings">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-data-usage.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Is Claude Code conversation data used for training? Retention periods and where to check settings",
+  "description": "This guide explains the conditions under which Claude Code conversation data is used for training, by consumer and commercial plan. Based on the official docs, it also covers retention periods, zero data retention, caveats about sending feedback, and where to check.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-data-usage/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code Data and Retention Periods",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-data-usage/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If I use Claude Code on an individual Pro plan, are my conversations used for training?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If the setting that allows your data to be used for model improvement is on, your data, including Claude Code usage, is used to train new models. You can change this setting at any time on the privacy settings page linked from the official docs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long is data retained if I don't allow training?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For consumer plans, it is 30 days, or 5 years if you allow it. The standard for commercial plans is 30 days, and zero data retention is enabled separately for eligible Enterprise accounts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If we sign up for an Enterprise plan, can we use zero data retention?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is not available by default. It is not included in the standard Enterprise plan, and you cannot enable it from the admin console. After an eligibility check, Anthropic enables it for each organization."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-data-usage/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code Data and Retention Periods</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Whether your data is used for training depends on your plan</a></li>
+        <li><a href="#s2">Retention period: 5 years or 30 days for consumer plans, 30 days standard for commercial</a></li>
+        <li><a href="#s3">Where to check settings, and the order to check them in-house</a></li>
+        <li><a href="#s4">Data sent through feedback and surveys</a></li>
+        <li><a href="#s5">Scope and caveats of zero data retention (ZDR)</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Is Claude Code conversation data used for training? Retention periods and where to check settings</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>On individual plans (Free, Pro, Max), there is a setting that lets you choose whether your data is used to improve future models. While it is on, your Claude Code (an AI coding agent from Anthropic that runs in the terminal) usage is also used for training.</li>
+      <li>On commercial plans (Team, Enterprise, API, and so on), code and prompts sent under commercial terms are not used to train generative models, unless the customer chooses to provide them for model improvement.</li>
+      <li>Retention is 5 years for individual accounts that opt in, 30 days for individual accounts that do not, and 30 days as the standard for commercial plans. Zero data retention is enabled separately for eligible Enterprise accounts and is not included by default.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Whether your data is used for training depends on your plan</h2>
+  <p>This article summarizes the official docs page "Data usage" as of writing (October 2026). It is not based on testing on a real machine.</p>
+  <h3>Individual plans (Free, Pro, Max)</h3>
+  <p>According to the official docs, users of Free, Pro, and Max accounts can choose whether their data may be used to improve future Claude models. When this setting is on, data from using Claude Code with those accounts is also used to train new models.</p>
+  <h3>Commercial (Team, Enterprise, API, etc.)</h3>
+  <p>Team and Enterprise, the API, third-party platforms, and Claude Gov are treated as commercial. The official docs state that under commercial terms, Anthropic does not train generative models on code or prompts sent to Claude Code. The exception is when the customer themselves chooses to provide data for model improvement.</p>
+  <p>One exception is the Development Partner Program. An organization admin must explicitly opt in, and it applies only to the Anthropic API directly. Users of Amazon Bedrock or Google Cloud's Agent Platform are not covered.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s2">Retention period: 5 years or 30 days for consumer plans, 30 days standard for commercial</h2>
+  <p>According to the official docs, Anthropic stores Claude Code data depending on the account type and settings.</p>
+  <h3>Individual plans (Free, Pro, Max)</h3>
+  <ul>
+    <li>If you have allowed use for model improvement: 5 years (for model development and safety improvements)</li>
+    <li>If you haven't allowed it: 30 days</li>
+    <li>You can change your privacy settings at any time.</li>
+  </ul>
+  <h3>Commercial (Team, Enterprise, API)</h3>
+  <ul>
+    <li>Standard: 30 days</li>
+    <li>Zero data retention: Available for Claude Code on Claude for Enterprise, for eligible accounts. It is not included in the standard Enterprise plan; it is enabled per organization after your account team confirms eligibility.</li>
+    <li>Local cache: The Claude Code client stores session transcripts in plain text in <code>~/.claude/projects/</code>, for 30 days by default. This is for resuming sessions, and you can adjust the period with <code>cleanupPeriodDays</code>. Transcripts of sessions started or most recently continued in Claude Desktop or Cowork are, by default, not subject to this expiry.</li>
+  </ul>
+  <p>You can delete cloud sessions individually at any time, and deleting one permanently removes the session's event data. The fact that data stays locally in plain text is something to consider when setting your device management policy.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s3">Where to check settings, and the order to check them in-house</h2>
+  <p>You can change the personal privacy settings at any time on the settings page linked from the official docs. For detailed terms, the docs direct you to the Commercial Terms of Service (Team, Enterprise, API), the Consumer Terms (Free, Pro, Max), the Privacy Policy, and the Privacy Center.</p>
+  <ol>
+    <li>Check the plan of the account you will use (individual or commercial).</li>
+    <li>For personal plans, check the setting for use of your data for model improvement.</li>
+    <li>For commercial use, ask your administrator whether your organization participates in the Development Partner Program.</li>
+    <li>If you need zero data retention, ask your account team about eligibility.</li>
+  </ol>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s4">Data sent through feedback and surveys</h2>
+  <p>Separate from the training settings, some data is sent depending on user actions and configuration.</p>
+  <ul>
+    <li><code>/feedback</code>: Sends a copy of your conversation history (including code) to Anthropic. However, if you use a third-party provider such as Amazon Bedrock or Google Cloud's Agent Platform, or have no Anthropic credentials configured, it is not sent to Anthropic and is instead written locally as an archive to <code>~/.claude/feedback-bundles/</code>. <code>/bug</code> and <code>/share</code> use the same path, and records shared through them are retained for 5 years. Before sending, you can choose between the current session only (default) or also including the past 24 hours or 7 days of the same project. To disable it, set <code>DISABLE_FEEDBACK_COMMAND=1</code>.</li>
+    <li>Session quality survey: Only your rating is recorded. Only if you select "Yes" at the following prompt asking whether the session transcript may be viewed is the conversation transcript uploaded and kept for up to 6 months. (In sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or a signed-in Claude apps gateway, nothing is uploaded; it is written out as a local archive in <code>~/.claude/feedback-bundles/</code>.) Known API key and token patterns are redacted, but source code and file contents are sent as-is. Your answers do not affect your training settings and are said not to be usable for model training. To disable it, set <code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1</code>.</li>
+    <li>Telemetry (usage metrics): latency, reliability, and usage patterns are sent; code, prompts, and file paths are not included. To turn it off, set <code>DISABLE_TELEMETRY=1</code>.</li>
+  </ul>
+  <p>If you use Amazon Bedrock, Microsoft Foundry, or similar, telemetry, error reporting, and bug reporting are disabled by default, but the session quality survey is an exception and still runs. Setting <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code> stops all nonessential traffic, including the survey.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s5">Scope and caveats of zero data retention (ZDR)</h2>
+  <p>According to the official docs, when ZDR is enabled, prompts and model responses generated in Claude Code sessions are processed in real time and are not stored by Anthropic after the response is returned. The exception is when storage is needed to comply with the law or to combat misuse.</p>
+  <ul>
+    <li>This applies to eligible Claude for Enterprise accounts. It is not included in standard plans and cannot be enabled from the admin console. Contact your sales representative or your Anthropic account team.</li>
+    <li>Enabling is per organization. It is not applied automatically to a new organization created under the same account.</li>
+    <li>Only sessions logged in to a ZDR organization are covered. Usage with a personal account or an API key from a different organization is not covered. You can restrict login with the <code>forceLoginMethod</code> and <code>forceLoginOrgUUID</code> managed settings.</li>
+    <li>This applies only to Anthropic's direct platform. For Amazon Bedrock and others, check each platform's policy.</li>
+    <li>Not covered: claude.ai chat, Cowork, Claude Code Analytics, user and seat management data, and third-party integrations.</li>
+    <li>Features disabled automatically: cloud sessions, Claude Tag, Artifacts, <code>/feedback</code>, <code>/bug</code>, <code>/share</code>, and Remote Control.</li>
+  </ul>
+  <p>For sessions flagged as policy violations, inputs and outputs may be retained for up to 2 years.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If I use Claude Code on an individual Pro plan, are my conversations used for training?</summary>
+      <p>If the setting that allows your data to be used for model improvement is on, your data, including Claude Code usage, is used to train new models. You can change this setting at any time on the privacy settings page linked from the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+    </details>
+    <details>
+      <summary>How long is data retained if I don't allow training?</summary>
+      <p>For consumer plans, it is 30 days, or 5 years if you allow it. The standard for commercial plans is 30 days, and zero data retention is enabled separately for eligible Enterprise accounts.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+    </details>
+    <details>
+      <summary>If we sign up for an Enterprise plan, can we use zero data retention?</summary>
+      <p>It is not available by default. It is not included in the standard Enterprise plan, and you cannot enable it from the admin console. After an eligibility check, Anthropic enables it for each organization.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/zero-data-retention" rel="noopener">Zero data retention</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-prompt-injection/index.html">How Claude Code security works and how to defend against prompt injection</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

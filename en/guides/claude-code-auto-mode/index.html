@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code auto mode settings: what the classifier blocks and how to add permissions | Chuki DX Lab</title>
+<meta name="description" content="A walkthrough, based on the official docs, of where the classifier reads its configuration in Claude Code&#x27;s auto mode, how to use allow, soft_deny, and hard_deny, and permissions.ask to require confirmation for pushes and PRs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-mode/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-mode/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-mode/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-auto-mode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code auto mode settings: what the classifier blocks and how to add permissions">
+<meta property="og:description" content="A walkthrough, based on the official docs, of where the classifier reads its configuration in Claude Code&#x27;s auto mode, how to use allow, soft_deny, and hard_deny, and permissions.ask to require confirmation for pushes and PRs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-mode/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-auto-mode.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code auto mode settings: what the classifier blocks and how to add permissions">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-auto-mode.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code auto mode settings: what the classifier blocks and how to add permissions",
+  "description": "A walkthrough, based on the official docs, of where the classifier reads its configuration in Claude Code's auto mode, how to use allow, soft_deny, and hard_deny, and permissions.ask to require confirmation for pushes and PRs.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-mode/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code auto mode settings",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-auto-mode/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If I write autoMode in the project's .claude/settings.json, does it apply to the whole team?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It has no effect. The classifier does not read autoMode in project settings. Put it in ~/.claude/settings.json for yourself, or in managed settings for the whole organization."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I forget to add \"$defaults\"?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This replaces all of the default rules for that entry. With soft_deny, you lose built-in rules such as force push and production deploys; with hard_deny, you lose the built-in data exfiltration rules."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I press Enter on a billing notice?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For the pending action and the rest of the session, Claude Code's own classifier requests are used and count toward token usage. If the notice named the gateway, it won't appear again on this machine for 24 hours. With Esc or Ctrl+C, the action isn't run and nothing is remembered."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-auto-mode/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code auto mode settings</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Where the classifier reads its settings from</a></li>
+        <li><a href="#s2">Keep the default rules and add to them, or replace them</a></li>
+        <li><a href="#s3">Put a human check on push and PR</a></li>
+        <li><a href="#s4">What to check and how to fix it when a request is denied</a></li>
+        <li><a href="#s5">Billing notice for classifier requests</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code auto mode settings: what the classifier blocks and how to add permissions</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The classifier reads CLAUDE.md and the <code>autoMode</code> in personal, organization, and <code>--settings</code> configuration. An <code>autoMode</code> written in the project's <code>.claude/settings.json</code> is not read.</li>
+      <li>If you write <code>environment</code>, <code>allow</code>, <code>soft_deny</code>, or <code>hard_deny</code> without including <code>"$defaults"</code>, it replaces the default rules for that entry.</li>
+      <li>To require confirmation before a push or PR, use <code>permissions.ask</code>. For operations that must never run, use <code>permissions.deny</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Where the classifier reads its settings from</h2>
+  <p>In auto mode in Claude Code (Anthropic's AI coding agent that runs in the terminal), a classifier (a mechanism that judges whether an action is safe) checks each action. According to the official docs as of writing (October 2026), the classifier reads the same CLAUDE.md content that Claude itself reads. So rules like "never force push" are best written in CLAUDE.md first.</p>
+  <p>For rules shared across multiple projects, use the <code>autoMode</code> settings block. It is read from the following three locations.</p>
+  <ul>
+    <li>Personal: <code>~/.claude/settings.json</code> (for infrastructure you personally trust)</li>
+    <li>Organization-wide: managed settings (for infrastructure you trust, distributed to all developers)</li>
+    <li><code>--settings</code> flag or Agent SDK: for per-invocation overrides</li>
+  </ul>
+  <p><code>autoMode</code> in the project's <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code> is not read, because that would let a repository inject allow rules. If you have it there, move it to <code>~/.claude/settings.json</code>.</p>
+  <p>Entries from each scope are merged. Developers can't remove Managed settings entries, but an <code>allow</code> they add can override the organization's <code>soft_deny</code>. The official docs say this is not a strict policy boundary, so for operations that must always be blocked, use <code>permissions.deny</code> in Managed settings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+  <h2 id="s2">Keep the default rules and add to them, or replace them</h2>
+  <p>According to the official docs, the classifier's default rules are replaced by the following three arrays. Each array is written in natural-language sentences.</p>
+  <ul>
+    <li><code>autoMode.hard_deny</code>: an unconditional safety boundary</li>
+    <li><code>autoMode.soft_deny</code>: destructive operations that the user's intent can override</li>
+    <li><code>autoMode.allow</code>: Exceptions to soft_deny</li>
+  </ul>
+  <p>Precedence runs hard_deny, soft_deny, allow, and finally explicit user intent overrides the remaining soft_deny rules. A general request like "clean up the repository" does not count as explicit intent. You need to ask for the specific operation, such as "force push this branch."</p>
+  <p>To keep the default rules and add your own, put the string <code>"$defaults"</code> in the array. The following example keeps the default rules in all four arrays.</p>
+<pre><code>{
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "Source control: github.example.com/acme-corp and all repos under it"
+    ],
+    "allow": [
+      "$defaults",
+      "Deploying to the staging namespace is allowed: staging is isolated from production and resets nightly",
+      "Writing to s3://acme-scratch/ is allowed: ephemeral bucket with a 7-day lifecycle policy"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Never run database migrations outside the migrations CLI, even against dev databases",
+      "Never modify files under infra/terraform/prod/: production infrastructure changes go through the review workflow"
+    ],
+    "hard_deny": [
+      "$defaults",
+      "Never send repository contents to third-party code-review APIs"
+    ]
+  }
+}</code></pre>
+  <p><strong>Note</strong>: If you set any of <code>environment</code>, <code>allow</code>, <code>soft_deny</code>, or <code>hard_deny</code> without including <code>"$defaults"</code>, all the default rules for that entry are discarded. For <code>soft_deny</code>, built-in rules such as force push, <code>curl | bash</code>, and production deploys are removed. Each entry is evaluated independently.</p>
+  <p>Omit the defaults only when you plan to manage the whole list yourself. In that case, run <code>claude auto-mode defaults</code> to print the built-in rules, copy them into your settings file, and review them. You can also edit them in the <strong>Auto mode</strong> tab of <code>/permissions</code>, but it appears only in v2.1.246 and later, and only in sessions where auto mode is available.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+  <h2 id="s3">Put a human check on push and PR</h2>
+  <p>By default, pushing to and creating PRs from any branch of the repository you're working in, including the default branch, is allowed. However, non-default branches whose names indicate a deploy or publishing target, such as <code>production</code>, <code>release</code>, and <code>gh-pages</code>, are excluded, and the classifier also treats them as production deploys. Force pushes and commits containing secrets remain blocked.</p>
+  <p>If you want a human to confirm an action, use <code>permissions.ask</code>. According to the official docs, ask rules that specify content are evaluated before the classifier, so a confirmation always appears even in auto mode.</p>
+<pre><code>{
+  "permissions": {
+    "ask": [
+      "Bash(git push *)",
+      "Bash(gh pr create *)"
+    ]
+  }
+}</code></pre>
+  <p>This rule matches commands that start with <code>git push</code> or <code>gh pr create</code>. A push written with git -C or git -c in between does not match and will not prompt for confirmation. If you want to see the full command, add a PreToolUse hook.</p>
+  <ul>
+    <li>Require confirmation: <code>permissions.ask</code>. The classifier cannot auto-approve matching operations.</li>
+    <li>To prevent execution: <code>permissions.deny</code>. It stops the action before the classifier and cannot be overridden.</li>
+    <li>This session only: tell it in conversation, "Don't push until I've reviewed." This can be lost when the context is compacted, so use ask or deny if you need certainty.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+  <h2 id="s4">What to check and how to fix it when a request is denied</h2>
+  <p>Actions denied by the auto mode classifier are recorded in the <strong>Recently denied</strong> tab of <code>/permissions</code>, where you can press <code>r</code> to mark one for retry (actions denied because the classifier couldn't reach a decision are not recorded). When calls are collapsed like <code>Ran 3 shell commands</code>, press <code>Ctrl+O</code> to expand them.</p>
+  <p>When <code>Denied by auto mode classifier</code> comes with a reason such as <code>[Production Deploy]</code>, the classifier has judged the action to be risky. Here is how to handle it.</p>
+  <ul>
+    <li>Destinations needed throughout the work (package registries, internal domains, repository hosts): add them to <code>autoMode.environment</code></li>
+    <li>Commands you want to run without review: add an <code>allow</code> rule</li>
+    <li>An action you intended once: state your intent in the next message and have it retry</li>
+  </ul>
+  <p>If the same destination is denied repeatedly, the classifier usually lacks context. Have it draft entries with <code>/auto-mode-setup</code>, then confirm they took effect with <code>claude auto-mode config</code>. If the classifier gives no verdict at all, as in <code>Not run · auto mode's check had no usable answer</code>, see the error section of the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+  <h2 id="s5">Billing notice for classifier requests</h2>
+  <p>According to the official docs, in environments where server-side checks are enabled, the classifier check is performed free of charge as part of the session's model request. If the check can't reach the server, for example because an LLM gateway or proxy sits in between, a notice appears and Claude Code's own classifier requests count toward token usage. On Pro, Max, and Team plans, no notice appears.</p>
+  <p>As an administrator, the fix is to make sure the gateway passes requests and responses through unmodified. If you know the gateway can't support this, set the following before launch. A direct Anthropic API connection requires v2.1.281 or later, and because this is a temporary setting, it may be removed later.</p>
+<pre><code>export CLAUDE_CODE_AUTO_MODE_SERVER=0</code></pre>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-classifier-billing" rel="noopener">Auto mode classifier request charges</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If I write autoMode in the project's .claude/settings.json, does it apply to the whole team?</summary>
+      <p>It has no effect. The classifier does not read <code>autoMode</code> in project settings. Put it in <code>~/.claude/settings.json</code> for yourself, or in managed settings for the whole organization.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+    </details>
+    <details>
+      <summary>What happens if I forget to add <code>"$defaults"</code>?</summary>
+      <p>This replaces all of the default rules for that entry. With <code>soft_deny</code>, you lose built-in rules such as force push and production deploys; with <code>hard_deny</code>, you lose the built-in data exfiltration rules.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a></p>
+    </details>
+    <details>
+      <summary>What happens if I press Enter on a billing notice?</summary>
+      <p>For the pending action and the rest of the session, Claude Code's own classifier requests are used and count toward token usage. If the notice named the gateway, it won't appear again on this machine for 24 hours. With Esc or Ctrl+C, the action isn't run and nothing is remembered.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/auto-mode-classifier-billing" rel="noopener">Auto mode classifier request charges</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/auto-mode-config" rel="noopener">Configure auto mode</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/auto-mode-classifier-billing" rel="noopener">Auto mode classifier request charges</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

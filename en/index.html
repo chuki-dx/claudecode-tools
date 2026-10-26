@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Tools for IT Admins | Chuki DX Lab</title>
+<meta name="description" content="A collection of free tools for corporate IT admins and in-house SEs who use Claude Code at work. Create scaffolds for permissions (settings.json), CLAUDE.md, and skills (SKILL.md), plus a troubleshooting cheat sheet and an API cost calculator, all in the browser.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Tools for IT Admins">
+<meta property="og:description" content="Scaffolds for permissions, CLAUDE.md, and skills, a troubleshooting cheat sheet, and an API cost calculator. These are free tools that run entirely in your browser.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Tools for IT Admins">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Claude Code Tools for IT Admins",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/",
+  "inLanguage": "en",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab",
+    "sameAs": [
+      "https://x.com/chuki_dx",
+      "https://note.com/chuki_dx_note",
+      "https://zenn.dev/chukidx_dev"
+    ]
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "Claude Code Tools for IT Admins",
+ "url": "https://chuki-dx.github.io/claudecode-tools/en/",
+ "inLanguage": "en",
+ "dateModified": "2026-10-26",
+ "isPartOf": {
+  "@type": "WebSite",
+  "name": "Claude Code Tools for IT Admins",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/"
+ },
+ "description": "A collection of free tools for corporate IT admins and in-house SEs who use Claude Code at work. Create scaffolds for permissions (settings.json), CLAUDE.md, and skills (SKILL.md), plus a troubleshooting cheat sheet and an API cost calculator, all in the browser."
+}
+</script>
+</head>
+<body class="pg-home">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-current="page"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="settings-generator/index.html">Permissions Generator</a>
+      <a href="claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="skill-generator/index.html">Skill Generator</a>
+      <a href="troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="cost-calculator/index.html">API Cost Calculator</a>
+      <a href="guides/index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"><span class="aurora a1"></span><span class="aurora a2"></span><span class="aurora a3"></span><span class="hero-grid"></span><span class="hero-beam"></span><span class="particles"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i><i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i><i style="--i:12"></i><i style="--i:13"></i><i style="--i:14"></i><i style="--i:15"></i><i style="--i:16"></i><i style="--i:17"></i></span></div>
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Claude Code × IT admins<span class="eyebrow-sep" aria-hidden="true"></span><span class="eyebrow-free">Free</span></p>
+      <h1 id="hero-title"><span class="h-line">Claude Code Tools</span> <span class="h-line"><span class="grad">for IT Admins</span></span></h1>
+    <p class="lead">Free tools that run entirely in your browser, for trying out Claude Code, rolling it out, and explaining its budget at small and midsize companies. What you enter is not sent anywhere (to count page views, only the URL of the page you opened is sent to the operator's server. <a href="about/index.html#access">Details</a>).</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#tools-heading">Use the tools<span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="guides/index.html">Read the guides</a>
+      </div>
+      <ul class="hero-points">
+        <li>Runs entirely in your browser</li>
+        <li>Free, no sign-up required</li>
+        <li>Do not send input externally</li>
+      </ul>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="window-glow"></div>
+      <div class="window">
+        <div class="window-bar"><span></span><span></span><span></span><em>.claude/settings.json</em><b class="window-tab">Generated output</b></div>
+<pre class="window-code" data-type><code><span class="t-p">{</span>
+  <span class="t-k">"permissions"</span>: <span class="t-p">{</span>
+    <span class="t-k">"deny"</span>: [
+      <span class="t-s">"Read(./.env)"</span>,
+      <span class="t-s">"Bash(curl *)"</span>,
+      <span class="t-s">"Bash(git push *)"</span>
+    ],
+    <span class="t-k">"ask"</span>: [<span class="t-s">"WebFetch"</span>]
+  <span class="t-p">}</span>
+<span class="t-p">}</span></code></pre>
+        <div class="window-foot"><span class="ok-dot"></span>JSON.parse OK ・ 4 rules</div>
+      </div>
+      <div class="float-chip chip-a"><span class="chip-dot"></span>deny → ask → allow</div>
+      <div class="float-chip chip-b"><span class="chip-dot"></span>CLAUDE.md · 200 lines or fewer</div>
+      <div class="float-chip chip-c"><span class="chip-dot"></span>SKILL.md ・ frontmatter</div>
+    </div>
+  </section>
+
+  <ul class="stats" aria-label="What is on this site">
+    <li class="stat"><span class="stat-num" data-count="5">5</span><span class="stat-label">Free tools</span></li>
+    <li class="stat"><span class="stat-num" data-count="82">82</span><span class="stat-label">Guides</span></li>
+    <li class="stat"><span class="stat-num" data-count="0">0</span><span class="stat-label">inputs sent externally</span></li>
+  </ul>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>settings.json</span><span>deny / ask / allow</span><span>CLAUDE.md</span><span>SKILL.md</span><span>MCP</span><span>hooks</span><span>Subagents</span><span>Plan mode</span><span>managed settings</span><span>API pricing</span><span>Windows</span><span>PowerShell</span>
+      <span>settings.json</span><span>deny / ask / allow</span><span>CLAUDE.md</span><span>SKILL.md</span><span>MCP</span><span>hooks</span><span>Subagents</span><span>Plan mode</span><span>managed settings</span><span>API pricing</span><span>Windows</span><span>PowerShell</span>
+    </div>
+  </div>
+
+  <h2 id="tools-heading" class="section-title"><span class="section-kicker" aria-hidden="true">Tools</span>Free tools</h2>
+
+  <ul class="tool-list">
+    <li class="card tool-card">
+      <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 9.5C8 19.3 5 15.5 5 11V6l7-3z"/><path d="M9.2 12l2 2 3.8-4"/></svg></span>
+      <h3><a href="settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a></h3>
+      <p>Choose policies such as "don't let it read .env," "don't let it send data out with curl or similar," and "ask before git push," and the tool outputs the matching deny / ask / allow rules for settings.json. It separates rules I confirmed actually block on a real machine from rules I did not verify individually.</p>
+    </li>
+    <li class="card tool-card">
+      <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 12h6M9.5 15.5h6M9.5 8.5h2"/></svg></span>
+      <h3><a href="claude-md-generator/index.html">CLAUDE.md Template Generator</a></h3>
+      <p>Choose the purpose, language, rules you want followed, and folders that must not be touched, and it outputs a CLAUDE.md template that Claude Code reads at startup. You can also switch to a minimal 3-line version, and it shows the line count so you can check that it stays within 200 lines.</p>
+    </li>
+    <li class="card tool-card">
+      <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg></span>
+      <h3><a href="skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a></h3>
+      <p>Enter the skill name, description, when to use it, steps, and output format, and the tool outputs a scaffold for <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. It checks how to write the skill name and the frontmatter format. Examples such as meeting-minutes summaries are included.</p>
+    </li>
+    <li class="card tool-card">
+      <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/><path d="M11 8v3.5M11 14h.01"/></svg></span>
+      <h3><a href="troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet (for Windows and Corporate IT)</a></h3>
+      <p>Problems I hit on a real machine, such as allow not taking effect, rules being bypassed despite deny, garbled text in PowerShell, and CSV BOM issues, are organized into a table of symptom, cause, and fix. You can filter by keyword and category.</p>
+    </li>
+    <li class="card tool-card">
+      <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01"/></svg></span>
+      <h3><a href="cost-calculator/index.html">Claude Code API Cost Calculator</a></h3>
+      <p>Calculates the monthly cost in USD and yen for pay-as-you-go API usage, based on the number of users, tokens per day, working days, and model. Unit prices are the values I confirmed on the official page as of 2026-10-14.</p>
+    </li>
+  </ul>
+
+  <section aria-labelledby="guides-heading">
+    <h2 id="guides-heading" class="section-title"><span class="section-kicker" aria-hidden="true">Guides</span>Guides</h2>
+    <p>These guides explain the background and caveats of each tool, based on the official docs and verification on a real machine. <a href="guides/index.html">See all guides</a></p>
+    <ul class="link-grid">
+      <li><a href="guides/claude-code-permissions-basics/index.html">Claude Code permissions (deny/ask/allow): the basics, and what they do and don't cover</a></li>
+      <li><a href="guides/claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a></li>
+      <li><a href="guides/claude-code-skills-intro/index.html">Introduction to Claude Code Skills (SKILL.md): Teach Claude Your Work Procedures</a></li>
+      <li><a href="guides/claude-code-api-cost-estimate/index.html">How to estimate Claude Code costs with the API (counting tokens and unit prices)</a></li>
+      <li><a href="guides/claude-code-windows-pitfalls/index.html">10 Common Problems When Using Claude Code on Windows, and How to Fix Them</a></li>
+      <li><a href="guides/claude-code-company-checklist/index.html">What to check before trying Claude Code at your company (plan, PC, network, internal rules)</a></li>
+      <li><a href="guides/claude-code-env-protection/index.html">Keeping .env Files Away from Claude Code, and the Limits of That Setup (Verified on Windows)</a></li>
+      <li><a href="guides/claude-code-training-nonengineers/index.html">How to teach Claude Code to non-engineers such as general affairs and accounting staff</a></li>
+    </ul>
+  </section>
+
+
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information and output of each tool reflect only what I could verify as of writing. Claude Code specifications and pricing may change. Check the official docs for the latest information before use. The operator is not responsible for any damages arising from the use of these tools.</p>
+  </div>
+</footer>
+<script src="../assets/ui.js" defer></script>
+<script src="../assets/count.js" defer></script>
+</body>
+</html>

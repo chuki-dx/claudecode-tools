@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Managing Claude Code Plugins in Your Organization: Distribution, Mandatory Installs, and Install Restrictions | Chuki DX Lab</title>
+<meta name="description" content="A guide for corporate IT on distributing Claude Code plugins across your organization, making them mandatory, and restricting install sources, based on the official docs. It includes configuration examples and covers what managed settings cannot do.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins-org/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins-org/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins-org/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Managing Claude Code plugins in an organization: settings for distribution, required plugins, and install restrictions">
+<meta property="og:description" content="A guide for corporate IT on distributing Claude Code plugins across your organization, making them mandatory, and restricting install sources, based on the official docs. It includes configuration examples and covers what managed settings cannot do.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins-org/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugins-org.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Managing Claude Code plugins in an organization: settings for distribution, required plugins, and install restrictions">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugins-org.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Managing Claude Code plugins in an organization: settings for distribution, required plugins, and install restrictions",
+  "description": "A guide for corporate IT on distributing Claude Code plugins across your organization, making them mandatory, and restricting install sources, based on the official docs. It includes configuration examples and covers what managed settings cannot do.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins-org/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Managing plugins at the organization level",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins-org/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can users disable plugins themselves?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A plugin enabled through enabledPlugins in managed settings is loaded even if the user disables it in their own scope, because managed settings take precedence over every other scope. To disable it in all scopes, set it to false on the managed side."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I also block --plugin-dir by setting an allowlist?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can't block it that way. According to the official docs, the allowlist does not apply to --plugin-dir; disableSideloadFlags rejects it instead. This key also rejects --plugin-url and similar flags at startup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I distribute a plugin to only specific departments?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no dedicated key. Plugin keys apply to all users who receive the settings, and server-managed settings are a single configuration per organization. The docs list endpoint-managed settings or gateway policies for per-group control, so check the official docs for details."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-plugins-org/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Managing plugins at the organization level</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do: the big picture of distributing, requiring, and restricting</a></li>
+        <li><a href="#s2">How to deliver managed settings to devices</a></li>
+        <li><a href="#s3">Settings to require plugins</a></li>
+        <li><a href="#s4">Restricting install sources</a></li>
+        <li><a href="#s5">What managed settings can&#x27;t do, and how to verify</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Managing Claude Code plugins in an organization: settings for distribution, required plugins, and install restrictions</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, Claude Code (Anthropic's AI coding agent that runs in the terminal) plugins can be distributed to all machines and enabled by writing <code>extraKnownMarketplaces</code> and <code>enabledPlugins</code> together in managed settings.</li>
+      <li>You can restrict install sources with <code>strictKnownMarketplaces</code> (allowlist) and <code>blockedMarketplaces</code> (blocklist). To also block loading from local paths or URLs, use <code>disableSideloadFlags</code> together with them.</li>
+      <li>There is no key for showing different things to different users or groups, or for hiding <code>/plugin</code>. This is based on the official docs as of writing (October 2026), so check the latest documentation before you roll it out.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do: the big picture of distributing, requiring, and restricting</h2>
+  <p>According to the official docs, a marketplace is a catalog of plugins that Claude Code fetches from a git repository, a URL, or a local path. Once you register one on your machine, you can install plugins from it.</p>
+  <p>To roll out to many machines, set two keys at the same time in managed settings (a policy file read by every device in the organization, or a policy delivered from a server). <code>extraKnownMarketplaces</code> registers the marketplace on each machine, and <code>enabledPlugins</code> names the plugins to install and enable from it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s2">How to deliver managed settings to devices</h2>
+  <p>There are three ways to deliver managed settings.</p>
+  <ul>
+    <li>Server-managed settings: In Organization settings &gt; Claude Code &gt; Managed settings, set the plugin keys as JSON. You need the Owner role in your Claude organization.</li>
+    <li>MDM policy: on macOS, distribute a plist with the settings keys at the top level. On Windows, store the entire JSON document as a string in a registry value.</li>
+    <li>Managed settings file: place <code>managed-settings.json</code> in the platform's system path. You can also add files to the <code>managed-settings.d/</code> directory next to it.</li>
+  </ul>
+  <p>The official docs say to use server-managed settings if you have a Claude for Teams or Enterprise organization on claude.ai and not all devices are under MDM; otherwise, use MDM or a file.</p>
+  <h3>Notes when using multiple paths</h3>
+  <p>By default, only one of the three sources applies on a given machine. Claude Code checks server-managed settings, then MDM, then files, and uses the first one that delivers a policy key. If server-managed settings deliver even one unrelated key, the plugin keys from MDM or files on that device are ignored (except keys that are read from all sources). To apply all sources, set <code>managedSourcesBehavior</code> to <code>"merge"</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s3">Settings to require plugins</h2>
+  <p>Add a marketplace to <code>extraKnownMarketplaces</code>, using the <code>name</code> from its <code>marketplace.json</code> as the key. Add plugins to <code>enabledPlugins</code> in the form <code>plugin-name@marketplace-name</code>. The following example registers an organization marketplace and force-enables two plugins.</p>
+<pre><code>{
+  "extraKnownMarketplaces": {
+    "your-marketplace": {
+      "source": { "source": "github", "repo": "your-org/your-marketplace" },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "code-formatter@your-marketplace": true,
+    "deploy-helper@your-marketplace": true
+  }
+}</code></pre>
+  <p>Once the settings arrive, the marketplace is registered and the plugin is installed at the user's next session start, and it appears in <code>/plugin</code>. Managed settings take precedence over every other scope, so a user disabling the plugin in their own scope does not stop it from loading. To block it in all scopes and hide it from the list, set it to <code>false</code> in the managed <code>enabledPlugins</code>.</p>
+  <p>A caution: if the marketplace is a private git repository, each user needs read access, and the clone runs without confirmation using the credentials already stored in git on each person's machine. In <code>-p</code> and CI runs, plugin installation proceeds in the background, so a plugin may be missing on the first turn. Setting <code>CLAUDE_CODE_SYNC_PLUGIN_INSTALL=1</code> makes it wait for installation before the first query.</p>
+  <p>If you only need it for one repository, you can write the same key in that repository's <code>.claude/settings.json</code>. However, <code>extraKnownMarketplaces</code> applies only in trusted folders and is silently ignored in untrusted ones.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s4">Restricting install sources</h2>
+  <p>The allowlist and denylist are checked against the source of the marketplace that a plugin comes from, not against individual plugins inside the marketplace. They apply before download (adding, installing, updating, auto-updating, and so on), and they are also re-applied to installed plugins at session start. Plugins that don't match are not loaded.</p>
+  <ul>
+    <li>An empty allowlist <code>[]</code> blocks all sources, including the official marketplace.</li>
+    <li>The deny list is checked before the allow list, and a source that appears in both is blocked.</li>
+    <li>For <code>github</code> and <code>git</code> entries in the allowlist, <code>repo</code>, <code>url</code>, <code>ref</code>, and <code>path</code> must match. A trailing slash or the presence of <code>.git</code> is treated as a different value. If a repository can be cloned from multiple URLs, <code>hostPattern</code> is recommended.</li>
+    <li>You can allow all repositories under an owner at once, as in <code>{ "source": "github", "repo": "your-org/*" }</code> (Claude Code v2.1.223 or later).</li>
+  </ul>
+  <p>If you set an allowlist without including <code>{ "source": "skills-dir" }</code>, plugins placed in places like <code>~/.claude/skills/</code> as folders containing <code>.claude-plugin/plugin.json</code> will no longer be loaded.</p>
+  <p>A typical configuration that allows only the official marketplace and your own is shown below. It also registers both, force-enables two plugins, and denies <code>--plugin-dir</code>.</p>
+<pre><code>{
+  "strictKnownMarketplaces": [
+    { "source": "github", "repo": "anthropics/claude-plugins-official" },
+    { "source": "github", "repo": "your-org/*" },
+    { "source": "skills-dir" }
+  ],
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": { "source": "github", "repo": "anthropics/claude-plugins-official" }
+    },
+    "your-marketplace": {
+      "source": { "source": "github", "repo": "your-org/your-marketplace" }
+    }
+  },
+  "enabledPlugins": {
+    "code-formatter@your-marketplace": true,
+    "deploy-helper@your-marketplace": true
+  },
+  "disableSideloadFlags": true
+}</code></pre>
+  <p>On machines with this setting, adding a source that is not on the allowlist fails with a message containing <code>is blocked by enterprise policy</code>. The allowlist doesn't register anything itself, so you also need to register sources explicitly with <code>extraKnownMarketplaces</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+  <h2 id="s5">What managed settings can't do, and how to verify</h2>
+  <p>The official docs list common requests from security reviews that the current settings schema has no dedicated key for.</p>
+  <ul>
+    <li>Per-user and per-group application: Every plugin key applies to all users who receive the settings. Server-managed settings are a single configuration for the whole organization. To target groups, use endpoint-managed settings or a gateway policy.</li>
+    <li>Blocking a specific plugin within an allowed marketplace: set it to <code>false</code> in the managed <code>enabledPlugins</code>.</li>
+    <li>Hiding <code>/plugin</code>: there is no key that disables it. The closest setup combines an allowlist of only your company's marketplace, <code>enabledPlugins</code> for the plugins you distribute, and <code>disableSideloadFlags</code>.</li>
+    <li>Control of <code>--plugin-dir</code>: Allowlists don't apply to it; <code>disableSideloadFlags</code> rejects it.</li>
+    <li>Plugin toggles in claude.ai: Organization settings &gt; Plugins &amp; skills does not set the keys described here. Settings made there reach the CLI as synced plugins, which have separate controls.</li>
+  </ul>
+  <h3>Checks after distribution</h3>
+  <p>On a single machine, start Claude Code, run <code>/plugin</code>, and check that the marketplaces and plugins are listed. In CI, run <code>claude -p</code> with <code>--output-format stream-json --verbose</code> and check <code>plugins</code> in the <code>init</code> event.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can users disable plugins themselves?</summary>
+      <p>A plugin enabled through <code>enabledPlugins</code> in managed settings is loaded even if the user disables it in their own scope, because managed settings take precedence over every other scope. To disable it in all scopes, set it to <code>false</code> on the managed side.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+    <details>
+      <summary>Can I also block <code>--plugin-dir</code> by setting an allowlist?</summary>
+      <p>You can't block it that way. According to the official docs, the allowlist does not apply to <code>--plugin-dir</code>; <code>disableSideloadFlags</code> rejects it instead. This key also rejects <code>--plugin-url</code> and similar flags at startup.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+    <details>
+      <summary>Can I distribute a plugin to only specific departments?</summary>
+      <p>There is no dedicated key. Plugin keys apply to all users who receive the settings, and server-managed settings are a single configuration per organization. The docs list endpoint-managed settings or gateway policies for per-group control, so check the official docs for details.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/plugins/org" rel="noopener">Manage Claude Code plugins for your organization</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-plugins/index.html">How to install Claude Code plugins, and what to watch for when choosing a marketplace</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plugin-security/index.html">Are Claude Code plugins safe? How to check before installing and how to tell the official marketplace apart</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-managed-settings/index.html">How to roll out Claude Code managed settings company-wide</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

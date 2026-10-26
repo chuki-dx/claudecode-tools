@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How do you adopt Claude Code in a company? Choosing a delivery route such as Bedrock or Google Cloud | Chuki DX Lab</title>
+<meta name="description" content="A summary of the delivery routes for deploying Claude Code in a company, based on the official docs. It covers the differences between Teams/Enterprise, Bedrock, Google Cloud, and Foundry, features that are unavailable, gateways, and cautions about pinning models.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cloud-providers/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cloud-providers/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cloud-providers/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cloud-providers/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How do you adopt Claude Code in a company? Choosing a delivery route such as Bedrock or Google Cloud">
+<meta property="og:description" content="A summary of the delivery routes for deploying Claude Code in a company, based on the official docs. It covers the differences between Teams/Enterprise, Bedrock, Google Cloud, and Foundry, features that are unavailable, gateways, and cautions about pinning models.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cloud-providers/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-cloud-providers.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How do you adopt Claude Code in a company? Choosing a delivery route such as Bedrock or Google Cloud">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-cloud-providers.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How do you adopt Claude Code in a company? Choosing a delivery route such as Bedrock or Google Cloud",
+  "description": "A summary of the delivery routes for deploying Claude Code in a company, based on the official docs. It covers the differences between Teams/Enterprise, Bedrock, Google Cloud, and Foundry, features that are unavailable, gateways, and cautions about pinning models.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cloud-providers/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to choose how you access Claude Code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cloud-providers/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I use MCP and the VS Code extension through Bedrock or Google Cloud?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the CLI, the VS Code and JetBrains extensions, subagents, hooks, skills, CLAUDE.md, plugins, and MCP servers work with all providers. However, claude.ai connectors are loaded only when the authentication method has an active claude.ai subscription."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use web search with Bedrock?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the list in the official docs, web search is not available on Amazon Bedrock. As an alternative, the docs point to the WebFetch tool with a specified URL. On Google Cloud it is available with Opus 4, Sonnet 4, and Haiku 4.5 or later models, and it is also available on Microsoft Foundry."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can an admin restrict which access paths can be used?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, you use allowedProviders in managed settings. For example, [\"bedrock\"] allows only Amazon Bedrock. Claude Code v2.1.285 or later is required. You may also need to pin endpoint variables, so check the official docs for details."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-cloud-providers/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to choose how you access Claude Code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Teams / Enterprise is recommended first</a></li>
+        <li><a href="#s2">Differences between Bedrock, Google Cloud, and Foundry</a></li>
+        <li><a href="#s3">Watch for features that aren&#x27;t available through cloud providers</a></li>
+        <li><a href="#s4">Proxies and LLM gateways</a></li>
+        <li><a href="#s5">Operational points to decide before rollout</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How do you adopt Claude Code in a company? Choosing a delivery route such as Bedrock or Google Cloud</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Claude for Teams or Enterprise is recommended for most organizations and requires no infrastructure setup. Going through a cloud provider is an option when you have reasons to stay with AWS, GCP, or Azure.</li>
+      <li>Through a cloud provider, features that require a Claude subscription, such as cloud sessions, are unavailable, and so are server-managed settings.</li>
+      <li>Before you distribute it, decide on model pinning, whether you need a proxy or gateway, and route restrictions with <code>allowedProviders</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Teams / Enterprise is recommended first</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) can be deployed directly through Anthropic or through a cloud provider. According to the official docs, Claude for Teams or Claude for Enterprise is the easiest option for most organizations: one subscription covers both Claude Code and Claude on the web, billing is centralized, and no infrastructure setup is needed.</p>
+  <p>Teams is self-service, includes SSO, billing management, and server-managed settings, and is aimed at small teams. Enterprise adds domain capture, role-based permissions, and a compliance API, and is aimed at larger organizations. The Anthropic Console is described as being for individual developers. The source gives no prices, so check the official pricing page for current amounts.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a></p>
+  <h2 id="s2">Differences between Bedrock, Google Cloud, and Foundry</h2>
+  <p>From the comparison table for cases with infrastructure requirements, I pull out the points that bear on the decision.</p>
+  <ul>
+    <li><strong>Amazon Bedrock</strong>: For AWS-native setups. You pay usage-based pricing through AWS, authenticate with an API key or AWS credentials, and manage access with IAM policies and CloudTrail.</li>
+    <li><strong>Google Cloud</strong>: for GCP-native environments. The official docs call it "Google Cloud's Agent Platform (formerly Vertex AI)." Billing is pay-as-you-go through GCP, authentication uses GCP credentials, and management is handled through IAM roles and Cloud Audit Logs.</li>
+    <li><strong>Microsoft Foundry</strong>: for Azure-native setups. Pay-as-you-go billing through Azure, authentication with an API key or Microsoft Entra ID, and management through RBAC policies and Azure Monitor.</li>
+  </ul>
+  <p>Prompt caching is enabled by default on every route. Claude on the web is included only for Teams/Enterprise. For Bedrock and Google Vertex AI, run <code>claude</code> and choose <strong>3rd-party platform</strong> on the login screen to launch an interactive setup wizard.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a></p>
+  <h2 id="s3">Watch for features that aren't available through cloud providers</h2>
+  <p>This is the crux of the adoption decision. According to the feature list in the official docs, features that require signing in with a claude.ai account, such as cloud sessions, the mobile app, Routines, Remote Control, and the Chrome extension, are not available through third-party providers. Claude Code Desktop is a partial exception; check the official docs for the conditions.</p>
+  <ul>
+    <li>Bedrock: Web search, fast mode, Advisor, Channels, the analytics dashboard, and server-managed settings are not available.</li>
+    <li>Google Cloud: fast mode, Advisor, Channels, the analytics dashboard, and server-managed settings are not available. Web search is available with Opus 4, Sonnet 4, Haiku 4.5, and later models.</li>
+    <li>Foundry: fast mode, Advisor, Channels, GitLab CI/CD, the analytics dashboard, and server-managed settings are not available.</li>
+  </ul>
+  <p>The CLI, the VS Code and JetBrains extensions, subagents, hooks, skills, CLAUDE.md, and MCP servers work on every path. As alternatives, the docs point to <code>/loop</code> instead of <code>/schedule</code>, and to GitHub Actions or GitLab CI/CD instead of cloud sessions (which CI you can use differs by path). Zero Data Retention depends on your contract with each cloud provider.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+  <h2 id="s4">Proxies and LLM gateways</h2>
+  <p>According to the official docs, most organizations can use the cloud directly without extra configuration. If you have network or management requirements, you use the following two. They are separate settings and can be used together.</p>
+  <ul>
+    <li><strong>Corporate proxy</strong>: For when your policy requires all outbound traffic to go through a proxy. Set it with <code>HTTPS_PROXY</code> or <code>HTTP_PROXY</code>.</li>
+    <li><strong>LLM gateway</strong>: A service that handles authentication and routing between Claude Code and the cloud. It suits cases where you need visibility into usage across teams and centralized control of rate limits, budgets, and authentication. You configure it with one of <code>ANTHROPIC_BASE_URL</code>, <code>ANTHROPIC_BEDROCK_BASE_URL</code>, <code>ANTHROPIC_AWS_BASE_URL</code>, <code>ANTHROPIC_VERTEX_BASE_URL</code>, or <code>ANTHROPIC_FOUNDRY_BASE_URL</code>.</li>
+  </ul>
+  <p>You can check the provider or proxy in use with <code>/status</code>. Note that through a gateway or a custom <code>ANTHROPIC_BASE_URL</code>, customer-managed encryption keys (CMEK) are not applied to that session's operational telemetry. To turn off telemetry for all developers, distribute <code>DISABLE_TELEMETRY</code> in managed settings. Also, if <code>ANTHROPIC_BASE_URL</code> points to a host other than Anthropic's API itself, Remote Control and server-managed settings are turned off.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a></p>
+  <h2 id="s5">Operational points to decide before rollout</h2>
+  <p>Narrow down what to decide before distribution.</p>
+  <h3>Pinning the model</h3>
+  <p>When deploying through Bedrock, Google Cloud, Foundry, or similar, the docs recommend pinning model versions with <code>ANTHROPIC_DEFAULT_FABLE_MODEL</code>, <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>, <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code>, and <code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code>. If you don't pin them, the defaults are the ones built into Claude Code, which may lag behind the latest release or may not be enabled on your account.</p>
+  <h3>Restricting routes</h3>
+  <p>With <code>allowedProviders</code> in managed settings, you can restrict which routes managed machines can use. For example, <code>["bedrock"]</code> allows only Amazon Bedrock. Claude Code v2.1.285 or later is required.</p>
+  <h3>How to Roll It Out</h3>
+  <ul>
+    <li>If you have your own development environment, provide a one-click way to install it</li>
+    <li>Start with questions about the codebase or small fixes, and have Claude make a plan so you can review its proposal</li>
+    <li>A central team configures MCP and includes <code>.mcp.json</code> in the codebase</li>
+  </ul>
+  <p>Based on the official docs as of writing (October 2026). Conditions may change, so check the latest information before adopting.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I use MCP and the VS Code extension through Bedrock or Google Cloud?</summary>
+      <p>According to the official docs, the CLI, the VS Code and JetBrains extensions, subagents, hooks, skills, CLAUDE.md, plugins, and MCP servers work with all providers. However, claude.ai connectors are loaded only when the authentication method has an active claude.ai subscription.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+    </details>
+    <details>
+      <summary>Can I use web search with Bedrock?</summary>
+      <p>According to the list in the official docs, web search is not available on Amazon Bedrock. As an alternative, the docs point to the WebFetch tool with a specified URL. On Google Cloud it is available with Opus 4, Sonnet 4, and Haiku 4.5 or later models, and it is also available on Microsoft Foundry.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+    </details>
+    <details>
+      <summary>How can an admin restrict which access paths can be used?</summary>
+      <p>According to the official docs, you use <code>allowedProviders</code> in managed settings. For example, <code>["bedrock"]</code> allows only Amazon Bedrock. Claude Code v2.1.285 or later is required. You may also need to pin endpoint variables, so check the official docs for details.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/third-party-integrations" rel="noopener">Enterprise deployment overview</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-microsoft-foundry/index.html">Using Claude Code via Microsoft Foundry (Azure): setup steps and caveats</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code Pricing and Plans Compared: Pro, Max, Team, Enterprise, and Console, and How to Choose</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

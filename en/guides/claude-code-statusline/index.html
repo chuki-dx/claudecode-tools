@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to set up the Claude Code status line, and what to check when it doesn't show | Chuki DX Lab</title>
+<meta name="description" content="A guide, based on the official docs, to configuring the Claude Code status line with the /statusline command and the statusLine setting in settings.json, including when it updates and what to check if it doesn&#x27;t appear.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-statusline/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-statusline/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-statusline/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to Set Up the Claude Code Status Line and What to Check When It Doesn&#x27;t Appear">
+<meta property="og:description" content="A guide, based on the official docs, to configuring the Claude Code status line with the /statusline command and the statusLine setting in settings.json, including when it updates and what to check if it doesn&#x27;t appear.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-statusline/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-statusline.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to Set Up the Claude Code Status Line and What to Check When It Doesn&#x27;t Appear">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-statusline.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Set Up the Claude Code Status Line and What to Check When It Doesn't Appear",
+  "description": "A guide, based on the official docs, to configuring the Claude Code status line with the /statusline command and the statusLine setting in settings.json, including when it updates and what to check if it doesn't appear.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-statusline/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Status line settings",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-statusline/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does using a status line consume API tokens?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the status line runs locally and does not consume API tokens."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I remove a status line I've set?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ask /statusline to delete or clear it, or remove the statusLine field from settings.json by hand. /statusline delete is given as an example of how to ask."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I keep refreshing time-varying displays, such as a clock?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Set refreshInterval. The command re-runs every N seconds, and the minimum value is 1. If it is not set, the command runs only on events."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-statusline/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Status line settings</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do with the status line</a></li>
+        <li><a href="#s2">Method 1: Create it with the /statusline command</a></li>
+        <li><a href="#s3">Setup method 2: Add statusLine to settings.json</a></li>
+        <li><a href="#s4">Update timing and operating tips</a></li>
+        <li><a href="#s5">What to check when it doesn&#x27;t appear</a></li>
+        <li><a href="#s6">When values or displays look wrong</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to Set Up the Claude Code Status Line and What to Check When It Doesn't Appear</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>You set up the status line in Claude Code (the AI coding agent from Anthropic that runs in the terminal) either by creating it with the <code>/statusline</code> command or by writing <code>statusLine</code> in a settings file.</li>
+      <li>The official docs say the status line displays a script's standard output, runs locally, and does not consume API tokens.</li>
+      <li>If it doesn't appear, check in this order: execute permission, standard output, workspace trust, and managed settings. This article is based on the official docs as of writing (October 2026).</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do with the status line</h2>
+  <p>According to the official docs, Claude Code passes session data as JSON to the script's standard input and displays whatever the script writes to standard output as-is. It runs locally and does not consume API tokens. It is temporarily hidden while the help menu or a permission prompt is shown.</p>
+  <p>Output can span multiple lines and can be colored with ANSI escape codes (control codes that change text color and so on). Colors require terminal support. You can also create clickable links with OSC 8 escape sequences, but this requires a terminal that supports hyperlinks, such as iTerm2, Kitty, or WezTerm.</p>
+  <p>The terminal size cannot be read with <code>tput cols</code>; it is read from the <code>COLUMNS</code> and <code>LINES</code> environment variables.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s2">Method 1: Create it with the /statusline command</h2>
+  <p>There are two main ways to set it up. The first is to describe in natural language what you want displayed. Claude Code generates a script in <code>~/.claude/</code> and updates the settings automatically. Here is an example from the official docs.</p>
+<pre><code>/statusline show model name and context percentage with a progress bar</code></pre>
+  <p>Approve the file edit permission prompts when they appear. Before you roll out a generated script company-wide, review its contents.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s3">Setup method 2: Add statusLine to settings.json</h2>
+  <p>To set it up manually, add a <code>statusLine</code> field to your user settings (<code>~/.claude/settings.json</code>) or your project settings. Set <code>type</code> to <code>"command"</code>, and set <code>command</code> to a script path or an inline shell command.</p>
+<pre><code>{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 2
+  }
+}</code></pre>
+  <p>Because <code>command</code> runs in a shell, you can also write an inline command that uses <code>jq</code> to parse the JSON input and display the model name and context percentage, as in the official example. The optional fields are as follows.</p>
+  <ul>
+    <li><code>padding</code>: Adds horizontal padding to the content, measured in characters. The default is <code>0</code>. It adjusts the relative indent, not the distance from the edge of the terminal.</li>
+    <li><code>refreshInterval</code>: Re-runs the command every N seconds, in addition to event-based updates. The minimum value is <code>1</code>. It is meant for time-dependent displays such as a clock; if unset, the command runs only on events.</li>
+    <li><code>hideVimModeIndicator</code>: Hides the built-in <code>-- INSERT --</code> indicator. If your script displays <code>vim.mode</code>, set this to <code>true</code> to avoid showing it twice.</li>
+  </ul>
+  <p>To disable it, ask for it to be removed, for example with <code>/statusline delete</code>, or delete the <code>statusLine</code> field from settings.json.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s4">Update timing and operating tips</h2>
+  <p>The script runs once at session start, and after that it runs again when a new assistant message arrives, when <code>/compact</code> finishes, when the permission mode or Vim mode changes, when you change <code>command</code>, when the <code>refreshInterval</code> timer elapses, and so on. Updates are batched at 300ms, and if the next update occurs while the script is running, the running script is canceled. If you edit the script, the change takes effect on the next update trigger.</p>
+  <p>The tips are to keep output short and to cache slow operations. The script runs frequently, so commands like <code>git status</code> can cause lag. For the context percentage, the docs say using <code>used_percentage</code> is the simplest and most accurate way. The official docs also include an example of mock input for testing.</p>
+  <p>The docs mention community projects such as ccstatusline and starship-claude that provide themed configurations. If you use one, review the contents of each project first.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s5">What to check when it doesn't appear</h2>
+  <p>The troubleshooting section of the official docs includes the following checks.</p>
+  <ul>
+    <li>Make the script executable with <code>chmod +x ~/.claude/statusline.sh</code></li>
+    <li>Check whether the output goes to standard output rather than standard error</li>
+    <li>Run the script by hand and check the output</li>
+    <li>If you have Git Bash installed on Windows, use forward slashes in the <code>command</code> path</li>
+    <li>After settings precedence is applied, if <code>disableAllHooks</code> is <code>true</code> in anything other than managed settings, only the <code>statusLine</code> from managed settings runs, and if there is none, it is disabled</li>
+    <li>If your organization uses <code>allowManagedHooksOnly</code> in managed settings, your custom status line disappears without any warning. Ask your admin whether this applies to you</li>
+    <li>Use <code>claude --debug</code> to check the script's standard error on every run and the exit code of the first run in the session</li>
+  </ul>
+  <p>The status line stays blank until you accept the workspace trust dialog. <code>statusLine</code> runs a shell command, so the same trust rules apply as for hooks in settings files. Restart Claude Code and accept the trust dialog to enable it. It is also shown only after the script exits with code 0; a non-zero exit or empty output leaves it blank.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+  <h2 id="s6">When values or displays look wrong</h2>
+  <ul>
+    <li><code>--</code> or empty values: These can be <code>null</code> before the first API response. Write a fallback such as <code>// 0</code> in your script.</li>
+    <li>Context percentages differ: <code>/context</code> adds an estimate for messages since the latest response, so it can read higher until the next response.</li>
+    <li>Display is garbled: Complex escape sequences can get garbled when they overlap with other UI updates, and this is more likely with multiple lines. Try simplifying to plain text.</li>
+    <li>Links aren't clickable: Terminal.app doesn't support them. SSH and tmux may strip OSC sequences.</li>
+    <li>Coexisting with notifications: outside fullscreen mode, notifications appear on the same line, so the status line may be cut off in a narrow terminal.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Does using a status line consume API tokens?</summary>
+      <p>According to the official docs, the status line runs locally and does not consume API tokens.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+    <details>
+      <summary>How do I remove a status line I've set?</summary>
+      <p>Ask <code>/statusline</code> to delete or clear it, or remove the <code>statusLine</code> field from settings.json by hand. <code>/statusline delete</code> is given as an example of how to ask.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+    <details>
+      <summary>How do I keep refreshing time-varying displays, such as a clock?</summary>
+      <p>Set <code>refreshInterval</code>. The command re-runs every N seconds, and the minimum value is <code>1</code>. If it is not set, the command runs only on events.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/statusline" rel="noopener">Customize your status line</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-terminal-config/index.html">Settings for when Shift+Enter doesn't insert a newline in Claude Code, plus tmux, notifications, and pasting</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-usage-limits/index.html">What to do when you hit Claude Code's usage limit: what's shown, resets, and whether to wait or add more</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

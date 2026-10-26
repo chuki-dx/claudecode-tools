@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What to Check Before Trying Claude Code at Work (Plan, PC, Network, Company Rules) | Chuki DX Lab</title>
+<meta name="description" content="This guide covers what corporate IT should check before trying Claude Code internally, split into four areas: plan, PC environment, network, and internal rules. Based on the official docs, it covers the required plan, Windows requirements, the destinations to allow through a proxy, how conversation data is handled, and post-install checks.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-company-checklist/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-company-checklist/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-company-checklist/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="What to check before trying Claude Code at your company (plan, PC, network, company rules)">
+<meta property="og:description" content="A checklist based on the official docs covering the required plan, Windows requirements, the destinations to allow through your proxy, how conversation data is handled, and what to verify after installation.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-company-checklist/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-company-checklist.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="What to check before trying Claude Code at your company (plan, PC, network, company rules)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-company-checklist.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What to check before trying Claude Code at your company (plan, PC, network, company rules)",
+  "description": "A checklist of plans, PC environment, network, and internal rules for corporate IT to confirm before trying Claude Code in the company.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-company-checklist/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "What to check before trying it internally",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-company-checklist/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I try a personal Pro plan first and move to a business plan later?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is possible as an approach. However, whether you may handle business data under a personal contract depends on your company's rules. Limiting the scope of the trial to something like \"fictional data only\" and getting your manager's approval first will also make it easier to explain when you switch."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I install it on a PC without administrator rights?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs state that installing on Windows does not require running as an administrator. However, if your company requires an application to install software, check that procedure first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "In an environment with a proxy, I can't get past the login screen",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The destinations that need to be allowed may not be getting through. Check the destinations and proxy setup in the network configuration page of the official docs, and share the claude doctor output with the person in charge as well. That will speed things up."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-company-checklist/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">What to check before trying it internally</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#why">Why check first</a></li>
+        <li><a href="#plan">1. Check your plan (account)</a></li>
+        <li><a href="#pc">2. Check your PC environment</a></li>
+        <li><a href="#network">3. Check the network</a></li>
+        <li><a href="#rules">4. Check internal rules</a></li>
+        <li><a href="#after">5. Verifying after installation</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (official docs, as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>What to check before trying Claude Code at your company (plan, PC, network, company rules)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-14">October 14, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs as of writing (October 2026)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Before installing, check these four things: <strong>your plan, your PC environment, your network, and company policies</strong>. Doing so reduces rework such as "it didn't work," "it couldn't connect," or "it violated company rules."</li>
+      <li>Claude Code is <strong>not available on the free plan</strong>. On Windows you can install it without administrator rights, but check your company's installation procedures separately.</li>
+      <li>If your company rules do not mention AI tools, decide the scope in which you will use them, consult your manager or the person in charge once, and keep a record of it.</li>
+    </ul>
+  </section>
+
+  <h2 id="why">Why check first</h2>
+  <p>When you try Claude Code (an AI coding agent from Anthropic that runs in the terminal) inside a company, most blockers aren't technical difficulty. They are things you could have checked in advance: the plan you signed up for didn't support it, the corporate proxy blocked the traffic, or it turned out later to conflict with company policy.</p>
+  <p>For a tool you use personally, just trying it out is fine. But with AI tools used for work, if a problem turns up later, people tend to ask why you used it without checking. If you check first, you can tell your manager, "I've confirmed the plan, environment, and rules."</p>
+  <p>Below is a checklist based on the official docs as of writing (October 2026). Product specifications change, so check the latest information at the linked pages right before you try it.</p>
+
+  <h2 id="plan">1. Check your plan (account)</h2>
+  <ul>
+    <li><strong>Do you have a plan that includes Claude Code?</strong>: The official docs say you need a Pro, Max, Team, or Enterprise plan, or a Console (the admin site for the API) account. The free claude.ai plan doesn't include Claude Code.</li>
+    <li><strong>Individual or organizational subscription</strong>: Decide whether to start small with an individual Pro plan or go straight to an organizational plan such as Team. Organizational plans include admin features, and data handling differs from individual plans.</li>
+    <li><strong>Is your country or region supported?</strong> You must use it in a country or region where Anthropic provides the service.</li>
+  </ul>
+  <p>Whether you may handle business data under a personal subscription depends on the company. If you're unsure, complete the "Checking internal rules" section later in this article first and then choose a plan, so you avoid rework.</p>
+
+  <h2 id="pc">2. Check your PC environment</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Item</th><th scope="col">What the official docs say (as of writing)</th></tr></thead>
+      <tbody>
+        <tr><td>OS</td><td>Windows 10 1809 or later, or Windows Server 2019 or later. macOS 13.0 or later</td></tr>
+        <tr><td>Memory</td><td>4 GB or more</td></tr>
+        <tr><td>Installation</td><td>Run the install command from PowerShell or Command Prompt. You do not need to run it as administrator. You can also install with WinGet</td></tr>
+        <tr><td>Git for Windows</td><td>Optional. If installed, Git Bash is used to run commands. If not installed, commands run in PowerShell</td></tr>
+        <tr><td>Update</td><td>If you install it the recommended way, it updates automatically. You can also choose the stable channel, which delays updates, or turn off auto-updates.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>For corporate IT at small and midsize companies, the big advantage is that you can install it without administrator privileges. However, not needing privileges is a separate question from whether installing it is allowed internally. I cover that in the section on internal rules.</p>
+  <p>If you want to align update timing across the company, decide how to update from the trial stage. This prevents versions from varying from user to user.</p>
+
+  <h2 id="network">3. Check the network</h2>
+  <p>Claude Code requires an internet connection. If your company has a proxy or firewall, you may need to allow certain destinations. The official docs list the following as destinations that need to be allowed (partial list).</p>
+  <ul>
+    <li><code>api.anthropic.com</code> (the Claude API)</li>
+    <li><code>claude.ai</code> and <code>claude.com</code> (for signing in with a claude.ai account)</li>
+    <li><code>platform.claude.com</code> (for example, signing in with a Console account)</li>
+    <li><code>downloads.claude.ai</code> (installation and auto-updates)</li>
+  </ul>
+  <p>If you go through a proxy, the docs describe setting the <code>HTTPS_PROXY</code> environment variable to the proxy's URL. The list of destinations can change, so check the latest table in the official docs before requesting an allowlist.</p>
+  <p>If you leave UTM (unified threat management) appliance or proxy settings to an outside vendor, it can take several days for an allow rule to take effect. If you've already picked a day to try this, it's safer to start on this item early.</p>
+
+  <h2 id="rules">4. Check internal rules</h2>
+  <p>This is not about product specifications but about checking your own company's rules. Sometimes corporate IT is the one who writes the rules, and sometimes it is the one who checks with general affairs or the person in charge of information management.</p>
+  <ul>
+    <li><strong>Whether your information security policy permits the use of external AI services</strong></li>
+    <li><strong>What information may be entered into the AI</strong>: for example, a line such as "work procedures are fine, but customer names and personal information are not"</li>
+    <li><strong>How conversation data is handled</strong>: The official docs explain that on individual plans (Free, Pro, Max), users choose in settings whether their conversations are used to improve models, while under commercial terms such as Team, Enterprise, and API, data is generally not used for training. If you use it for work, check the settings before trying it.</li>
+    <li><strong>Software installation procedures</strong>: Even if no admin rights are needed, your company may still require a request.</li>
+    <li><strong>Who bears the cost</strong>: an individual paying out of pocket, or a department budget</li>
+  </ul>
+  <p>Many companies have no mention of AI tools in their policies. In that case, don't assume "it isn't prohibited, so it's fine." I recommend talking once with your manager or the person in charge of information management about the scope you want to try. If you have a record of that conversation, you won't be stuck if you're asked to explain later.</p>
+
+  <h2 id="after">5. Verifying after installation</h2>
+  <ol>
+    <li>Run <code>claude --version</code> in a terminal and confirm that a version number is displayed.</li>
+    <li>Run <code>claude doctor</code> to check for problems with the installation or settings files.</li>
+    <li>Create an empty folder to experiment in, start <code>claude</code> inside it, and log in.</li>
+  </ol>
+  <p>The third point looks minor, but it matters. Claude Code works inside the folder where you launch it. Don't launch it right away in a folder that holds important work files; starting from an empty folder is safer.</p>
+  <p>Once you have a folder to try things in, preparing two files first makes the rest of the work go more smoothly. One is <code>CLAUDE.md</code>, a file of instructions that Claude Code reads at startup. The other is <code>.claude/settings.json</code>, which defines the files it must not read and the commands it must not run. You can create drafts of both just by making selections in this site's <a href="../../claude-md-generator/index.html">CLAUDE.md Template Generator</a> and <a href="../../settings-generator/index.html">Permissions (settings.json) Generator</a>.</p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I try a personal Pro plan first and move to a business plan later?</summary>
+      <p>It is possible as an approach. However, whether you may handle business data under a personal contract depends on your company's rules. Limiting the scope of the trial to something like "fictional data only" and getting your manager's approval first will also make it easier to explain when you switch.</p>
+    </details>
+    <details>
+      <summary>Can I install it on a PC without administrator rights?</summary>
+      <p>The official docs state that installing on Windows does not require running as an administrator. However, if your company requires an application to install software, check that procedure first.</p>
+    </details>
+    <details>
+      <summary>In an environment with a proxy, I can't get past the login screen</summary>
+      <p>The destinations that need to be allowed may not be getting through. Check the destinations and proxy setup in the network configuration page of the official docs, and share the <code>claude doctor</code> output with the person in charge as well. That will speed things up.</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Create your first settings file</h2>
+    <p>You can create the <code>CLAUDE.md</code> for your trial folder with the <a href="../../claude-md-generator/index.html">CLAUDE.md Template Generator</a>, and <code>.claude/settings.json</code> with the <a href="../../settings-generator/index.html">Permissions (settings.json) Generator</a>. Both run entirely in your browser and don't send what you enter.</p>
+  </section>
+
+  <h2 id="refs">References (official docs, as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/setup" rel="noopener">Set up Claude Code</a> (system requirements, installing on Windows, updating, claude doctor)</li>
+    <li><a href="https://code.claude.com/docs/en/authentication" rel="noopener">Authentication</a> (account types)</li>
+    <li><a href="https://code.claude.com/docs/en/network-config" rel="noopener">Network configuration</a> (proxies and destinations that must be allowed)</li>
+    <li><a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a> (how conversation data is handled)</li>
+    <li><a href="https://www.anthropic.com/supported-countries" rel="noopener">Supported countries</a> (countries and regions where it is available)</li>
+  </ul>
+  <p class="hint">Specs and pricing may change. Before you try this internally, check the official docs for the latest information.</p>
+  <p>I've also put together a book that walks through the whole process in order: pre-trial checks, internal approval (ringi), security settings, CLAUDE.md, your first automation, and company-wide rollout. <a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">Zenn book (Japanese; introduction through Chapter 2 free) · ¥2,500</a></p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

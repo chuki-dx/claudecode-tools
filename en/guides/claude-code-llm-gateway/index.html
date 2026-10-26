@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using Claude Code Through an LLM Gateway: What You Can Do and How to Roll It Out | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, for corporate IT, what you can do when using Claude Code through an internal LLM gateway, how to proceed with adoption, how it relates to subscriptions, and what to watch out for, following the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-llm-gateway/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-llm-gateway/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-llm-gateway/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-llm-gateway/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Using Claude Code through an LLM gateway: what it can do and how to roll it out">
+<meta property="og:description" content="This guide covers, for corporate IT, what you can do when using Claude Code through an internal LLM gateway, how to proceed with adoption, how it relates to subscriptions, and what to watch out for, following the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-llm-gateway/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-llm-gateway.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Using Claude Code through an LLM gateway: what it can do and how to roll it out">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-llm-gateway.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Using Claude Code through an LLM gateway: what it can do and how to roll it out",
+  "description": "This guide covers, for corporate IT, what you can do when using Claude Code through an internal LLM gateway, how to proceed with adoption, how it relates to subscriptions, and what to watch out for, following the official docs.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-llm-gateway/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Using Claude Code through an LLM gateway",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-llm-gateway/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When going through a gateway, does it use my claude.ai subscription allowance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you use gateway credentials, the subscription isn't used and the provider account is billed at API rates. If you set only ANTHROPIC_BASE_URL, your saved claude.ai login stays active, and the subscription's limits and billing apply."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use it from CI through the Claude apps gateway?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, sign-in uses browser SSO and there is no service token method, so CI with no developer present to approve cannot authenticate. Configure CI directly with the provider."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I route requests to non-Claude models through a gateway?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs state that Anthropic does not support routing to non-Claude models through any gateway."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-llm-gateway/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Using Claude Code through an LLM gateway</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What a gateway is and what it can do</a></li>
+        <li><a href="#s2">When using the Claude apps gateway provided by Anthropic</a></li>
+        <li><a href="#s3">If you already run an LLM gateway</a></li>
+        <li><a href="#s4">How to proceed with rollout</a></li>
+        <li><a href="#s5">What to watch for with billing and settings outside the gateway</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Using Claude Code through an LLM gateway: what it can do and how to roll it out</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>A gateway is a proxy an organization places between Claude Code (Anthropic's AI coding agent that runs in the terminal) and the model provider. It lets you manage authentication, usage logging, budgets, and audit logs in one place.</li>
+      <li>The options are the Claude apps gateway included in the <code>claude</code> binary, and an LLM gateway you already run. The former requires browser sign-in, so it can't authenticate in unattended environments such as CI.</li>
+      <li>When you use gateway credentials, you are billed at API rates on the provider account rather than through a subscription. Model selection and other traffic are configured separately from the gateway.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What a gateway is and what it can do</h2>
+  <p>According to the official docs, a gateway is a proxy (a relay for network traffic) that an organization runs between Claude Code and the model provider. Claude Code sends its API traffic to the gateway, and the gateway forwards it to the provider using credentials the organization holds. Developers don't hold provider credentials; they authenticate to the gateway.</p>
+  <p>You can consolidate authentication, usage tracking, budgets, and audit logs in one place managed by your organization. There are two types of credentials.</p>
+  <ul>
+    <li>Developer credentials: issued per developer by the gateway and used for authentication and for identifying usage</li>
+    <li>Provider credentials: the gateway holds one set for the provider account, shared across all the traffic it forwards</li>
+  </ul>
+  <p>The destination is determined by the gateway configuration. Besides Anthropic's API, you can choose Amazon Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry. With a gateway that exposes a single Anthropic-format endpoint, you can switch providers without touching developers' machines.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a></p>
+  <h2 id="s2">When using the Claude apps gateway provided by Anthropic</h2>
+  <p>The Claude apps gateway is Anthropic's self-hosted gateway, included in the <code>claude</code> binary. Upstream you can specify Amazon Bedrock, Claude Platform on AWS, Google Cloud, Microsoft Foundry, or the Anthropic API. Developers sign in to your company's IdP (identity provider) with <code>/login</code>, and model access and managed settings (settings distributed by administrators) are applied per IdP group. Usage is exported as OTLP-format metrics to your own monitoring platform.</p>
+  <p>It is built and tested together with each Claude Code release, so you don't need to keep updating forwarding rules the way you would with a separately managed gateway. A few features behave differently in sessions through a gateway, so check the limitations in the official docs.</p>
+  <p><strong>Note</strong>: Sign-in uses browser-based SSO, and there is no service token option. CI has no developer to approve the sign-in, so it can't authenticate this way; configure CI directly against the provider. Also, <code>claude -p</code> and Agent SDK sessions on a machine where a developer is signed in use that machine's gateway session and are subject to its policy.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a></p>
+  <h2 id="s3">If you already run an LLM gateway</h2>
+  <p>As of writing (October 2026), the official docs say you can use a gateway you already run, as long as it exposes a supported API format. However, Anthropic does not recommend, maintain, or audit third-party products, and does not support routing to non-Claude models through any gateway.</p>
+  <p>What you can manage is credentials, usage (by developer and team), budgets and rate limits, audit logs, and provider switching. Provider switching is available only if the upstream exposes a single Anthropic-format endpoint, regardless of what the upstream is.</p>
+  <p>The trade-off is that the gateway becomes infrastructure your organization has to operate. Claude Code gains features with each release, and if the gateway doesn't forward them, those features stop working, so the gateway needs to be updated to keep up with the product.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/llm-gateway" rel="noopener">Other LLM gateways</a></p>
+  <h2 id="s4">How to proceed with rollout</h2>
+  <p>According to the official docs, the steps are the same in this order for any gateway product.</p>
+  <ol>
+    <li>Deploy the gateway and pass it the provider credentials.</li>
+    <li>Issue gateway credentials to each developer. Usage is tied to the individual developer, and when someone leaves you only need to revoke that one credential.</li>
+    <li>Use a managed settings file and your secrets management system to distribute the base URL and credentials to every machine. If you distribute both, developers don't have to configure anything.</li>
+    <li>Each developer checks in Claude Code that the settings have arrived, so you catch distribution problems early.</li>
+  </ol>
+  <p>To make the gateway the only destination on managed devices, set <code>allowedProviders</code> to <code>["customEndpoint"]</code> in the same managed settings file, and put the gateway's <code>ANTHROPIC_BASE_URL</code> in the <code>env</code> block. Sessions aimed at a direct connection to Anthropic or at a developer's personal proxy are rejected. Claude Code v2.1.285 or later is required.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/llm-gateway" rel="noopener">Other LLM gateways</a></p>
+  <h2 id="s5">What to watch for with billing and settings outside the gateway</h2>
+  <h3>Subscriptions and billing</h3>
+  <p>When you connect with gateway credentials, usage is billed at API rates to your organization's provider account, and the developer's claude.ai subscription is not used. If you set <code>ANTHROPIC_AUTH_TOKEN</code> on your own gateway, or sign in to the Claude apps gateway with <code>/login</code>, the subscription login is disabled for that session. The exception is when you set only <code>ANTHROPIC_BASE_URL</code>: traffic goes through the gateway, but the saved claude.ai login stays active, so subscription limits and billing apply. Check the official pricing page for current amounts.</p>
+  <h3>What to configure separately from the gateway</h3>
+  <ul>
+    <li>Choosing a model: You choose with the <code>/model</code> command or the model environment variables. The gateway only decides the destination. The Claude apps gateway can narrow the choices per group with <code>availableModels</code>, but the developer still picks from within that list.</li>
+    <li>Other traffic: Version checks and downloads go directly to Anthropic. Either allow outbound traffic to the required domains, or stop optional traffic with <code>CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC</code>.</li>
+    <li>Client telemetry: in sessions signed in to the Claude apps gateway, client analytics to Anthropic are disabled. To also stop startup analytics before sign-in, distribute <code>DISABLE_TELEMETRY</code> through client-side managed settings on each device. Other gateways vary by provider, so check the table of defaults in the official docs</li>
+    <li>Corporate HTTP proxy: <code>HTTPS_PROXY</code> sits in front of all traffic, including traffic to the gateway, so set up the proxy separately from the gateway if you need one. With a self-hosted Claude apps gateway, sign-in also checks whether the proxy host is on the private network; if it isn't, add the gateway host to <code>NO_PROXY</code></li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>When going through a gateway, does it use my claude.ai subscription allowance?</summary>
+      <p>If you use gateway credentials, the subscription isn't used and the provider account is billed at API rates. If you set only <code>ANTHROPIC_BASE_URL</code>, your saved claude.ai login stays active, and the subscription's limits and billing apply.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a></p>
+    </details>
+    <details>
+      <summary>Can I use it from CI through the Claude apps gateway?</summary>
+      <p>According to the official docs, sign-in uses browser SSO and there is no service token method, so CI with no developer present to approve cannot authenticate. Configure CI directly with the provider.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a></p>
+    </details>
+    <details>
+      <summary>Can I route requests to non-Claude models through a gateway?</summary>
+      <p>The official docs state that Anthropic does not support routing to non-Claude models through any gateway.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/llm-gateway" rel="noopener">Other LLM gateways</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/gateways" rel="noopener">Run Claude Code through a gateway</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/llm-gateway" rel="noopener">Other LLM gateways</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-cloud-providers/index.html">How Do You Roll Out Claude Code in a Company? Choosing Between Bedrock, Google Cloud, and Other Providers</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-proxy-network/index.html">Using Claude Code Behind a Proxy or with Internal Certificates (Environment Variables and Verification)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

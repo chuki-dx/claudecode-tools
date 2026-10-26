@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLAUDE.md Template Generator | Chuki DX Lab</title>
+<meta name="description" content="A free tool that builds a CLAUDE.md for Claude Code just by selecting the purpose, language, rules you want followed, and folders that must not be touched. You can also switch to the first 3-line version, and it shows the line count so you can check that it stays within 200 lines.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/claude-md-generator/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/claude-md-generator/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/claude-md-generator/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/claude-md-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="CLAUDE.md Template Generator">
+<meta property="og:description" content="A free tool that creates a CLAUDE.md starter for Claude Code just by selecting your use case and the rules you want followed. Includes a 3-line version and a line-count check for staying within 200 lines.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/claude-md-generator/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-claude-md-generator.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CLAUDE.md Template Generator">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-claude-md-generator.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CLAUDE.md Template Generator",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web browser",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/claude-md-generator/",
+  "description": "A browser-based tool that generates a CLAUDE.md template, which Claude Code reads at startup, from the use case and policies you choose.",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Should I start with the 3-line version or the template?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "If you're using it alone, the 3-line version is enough. If you're distributing it through a department folder, use a template that covers how to use the folder and what to follow."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What if the folder already has files in it?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Type /init inside Claude Code and it looks at the contents of your folder and creates an initial CLAUDE.md. If a CLAUDE.md already exists, it suggests improvements instead of overwriting it. You can also compare it with this tool's output and add assumptions that only you know."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is the content I enter sent anywhere?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No, it is not sent. This page runs on HTML and JavaScript only, and generation happens inside your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. Details)."
+   }
+  }
+ ],
+ "dateModified": "2026-10-26"
+}
+</script>
+</head>
+<body class="pg-tool">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../settings-generator/index.html">Permissions Generator</a>
+      <a href="../claude-md-generator/index.html" aria-current="page">CLAUDE.md Generator</a>
+      <a href="../skill-generator/index.html">Skill Generator</a>
+      <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../guides/index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../claude-md-generator/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>CLAUDE.md Template Generator</h1>
+  <p class="lead">Create a template for the instructions Claude Code reads every time (CLAUDE.md) just by making a few selections. You can also switch to the first 3-line version. Nothing you enter is sent outside your browser.</p>
+
+  <section class="card tool-panel" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">Choose the content</h2>
+    <div class="tool-grid">
+    <div class="tool-input">
+    <form id="md-form" novalidate>
+      <fieldset>
+        <legend>Version</legend>
+        <div class="opt"><input type="radio" id="mode-full" name="mode" value="full" checked><label for="mode-full">Template (with how to use the folder, rules to follow, and how to fix it)</label></div>
+        <div class="opt"><input type="radio" id="mode-minimal" name="mode" value="minimal"><label for="mode-minimal">3-line version (role, tools, and priorities only; for your first week of use)</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Use case</legend>
+        <div class="opt"><input type="radio" id="pur-business" name="purpose" value="business" checked><label for="pur-business">Work folders (used for work such as meeting minutes, spreadsheets, and procedure documents)</label></div>
+        <div class="opt"><input type="radio" id="pur-dev" name="purpose" value="dev"><label for="pur-dev">Development repositories (where you build scripts and tools)</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>The first 3 lines</legend>
+        <label class="field" for="md-role">Your own position (what you're using it for)</label>
+        <input type="text" id="md-role" class="wide" autocomplete="off">
+        <label class="field" for="md-tools">Tools you'll use often</label>
+        <input type="text" id="md-tools" class="wide" autocomplete="off">
+        <label class="field" for="md-priority">Order of priority when you can't decide</label>
+        <input type="text" id="md-priority" class="wide" autocomplete="off">
+        <p class="hint">The examples come from the article "Start CLAUDE.md with three lines" (Japanese). Rewrite them in your own words. Don't write passwords or customer names.</p>
+      </fieldset>
+
+      <div id="full-only">
+        <fieldset>
+          <legend>Language and writing style</legend>
+          <div class="grid">
+            <div>
+              <label class="field" for="md-lang">Language of replies and generated files</label>
+              <select id="md-lang">
+                <option value="ja">Japanese</option>
+                <option value="en" selected>English</option>
+              </select>
+            </div>
+            <div>
+              <label class="field" for="md-style">Writing style</label>
+              <select id="md-style">
+                <option value="desu" selected>Polite (desu/masu) style</option>
+                <option value="dearu">Plain (da/dearu) style</option>
+                <option value="none">Not specified</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Rules you want followed</legend>
+          <div id="md-rules"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Folder</legend>
+          <label class="field" for="md-dirs">Folders that must not be touched (one per line)</label>
+          <textarea id="md-dirs" rows="3" spellcheck="false" aria-describedby="dirs-hint"></textarea>
+          <p class="hint" id="dirs-hint">Write paths relative to the working folder (for example, <code>data/raw</code> or <code>secrets</code>). What you write here is a request, not enforcement. To actually block access, add the same folders to deny in the <a href="../settings-generator/index.html">Permissions Generator</a>.</p>
+          <label class="field" for="md-output">Where to put the output (leave out if blank)</label>
+          <input type="text" id="md-output" autocomplete="off" spellcheck="false">
+          <div class="opt"><input type="checkbox" id="md-howto" checked><label for="md-howto">Include "how to fix this file" (when to add a line, and the 200-line guideline)</label></div>
+        </fieldset>
+      </div>
+    </form>
+    </div>
+    <div class="tool-output">
+
+    <h3 id="out-heading">Generated CLAUDE.md</h3>
+    <p id="md-status" class="status" role="status" aria-live="polite">Enable JavaScript to see the results here.</p>
+    <div id="md-warnings" class="note" hidden></div>
+    <pre aria-labelledby="out-heading" tabindex="0"><code id="md-output-text"></code></pre>
+    <div class="buttons">
+      <button type="button" id="md-copy">Copy</button>
+      <button type="button" id="md-download" class="secondary">Save CLAUDE.md</button>
+    </div>
+    <p id="md-copy-msg" class="hint" role="status" aria-live="polite"></p>
+    </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">What is CLAUDE.md?</h2>
+    <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) starts every conversation with no memory of the previous one. CLAUDE.md is the instruction file it reads at the start of each session, so you don't have to repeat the same explanations every time. Its contents are plain Markdown (text where you can write headings and bullet lists).</p>
+    <p>Three lines covering role, tools, and priorities are enough to start. Keep growing the file by adding one line each time you explain the same thing twice. The official docs suggest keeping each file under 200 lines (as of writing), because the longer it gets, the heavier it is to load and the less likely it is to be followed. This tool counts the lines in its output and does not generate combinations that exceed 200 lines.</p>
+
+    <h3 id="placement-heading">Where to put it</h3>
+    <p>Where you place it changes its scope. These are the locations I confirmed in the official docs (as of writing: October 2026).</p>
+    <div class="table-scroll">
+      <table aria-labelledby="placement-heading">
+        <thead><tr><th scope="col">Where to put it</th><th scope="col">Scope of effect</th><th scope="col">What to write</th></tr></thead>
+        <tbody>
+          <tr><td>Organization-wide (Windows: <code>C:\Program Files\ClaudeCode\CLAUDE.md</code>)</td><td>Everyone who uses that PC</td><td>Rules you want to apply across the whole organization. Placed by an administrator</td></tr>
+          <tr><td>Personal, shared across all projects (<code>~/.claude/CLAUDE.md</code>)</td><td>All projects you use</td><td>Your own preferences and rules shared across every project</td></tr>
+          <tr><td>For a project (<code>CLAUDE.md</code> in the root of your working folder, or <code>.claude/CLAUDE.md</code>)</td><td>Everyone who works in that folder</td><td>Assumptions and procedures to share with your team. The output of this tool is meant to go here.</td></tr>
+          <tr><td>For yourself, this project only (<code>CLAUDE.local.md</code> at the top level of the working folder)</td><td>Just me</td><td>Personal notes you don't share. Add it to <code>.gitignore</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Your personal <code>~/.claude/CLAUDE.md</code> is loaded no matter which folder you start in. If you test a CLAUDE.md meant for other people on your own PC, your personal instructions will affect the result too, so be careful (there is a real example in the <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>).</p>
+
+    <h3>Put what you want to prohibit in settings.json</h3>
+    <p>CLAUDE.md is not an enforced setting. It is instructions that Claude reads and tries to follow. Writing "don't read .env" there does not actually block anything. For operations that must be blocked, use the <a href="../settings-generator/index.html">Permissions Generator</a> to create deny rules in settings.json. The division of labor is: CLAUDE.md records the reasoning behind a rule, and permissions do the blocking.</p>
+    <p>In my testing, when CLAUDE.md said not to read a file, Claude did not attempt to read it. When you test whether deny works, temporarily rename CLAUDE.md first and then try.</p>
+
+    <h3>The official docs (as of writing)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/memory" rel="noopener">How Claude remembers your project</a> (where to put CLAUDE.md, how it's loaded, and guidelines for writing it)</li>
+      <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a> (where settings.json is located)</li>
+    </ul>
+    <p class="hint">The content of this page is current as of October 2026. Specifications can change, so check the official docs and verify on a real machine before you distribute anything.</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Should I start with the 3-line version or the template?</summary>
+      <p>If you're using it alone, the 3-line version is enough. If you're distributing it through a department folder, use a template that covers how to use the folder and what to follow.</p>
+    </details>
+    <details>
+      <summary>What if the folder already has files in it?</summary>
+      <p>Type <code>/init</code> inside Claude Code and it looks at the contents of your folder and creates an initial CLAUDE.md. If a CLAUDE.md already exists, it suggests improvements instead of overwriting it. You can also compare it with this tool's output and add assumptions that only you know.</p>
+    </details>
+    <details>
+      <summary>Is the content I enter sent anywhere?</summary>
+      <p>No, it is not sent. This page runs on HTML and JavaScript only, and generation happens inside your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. <a href="../about/index.html#access">Details</a>).</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../guides/claude-md-how-to-write/index.html">Guide: How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-md-vs-settings-json/index.html">Guide: CLAUDE.md vs. settings.json: What Goes Where</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-plan-mode/index.html">Guide: How to use Claude Code plan mode: review the plan before edits</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-best-practices/index.html">Guide: Claude Code best practices: key points from the official docs, organized for corporate IT</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-common-workflows/index.html">Guide: Examples of using Claude Code: the official task recipes and basic workflows</a><span class="tag">Guide (this site)</span></li>
+      <li><a href="https://note.com/chuki_dx_note/n/n8eea75ce93e9" rel="noopener">Start CLAUDE.md with three lines</a><span class="tag">Free article (note, Japanese)</span><br><span class="hint">The article the three-line version is based on. It covers where to put the file and how to grow it.</span></li>
+      <li><a href="../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a><span class="tag">Free tool</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page and the tool output reflect what I confirmed as of writing. Claude Code's behavior may change. Before rolling it out company-wide, check the latest information in the official docs and verify the behavior in your own environment. The operator accepts no responsibility for any damages arising from the use of these tools.</p>
+  </div>
+</footer>
+
+<script src="../assets/claude-md-generator.js"></script>
+<script src="../assets/claude-md-generator-ui.js"></script>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

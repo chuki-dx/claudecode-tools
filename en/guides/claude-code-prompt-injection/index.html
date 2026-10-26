@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Claude Code Security Works and How to Defend Against Prompt Injection | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, based on the official docs, what to check before trying Claude Code internally: permission modes, the sandbox, prompt injection defenses, and precautions for MCP and cloud execution.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-injection/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-injection/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-injection/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-prompt-injection/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How Claude Code security works and how to defend against prompt injection">
+<meta property="og:description" content="This guide covers, based on the official docs, what to check before trying Claude Code internally: permission modes, the sandbox, prompt injection defenses, and precautions for MCP and cloud execution.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-injection/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-prompt-injection.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How Claude Code security works and how to defend against prompt injection">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-prompt-injection.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How Claude Code security works and how to defend against prompt injection",
+  "description": "This guide covers, based on the official docs, what to check before trying Claude Code internally: permission modes, the sandbox, prompt injection defenses, and precautions for MCP and cloud execution.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-injection/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code security",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-prompt-injection/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are curl and wget run automatically?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, curl and wget are not auto-approved by default. In manual mode, you get a confirmation prompt. If you don't want them to run, add them to permissions.deny."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "In manual mode, can it still write outside the working folder?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "File tools prompt for confirmation. However, the boundary is the approval prompt, so a Bash command you approve can write anywhere the user's account can write. To restrict this at the OS level, enable the sandbox."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Anthropic verify the safety of MCP servers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, Anthropic reviews connectors against its listing criteria but does not audit or manage the security of MCP servers. It recommends building your own or using ones from a trusted provider."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-prompt-injection/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code security</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Use permission modes to decide what Claude can do</a></li>
+        <li><a href="#s2">Built-in protections and boundary caveats</a></li>
+        <li><a href="#s3">What the prompt injection protections include</a></li>
+        <li><a href="#s4">Notes on MCP, cloud execution, and Remote Control</a></li>
+        <li><a href="#s5">Operations for trying it out and rolling it out within your company</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How Claude Code security works and how to defend against prompt injection</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Claude Code (an AI coding agent from Anthropic that runs in the terminal) uses permission modes to decide which operations can run without confirmation. In manual mode, it asks for confirmation before edits and command execution.</li>
+      <li>Prepare for prompt injection (a technique that tries to rewrite an AI's instructions with malicious text) by requiring permission prompts and not auto-approving network-related commands, among other measures. Even so, the official docs state that no system can fully prevent it.</li>
+      <li>When rolling this out company-wide, combine confirmation before approval, isolation such as a sandbox, and common rules through managed settings.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Use permission modes to decide what Claude can do</h2>
+  <p>According to the official docs, the session's permission mode determines which actions Claude can take without asking first. As of writing (October 2026), Auto mode is the default starting mode for interactive sessions in the terminal and VS Code. For the starting mode in earlier versions or other surfaces, check the official docs.</p>
+  <ul>
+    <li><strong>Auto mode</strong>: A separate classifier model reviews actions on the user's behalf and blocks anything it judges unsafe. Explicit ask and deny rules remain in effect, and your organization can also turn auto mode off.</li>
+    <li><strong>Manual mode</strong>: Starts read-only and asks for confirmation before file edits, tests, and command execution. You can choose to allow an action just once or to keep allowing it from then on. Built-in read-only commands such as <code>ls</code>, <code>cat</code>, and <code>git status</code> run without confirmation.</li>
+  </ul>
+  <p>The official docs state explicitly that the user is responsible for verifying that code and commands are safe before approving them.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+  <h2 id="s2">Built-in protections and boundary caveats</h2>
+  <ul>
+    <li><strong>Sandboxed Bash tool</strong>: isolates the file system and network, reducing confirmation prompts while staying safe. Use <code>/sandbox</code> to set the boundaries within which it can work autonomously.</li>
+    <li><strong>Working directory boundary</strong>: in manual mode, Claude Code asks for confirmation before file tools read or write outside the folder you launched in and its subfolders.</li>
+    <li><strong>Reducing approval fatigue</strong>: You can add safe commands to an allowlist at the user, codebase, or organization level.</li>
+    <li><strong>Accept Edits mode</strong>: Automatically approves file edits inside the working directory, plus certain filesystem Bash commands such as <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>mv</code>, <code>cp</code>, and <code>sed</code>. Other Bash commands and paths outside that scope still ask for confirmation.</li>
+  </ul>
+  <p>Note that the working directory boundary is a permission prompt boundary. An approved Bash command can write anywhere the user's account can write. To restrict Bash commands at the OS level, enable the sandbox.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+  <h2 id="s3">What the prompt injection protections include</h2>
+  <p>Prompt injection is a technique that inserts malicious text to override or manipulate an AI assistant's instructions. The official docs list the following protections.</p>
+  <ul>
+    <li><strong>Permission system</strong>: in manual mode, sensitive operations require explicit approval.</li>
+    <li><strong>Approval of network commands</strong>: <code>curl</code> and <code>wget</code> are not auto-approved by default. In manual mode they prompt for confirmation like other Bash commands that aren't read-only, and you can also let them through with an allow rule such as <code>Bash(curl *)</code>. If you don't want them to run, add them to <code>permissions.deny</code>. Deny rules match the command exactly as written, so for control that doesn't depend on the command string, use the sandbox's network isolation.</li>
+    <li><strong>Web page summaries</strong>: In many fetches, WebFetch processes the page with a separate model call, and Claude receives that answer instead of the raw page.</li>
+    <li><strong>Trust check</strong>: When you start an interactive session in a folder you haven't trusted, a workspace trust dialog appears. In <code>-p</code> sessions, neither this dialog nor the <code>.mcp.json</code> approval appears.</li>
+    <li><strong>Command injection detection</strong>: In manual mode, Bash commands that can't be fully parsed trigger a confirmation prompt first. This confirmation is not skipped even if you have an allow rule for part of a command, such as <code>Bash(git *)</code>.</li>
+    <li><strong>Commands that don't match a rule require approval</strong>: In manual mode, commands that don't match any rule require approval by default.</li>
+  </ul>
+  <p>On Windows, the official docs recommend not enabling WebDAV and not allowing access to paths that may include WebDAV subdirectories. When enabled, it can bypass the permission system and cause network requests to remote hosts.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+  <h2 id="s4">Notes on MCP, cloud execution, and Remote Control</h2>
+  <p>Claude Code can connect to MCP (Model Context Protocol) servers. Project servers can be defined in <code>.mcp.json</code>, but servers from other scopes, claude.ai connectors, and servers added by plugins are configured outside the repository. So looking at <code>.mcp.json</code> alone doesn't show every server that could be loaded. The official docs recommend building your own or using ones from a trusted provider. Anthropic reviews connectors against listing criteria, but it does not audit or manage the security of MCP servers. To restrict them across your organization, use managed MCP settings.</p>
+  <p>Cloud sessions hosted by Anthropic run in a separate VM per session, and network access is restricted by default. You can also disable it or allow only specific domains. GitHub credentials are stored encrypted on the server side and never enter the VM. Actions are recorded in audit logs. If you route sessions to your own self-hosted environment, isolation, outbound traffic, and git credentials are your responsibility.</p>
+  <p>With Remote Control, code execution and file access stay local. While connected, however, the session transcript is stored on Anthropic's servers so the conversation can sync across devices. No cloud VM or sandbox is used.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+  <h2 id="s5">Operations for trying it out and rolling it out within your company</h2>
+  <p>The recommendations for handling untrusted content are as follows.</p>
+  <ol>
+    <li>Review proposed commands before approving them</li>
+    <li>Don't pipe untrusted content directly into Claude</li>
+    <li>Review changes to important files</li>
+    <li>Especially when interacting with external web services, run scripts and tool calls in a virtual machine (VM)</li>
+    <li>Report suspicious behavior with <code>/feedback</code></li>
+  </ol>
+  <ul>
+    <li>For sensitive code, use project-level permission settings, run the entire Claude Code process in a sandbox runtime or a dev container, and review your permissions regularly with <code>/permissions</code>.</li>
+    <li>For teams, you enforce organizational standards with managed settings, share approved permission settings through version control, and monitor usage with OpenTelemetry metrics. You can audit or block settings changes during a session with the <code>ConfigChange</code> hook.</li>
+  </ul>
+  <p>The official docs say these protections greatly reduce risk, but no system is fully immune to every attack, so you should keep following basic security practices.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Are curl and wget run automatically?</summary>
+      <p>According to the official docs, <code>curl</code> and <code>wget</code> are not auto-approved by default. In manual mode, you get a confirmation prompt. If you don't want them to run, add them to <code>permissions.deny</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+    </details>
+    <details>
+      <summary>In manual mode, can it still write outside the working folder?</summary>
+      <p>File tools prompt for confirmation. However, the boundary is the approval prompt, so a Bash command you approve can write anywhere the user's account can write. To restrict this at the OS level, enable the sandbox.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+    </details>
+    <details>
+      <summary>Does Anthropic verify the safety of MCP servers?</summary>
+      <p>According to the official docs, Anthropic reviews connectors against its listing criteria but does not audit or manage the security of MCP servers. It recommends building your own or using ones from a trusted provider.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/security" rel="noopener">Security</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-data-usage/index.html">Does Claude Code use your conversation data for training? Retention periods and where to check your settings</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

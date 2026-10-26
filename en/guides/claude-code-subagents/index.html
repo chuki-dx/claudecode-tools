@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use and create subagents in Claude Code (settings, invocation, and caveats) | Chuki DX Lab</title>
+<meta name="description" content="A guide for corporate IT, based on the official docs, covering what Claude Code subagents are, how to create the files, where to put them, tool restrictions, how to invoke them, and caveats such as the number of concurrent runs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-subagents/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-subagents/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-subagents/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-subagents/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to use and create subagents in Claude Code (setup, invocation, and cautions)">
+<meta property="og:description" content="A guide for corporate IT, based on the official docs, covering what Claude Code subagents are, how to create the files, where to put them, tool restrictions, how to invoke them, and caveats such as the number of concurrent runs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-subagents/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-subagents.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to use and create subagents in Claude Code (setup, invocation, and cautions)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-subagents.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to use and create subagents in Claude Code (setup, invocation, and cautions)",
+  "description": "A guide for corporate IT, based on the official docs, covering what Claude Code subagents are, how to create the files, where to put them, tool restrictions, how to invoke them, and caveats such as the number of concurrent runs.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-subagents/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to use subagents",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-subagents/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What if Claude can't find the subagent I created?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs advise restarting Claude Code and trying again. This applies when ~/.claude/agents/ didn't exist before the session started, because a running session doesn't detect a newly created agents directory. A directory added with --add-dir also needs a restart after you add or edit its .claude/agents/."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I turn off a built-in subagent such as Explore?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add Agent(Explore) to permissions.deny. In the CLI, you can also specify it with claude --disallowedTools \"Agent(Explore)\". It works for both built-in and custom subagents."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do subagents remember the contents of the main conversation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs explain that, except for forks (a special type that inherits the entire conversation), a subagent doesn't see the conversation history or the files Claude has already read. It starts work from a delegation message in which Claude summarizes the task."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-subagents/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to use subagents</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What a subagent is and what it can do</a></li>
+        <li><a href="#s2">Built-in subagents and how to stop them</a></li>
+        <li><a href="#s3">Steps to create your first one</a></li>
+        <li><a href="#s4">Settings: location, tools, model, and permissions</a></li>
+        <li><a href="#s5">How to invoke it and operational notes</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to use and create subagents in Claude Code (setup, invocation, and cautions)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>A subagent processes large outputs you won't need to refer to later, such as search results and logs, in a separate context and returns only a summary to the main conversation.</li>
+      <li>To create one, just place a Markdown file with YAML frontmatter in <code>~/.claude/agents/</code> (for all projects) or <code>.claude/agents/</code> (for that project only). You can also have Claude write it for you.</li>
+      <li>Before adopting subagents, check the tool restrictions, the subagent's own token consumption, and the concurrency limit.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What a subagent is and what it can do</h2>
+  <p>According to the official docs, a subagent is a specialized AI assistant that handles a specific type of task. In Claude Code (Anthropic's AI coding agent that runs in the terminal), you use one when search results, logs, or file contents would fill the conversation without being referenced again. A subagent works in its own context and returns only a summary.</p>
+  <p>Each subagent runs with its own context window, system prompt, tool access, and independent permissions. You can also restrict its tools, or route work to a fast, low-cost model such as Haiku to keep costs down. When you find yourself calling the same kind of worker with the same instructions again and again, that is a good sign it is time to define a custom subagent.</p>
+  <p>Note that subagents also send their own requests, and these count toward the same usage limit as the main conversation. Subagents also run within a single session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+  <h2 id="s2">Built-in subagents and how to stop them</h2>
+  <p>Claude Code has built-in subagents, which Claude uses automatically when it judges them appropriate. Explore is a read-only agent for searching and analyzing the codebase; Write and Edit are denied. Plan is a read-only agent used for research in plan mode. General-purpose is for multi-step tasks that require both exploring and making changes. Explore and Plan start without CLAUDE.md and the git status snapshot, which keeps research fast and cheap.</p>
+  <p>To prevent a specific subagent from being used, add it to <code>permissions.deny</code> in a form such as <code>Agent(Explore)</code>.</p>
+<pre><code>{
+  "permissions": {
+    "deny": ["Agent(Explore)", "Agent(my-custom-agent)"]
+  }
+}</code></pre>
+  <p>If you deny the <code>Agent</code> tool itself, Claude no longer delegates to any subagent.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+  <h2 id="s3">Steps to create your first one</h2>
+  <p>In the official docs quickstart, you ask Claude to create it. A subagent is a Markdown file with YAML frontmatter, so you can also write it by hand. In Claude Code, tell it which subagent you want to create and where to save it.</p>
+<pre><code>Create a personal code-improver subagent in ~/.claude/agents/ that scans
+files and suggests improvements for readability, performance, and best
+practices. It should explain each issue, show the current code, and
+provide an improved version. Make it read-only and have it use Sonnet.</code></pre>
+  <p>Claude writes a file containing <code>name</code>, <code>description</code>, <code>tools</code>, <code>model</code>, and a system prompt. Open <code>~/.claude/agents/code-improver.md</code> and check that it matches what you asked for. The result looks like this.</p>
+<pre><code>---
+name: code-improver
+description: Scans files and suggests improvements for readability, performance, and best practices. Use after writing or modifying code.
+tools: Read, Grep, Glob
+model: sonnet
+---
+
+You are a code improvement specialist. For each issue you find, explain
+the problem, show the current code, and provide an improved version.</code></pre>
+  <p>This file is in <code>~/.claude/agents/</code>, so it is available in every project on that machine. If you want to limit it to one project, move it to that project's <code>.claude/agents/</code>.</p>
+  <p>To try it, ask Claude to delegate, for example: <code>Use the code-improver agent to suggest improvements in this project</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+  <h2 id="s4">Settings: location, tools, model, and permissions</h2>
+  <p>The only required fields are <code>name</code> and <code>description</code>. Claude reads <code>description</code> to decide whether to delegate, so state clearly and briefly when the subagent should be used. If the combined descriptions of subagents, excluding built-in ones, exceed 15,000 tokens, a warning appears at startup, so put the details in the system prompt.</p>
+  <h3>Locations and precedence</h3>
+  <p>If subagents share the same name, the one in the higher-priority location is used.</p>
+  <ul>
+    <li>Organization managed settings: organization-wide, priority 1 (highest)</li>
+    <li><code>--agents</code> CLI flag: current session only, priority 2</li>
+    <li><code>.claude/agents/</code>: current project, priority 3</li>
+    <li><code>~/.claude/agents/</code>: all of your own projects, priority 4</li>
+    <li>Plugin <code>agents/</code> directory: applies wherever the plugin is enabled, priority 5 (lowest)</li>
+  </ul>
+  <p>If you check the project-level file into version control, your team can share and improve it.</p>
+  <h3>Tools, models, and permission modes</h3>
+  <p><code>tools</code> is an allowlist and <code>disallowedTools</code> is a denylist. If you omit <code>tools</code>, the subagent inherits all available tools. If you specify both, <code>disallowedTools</code> is applied first. <code>model</code> accepts <code>sonnet</code>, <code>opus</code>, <code>haiku</code>, <code>fable</code>, a full model ID, or <code>inherit</code>. For how the model is chosen when omitted, check the official docs.</p>
+  <p>If you omit <code>permissionMode</code>, the subagent inherits the permission mode of the main conversation. When the main conversation is in <code>bypassPermissions</code>, <code>acceptEdits</code>, or auto mode, the subagent runs in the same mode and the configured value is ignored.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+  <h2 id="s5">How to invoke it and operational notes</h2>
+  <p>There are three ways to invoke a subagent: name it in natural language; use an @-mention to make Claude use that subagent for a single task; or use the <code>--agent</code> flag or the <code>agent</code> setting to run the entire session as that subagent.</p>
+<pre><code>claude --agent code-reviewer</code></pre>
+  <p>With <code>--agent</code>, the custom subagent's system prompt completely replaces the default Claude Code system prompt, unless the prompt is empty.</p>
+  <p>A subagent starts with a fresh context and cannot see the conversation history. It starts from a delegation message in which Claude summarizes the work.</p>
+  <p>Keep the following in mind when operating this. If you run many subagents and they return detailed results, they consume a large share of the main conversation's context, and each subagent also uses its own tokens. The default limit on concurrent subagents is 20, and going over it fails with <code>Concurrent subagent limit reached</code>. To change it, set <code>CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS</code>.</p>
+  <p>Tasks with many back-and-forth exchanges, tasks that share context across multiple phases, and small fixes suit the main conversation. Tasks with long output, tasks where you want to restrict tools, and tasks where only a summary needs to be returned suit subagents.</p>
+  <p>This is based on the official docs as of writing (October 2026), and the Claude Code version required differs by feature. Before you roll it out company-wide, check the official docs to confirm it works with the version you use.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What if Claude can't find the subagent I created?</summary>
+      <p>The official docs advise restarting Claude Code and trying again. This applies when <code>~/.claude/agents/</code> didn't exist before the session started, because a running session doesn't detect a newly created <code>agents</code> directory. A directory added with <code>--add-dir</code> also needs a restart after you add or edit its <code>.claude/agents/</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+    </details>
+    <details>
+      <summary>How do I turn off a built-in subagent such as Explore?</summary>
+      <p>Add <code>Agent(Explore)</code> to <code>permissions.deny</code>. In the CLI, you can also specify it with <code>claude --disallowedTools "Agent(Explore)"</code>. It works for both built-in and custom subagents.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+    </details>
+    <details>
+      <summary>Do subagents remember the contents of the main conversation?</summary>
+      <p>The official docs explain that, except for forks (a special type that inherits the entire conversation), a subagent doesn't see the conversation history or the files Claude has already read. It starts work from a delegation message in which Claude summarizes the task.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/sub-agents" rel="noopener">Create custom subagents</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-slash-commands/index.html">How to use Claude Code slash commands, and the main commands for each stage of your work</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plugins/index.html">How to install Claude Code plugins, and what to watch for when choosing a marketplace</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Introduction to Claude Code skills (SKILL.md): teaching Claude your work procedures</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

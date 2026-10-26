@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to install Claude Code plugins and what to watch for when choosing a marketplace | Chuki DX Lab</title>
+<meta name="description" content="A summary, following the official docs, of how to install Claude Code plugins, how to choose the installation scope, and what to watch for when choosing among official, community, and third-party marketplaces.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plugins/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to install Claude Code plugins, and what to watch for when choosing a marketplace">
+<meta property="og:description" content="A summary, following the official docs, of how to install Claude Code plugins, how to choose the installation scope, and what to watch for when choosing among official, community, and third-party marketplaces.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugins.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to install Claude Code plugins, and what to watch for when choosing a marketplace">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plugins.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to install Claude Code plugins, and what to watch for when choosing a marketplace",
+  "description": "A summary, following the official docs, of how to install Claude Code plugins, how to choose the installation scope, and what to watch for when choosing among official, community, and third-party marketplaces.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to install Claude Code plugins",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plugins/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I install only skills without using plugins?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. According to the official docs, skills, subagents, hooks, and MCP servers all work on their own without a plugin. For example, a skill saved in ~/.claude/skills/ is available in every project on that machine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if the part after the @ in an install command from an acquaintance is not claude-plugins-official?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say to add the marketplace first. Run /plugin marketplace add followed by the source, then install the plugin. Plugins published by coworkers or your own company count as third-party, so you need to review them before installing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I temporarily disable plugins I don't use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can disable a plugin without uninstalling it. Use /plugin, or run claude plugin disable in your shell. In the Installed tab, Not used recently helps you find plugins you aren't using."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-plugins/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">How to install Claude Code plugins</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What plugins can do</a></li>
+        <li><a href="#s2">How to install it in the terminal</a></li>
+        <li><a href="#s3">How to choose a scope</a></li>
+        <li><a href="#s4">Things to watch when choosing a marketplace</a></li>
+        <li><a href="#s5">Impact after installation and how to manage it</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to install Claude Code plugins, and what to watch for when choosing a marketplace</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>For Claude Code (Anthropic's AI coding agent that runs in the terminal), the standard way to add a plugin is to run <code>/plugin</code> in a session and pick one from the <strong>Discover</strong> tab.</li>
+      <li>Marketplaces are divided by name into official, community, and third-party, but at every level an installed plugin can run code with the user's permissions. You need to check before installing.</li>
+      <li>Enabled plugins affect every session. Before you roll them out company-wide, check the scope and <strong>Context cost</strong>, and decide on a policy of disabling plugins you don't use.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What plugins can do</h2>
+  <p>According to the official docs, a plugin is a directory containing skills, agents, hooks, MCP servers, and more, which Claude Code installs and loads as a single bundled unit. Most are installed from a marketplace. A marketplace is a catalog that lists plugins and where to get them, not a store.</p>
+  <p>A skill is instructions written in <code>SKILL.md</code>, a hook is a command that runs at key points in Claude Code's behavior such as after an edit, and an MCP server is a server for tools that Claude Code connects to.</p>
+  <p>These all work on their own without a plugin. The official docs say to use a plugin when you want to bundle several of them together, or when you want to install a setup someone else built with a single command and receive updates from a marketplace.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a></p>
+  <h2 id="s2">How to install it in the terminal</h2>
+  <p>The example in the official docs is <code>commit-commands</code> from the official Anthropic marketplace, which adds commands for committing, pushing, and creating pull requests. The official marketplace is added automatically the first time you start an interactive terminal session (unless it is blocked by a managed policy).</p>
+  <p>Start <code>claude</code> and run the following command. Inside the session, it doesn't install right away. Instead, the <code>/plugin</code> panel opens on that plugin's details, where you can review it and choose a scope.</p>
+<pre><code>/plugin install commit-commands@claude-plugins-official</code></pre>
+  <ol>
+    <li>In the detail view, check the commands, agents, skills, hooks, and MCP and LSP servers the plugin adds. Because plugins can run hooks and MCP servers, read through them before you install.</li>
+    <li>Choose a scope (explained in the next section).</li>
+    <li>The last sentence of the post-install summary tells you whether the plugin is usable in the current session. If it says <code>Plugin is now active.</code>, no reload is needed. If it says <code>Run /reload-plugins to apply.</code>, Claude Code runs the reload, but if the reload would invalidate the prompt cache, it shows a warning and leaves the plugin pending.</li>
+    <li>Type <code>/</code> and check whether <code>/commit-commands:commit</code> appears. You can also see the list with <code>claude plugin list</code>.</li>
+  </ol>
+  <p>To browse and install, run <code>/plugin</code> without a plugin name to open the <strong>Discover</strong> tab. The desktop app and VS Code each have their own separate steps. Cloud sessions have no plugin browser and don't load plugins installed on your local machine. See the official docs for details.</p>
+  <p>From scripts, run <code>claude plugin install</code> in the shell. The default is user scope, and the plugin is loaded at the next startup or when you run <code>/reload-plugins</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/install" rel="noopener">Install and manage plugins</a></p>
+  <h2 id="s3">How to choose a scope</h2>
+  <p>The scope you choose at install time determines who it is enabled for.</p>
+  <ul>
+    <li>User scope: for yourself, and active in all projects on this machine. The setting is stored in <code>~/.claude/settings.json</code>.</li>
+    <li>Project scope: applies to everyone who works in that repository. The settings go in <code>.claude/settings.json</code>, which you commit. However, committing does not install anything on each person's machine, so each person needs to run the install once with the project scope specified.</li>
+    <li>Local scope: for you only, and active only in that repository. The settings go in <code>.claude/settings.local.json</code>.</li>
+  </ul>
+  <p>When the same plugin is configured in multiple scopes, local overrides project, and project overrides user. Also, some plugins are disabled initially by the author's settings; in that case, enable them from the <strong>Installed</strong> tab or elsewhere.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/install" rel="noopener">Install and manage plugins</a></p>
+  <h2 id="s4">Things to watch when choosing a marketplace</h2>
+  <p>The official docs divide marketplaces into three tiers by name. Claude Code recognizes the official and community names only for marketplaces based on repositories under <code>github.com/anthropics/</code>.</p>
+  <ul>
+    <li>Official: <code>claude-plugins-official</code> and others. This also includes <code>claude-code-plugins</code>, which is for demos.</li>
+    <li>Community: Anthropic community names such as <code>claude-community</code>.</li>
+    <li>Third-party: Everything else. Plugins published by your coworkers or your own company also fall here.</li>
+  </ul>
+  <p>At any stage, an installed plugin can run code with your user permissions. Before installing one, read Plugin security and trust in the official docs to see how to check it.</p>
+  <p>To install from a source other than the official one, first add it with <code>/plugin marketplace add</code>. You can specify a GitHub repository, a git repository, a local directory or file, or an <code>https://</code> URL to a <code>marketplace.json</code>. Community and demo marketplaces are not added automatically. According to the official docs as of writing (October 2026), <code>--marketplace</code>, which adds and installs in one step, is available from Claude Code v2.1.275 or later inside a session, and from v2.1.292 or later from the shell.</p>
+  <p>Auto-update is enabled by default for the official marketplaces and similar ones (except <code>knowledge-work-plugins</code> and <code>first-party-plugins</code>). It is disabled by default for community, third-party, and local development marketplaces. Organizations can use managed settings to allow or block marketplaces and to force-install plugins.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a></p>
+  <h2 id="s5">Impact after installation and how to manage it</h2>
+  <p>According to the official docs, enabled plugins are always included, even in sessions that don't use them. The names and descriptions of callable skills and similar items enter the context every turn, count toward token usage, and reduce the room left in the context window. MCP servers run per session, and hooks run on their events.</p>
+  <ul>
+    <li>Before you install: open a plugin in the <strong>Marketplaces</strong> tab of <code>/plugin</code>. Plugins from the official marketplace show an estimated <strong>Context cost</strong>.</li>
+    <li>After installing: plugins you could probably turn off are listed under <strong>Not used recently</strong> on the <strong>Installed</strong> tab.</li>
+    <li>To stop it: you can disable it without uninstalling, using <code>/plugin</code> or <code>claude plugin disable</code> in the shell.</li>
+  </ul>
+  <p>Removing a marketplace also uninstalls every plugin you installed from it. Before you do, check the plugin names in the <strong>Marketplaces</strong> tab.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I install only skills without using plugins?</summary>
+      <p>Yes. According to the official docs, skills, subagents, hooks, and MCP servers all work on their own without a plugin. For example, a skill saved in <code>~/.claude/skills/</code> is available in every project on that machine.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a></p>
+    </details>
+    <details>
+      <summary>What if the part after the @ in an install command from an acquaintance is not claude-plugins-official?</summary>
+      <p>The official docs say to add the marketplace first. Run <code>/plugin marketplace add</code> followed by the source, then install the plugin. Plugins published by coworkers or your own company count as third-party, so you need to review them before installing.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/install" rel="noopener">Install and manage plugins</a></p>
+    </details>
+    <details>
+      <summary>How do I temporarily disable plugins I don't use?</summary>
+      <p>You can disable a plugin without uninstalling it. Use <code>/plugin</code>, or run <code>claude plugin disable</code> in your shell. In the <strong>Installed</strong> tab, <strong>Not used recently</strong> helps you find plugins you aren't using.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/plugins/overview" rel="noopener">Plugins overview</a> (the official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/plugins/install" rel="noopener">Install and manage plugins</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-slash-commands/index.html">How to use Claude Code slash commands, and the main commands for each stage of your work</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-features-overview/index.html">When to use CLAUDE.md, skills, hooks, MCP, and subagents in Claude Code</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-skills-intro/index.html">Introduction to Claude Code skills (SKILL.md): teaching Claude your work procedures</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

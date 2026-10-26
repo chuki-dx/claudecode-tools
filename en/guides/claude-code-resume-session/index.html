@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Resume a Previous Conversation in Claude Code: --continue, --resume, and Naming Sessions | Chuki DX Lab</title>
+<meta name="description" content="This guide explains how to resume a previous conversation in Claude Code, following the official docs and written for corporate IT. You will learn the difference between --continue and --resume, how to name sessions, and what is restored and what to watch out for.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-resume-session/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-resume-session/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-resume-session/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions">
+<meta property="og:description" content="This guide explains how to resume a previous conversation in Claude Code, following the official docs and written for corporate IT. You will learn the difference between --continue and --resume, how to name sessions, and what is restored and what to watch out for.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-resume-session/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-resume-session.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-resume-session.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions",
+  "description": "This guide explains how to resume a previous conversation in Claude Code, following the official docs and written for corporate IT. You will learn the difference between --continue and --resume, how to name sessions, and what is restored and what to watch out for.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-resume-session/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Resuming conversations in Claude Code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-resume-session/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I quickly resume my most recent conversation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use claude --continue. It reopens the most recent session in the current directory. Sessions whose first prompt was /loop, and sessions created with claude -p or the Agent SDK, are not included. It also won't open a background session that is still running; it prints a message and exits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I resume a conversation that I haven't named?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Pick it in the picker, or pass the generated title to claude --resume or /resume. The default display name (something like my-app-3f) can't be used to resume. Also, claude -p run directly from a shell or script doesn't get a title."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I resume a conversation that I started in a different directory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can run claude --resume <session-id> from any directory. It first searches the current project's directory and its worktrees, then other projects on this machine. For other projects, it resolves only when exactly one project has a record of the session. If nothing matches, it shows No conversation found with session ID: <session-id>."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-resume-session/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Resuming conversations in Claude Code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Entry points for resuming a previous conversation</a></li>
+        <li><a href="#s2">Name a session and resume it</a></li>
+        <li><a href="#s3">How to use the session picker and what it can search</a></li>
+        <li><a href="#s4">What is restored on resume and what you need to provide again</a></li>
+        <li><a href="#s5">Notes on branching and where sessions are saved</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to resume a previous conversation in Claude Code: --continue, --resume, and naming sessions</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Conversations in Claude Code (an AI coding agent from Anthropic that runs in the terminal) are saved locally per project. You can resume the most recent one with <code>claude --continue</code>, or pick one from a list with <code>claude --resume</code>.</li>
+      <li>If you run a lot of work in parallel, name sessions with <code>claude -n auth-refactor</code> or <code>/rename auth-refactor</code> so you can return directly with <code>claude --resume &lt;name&gt;</code>. Even without a name, the generated title can be used to resume.</li>
+      <li>Some launch options are not restored on resume, and the permission mode of a conversation that ended in <code>bypassPermissions</code> is not restored either. Check what gets restored before you roll this out company-wide.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Entry points for resuming a previous conversation</h2>
+  <p>According to the official docs, a session is a saved conversation tied to a project directory. It keeps being saved as you work, so you can return to it after exiting or after <code>/clear</code>. This article covers the CLI; the desktop app, claude.ai/code, and the VS Code extension each have their own separate session lists.</p>
+  <ul>
+    <li><code>claude --continue</code>: Reopens the most recent session in the current directory</li>
+    <li><code>claude --resume</code>: Opens the session picker (a screen where you choose from a list)</li>
+    <li><code>claude --resume &lt;name&gt;</code>: Resumes a named session directly</li>
+    <li><code>claude --resume &lt;transcript-path&gt;</code>: Resumes from a <code>.jsonl</code> transcript file, specified by its full path.</li>
+    <li><code>claude --from-pr &lt;number&gt;</code>: Opens a picker filtered to sessions linked to that pull request.</li>
+    <li><code>/resume</code>: switch to a different session from within a running session</li>
+  </ul>
+  <p>This is a summary based on the official docs as of writing (October 2026), not on my own testing. Some behavior changes between versions, so check the latest official docs before you adopt it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s2">Name a session and resume it</h2>
+  <p>The official docs recommend giving sessions clear names, especially when you run multiple tasks in parallel. A name makes a session easier to find in the picker and can also be used to resume it.</p>
+  <ul>
+    <li>At startup: <code>claude -n auth-refactor</code></li>
+    <li>During a session: <code>/rename auth-refactor</code> (the name also appears in the prompt bar)</li>
+    <li>From the picker: select a session and press <code>Ctrl+R</code></li>
+    <li>When you approve a plan in plan mode: if no name is set, a title based on the plan is added automatically</li>
+  </ul>
+  <p>After you name a session, you can return to it with <code>claude --resume &lt;name&gt;</code> or <code>/resume &lt;name&gt;</code>. On an exact match, the session resumes directly, even if it lives in a different worktree (another working directory of the same repository). If the name matches multiple sessions, <code>claude --resume &lt;name&gt;</code> opens the picker with the name as the search term, while <code>/resume &lt;name&gt;</code> returns an error. In that case, run <code>/resume</code> with no argument to open the picker.</p>
+  <p>A session you haven't named gets a default display name (something like <code>my-app-3f</code>) and a generated title that summarizes the first prompt. Only the generated title works for resuming; passing the default display name won't find the session.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s3">How to use the session picker and what it can search</h2>
+  <p>Run <code>claude --resume</code> with no arguments, or run <code>/resume</code> during a session, to open the picker. The main controls are as follows.</p>
+  <ul>
+    <li><code>↑</code> / <code>↓</code> to move, <code>Enter</code> to resume, <code>Space</code> to preview the contents</li>
+    <li>Search with <code>/</code> and similar. Paste a pull request URL to find the session that created it</li>
+    <li><code>Ctrl+A</code> shows all projects on this machine, <code>Ctrl+W</code> shows all worktrees in the repository, and <code>Ctrl+B</code> filters to the current git branch</li>
+  </ul>
+  <p>By default, it shows sessions from the current worktree, plus sessions started in other locations where you added the current directory with <code>/add-dir</code>.</p>
+  <p>Here is a caveat if a session doesn't show up in the list. A session whose first prompt was <code>/loop</code> appears neither in the picker nor with <code>claude --continue</code>. The same is true of sessions created with <code>claude -p</code> or the Agent SDK, but you can resume them by passing the session ID to <code>claude --resume &lt;session-id&gt;</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s4">What is restored on resume and what you need to provide again</h2>
+  <p>According to the official docs, when you load a conversation from a transcript, the following state is restored in addition to the conversation history, including tool calls and results.</p>
+  <ul>
+    <li>Model: it continues with the model you were using (for exceptions, check the official model configuration page)</li>
+    <li>Agent: a session started with <code>--agent</code> or similar continues as that agent</li>
+    <li>Permission mode: if you use <code>claude --continue</code> or similar in the terminal without <code>-p</code>, the permission mode from when the session ended is restored. You can override it with <code>--permission-mode</code> or similar</li>
+    <li>Scheduled tasks: those that haven't expired are restored, but background Bash and monitor tasks are not</li>
+  </ul>
+  <p>Some things are not restored. If a session depended on <code>--mcp-config</code>, <code>--settings</code>, <code>--plugin-dir</code>, <code>--fallback-model</code>, or <code>--add-dir</code>, pass them again when you resume. Directories you added mid-session with <code>/add-dir</code> are not restored either. Configuration files such as <code>settings.json</code> are re-read at startup, so you don't need to pass them again.</p>
+  <p>For permission modes: if a session that ended in <code>bypassPermissions</code> is resumed in the terminal, that mode is not restored, and the session starts in the same mode as a new session. If it ended in plan mode, resuming in the terminal returns you to plan mode (except when you add <code>--fork-session</code>, or when a deny rule has removed the <code>ExitPlanMode</code> tool).</p>
+  <h3>Resuming a conversation left idle for a long time</h3>
+  <p>On a Pro or Max plan, if you resume a session that has been idle for more than about an hour and exceeds 100,000 tokens, a dialog appears before your first message. <strong>Resume from summary</strong> runs <code>/compact</code> and carries the summary forward. Later costs go down, but anything the summary left out disappears from Claude's context. <strong>Resume full session as-is</strong> loads the conversation unchanged. If you choose <strong>Don't ask me again</strong>, the dialog no longer appears on future resumes.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+  <h2 id="s5">Notes on branching and where sessions are saved</h2>
+  <p>To keep the original conversation and try a different approach, use <code>/branch</code> during the session, or combine it with <code>--fork-session</code> on the command line as shown below.</p>
+<pre><code>claude --continue --fork-session</code></pre>
+  <p>If you resume the same session in two terminals without forking it, messages from both get mixed into a single record.</p>
+  <p>Transcripts are saved by default to <code>~/.claude/projects/&lt;project&gt;/&lt;session-id&gt;.jsonl</code> and kept for 30 days. You can change this with <code>cleanupPeriodDays</code> in <code>settings.json</code>. The transcript format is an internal detail of Claude Code and changes between versions, so scripts that parse it directly may break. To keep a human-readable record, use <code>/export</code>. To delete transcripts sooner, there is <code>claude purge</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>How do I quickly resume my most recent conversation?</summary>
+      <p>Use <code>claude --continue</code>. It reopens the most recent session in the current directory. Sessions whose first prompt was <code>/loop</code>, and sessions created with <code>claude -p</code> or the Agent SDK, are not included. It also won't open a background session that is still running; it prints a message and exits.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+    <details>
+      <summary>Can I resume a conversation that I haven't named?</summary>
+      <p>Yes. Pick it in the picker, or pass the generated title to <code>claude --resume</code> or <code>/resume</code>. The default display name (something like <code>my-app-3f</code>) can't be used to resume. Also, <code>claude -p</code> run directly from a shell or script doesn't get a title.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+    <details>
+      <summary>Can I resume a conversation that I started in a different directory?</summary>
+      <p>You can run <code>claude --resume &lt;session-id&gt;</code> from any directory. It first searches the current project's directory and its worktrees, then other projects on this machine. For other projects, it resolves only when exactly one project has a record of the session. If nothing matches, it shows <code>No conversation found with session ID: &lt;session-id&gt;</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/sessions" rel="noopener">Manage sessions</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-rewind-checkpoint/index.html">How to roll back Claude Code changes: what checkpoints and /rewind can restore</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-vscode/index.html">Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

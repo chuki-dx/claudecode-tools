@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code permission basics (deny/ask/allow): what they do and don't cover | Chuki DX Lab</title>
+<meta name="description" content="This guide explains the evaluation order, placement, and syntax of the permission rules (deny / ask / allow) you write in Claude Code&#x27;s settings.json. I sorted out which operations deny stops and which it doesn&#x27;t (such as reads done through a script), based on the official docs and what I verified on a real machine.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permissions-basics/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permissions-basics/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-permissions-basics/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="The basics of Claude Code permissions (deny/ask/allow), and what they do and don&#x27;t cover">
+<meta property="og:description" content="I summarized the evaluation order, placement, and syntax of deny / ask / allow, plus the operations that deny does not stop, based on the official docs and my checks on a real machine.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permissions-basics/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permissions-basics.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The basics of Claude Code permissions (deny/ask/allow), and what they do and don&#x27;t cover">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-permissions-basics.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The basics of Claude Code permissions (deny/ask/allow), and what they do and don't cover",
+  "description": "A guide to the order in which permission rules in Claude Code's settings.json are evaluated, where to put them, how to write them, and which operations deny stops and which it doesn't.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permissions-basics/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Permission settings (deny/ask/allow) basics",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-permissions-basics/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What happens if I write the same rule in both deny and ask?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "deny is evaluated first, so the action is blocked. If you only want a confirmation prompt, write the rule only in ask."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are files listed in .gitignore not read?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": ".gitignore tells Git which files to leave out of version control, which is separate from keeping files away from Claude Code. Put anything you don't want Claude Code to read in deny as well, and anything you don't want committed in .gitignore as well."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I wrote a rule, but it doesn't seem to take effect",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The file location or path syntax may be wrong. Use /permissions to check whether the rules were loaded, and confirm you placed the file at .claude/settings.json in your working folder."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-permissions-basics/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Permission settings (deny/ask/allow) basics</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#what">What permissions settings are</a></li>
+        <li><a href="#where">Where settings files live and their precedence</a></li>
+        <li><a href="#how">How to write rules</a></li>
+        <li><a href="#works">Operations blocked by deny</a></li>
+        <li><a href="#limits">Operations that deny does not stop</a></li>
+        <li><a href="#trust">If allow doesn&#x27;t seem to work</a></li>
+        <li><a href="#operation">How to think about internal use</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (official docs, as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>The basics of Claude Code permissions (deny/ask/allow), and what they do and don't cover</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-14">October 14, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs as of writing (October 2026)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Permission rules come in three types: deny (block), ask (confirm every time), and allow (permit without confirmation). They are <strong>evaluated in the order deny → ask → allow</strong>. An operation that matches deny can't be used even if you also list it in allow.</li>
+      <li>deny blocks Claude's read tools and "ordinary" operations such as <code>cat</code> and <code>curl</code>. However, <strong>it does not block a script that opens files on its own</strong>.</li>
+      <li>Use deny as a safety net against accidents, and combine it with a practice of never keeping real secrets in your working folder.</li>
+    </ul>
+  </section>
+
+  <h2 id="what">What permissions settings are</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) checks the permission rules in your settings file every time it performs an operation, such as reading or writing a file or running a command. You write the rules under <code>permissions</code> in <code>settings.json</code>, which is in JSON format.</p>
+  <p>There are three types of rules:</p>
+  <ul>
+    <li><strong>deny</strong>: block the operation</li>
+    <li><strong>ask</strong>: Asks the user for confirmation every time before running</li>
+    <li><strong>allow</strong>: Allow execution without asking for confirmation</li>
+  </ul>
+  <p>The official docs explain that rules are evaluated in the order deny, ask, allow, and the first match decides the result. For example, if you set <code>Bash(aws *)</code> to deny, the command is still blocked even if you add the more specific <code>Bash(aws s3 ls)</code> to allow. Keep in mind that you can't use allow to create an exception to a deny, and you won't get stuck when building your rules.</p>
+  <p>Writing "don't read .env" in CLAUDE.md (the instruction file Claude Code reads at startup) is a request to the AI. A permission rule, by contrast, is enforced by Claude Code itself, which blocks the operation. As a rule, put anything you need enforced in permission rules, not in prose.</p>
+
+  <h2 id="where">Where settings files live and their precedence</h2>
+  <p>The scope of a settings file depends on where you put it. Here are the four that corporate IT should know.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">Where to put it</th><th scope="col">Scope and when to use it</th></tr></thead>
+      <tbody>
+        <tr><td><code>.claude/settings.json</code> (inside the working folder)</td><td>Everyone who uses that folder. Sharing it through Git lets you distribute the same rules</td></tr>
+        <tr><td><code>.claude/settings.local.json</code></td><td>Only for you, only in that folder: write personal preferences</td></tr>
+        <tr><td><code>~/.claude/settings.json</code></td><td>All projects you use</td></tr>
+        <tr><td>Managed settings (for example, <code>C:\Program Files\ClaudeCode\managed-settings.json</code> on Windows)</td><td>All users of that PC. Users cannot override it</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>When the same item appears in multiple places, precedence is: managed settings → command line → <code>settings.local.json</code> → project <code>settings.json</code> → user <code>settings.json</code>. For a company-wide rollout, a practical order is to start with the project's <code>.claude/settings.json</code> and consider managed settings only after the rules you want to enforce for everyone have settled.</p>
+
+  <h2 id="how">How to write rules</h2>
+  <p>Rules are written in the form "tool name (target)". Reading a file is <code>Read(path)</code>, and a command is <code>Bash(command *)</code>. Here is a minimal example that blocks reading <code>.env</code>, stops outbound sends with <code>curl</code>, and forbids <code>git push</code>.</p>
+<pre><code>{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Bash(curl *)",
+      "Bash(git push *)"
+    ]
+  }
+}</code></pre>
+  <p>If you also don't want Claude to read the folder that holds real data, use <code>**</code> to cover everything inside it, as in <code>Read(./data/raw/**)</code>. After writing the rule, run <code>/permissions</code> in Claude Code to confirm the rule was loaded.</p>
+
+  <h2 id="works">Operations blocked by deny</h2>
+  <p>At Chuki DX Lab, I tried the settings above (October 2026) on Windows 11 with Git for Windows and Claude Code 2.1.296, in a folder containing a dummy <code>.env</code> (with test values only). The results are as follows.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col">What you asked for</th><th scope="col">Result</th></tr></thead>
+      <tbody>
+        <tr><td>Read <code>.env</code> with Claude's read tool</td><td>Stopped</td></tr>
+        <tr><td>Run <code>cat .env</code></td><td>Stopped</td></tr>
+        <tr><td>Access external sites with <code>curl</code></td><td>Stopped</td></tr>
+        <tr><td>Opening and printing <code>.env</code> inside a Python script</td><td><strong>It was able to read the file</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="limits">Operations that deny does not stop</h2>
+  <p>The last line is not a bug; it behaves as the official docs specify. As of writing, the official docs describe Read and Edit deny rules as follows (summarized).</p>
+  <ul>
+    <li>Works on Claude's built-in file tools</li>
+    <li>It works for commands Claude Code recognizes as reading files, such as <code>cat</code>, <code>head</code>, and <code>tail</code></li>
+    <li>It doesn't cover indirect reads and writes, such as a Python or Node script opening files on its own</li>
+  </ul>
+  <p>Command rules work the same way. <code>Bash(curl *)</code> blocks the form <code>curl https://…</code>, but it reportedly does not catch calls by path such as <code>/usr/bin/curl</code> or calls wrapped in <code>sh -c '…'</code>. In other words, deny is not a wall that prevents reading by any means; it is a net that stops ordinary operations.</p>
+
+  <h2 id="trust">If allow doesn't seem to work</h2>
+  <p>An allow rule in a project's <code>.claude/settings.json</code> is not used until someone accepts the workspace trust prompt for that folder. Deny and ask rules restrict behavior, so they take effect regardless of trust. If a command you put in allow still prompts for confirmation after you distribute the file, have the user start <code>claude</code> once in an interactive session and accept the trust prompt.</p>
+
+  <h2 id="operation">How to think about internal use</h2>
+  <ol>
+    <li><strong>Don't put real secrets in the working folder</strong>: manage API keys and the like outside the folder. Not placing them there at all is more reliable than protecting them with deny.</li>
+    <li><strong>Share deny as a safety net</strong>: Put <code>.env</code>, <code>secrets/</code>, folders with real data, and commands that send data externally into deny, and distribute them through Git as project settings.</li>
+    <li><strong>If you need a hard stop, use a different mechanism</strong>: The official docs describe a sandbox that blocks access at the OS level. As of writing, it is not available on native Windows; it is said to work when you run Claude Code inside WSL 2.</li>
+    <li><strong>Test with dummy data before distributing</strong>: place a file containing test values, confirm locally once that it can't be read or sent, and then distribute.</li>
+  </ol>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What happens if I write the same rule in both deny and ask?</summary>
+      <p>deny is evaluated first, so the action is blocked. If you only want a confirmation prompt, write the rule only in ask.</p>
+    </details>
+    <details>
+      <summary>Are files listed in .gitignore not read?</summary>
+      <p>.gitignore tells Git which files to leave out of version control, which is separate from keeping files away from Claude Code. Put anything you don't want Claude Code to read in deny as well, and anything you don't want committed in .gitignore as well.</p>
+    </details>
+    <details>
+      <summary>I wrote a rule, but it doesn't seem to take effect</summary>
+      <p>The file location or path syntax may be wrong. Use <code>/permissions</code> to check whether the rules were loaded, and confirm you placed the file at <code>.claude/settings.json</code> in your working folder.</p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Create settings.json with just checkboxes</h2>
+    <p>You can generate this article's rules just by ticking checkboxes in the <a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>. It separates rules I verified on a real machine to block as expected from rules I haven't verified individually.</p>
+  </section>
+
+  <h2 id="refs">References (official docs, as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (evaluation order, rule syntax, what rules don't cover, trust verification)</li>
+    <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a> (where settings files live and their precedence)</li>
+    <li><a href="https://code.claude.com/docs/en/sandboxing" rel="noopener">Sandboxing</a> (supported environments)</li>
+  </ul>
+  <p class="hint">Specs and pricing can change. Before you roll this out company-wide, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-env-protection/index.html">Keeping Claude Code from reading .env, and the limits of that setup (verified on Windows)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

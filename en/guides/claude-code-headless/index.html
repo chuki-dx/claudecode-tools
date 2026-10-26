@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Run Claude Code from Scripts with claude -p (Headless Mode) | Chuki DX Lab</title>
+<meta name="description" content="This guide covers how to run Claude Code non-interactively with claude -p, following the official docs. It summarizes what corporate IT needs to decide: --bare, output formats, preconfiguring permissions, continuing a conversation, and behavior when it stops.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-headless/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-headless/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-headless/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-headless/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to Run Claude Code from a Script with claude -p (Headless Mode)">
+<meta property="og:description" content="This guide covers how to run Claude Code non-interactively with claude -p, following the official docs. It summarizes what corporate IT needs to decide: --bare, output formats, preconfiguring permissions, continuing a conversation, and behavior when it stops.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-headless/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-headless.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to Run Claude Code from a Script with claude -p (Headless Mode)">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-headless.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Run Claude Code from a Script with claude -p (Headless Mode)",
+  "description": "This guide covers how to run Claude Code non-interactively with claude -p, following the official docs. It summarizes what corporate IT needs to decide: --bare, output formats, preconfiguring permissions, continuing a conversation, and behavior when it stops.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-headless/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Headless execution with claude -p",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-headless/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I use subscription login even when I add --bare?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, bare mode does not read OAuth credentials or the system keychain, and it does not use a subscription login. For the Anthropic API, set ANTHROPIC_API_KEY."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I pipe in a large log file?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard input passed through a pipe is limited to 10MB. If you exceed that, it exits with an error and a non-zero status, so the docs suggest writing the content to a file and pointing to its path in the prompt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How to keep unattended runs from stopping to wait for permission prompts.",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Specify the tools to use with --allowedTools, or choose a permission mode such as dontAsk. If there is no one to approve prompts, you can use --permission-prompts none. This flag requires v2.1.259 or later."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-headless/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Headless execution with claude -p</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do with claude -p</a></li>
+        <li><a href="#s2">--bare and authentication for CI</a></li>
+        <li><a href="#s3">Piping input and output formats</a></li>
+        <li><a href="#s4">Permission settings for unattended runs</a></li>
+        <li><a href="#s5">Continuing a conversation and what to watch for when it stops</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to Run Claude Code from a Script with claude -p (Headless Mode)</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Claude Code (an AI coding agent from Anthropic that runs in the terminal) can run non-interactively when you add <code>-p</code> (or <code>--print</code>) to the <code>claude</code> command, so you can call it from scripts.</li>
+      <li>In CI and scripts, adding <code>--bare</code> skips loading the host's hooks and CLAUDE.md, which makes results more consistent across machines. Note that it assumes authentication with an API key or similar rather than a subscription login.</li>
+      <li>For unattended runs, decide in advance which operations are allowed by using <code>--allowedTools</code> or <code>--permission-mode</code>. Be careful not to make the permission scope too broad.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do with claude -p</h2>
+  <p>According to the official docs, adding <code>-p</code> (or <code>--print</code>) to the <code>claude</code> command runs it non-interactively. Not every CLI option can be combined with <code>-p</code>; for example, <code>--bg</code> is rejected with an error. Commonly combined options are <code>--continue</code> to continue a conversation, <code>--allowedTools</code> to auto-approve tools, and <code>--output-format</code> for structured output.</p>
+<pre><code>claude -p "What does the auth module do?"</code></pre>
+  <p>The exit code is 0 on success and nonzero when the run fails, so scripts can branch on the exit status. An invalid flag writes an error to stderr, but failures during a run, such as missing authentication, are written to stdout as the result. Keep both in mind when you build monitoring.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+  <h2 id="s2">--bare and authentication for CI</h2>
+  <p>With <code>--bare</code>, Claude Code skips auto-discovery of hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, and CLAUDE.md, so it starts faster. Without it, <code>claude -p</code> loads the working directory and even the settings in <code>~/.claude</code>, just like an interactive session.</p>
+  <p>In bare mode, hooks in a colleague's <code>~/.claude</code> and MCP servers in a project's <code>.mcp.json</code> are not loaded and do not run. The official docs recommend <code>--bare</code> for scripts and SDK calls, and say it is planned to become the default for <code>-p</code> in a future release.</p>
+<pre><code>claude --bare -p "Summarize README.md" --allowedTools "Read"</code></pre>
+  <p>Bare mode does not use a subscription login, so you need to set <code>ANTHROPIC_API_KEY</code> before running it. It also does not read OAuth credentials or the system keychain.</p>
+  <p><strong>Caution</strong>: <code>-p</code> without <code>--bare</code> runs the hooks in the project's <code>.claude/settings.json</code> and connects to the servers in <code>.mcp.json</code>, even in a folder you have never trusted. Neither the workspace trust dialog nor the per-server approval prompt appears. When working with external repositories, check the official docs to see what runs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+  <h2 id="s3">Piping input and output formats</h2>
+  <p>Non-interactive mode reads standard input, so you can pipe in a log and write the result to a file.</p>
+<pre><code>cat build-error.txt | claude -p 'concisely explain the root cause of this build error' &gt; output.txt</code></pre>
+  <p>Input passed through a pipe is limited to 10MB. Beyond that, it exits with an error and a non-zero status. For large input, the docs suggest writing it to a file and pointing to the path in the prompt.</p>
+  <p><code>--output-format</code> accepts <code>text</code> (the default) for plain text, <code>json</code> for the result plus session ID and metadata, and <code>stream-json</code> for real-time output. With <code>json</code>, the text result goes in the <code>result</code> field, so you can extract it with jq.</p>
+<pre><code># Extract the text result
+claude -p "Summarize this project" --output-format json | jq -r '.result'</code></pre>
+  <p>If you pass a JSON Schema with <code>--output-format json</code> and <code>--json-schema</code>, the structured result goes into the <code>structured_output</code> field. The <code>format</code> keyword is treated as an annotation and is not enforced. Also, <code>json</code> output includes <code>total_cost_usd</code>, but it is a client-side estimate and may differ from your actual bill.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+  <h2 id="s4">Permission settings for unattended runs</h2>
+  <p>Tools listed in <code>--allowedTools</code> are used without confirmation (though listing <code>Read</code> excludes reads from network paths). However, in runs that start in auto mode, a bare <code>Bash</code> is dropped as an overly broad allow rule, and auto mode evaluates each command.</p>
+<pre><code>claude -p "Run the test suite and fix any failures" \
+  --allowedTools "Bash,Read,Edit"</code></pre>
+  <p>If you do not specify a permission mode, Claude Code uses the built-in starting mode, which may be <code>auto</code>. Specify the mode you intend explicitly.</p>
+  <ul>
+    <li><code>auto</code>: With <code>--permission-mode auto</code>, a classifier reviews most actions.</li>
+    <li><code>dontAsk</code>: denies calls that would normally prompt. It suits locked-down CI. However, operations that need no approval, and operations allowed through <code>--allowedTools</code> or similar, still run.</li>
+    <li><code>acceptEdits</code>: Writes files without confirmation and automatically approves commands such as <code>mkdir</code>, <code>touch</code>, <code>mv</code>, and <code>cp</code>. Other shell commands and network requests need explicit allow rules.</li>
+  </ul>
+  <p>Use <code>--permission-prompts none</code> for cases like scheduled jobs where no one is available to approve. Actions that would prompt are denied unless a <code>PermissionRequest</code> hook allows them, and the run continues. This flag requires Claude Code v2.1.259 or later; earlier versions produce an unknown-option error.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+  <h2 id="s5">Continuing a conversation and what to watch for when it stops</h2>
+  <p><code>--continue</code> continues the most recent conversation. When you work with multiple conversations, note the session ID and pass it to <code>--resume</code>. On the same machine, you can find a session by ID even from a different directory.</p>
+<pre><code>session_id=$(claude -p "Start a review" --output-format json | jq -r '.session_id')
+claude -p "Continue that review" --resume "$session_id"</code></pre>
+  <p>If you stop it with SIGTERM, the exit code is 143, and the turn in progress is left unfinished with no result recorded. If you want the turn to finish, send SIGINT before stopping, or call <code>interrupt()</code> in the Agent SDK.</p>
+  <p>Unless a background command started by the main conversation is running, by default it stops anything still running after 10 consecutive minutes of waiting and discards partial results. You can change the limit with <code>CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS</code>. Also, the official docs as of writing (October 2026) list the Claude Code version each feature requires. Check your local version before you roll it out company-wide.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can I use subscription login even when I add --bare?</summary>
+      <p>According to the official docs, bare mode does not read OAuth credentials or the system keychain, and it does not use a subscription login. For the Anthropic API, set <code>ANTHROPIC_API_KEY</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+    </details>
+    <details>
+      <summary>Can I pipe in a large log file?</summary>
+      <p>Standard input passed through a pipe is limited to 10MB. If you exceed that, it exits with an error and a non-zero status, so the docs suggest writing the content to a file and pointing to its path in the prompt.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+    </details>
+    <details>
+      <summary>How to keep unattended runs from stopping to wait for permission prompts.</summary>
+      <p>Specify the tools to use with <code>--allowedTools</code>, or choose a permission mode such as <code>dontAsk</code>. If there is no one to approve prompts, you can use <code>--permission-prompts none</code>. This flag requires v2.1.259 or later.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a>: Enter a skill name, description, steps, and output format, and it generates a SKILL.md scaffold along with where to place it.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/headless" rel="noopener">Run Claude Code programmatically</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-excel-automation/index.html">How to automate Excel aggregation with Claude Code: 3 steps to replace manual work with a script</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-slash-commands/index.html">How to use Claude Code slash commands, and the main commands for each stage of your work</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

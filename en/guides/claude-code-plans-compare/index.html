@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Pricing and Plan Comparison: Pro, Max, Team, Enterprise, and Console, and How to Choose | Chuki DX Lab</title>
+<meta name="description" content="A summary of the differences between Pro, Max, Team, and Enterprise plans that can use Claude Code, and Console, based only on the official documentation. It covers setup steps, billing caveats, feature differences, and guidelines for choosing.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plans-compare/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plans-compare/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-plans-compare/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Pricing and Plan Comparison: Differences Between Pro, Max, Team, Enterprise, and Console, and How to Choose">
+<meta property="og:description" content="A summary of the differences between Pro, Max, Team, and Enterprise plans that can use Claude Code, and Console, based only on the official documentation. It covers setup steps, billing caveats, feature differences, and guidelines for choosing.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plans-compare/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plans-compare.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Pricing and Plan Comparison: Differences Between Pro, Max, Team, Enterprise, and Console, and How to Choose">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-plans-compare.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Pricing and Plan Comparison: Differences Between Pro, Max, Team, Enterprise, and Console, and How to Choose",
+  "description": "A summary of the differences between Pro, Max, Team, and Enterprise plans that can use Claude Code, and Console, based only on the official documentation. It covers setup steps, billing caveats, feature differences, and guidelines for choosing.",
+  "datePublished": "2026-10-17",
+  "dateModified": "2026-10-17",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plans-compare/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Claude Code plan comparison",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-plans-compare/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "If I set ANTHROPIC_API_KEY, will my Pro or Max allowance go unused?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official Help Center, when this environment variable is set, Claude Code authenticates with an API key instead of a subscription. As a result, you are charged API usage fees rather than using the allowance included in your plan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to purchase Claude Code separately on an Enterprise plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On new Enterprise plans and self-serve Enterprise plans, it is included with every Enterprise seat and requires no additional purchase. On older plans, you need a seat type that includes Claude Code."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Computer use on the Team plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the official docs' feature list, Computer use is available on Pro and Max and unavailable on Team and Enterprise. Code Review is the opposite: Team and Enterprise only."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-plans-compare/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Claude Code plan comparison</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What you can do with Claude Code (Pro and Max)</a></li>
+        <li><a href="#s2">Getting started with Pro and Max: settings and caveats</a></li>
+        <li><a href="#s3">How billing works: plan allowances and API credits are separate</a></li>
+        <li><a href="#s4">Using it with Team and Enterprise</a></li>
+        <li><a href="#s5">Feature differences by plan and a rough guide to choosing one</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Pricing and Plan Comparison: Differences Between Pro, Max, Team, Enterprise, and Console, and How to Choose</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Pro and Max let you use Claude (web, desktop, and mobile) and Claude Code under a single subscription. They are an entry point for individuals or small groups to try it out.</li>
+      <li>SSO, server-managed settings, Code Review, and similar features are listed in the official docs' feature list as available on Team and above. Check the official pricing page for amounts.</li>
+      <li>Your plan's usage allowance and Console API credits are billed separately. If <code>ANTHROPIC_API_KEY</code> is set, usage is billed to the API, so check this first.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What you can do with Claude Code (Pro and Max)</h2>
+  <p>Claude Code is an AI coding agent from Anthropic that runs in the terminal. According to the official Help Center, it is a tool that lets you use Claude models directly from the terminal or a supported IDE, so you can delegate complex coding work while keeping transparency and control. With Pro and Max, one subscription covers both Claude (web, desktop, and mobile) and Claude Code in the terminal.</p>
+  <p>Supported IDEs are VS Code, VS Code derivatives such as Cursor, and JetBrains IDEs such as IntelliJ and PyCharm. You sign in with the same credentials as the terminal, and IDE usage counts toward the same usage limit shared by Claude and Claude Code.</p>
+  <p>This article is based on sources as of writing (October 2026). The sources do not include amounts or usage limit figures, so check the official pricing page for the latest information.</p>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s2">Getting started with Pro and Max: settings and caveats</h2>
+  <ol>
+    <li>Confirm that your Pro or Max subscription is active</li>
+    <li>Follow the Claude Code page in the official docs and install it for your OS</li>
+    <li>Sign in with the same credentials as Claude during setup or on first use</li>
+  </ol>
+  <p>If you are already logged in with Claude Console pay-as-you-go (PAYG) billing, run <code>/login</code> inside Claude Code to switch to a subscription.</p>
+  <h3>When authentication options don't appear</h3>
+  <ol>
+    <li>Log out completely with <code>/logout</code></li>
+    <li>Run <code>claude update</code></li>
+    <li>Fully restart the terminal</li>
+    <li>Run <code>claude</code> and choose the correct account</li>
+  </ol>
+  <p><strong>Note</strong>: If an <code>ANTHROPIC_API_KEY</code> environment variable exists on the system, Claude Code authenticates with this API key instead of a subscription (Pro, Max, Team, Enterprise). As a result, you incur API usage charges rather than using the allowance included in your plan. Before trying it on a company machine, it's wise to check whether this variable is set.</p>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s3">How billing works: plan allowances and API credits are separate</h2>
+  <p>The official Help Center describes Claude Code and the Claude Console / Claude API as separate systems. Claude Code offers the option of continuing with API credits, and the auto-reload setting is on the Console side.</p>
+  <ul>
+    <li>If you choose API credits, you are billed at standard API rates (separate from the Pro/Max plan fee)</li>
+    <li>If auto-reload is enabled in the Console, credits are added automatically when your balance runs low</li>
+    <li>auto-reload works only if you chose to use API credits</li>
+  </ul>
+  <h3>How to stay within your plan's limits</h3>
+  <ul>
+    <li>Decline the API credit option if it appears</li>
+    <li>Wait for the usage period to reset</li>
+    <li>Check your remaining quota with the <code>/status</code> command</li>
+  </ul>
+  <h3>How to stop it from offering choices</h3>
+  <ol>
+    <li>Run <code>claude logout</code> in your terminal</li>
+    <li>Run <code>claude login</code> and authenticate with Pro or Max credentials only</li>
+    <li>Don't add Claude Console credentials while logging in</li>
+  </ol>
+  <p>With this setup, when you hit the limit you are reportedly not prompted to use API credits and only the plan's allowance is used. Check and adjust the auto-reload status in the Billing settings in the Console.</p>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+  <h2 id="s4">Using it with Team and Enterprise</h2>
+  <p>According to the official Help Center, on the new Enterprise plan or the self-serve Enterprise plan, Claude Code is included in every Enterprise seat and no additional purchase is needed. On older Enterprise plans (Chat and Chat + Claude Code seats, or Standard and Premium seats), you need a seat type that includes Claude Code. Owners can purchase and reassign Chat + Claude Code / Premium seats under Organization settings &gt; Organization.</p>
+  <p>Take care with HIPAA-ready Enterprise plans. If the primary owner has not applied the HIPAA configuration and Claude Code does not have zero data retention (ZDR), Claude Code is included in the seat and usable, but it is not covered by the BAA. You are advised not to use it with protected health information (PHI).</p>
+  <h3>Sign-in flow</h3>
+  <ol>
+    <li>Type <code>claude</code> in the terminal to start a session</li>
+    <li>Choose a login method (if you're already logged in with a different account, run <code>/login</code>)</li>
+    <li>Select "Claude account with subscription" and proceed to the OAuth screen</li>
+    <li>Select a Team or Enterprise plan and click "Authorize"</li>
+  </ol>
+  <p>After you log in, the skills and plugins on your Claude account, including those provided by your organization, are loaded into Claude Code automatically. This requires Claude Code v2.1.273 or later. The steps for when no authentication options appear are the same as those given for Pro and Max.</p>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
+  <h2 id="s5">Feature differences by plan and a rough guide to choosing one</h2>
+  <p>According to the official docs, when you sign in with a claude.ai account, the features available depend on your plan. This distinction does not apply when you authenticate with Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or an Anthropic Console API key. Applying the HIPAA configuration on Enterprise disables some features.</p>
+  <ul>
+    <li>Pro and Max only: Computer use, Dispatch (Desktop)</li>
+    <li>Team and Enterprise only: Code Review, analytics dashboard and contribution metrics, Server-managed settings, SSO</li>
+    <li>Enterprise only: Enterprise Analytics API, SCIM, Compliance API, Zero Data Retention</li>
+    <li>Remote Control and Channels: available on Pro and Max; on Team and Enterprise, only if an admin has enabled them</li>
+    <li>Cloud sessions: Available on all plans. However, Enterprise requires a Premium seat or a Chat + Claude Code seat.</li>
+  </ul>
+  <p>Zero Data Retention is not included in the standard Enterprise plan. Anthropic must enable it separately for accounts that meet the conditions. For a detailed comparison including pricing, see the official Team and Enterprise plan pages.</p>
+  <h3>How to choose</h3>
+  <ul>
+    <li>Trying it solo or with a small team: Pro or Max (Computer use and other features are available)</li>
+    <li>You need SSO, server-managed settings, or usage analytics: Team or higher</li>
+    <li>If you need SCIM, the Compliance API, or zero data retention: Enterprise (zero data retention must be enabled separately)</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>If I set <code>ANTHROPIC_API_KEY</code>, will my Pro or Max allowance go unused?</summary>
+      <p>According to the official Help Center, when this environment variable is set, Claude Code authenticates with an API key instead of a subscription. As a result, you are charged API usage fees rather than using the allowance included in your plan.</p>
+      <p class="hint">Source: <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a></p>
+    </details>
+    <details>
+      <summary>Do I need to purchase Claude Code separately on an Enterprise plan?</summary>
+      <p>On new Enterprise plans and self-serve Enterprise plans, it is included with every Enterprise seat and requires no additional purchase. On older plans, you need a seat type that includes Claude Code.</p>
+      <p class="hint">Source: <a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
+    </details>
+    <details>
+      <summary>Can I use Computer use on the Team plan?</summary>
+      <p>In the official docs' feature list, Computer use is available on Pro and Max and unavailable on Team and Enterprise. Code Review is the opposite: Team and Enterprise only.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a> (official Help Center)</li>
+    <li><a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a> (official Help Center)</li>
+    <li><a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-usage-limits/index.html">What to do when you hit Claude Code's usage limit: what's shown, resets, and whether to wait or add more</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-key-billing/index.html">Does Having ANTHROPIC_API_KEY Set Switch Claude Code to API Billing? How to Check and Remove It</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

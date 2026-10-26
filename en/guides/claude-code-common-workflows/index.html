@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code usage examples: official task recipes and basic workflows | Chuki DX Lab</title>
+<meta name="description" content="This guide organizes the task examples in the Claude Code official docs for corporate IT, covering understanding code, fixing bugs, testing, PRs, worktrees, and plan mode. It also covers what to check before trying it internally.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-common-workflows/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-common-workflows/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-common-workflows/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-common-workflows/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Examples of how to use Claude Code: official recipes and basic workflows">
+<meta property="og:description" content="This guide organizes the task examples in the Claude Code official docs for corporate IT, covering understanding code, fixing bugs, testing, PRs, worktrees, and plan mode. It also covers what to check before trying it internally.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-common-workflows/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-common-workflows.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Examples of how to use Claude Code: official recipes and basic workflows">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-common-workflows.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Examples of how to use Claude Code: official recipes and basic workflows",
+  "description": "This guide organizes the task examples in the Claude Code official docs for corporate IT, covering understanding code, fixing bugs, testing, PRs, worktrees, and plan mode. It also covers what to check before trying it internally.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-common-workflows/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Examples of how to use Claude Code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-common-workflows/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I resume Claude Code from where I left off last time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "claude --continue resumes the most recent session in the current directory. To choose from a list, use claude --resume; inside a running session, use /resume."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I run several tasks at the same time, will the edits conflict?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs show using worktrees, as in claude --worktree feature-auth. If you run the same command from another terminal with a different name, you get an independent parallel session. The repository needs at least one commit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I review the contents before a file is overwritten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use plan mode. If you start with claude --permission-mode plan, Claude only presents a plan and does not edit anything until you approve. During a session, you can also switch with Shift+Tab."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-common-workflows/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Examples of how to use Claude Code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">How to understand code and fix bugs</a></li>
+        <li><a href="#s2">Refactoring, tests, PRs, and documentation</a></li>
+        <li><a href="#s3">How to use file references, images, and a notes folder</a></li>
+        <li><a href="#s4">Resuming conversations, parallel work, and plan mode</a></li>
+        <li><a href="#s5">Subagents, script integration, and scheduled runs</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Examples of how to use Claude Code: official recipes and basic workflows</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Common workflows in the official docs collects short example prompts for using Claude Code (Anthropic's AI coding agent that runs in the terminal) to understand code, fix bugs, refactor, write tests, create PRs, and maintain documentation.</li>
+      <li>Resuming a conversation, working in parallel with worktrees, checking ahead of time in plan mode, and embedding Claude Code in scripts can also be started with short commands.</li>
+      <li>When you distribute this within your company, reword the prompts to fit your own projects. For uses where it can't ask questions midway, such as scheduled runs, the key is to write the success conditions into the prompt.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">How to understand code and fix bugs</h2>
+  <p>This article is based solely on the official docs page "Common workflows" as of writing (October 2026). According to the official docs, this page is a short collection of recipes for everyday development. Each prompt works in any Claude Code interface, and the wording is meant to be adjusted to fit your project.</p>
+  <h3>Understand a new codebase</h3>
+  <p>The official docs describe this flow: go to the project root, start Claude Code with <code>claude</code>, and ask for an overview. Here is an example of a first question.</p>
+<pre><code>give me an overview of this codebase</code></pre>
+  <p>Next, narrow from broad questions to specifics, such as <code>how is authentication handled?</code>. The docs also suggest asking about coding conventions or requesting a glossary of project-specific terms.</p>
+  <h3>Find related code</h3>
+  <p>Be specific about what you're looking for, as in <code>find the files that handle user authentication</code>, and follow the flow with <code>trace the login process from front-end to database</code>. The docs suggest using the terms your project uses. They also explain that installing a code intelligence plugin for your language makes jumping to definitions and finding references more accurate.</p>
+  <h3>Fix a bug</h3>
+  <p>This is a three-step process: share the error, ask for a fix, and have it applied. Start by describing the situation, such as <code>I'm seeing an error when I run npm test</code>. It is recommended to include the command that reproduces the error, the stack trace, the reproduction steps, and whether the error is intermittent or constant.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+  <h2 id="s2">Refactoring, tests, PRs, and documentation</h2>
+  <p>Refactoring goes in this order: find where the old API is used, ask for improvement suggestions, apply the changes, and verify with tests. Start with <code>find deprecated API usage in our codebase</code> and finish by checking with <code>run tests for the refactored code</code>. The docs advise working in small, testable units and asking Claude to keep backward compatibility if needed.</p>
+  <p>To add tests, Claude finds uncovered functions, creates a scaffold, adds boundary-condition cases, then runs the tests and fixes failures. According to the official docs, Claude examines existing test files and matches the style and framework in use. This assumes you tell it specifically what you want to verify.</p>
+  <p>You can create a PR by simply asking <code>create a pr</code>, or you can go step by step starting with a summary of the changes. When Claude creates a PR with <code>gh pr create</code> or <code>glab mr create</code>, or works on an existing PR, the session is linked to that PR, and you can find it later with <code>claude --from-pr 1234</code> (the number is your own PR number). The official docs advise reviewing the generated PR before submitting it and having Claude list risks and caveats.</p>
+  <p>For documentation work, you can have Claude Code find gaps with a prompt like <code>find functions without proper JSDoc comments in the auth module</code>, then add the comments. Specify the format you want, such as JSDoc or docstrings.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+  <h2 id="s3">How to use file references, images, and a notes folder</h2>
+  <p>With <code>@</code>, you can include files or directories in the conversation without waiting for Claude to read them. Examples follow.</p>
+<pre><code>Explain the logic in @src/utils/auth.js</code></pre>
+  <p>According to the official docs, file contents are included if they fit within the Read tool's token limit (25,000 tokens by default), and text files over 256KB are not included. If you specify a directory, only the file listing is included, not the contents. Paths can be relative or full, and when you reference a file, the <code>CLAUDE.md</code> files in that directory and its parent directories are also added to the context.</p>
+  <p>Data from connected MCP servers can be referenced in the form <code>@server:resource</code>. To stop their contents from being embedded, set <code>CLAUDE_CODE_DISABLE_FILE_MENTIONS=1</code> in your shell or user settings. This variable requires Claude Code v2.1.299 or later, and it is ignored in project settings and local settings.</p>
+  <h3>Folders for images and notes</h3>
+  <p>You can pass images by dragging and dropping them into the window, pasting with <code>Ctrl+V</code> (<code>Alt+V</code> on Windows and WSL), or specifying an image path. The docs show an example of showing a screenshot of an error screen and asking for the cause.</p>
+  <p>Also, because Claude Code works in any directory, you can search, edit, and organize folders of markdown notes or documents the same way you would code.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+  <h2 id="s4">Resuming conversations, parallel work, and plan mode</h2>
+  <p>When work spans multiple sessions, the official docs recommend resuming the conversation. Conversations are stored locally.</p>
+<pre><code>claude --continue</code></pre>
+  <p>This resumes the most recent session in the current directory, and if there is none, it prints <code>No conversation found to continue</code> and exits. To choose from a list, use <code>claude --resume</code>; from inside a running session, use <code>/resume</code>.</p>
+  <h3>Work in parallel with worktrees</h3>
+  <p>If you are building a feature on one terminal while having Claude fix a bug on another, using a worktree keeps the edits from colliding. A worktree is a separate checkout for each branch and is created from an existing commit, so the repository needs at least one commit.</p>
+<pre><code>claude --worktree feature-auth</code></pre>
+  <p>Running the same command with a different name in a second terminal starts an independent parallel session. In a repository with no commits, it fails with <code>Failed to resolve base branch "HEAD": git rev-parse failed</code>.</p>
+  <h3>Review changes before editing with plan mode</h3>
+  <p>If you want to review changes before they are written to disk, use plan mode. Claude reads files and presents a plan, but doesn't edit anything until you approve it.</p>
+<pre><code>claude --permission-mode plan</code></pre>
+  <p>You can also switch with <code>Shift+Tab</code> during a session. While it's active, the status bar shows <code>⏸ plan mode on</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+  <h2 id="s5">Subagents, script integration, and scheduled runs</h2>
+  <p>Investigating a large codebase tends to fill up the context with file reads. The official docs describe delegating the investigation to a subagent and receiving only the result. The subagent reads files in its own context window and returns a summary.</p>
+<pre><code>use a subagent to investigate how our auth system handles token refresh</code></pre>
+  <p>In CI, pre-commit hooks, and batch jobs, you can run it non-interactively. Standard input and output work the same way as with typical Unix tools.</p>
+<pre><code>git log --oneline -20 | claude -p "summarize these recent commits"</code></pre>
+  <h3>Choose scheduled runs based on where they will run</h3>
+  <ul>
+    <li>Routines: These run in the cloud and are managed by Anthropic by default. They suit tasks that should run even when your PC is powered off, and can also be triggered by API calls or GitHub events.</li>
+    <li>Desktop scheduled tasks: these run on your own machine through the desktop app. They suit work that directly touches local files, tools, and uncommitted changes.</li>
+    <li>GitHub Actions: Runs in a CI pipeline and suits work tied to repository events, such as creating a PR, or to cron.</li>
+    <li><code>/loop</code>: runs inside the current CLI session and is meant for lightweight checks while the session is open.</li>
+  </ul>
+  <p>According to the official docs, scheduled tasks run autonomously, so they can't ask questions midway. State the success conditions and how to handle the results explicitly in the prompt.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>How do I resume Claude Code from where I left off last time?</summary>
+      <p><code>claude --continue</code> resumes the most recent session in the current directory. To choose from a list, use <code>claude --resume</code>; inside a running session, use <code>/resume</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+    </details>
+    <details>
+      <summary>If I run several tasks at the same time, will the edits conflict?</summary>
+      <p>The official docs show using worktrees, as in <code>claude --worktree feature-auth</code>. If you run the same command from another terminal with a different name, you get an independent parallel session. The repository needs at least one commit.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+    </details>
+    <details>
+      <summary>Can I review the contents before a file is overwritten?</summary>
+      <p>Use plan mode. If you start with <code>claude --permission-mode plan</code>, Claude only presents a plan and does not edit anything until you approve. During a session, you can also switch with <code>Shift+Tab</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../claude-md-generator/index.html">Claude Code CLAUDE.md Template Generator</a>: choose the purpose and the rules you want followed, and it outputs a short CLAUDE.md template. It's useful for deciding the first few lines.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/common-workflows" rel="noopener">Common workflows</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-output-styles/index.html">What Are Claude Code Output Styles? How to Change and Create Them</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-best-practices/index.html">Claude Code Best Practices: Key Points from the Official Docs, Organized for Corporate IT</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-md-how-to-write/index.html">How to write CLAUDE.md: where to put it and how to keep it short</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

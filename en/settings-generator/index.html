@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Permissions (settings.json) Generator | Chuki DX Lab</title>
+<meta name="description" content="A free tool that builds a Claude Code settings.json (permissions) just by ticking checkboxes. It outputs deny / ask / allow rules to keep .env unreadable, block outbound transfers such as curl, and require confirmation for git push. It shows the rules I verified actually block on a real machine.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/settings-generator/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/settings-generator/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/settings-generator/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/settings-generator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Permissions (settings.json) Generator">
+<meta property="og:description" content="A free tool that builds Claude Code permission settings just by ticking checkboxes. It marks which rules I verified on a real machine actually block actions.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/settings-generator/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-settings-generator.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Permissions (settings.json) Generator">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-settings-generator.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Claude Code Permissions (settings.json) Generator",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web browser",
+  "url": "https://chuki-dx.github.io/claudecode-tools/en/settings-generator/",
+  "description": "A browser-based tool that generates Claude Code settings.json permissions (deny / ask / allow) from the policy you choose.",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Where should I put settings.json?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "This is .claude/settings.json in your work folder (the folder where you launch Claude Code). If you share it through Git, you can distribute the same rules to everyone who uses that folder. Personal-only settings go in .claude/settings.local.json, and personal settings shared across all projects go in ~/.claude/settings.json."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "I added it to deny, but it could still be read",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Deny doesn't work for methods Claude Code can't recognize as file reads, such as a script that opens a file internally. See \"Known limitations\" above. First, check with /permissions that your rules are loaded."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "A confirmation prompt appears for commands you put in allow",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "A project's allow rules aren't used until you accept the trust prompt for that folder. Start claude once in interactive mode and accept it. deny and ask take effect regardless of that approval."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is the content I enter sent anywhere?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No, it is not sent. This page runs on HTML and JavaScript only, and generation happens inside your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. Details)."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Should I avoid rules marked \"not verified individually\"?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The syntax follows the rules I confirmed in the official docs and on a real machine, but I haven't tested whether the rules themselves actually block anything. Before you distribute them, I recommend confirming locally, with dummy files or commands, that they block what you expect."
+   }
+  }
+ ],
+ "dateModified": "2026-10-26"
+}
+</script>
+</head>
+<body class="pg-tool">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../settings-generator/index.html" aria-current="page">Permissions Generator</a>
+      <a href="../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../skill-generator/index.html">Skill Generator</a>
+      <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../guides/index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../settings-generator/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Claude Code Permissions (settings.json) Generator</h1>
+  <p class="lead">Turn your "don't read, don't send, ask first" rules for Claude Code at work into a settings.json just by ticking checkboxes. Nothing you enter is sent outside your browser.</p>
+
+  <section class="card tool-panel" aria-labelledby="tool-heading">
+    <h2 id="tool-heading" class="visually-hidden">Choose your settings</h2>
+    <div class="tool-grid">
+    <div class="tool-input">
+    <form id="gen-form" novalidate>
+      <fieldset>
+        <legend>Shell to use</legend>
+        <div class="opt"><input type="radio" id="sh-both" name="shells" value="both" checked><label for="sh-both">Both Bash and PowerShell (choose this if you're unsure on Windows)</label></div>
+        <div class="opt"><input type="radio" id="sh-bash" name="shells" value="bash"><label for="sh-bash">Bash only (Git Bash, WSL, macOS, Linux)</label></div>
+        <div class="opt"><input type="radio" id="sh-ps" name="shells" value="powershell"><label for="sh-ps">PowerShell only</label></div>
+        <p class="hint">Command rules (outbound transfers, git, deletion) are generated in the syntax of the shell you choose. In PowerShell, they look like <code>PowerShell(git push *)</code>.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Block reads (deny)</legend>
+        <div class="opt"><input type="checkbox" id="opt-env" checked><label for="opt-env">Block reading of .env and other secrets (<code>.env</code> and <code>.env.*</code>)</label></div>
+        <div class="opt"><input type="checkbox" id="opt-secrets" checked><label for="opt-secrets">Keep the <code>secrets/</code> folder from being read</label></div>
+        <div class="opt"><input type="checkbox" id="opt-block-data" checked><label for="opt-block-data">Keep Claude from reading your real data folders</label></div>
+        <label class="field" for="opt-data-path">Path to the real data folder (relative to the working folder)</label>
+        <input type="text" id="opt-data-path" value="data/raw" autocomplete="off" spellcheck="false" aria-describedby="data-path-hint">
+        <p class="hint" id="data-path-hint">Examples: <code>data/raw</code>, <code>顧客データ</code> (customer data). You can use either / or \ as the separator. I haven't individually checked anything other than <code>data/raw</code>, though the syntax is the same.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Block sending (deny)</legend>
+        <div class="opt"><input type="checkbox" id="opt-network" checked><label for="opt-network">Block outbound-transfer commands (curl / wget / Invoke-WebRequest / Invoke-RestMethod)</label></div>
+        <p class="hint">Outputs only for the shell you selected.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>How git push is handled</legend>
+        <div class="opt"><input type="radio" id="gp-ask" name="gitpush" value="ask" checked><label for="gp-ask">Ask every time (ask)</label></div>
+        <div class="opt"><input type="radio" id="gp-deny" name="gitpush" value="deny"><label for="gp-deny">Block (deny)</label></div>
+        <div class="opt"><input type="radio" id="gp-none" name="gitpush" value="none"><label for="gp-none">Not writing any rules</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Examples of ask and allow</legend>
+        <div class="opt"><input type="checkbox" id="opt-ask-delete" checked><label for="opt-ask-delete">Always confirm file deletion (rm / Remove-Item)</label></div>
+        <div class="opt"><input type="checkbox" id="opt-ask-web" checked><label for="opt-ask-web">Always confirm web fetches and searches (WebFetch / WebSearch)</label></div>
+        <div class="opt"><input type="checkbox" id="opt-allow-git"><label for="opt-allow-git">Allow git status / git diff / git log without confirmation</label></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Other</legend>
+        <div class="opt"><input type="checkbox" id="opt-schema" checked><label for="opt-schema">Include <code>$schema</code> (it enables autocomplete in your editor)</label></div>
+      </fieldset>
+    </form>
+    </div>
+    <div class="tool-output">
+
+    <h3 id="out-heading">Generated settings.json</h3>
+    <p id="gen-status" class="status" role="status" aria-live="polite">Enable JavaScript to see the results here.</p>
+    <div id="gen-warnings" class="note" hidden></div>
+    <pre aria-labelledby="out-heading" tabindex="0"><code id="gen-output"></code></pre>
+    <div class="buttons">
+      <button type="button" id="gen-copy">Copy</button>
+      <button type="button" id="gen-download" class="secondary">Save settings.json</button>
+    </div>
+    <p id="gen-copy-msg" class="hint" role="status" aria-live="polite"></p>
+    </div>
+    </div>
+
+    <h3>Verification status for each rule</h3>
+    <p class="hint">"✓ Verified on a real machine" means I confirmed on Windows 11 with Claude Code 2.1.296 that the rule actually stopped the operation (October 2026). The others follow the wording in the official docs, but I did not test them individually.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Rules</th><th scope="col">Category</th><th scope="col">Verification status</th></tr></thead>
+        <tbody id="gen-rules"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="about-heading">
+    <h2 id="about-heading">What you can do with permission settings in settings.json</h2>
+    <p>Claude Code (Anthropic's AI coding agent that runs in the terminal) follows the permission rules you write in <code>.claude/settings.json</code> in your working folder to block file reads and command execution, or to ask for confirmation before running them. There are three kinds of rules: <code>deny</code> prohibits, <code>ask</code> confirms every time, and <code>allow</code> permits without confirmation. The official docs explain that rules are evaluated in the order deny → ask → allow, and anything denied at any level cannot be used even if allowed elsewhere (as of writing).</p>
+    <p>Writing "don't read .env" in CLAUDE.md (the instruction file Claude Code reads at startup) is a request to the AI, whereas rules in settings.json are enforced by Claude Code itself. For company-wide rollout, distributing rules as a file rather than as prose avoids copy mistakes.</p>
+
+    <h3>How to use</h3>
+    <ol>
+      <li>Select the checks above and click "Save settings.json."</li>
+      <li>Create a <code>.claude</code> folder inside your work folder and put the saved files there.</li>
+      <li>Start <code>claude</code> in that folder and accept the trust prompt. You can confirm the rules were loaded with <code>/permissions</code>.</li>
+    </ol>
+
+    <h3>Some things are not stopped (known limitations)</h3>
+    <p>In my testing, a <code>Read(./.env)</code> rule stopped Claude's read tool and <code>cat .env</code>. However, <strong>opening .env from inside a Python script still got through</strong>. The official docs also say these rules don't cover indirect reads and writes, such as a script opening the file itself. Likewise, <code>Bash(curl *)</code> is documented as not blocking calls made by path or wrapped in <code>sh -c</code>.</p>
+    <p>Use deny rules as a safety net against accidentally reading or sending files, and combine them with a practice of never keeping real API keys in the working folder. To enforce this across an organization, the official docs describe managed settings, which users can't override, and sandboxing.</p>
+
+    <h3>The official docs (as of writing)</h3>
+    <ul>
+      <li><a href="https://code.claude.com/docs/en/settings" rel="noopener">Claude Code settings</a> (where settings files live and their precedence)</li>
+      <li><a href="https://code.claude.com/docs/en/permissions" rel="noopener">Configure permissions</a> (rule syntax and evaluation order)</li>
+      <li><a href="https://code.claude.com/docs/en/permissions#powershell" rel="noopener">The "PowerShell" section of Configure permissions</a> (checked on October 23, 2026. PowerShell rules have the same form as Bash rules, and the example includes <code>PowerShell(git commit *)</code>. Rules such as <code>PowerShell(git push *)</code> in this tool follow that format; I have not verified them on a real machine)</li>
+    </ul>
+    <p class="hint">The content of this page is current as of October 2026. Specifications can change, so check the official docs and verify on a real machine before you distribute anything.</p>
+  </section>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Where should I put settings.json?</summary>
+      <p>This is <code>.claude/settings.json</code> in your work folder (the folder where you launch Claude Code). If you share it through Git, you can distribute the same rules to everyone who uses that folder. Personal-only settings go in <code>.claude/settings.local.json</code>, and personal settings shared across all projects go in <code>~/.claude/settings.json</code>.</p>
+    </details>
+    <details>
+      <summary>I added it to deny, but it could still be read</summary>
+      <p>Deny doesn't work for methods Claude Code can't recognize as file reads, such as a script that opens a file internally. See "Known limitations" above. First, check with <code>/permissions</code> that your rules are loaded.</p>
+    </details>
+    <details>
+      <summary>A confirmation prompt appears for commands you put in allow</summary>
+      <p>A project's allow rules aren't used until you accept the trust prompt for that folder. Start <code>claude</code> once in interactive mode and accept it. deny and ask take effect regardless of that approval.</p>
+    </details>
+    <details>
+      <summary>Is the content I enter sent anywhere?</summary>
+      <p>No, it is not sent. This page runs on HTML and JavaScript only, and generation happens inside your browser. To count page views, only the URL of the page you opened is sent to the operator's server (no cookies or external analytics services are used. <a href="../about/index.html#access">Details</a>).</p>
+    </details>
+    <details>
+      <summary>Should I avoid rules marked "not verified individually"?</summary>
+      <p>The syntax follows the rules I confirmed in the official docs and on a real machine, but I haven't tested whether the rules themselves actually block anything. Before you distribute them, I recommend confirming locally, with dummy files or commands, that they block what you expect.</p>
+    </details>
+  </section>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../guides/claude-code-permissions-basics/index.html">Guide: Claude Code permissions (deny/ask/allow) basics, and what they do and don't cover</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-hooks-intro/index.html">Guide: What Are Claude Code Hooks? How to Write the Settings and When to Use Them</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-mcp-scopes/index.html">Guide: MCP configuration in Claude Code: local, project, and user scopes and .mcp.json</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-permission-modes/index.html">Guide: Claude Code permission modes compared: choosing between default, acceptEdits, plan, and auto</a><span class="tag">Guide (this site)</span></li>
+      <li class="more-guide"><a href="../guides/claude-code-data-usage/index.html">Guide: Is Your Claude Code Conversation Data Used for Training? Retention Periods and Where to Check Settings</a><span class="tag">Guide (this site)</span></li>
+      <li><a href="../claude-md-generator/index.html">CLAUDE.md Template Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../skill-generator/index.html">Claude Code Skill (SKILL.md) Scaffold Generator</a><span class="tag">Free tool</span></li>
+      <li><a href="../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a><span class="tag">Free tool</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page and the tool output reflect what I confirmed as of writing. Claude Code's behavior may change. Before rolling it out company-wide, check the latest information in the official docs and verify the behavior in your own environment. The operator accepts no responsibility for any damages arising from the use of these tools.</p>
+  </div>
+</footer>
+
+<script src="../assets/settings-generator.js"></script>
+<script src="../assets/settings-generator-ui.js"></script>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+</body>
+</html>

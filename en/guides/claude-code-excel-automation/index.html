@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Automate Excel Aggregation with Claude Code: 3 Steps to Replace Manual Work with a Script | Chuki DX Lab</title>
+<meta name="description" content="This guide explains how to have Claude Code write an aggregation script to replace your monthly Excel consolidation. Based on the Chuki DX Lab article, it covers how to choose which tasks to replace, a prompt template, a batch file for the person who runs it, and common pitfalls.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-excel-automation/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-excel-automation/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-excel-automation/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Automating Excel Reports with Claude Code: 3 Steps to Replace Manual Work with a Script">
+<meta property="og:description" content="This guide explains how to have Claude Code write an aggregation script to replace your monthly Excel consolidation. Based on the Chuki DX Lab article, it covers how to choose which tasks to replace, a prompt template, a batch file for the person who runs it, and common pitfalls.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-excel-automation/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-excel-automation.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Automating Excel Reports with Claude Code: 3 Steps to Replace Manual Work with a Script">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-excel-automation.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Automating Excel Reports with Claude Code: 3 Steps to Replace Manual Work with a Script",
+  "description": "This guide explains how to have Claude Code write an aggregation script to replace your monthly Excel consolidation. Based on the Chuki DX Lab article, it covers how to choose which tasks to replace, a prompt template, a batch file for the person who runs it, and common pitfalls.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-excel-automation/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Automating Excel aggregation",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-excel-automation/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between automating with VBA macros and building scripts with Claude Code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Chuki DX Lab article names one major difference: because the result stays as code, the next person in charge can have Claude Code read and fix it. Macros can be written by only a limited number of people, and the article explains that when the person who built one moves to another department, no one can fix it. However, it also notes that the only thing guaranteeing the correctness of the results is your own checking."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I ran the aggregation and all the amounts came out empty. What is the cause?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the article, the cause is that unit prices are entered as formulas and the file has never been saved in Excel. You can fix it by opening the original file in Excel and saving it again, because openpyxl does not calculate formulas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long should I keep running the manual tally in parallel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The article says that for the first one to two months, you should compare results side by side with the manual work and stop doing it by hand only after confirming the totals match. It doesn't specify detailed criteria for what counts as a match, so decide that yourself."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-excel-automation/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Automating Excel aggregation</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Why Excel aggregation work doesn&#x27;t go away, and how to think about what replaces it</a></li>
+        <li><a href="#s2">Step 1: Pick one task to replace and write down its input and output</a></li>
+        <li><a href="#s3">Step 2: Describe the input, output, and error behavior, then ask Claude Code</a></li>
+        <li><a href="#s4">Step 3: Make it run with a double-click and hand it to the person in charge</a></li>
+        <li><a href="#s5">Common pitfalls and precautions when trying it internally</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Automating Excel Reports with Claude Code: 3 Steps to Replace Manual Work with a Script</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Start by replacing just one task: collecting Excel files of the same format every month and totaling them. An article from Chuki DX Lab notes that trying to replace everything at once tends to get bogged down in handling exceptions, and people give up.</li>
+      <li>Give Claude Code (Anthropic's AI coding agent that runs in the terminal) three things before having it write a script: the shape of the input file, the shape of the output, and what to do when something goes wrong.</li>
+      <li>For the first month or two, compare the results against your manual work. At the end, leave the batch file for running it and a procedure document, and hand them to the person in charge. A person verifies whether the code is correct.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Why Excel aggregation work doesn't go away, and how to think about what replaces it</h2>
+  <p>The Chuki DX Lab article uses the following example: consolidating the Excel line-item files that arrive from each department at the start of each month. You open the files one by one, paste each line-item sheet into a master workbook, refresh the pivot table, and compile totals by department and by item for reporting. The volume each time is not large, but it happens every month without fail. The article notes that if a file with a different column order gets mixed in, just finding why the totals don't match takes a lot of time.</p>
+  <p>The article summarizes the existing options as follows.</p>
+  <ul>
+    <li>Macros (VBA, a way to automate actions in Excel) can only be written by a limited number of people, and when the person who built one changes roles, nobody can fix it.</li>
+    <li>I find that Power Query (the data retrieval and transformation feature built into Excel) is strong at routine merges, but it is hard to build a process that detects problems in each file and reports them.</li>
+    <li>Recording screen operations with RPA (Robotic Process Automation) tends to break when the screen or column positions change, and it does not guarantee that the calculations themselves are correct.</li>
+  </ul>
+  <p>With Claude Code, by contrast, if you can describe in words what the process does, it can write a readable script for you. The article says the big difference from macros is that the result stays as code, so the next person in charge can have Claude Code read it and fix it.</p>
+  <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+  <h2 id="s2">Step 1: Pick one task to replace and write down its input and output</h2>
+  <p>The guide lists the following three conditions for choosing your first task.</p>
+  <ul>
+    <li>Occurs every month (or every week)</li>
+    <li>The input files have a mostly fixed shape (same sheet names and column names)</li>
+    <li>You can check whether the results are correct by comparing them with the results from your previous manual work</li>
+  </ul>
+  <p>Once you've chosen a task, write its input and output in a memo. The article uses a fictional example: collecting per-department office supply purchase records and totaling them by department and by item. The memo reads as follows.</p>
+  <ul>
+    <li>Input: .xlsx files in the <code>input/</code> folder (one file per department)</li>
+    <li>Sheet: "Details"</li>
+    <li>Columns: date / department / item / quantity / unit price</li>
+    <li>Output: <code>集計結果.xlsx</code> (sheets: "By department" and "By item")</li>
+  </ul>
+  <p>The article also includes <code>make_sample.py</code>, a script that creates fictional sample data in <code>input/</code> so you can try things yourself. It gives you material to check the flow before touching real data.</p>
+  <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+  <h2 id="s3">Step 2: Describe the input, output, and error behavior, then ask Claude Code</h2>
+  <p>The key to the request is to always state three things: the input format, the output format, and the behavior on errors. The article warns that if you don't specify the behavior on errors, you tend to get code that silently skips files with missing columns. The prompt used in the article is as follows.</p>
+<pre><code>input/ フォルダにある .xlsx をすべて読み込んで集計する Python スクリプト aggregate.py を作ってください。
+
+入力:
+- 各ファイルのシート「明細」。1行目が見出しで、列は 日付 / 部署 / 品目 / 数量 / 単価
+- 列の並び順はファイルによって違うことがあるので、見出しの名前で列を探す
+- Excel が作る一時ファイル(~$ で始まるもの)は対象外
+
+出力:
+- 集計結果.xlsx に、シート「部署別」(部署, 金額)と「品目別」(品目, 数量, 金額)を作る
+- 金額 = 数量 × 単価。金額列は桁区切りの書式にする
+
+異常時:
+- シートや列が無いファイル、数量・単価が数値でない行があるファイルは、集計に含めずにスキップする
+- スキップしたファイルと理由を最後に画面へ出し、終了コードを 0 以外にする
+
+制約:
+- Python 3.10 以上と openpyxl だけで動くこと
+- 入力フォルダと出力ファイルはコマンドライン引数で変えられること(省略時は上の既定値)</code></pre>
+  <p>This request tells Claude to find columns by header name even when the column order differs between files, to skip the temporary files Excel creates, and to print the skipped files and the reasons on screen at the end and exit with a non-zero exit code.</p>
+  <p>The article's author tidied up the code generated from this prompt and saved it as <code>aggregate.py</code>. It runs on just Python and openpyxl (a library for working with Excel files from Python), and you run it as follows.</p>
+<pre><code>pip install openpyxl
+python make_sample.py
+python aggregate.py</code></pre>
+  <p>Verification matters here. For the first month or two, <strong>compare the results side by side with your manual work</strong>, and stop doing it by hand only after the totals match. The article says that even when Claude Code wrote the code, only your own checking guarantees it is correct.</p>
+  <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+  <h2 id="s4">Step 3: Make it run with a double-click and hand it to the person in charge</h2>
+  <p>If only you can run the script, you have just moved the dependency on one person somewhere else. The article shows how to put the following batch file in the same folder as <code>aggregate.py</code> so the person in charge can run it by double-clicking.</p>
+<pre><code>@echo off
+rem 集計.bat  aggregate.py と同じフォルダに置いてダブルクリックで実行する
+cd /d %~dp0
+py aggregate.py
+pause</code></pre>
+  <p>The article explains that <code>py</code> is the Python launcher installed by the python.org installer. Also, put the following into a single-page procedure document (README). The article says you can even have Claude Code draft that document by asking it to "write it for the person in charge, without technical jargon."</p>
+  <ul>
+    <li>What to do each month (put files in <code>input/</code> and double-click <code>集計.bat</code>)</li>
+    <li>What to do when it shows "Skipped" (which department to check what with)</li>
+    <li>How to fix it when columns or items increase (open this folder in Claude Code and ask)</li>
+  </ul>
+  <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+  <h2 id="s5">Common pitfalls and precautions when trying it internally</h2>
+  <p>The pitfalls the article lists are as follows, in the order of symptom, cause, and fix.</p>
+  <ul>
+    <li>Can't save because of <code>PermissionError</code>: this happens because <code>集計結果.xlsx</code> was still open in Excel when you ran the script. Close the file and run it again.</li>
+    <li>All amounts are empty: The unit prices are entered as formulas, and the file has never been saved in Excel. Open the original file in Excel and save it again (openpyxl does not calculate formulas).</li>
+    <li>If you see a "columns missing" error: the cause is inconsistent header spelling (for example "unit price" written with a stray space, or "unit price (yen)"). Either standardize the input format, or ask Claude Code to change the code so it accepts alternate header names.</li>
+    <li><code>py</code> not found: the Python launcher is not installed. Either change <code>py</code> to <code>python</code>, or reinstall Python from python.org.</li>
+  </ul>
+  <h3>Points to check before trying it internally</h3>
+  <p>This article summarizes content from Chuki DX Lab's articles and is not the result of my own testing as of writing (October 2026). The prompts and code use a fictional office-supplies purchase ledger as an example, so you will need to rewrite the input, output, and error behavior to match the shape of your own files. For details on using and configuring Claude Code, check the official docs.</p>
+  <p>The article's author says that replacing even one manual tally in their own area made the start-of-month work feel lighter. This is the author's personal impression, and results vary by workplace. As a first step, the article suggests listing three Excel tasks you repeat every month and picking one that meets the conditions in Step 1.</p>
+  <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What is the difference between automating with VBA macros and building scripts with Claude Code?</summary>
+      <p>The Chuki DX Lab article names one major difference: because the result stays as code, the next person in charge can have Claude Code read and fix it. Macros can be written by only a limited number of people, and the article explains that when the person who built one moves to another department, no one can fix it. However, it also notes that the only thing guaranteeing the correctness of the results is your own checking.</p>
+      <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+    </details>
+    <details>
+      <summary>I ran the aggregation and all the amounts came out empty. What is the cause?</summary>
+      <p>According to the article, the cause is that unit prices are entered as formulas and the file has never been saved in Excel. You can fix it by opening the original file in Excel and saving it again, because openpyxl does not calculate formulas.</p>
+      <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+    </details>
+    <details>
+      <summary>How long should I keep running the manual tally in parallel?</summary>
+      <p>The article says that for the first one to two months, you should compare results side by side with the manual work and stop doing it by hand only after confirming the totals match. It doesn't specify detailed criteria for what counts as a match, so decide that yourself.</p>
+      <p class="hint">Source: <a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://zenn.dev/chukidx_dev/articles/claudecode-excel-3steps" rel="noopener">Escape internal Excel hell with Claude Code in 3 steps: replacing manual aggregation with a script (Japanese)</a> (a Chuki DX Lab article)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-install-windows/index.html">Installing Claude Code on Windows: native vs. WSL and post-install checks</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-install-errors/index.html">How to investigate Claude Code installation and login errors</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-windows-pitfalls/index.html">10 Pitfalls When Using Claude Code on Windows and How to Fix Them</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

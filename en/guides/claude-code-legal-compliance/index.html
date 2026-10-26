@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code Terms of Service and Compliance: Terms by Plan and What to Check | Chuki DX Lab</title>
+<meta name="description" content="For corporate IT: Claude Code&#x27;s terms of use organized by plan, covering conditions for building it into products, when to use OAuth versus API keys, and the scope of the BAA, based on the official docs.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-legal-compliance/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-legal-compliance/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-legal-compliance/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-legal-compliance/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code Terms of Service and Compliance: Terms by Plan and What to Check">
+<meta property="og:description" content="For corporate IT: Claude Code&#x27;s terms of use organized by plan, covering conditions for building it into products, when to use OAuth versus API keys, and the scope of the BAA, based on the official docs.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-legal-compliance/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-legal-compliance.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code Terms of Service and Compliance: Terms by Plan and What to Check">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-legal-compliance.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code Terms of Service and Compliance: Terms by Plan and What to Check",
+  "description": "For corporate IT: Claude Code's terms of use organized by plan, covering conditions for building it into products, when to use OAuth versus API keys, and the scope of the BAA, based on the official docs.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-legal-compliance/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Checking the Claude Code terms",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-legal-compliance/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Which terms apply when I use it on a Team plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, the Commercial Terms of Service apply to Team, Enterprise, and Claude API users. Free, Pro, and Max users are covered by the Consumer Terms of Service."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I build Claude Code into my own service and have the company cover the usage fees centrally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, unless there is a separate agreement. Per the official docs, paying for usage on behalf of end users, reselling, or acting as an intermediary is not permitted. Each user authenticates with their own credentials, and usage is billed directly to that user. For your specific situation, contact the sales team."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it a problem to set an API key in a shared internal environment and have people use it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say that setting an API key in development environments, secrets management tools, or machine images and letting your company's authorized users use it is not restricted. However, the usage charges must be billed to the key's owner, and it must not amount to resale or brokering."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-legal-compliance/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Checking the Claude Code terms</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Terms of use differ by plan</a></li>
+        <li><a href="#s2">Conditions for embedding it in your own products or services</a></li>
+        <li><a href="#s3">Authentication and credentials: when to use OAuth vs. an API key</a></li>
+        <li><a href="#s4">Healthcare compliance (BAA)</a></li>
+        <li><a href="#s5">Usage policy, contact points, and checks before trying it internally</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code Terms of Service and Compliance: Terms by Plan and What to Check</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>For Claude Code (Anthropic's AI coding agent that runs in the terminal), Team, Enterprise, and Claude API plans fall under the Commercial Terms, while Free, Pro, and Max plans fall under the consumer terms.</li>
+      <li>If you embed it in your own products or services, conditions apply, such as no modifying the binary and no absorbing usage fees or reselling.</li>
+      <li>For points that are hard to judge, such as authentication methods or a medical BAA, check the official docs and contact sales if needed.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Terms of use differ by plan</h2>
+  <p>According to the official docs, use of Claude Code is subject to the following terms.</p>
+  <ul>
+    <li>Commercial Terms of Service: applies to users of Team, Enterprise, and the Claude API</li>
+    <li>Consumer Terms of Service: applies to Free, Pro, and Max users</li>
+  </ul>
+  <p>Whether you use the Claude API directly or go through Amazon Bedrock or Google Cloud's Agent Platform, your existing commercial agreement also applies to Claude Code unless you have a separate agreement.</p>
+  <p>This content is based on the official docs as of writing (October 2026). Check the latest version of the terms before adopting.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+  <h2 id="s2">Conditions for embedding it in your own products or services</h2>
+  <p>According to the official docs, if you preinstall Claude Code in your own product or service, or run it on an agent platform such as a hosted sandbox, you must agree to the Commercial Terms and comply with the following conditions, unless you have a separate agreement.</p>
+  <ul>
+    <li><strong>Do not modify the Claude Code binary.</strong> Install and run it exactly as Anthropic publishes it. You also cannot remove, disable, or restrict the authentication methods, including signing in with a Claude account or with the user's own API key.</li>
+    <li><strong>You cannot pay for Claude usage on behalf of your users, resell it, or act as an intermediary.</strong> Each user authenticates with their own API key, Claude subscription credentials, or credentials for a third-party inference provider (Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry), and usage is billed directly under that user's own agreement.</li>
+  </ul>
+  <h3>Use of the name and logo</h3>
+  <p>You may state, in plain text and accurately, that Claude Code is preinstalled on your product or that your product runs Claude Code. However, you may not use the names or logos of Claude Code or Anthropic as your product name, feature name, company name, or logo, or use them in a way that suggests Anthropic developed, approved, or partnered with you. Any other use is subject to the trademark guidelines and requires written permission.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+  <h2 id="s3">Authentication and credentials: when to use OAuth vs. an API key</h2>
+  <p>Claude Code authenticates with an OAuth token or an API key. The official docs separate the two by purpose.</p>
+  <ul>
+    <li><strong>OAuth authentication</strong> is for Claude Free, Pro, Max, Team, and Enterprise subscribers, and is intended for ordinary use of Anthropic's native apps such as Claude Code.</li>
+    <li>If you're a <strong>developer</strong> building a product or service that uses Claude's capabilities (including use of the Agent SDK), use API key authentication through Claude Console or a supported cloud provider.</li>
+  </ul>
+  <p>Third-party developers may not offer Claude.ai login in their own apps, or route user requests using Free, Pro, or Max credentials. You also may not collect, store, or proxy Claude.ai credentials or session tokens.</p>
+  <h3>What is not restricted</h3>
+  <p>The docs state explicitly that the following two are not restricted.</p>
+  <ul>
+    <li>Setting API keys in development environments, secret management tools, machine images, and similar, and letting users your company has authorized use them. The conditions are that usage charges are billed to the key owner and that this does not amount to resale or brokering.</li>
+    <li>The user signs in to an unmodified Claude Code with their own Claude subscription.</li>
+  </ul>
+  <p>Anthropic may take action to enforce these restrictions without prior notice. If you're unsure about a use case, you are directed to contact sales.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+  <h2 id="s4">Healthcare compliance (BAA)</h2>
+  <p>According to the official docs, if a customer has signed a Business Associate Agreement (BAA) with Anthropic, the BAA covers Claude Code in the following two configurations. Which one applies depends on what is available to your organization.</p>
+  <ul>
+    <li><strong>HIPAA configuration</strong>: This setup uses the Claude Code CLI or the Code tab in Claude Desktop with a Claude for Enterprise account. Your organization must enable HIPAA and apply the HIPAA configuration to Claude Code (local mode) and Cowork (local mode).</li>
+    <li><strong>Zero Data Retention (ZDR)</strong>: Claude Code in an organization where ZDR is enabled. ZDR is not available to every organization.</li>
+  </ul>
+  <p>HIPAA configurations do not cover cloud sessions, Remote Control, Claude Code in the Claude mobile app, or Claude Code through third-party cloud providers or gateways. Check the Implementation Guide it points to for the full list of covered services. This page does not explain HIPAA or BAA terms themselves, so if they may apply to you, confirm with the official docs and your contract contact.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+  <h2 id="s5">Usage policy, contact points, and checks before trying it internally</h2>
+  <p>Using Claude Code is subject to the Anthropic Usage Policy. The usage limits described for the Pro and Max plans assume ordinary individual use of Claude Code and the Agent SDK.</p>
+  <p>The docs point to the Anthropic Trust Center and Transparency Hub, and vulnerabilities are reported through the HackerOne reporting form.</p>
+  <h3>Checks before trying it internally</h3>
+  <ol>
+    <li>Check your current plan and the terms that apply</li>
+    <li>If you plan to embed it in your company's products or services, check it against the no-modification and billing terms</li>
+    <li>Check that the authentication method you require users to use (OAuth or API key) fits your use case</li>
+    <li>If you may handle medical information, check whether your setup is covered by a BAA</li>
+  </ol>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Which terms apply when I use it on a Team plan?</summary>
+      <p>According to the official docs, the Commercial Terms of Service apply to Team, Enterprise, and Claude API users. Free, Pro, and Max users are covered by the Consumer Terms of Service.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+    </details>
+    <details>
+      <summary>Can I build Claude Code into my own service and have the company cover the usage fees centrally?</summary>
+      <p>No, unless there is a separate agreement. Per the official docs, paying for usage on behalf of end users, reselling, or acting as an intermediary is not permitted. Each user authenticates with their own credentials, and usage is billed directly to that user. For your specific situation, contact the sales team.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+    </details>
+    <details>
+      <summary>Is it a problem to set an API key in a shared internal environment and have people use it?</summary>
+      <p>The official docs say that setting an API key in development environments, secrets management tools, or machine images and letting your company's authorized users use it is not restricted. However, the usage charges must be billed to the key's owner, and it must not amount to resale or brokering.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/legal-and-compliance" rel="noopener">Legal and compliance</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-devcontainer/index.html">Running Claude Code in a dev container: settings and organizational rules</a><span class="tag">Guide</span></li>
+      <li><a href="../ai-usage-rules-claude-code/index.html">How to think about generative AI usage rules before using Claude Code at a small or midsize company</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

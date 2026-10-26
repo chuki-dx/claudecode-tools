@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to restrict MCP in Claude Code across your company: allow/deny lists and managed-mcp.json | Chuki DX Lab</title>
+<meta name="description" content="A guide to restricting which MCP servers can be used with Claude Code in your company, based on the official docs. It explains how to choose between managed-mcp.json, allowlists, and denylists, and what to watch out for.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-org-control/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-org-control/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-mcp-org-control/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to restrict MCP in Claude Code within your company: allow/deny lists and managed-mcp.json">
+<meta property="og:description" content="A guide to restricting which MCP servers can be used with Claude Code in your company, based on the official docs. It explains how to choose between managed-mcp.json, allowlists, and denylists, and what to watch out for.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-org-control/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-mcp-org-control.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to restrict MCP in Claude Code within your company: allow/deny lists and managed-mcp.json">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-mcp-org-control.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to restrict MCP in Claude Code within your company: allow/deny lists and managed-mcp.json",
+  "description": "A guide to restricting which MCP servers can be used with Claude Code in your company, based on the official docs. It explains how to choose between managed-mcp.json, allowlists, and denylists, and what to watch out for.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-org-control/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "MCP server restrictions",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-mcp-org-control/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can users expand the allowlist themselves?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is possible if you don't set allowManagedMcpServersOnly. Allowlists are merged across all scopes, and users can extend them in their own ~/.claude/settings.json. If you put allowedMcpServers and allowManagedMcpServersOnly: true in managed settings, the user, project, and local allowlists are ignored."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it OK to manage allow and deny by serverName alone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, serverName is not a security measure. The name is a label chosen by the user, not the actual server. To control which servers actually run, add serverCommand or serverUrl entries."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I distribute managed-mcp.json, can users no longer add MCP servers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, in the fixed-distribution pattern everyone uses the same servers and no others can be added. Running claude mcp add shows an error saying that the enterprise MCP configuration is active and has exclusive control."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-mcp-org-control/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">MCP server restrictions</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">First decide: how far to restrict</a></li>
+        <li><a href="#s2">Distributing fixed servers with managed-mcp.json</a></li>
+        <li><a href="#s3">Configuring the allow and deny lists</a></li>
+        <li><a href="#s4">How to write entries and points to note when matching</a></li>
+        <li><a href="#s5">Servers that don&#x27;t pass the allowlist, and what users see</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to restrict MCP in Claude Code within your company: allow/deny lists and managed-mcp.json</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>According to the official docs, MCP servers in Claude Code (an AI coding agent from Anthropic that runs in the terminal) can be restricted using several patterns, such as disabling them entirely, distributing a fixed set, allowing only approved ones, or deny-only.</li>
+      <li>To distribute the same fixed servers to everyone, use <code>managed-mcp.json</code>. To restrict what users can add themselves, use <code>allowedMcpServers</code> and <code>deniedMcpServers</code>.</li>
+      <li>To make an allowlist that users cannot widen, put <code>allowedMcpServers</code> and <code>allowManagedMcpServersOnly: true</code> together in managed settings. <code>serverName</code> does not work as a security measure.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">First decide: how far to restrict</h2>
+  <p>This article is based on the official docs as of writing (October 2026). There are three mechanisms for restricting MCP servers (the servers you add to Claude Code as connection targets). <code>managed-mcp.json</code> distributes a fixed set of servers, <code>managedMcpServers</code> has the company provide servers in addition to those users add, and <code>allowedMcpServers</code>/<code>deniedMcpServers</code> narrow down what users have configured.</p>
+  <p>The official docs list the following restriction patterns.</p>
+  <ul>
+    <li>Disable everything: a <code>managed-mcp.json</code> with an empty server definition. The exception is certain servers that are loaded under exclusive control.</li>
+    <li>Fixed distribution: a <code>managed-mcp.json</code> that lists the servers you want. Everyone uses the same servers and can't add their own.</li>
+    <li>Provided servers: <code>managedMcpServers</code>. It distributes the remote servers your company lists, and users' own servers remain as well.</li>
+    <li>Approved catalog: <code>allowedMcpServers</code> and <code>allowManagedMcpServersOnly: true</code>. Anything not approved is blocked.</li>
+    <li>Plugin servers only: include <code>mcp</code> in the <code>strictPluginOnlyCustomization</code> list.</li>
+    <li>Loose allowlist: <code>allowedMcpServers</code> without <code>allowManagedMcpServersOnly</code>. Users can extend it in their own settings.</li>
+    <li>Deny list only: <code>deniedMcpServers</code>. It blocks only the problematic servers and allows the rest.</li>
+  </ul>
+  <p>Claude Code has no built-in MCP server registry that users can browse and install from. With an approved-catalog approach, you either share the approved list and the <code>claude mcp add</code> commands somewhere users can easily find them, such as an internal wiki, or distribute them as plugins through a managed plugin marketplace.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s2">Distributing fixed servers with managed-mcp.json</h2>
+  <p>According to the settings reference in the official docs, <code>managed-mcp.json</code> goes in one of these system paths: <code>/Library/Application Support/ClaudeCode/</code>, <code>/etc/claude-code/</code>, or <code>C:\Program Files\ClaudeCode\</code>. Distribute it through MDM, GPO, fleet management, or a process with administrator privileges. It can't be set through server-managed settings.</p>
+  <p>After distribution, when a user runs <code>claude mcp add</code>, a message says it can't be added. Also, when a user who can use Claude in Chrome runs <code>claude --chrome</code>, it exits at startup. To allow it, set <code>allowClaudeInChromeWithManagedMcp</code> in the device-side managed settings (only MDM profiles, the HKLM registry, and <code>managed-settings.json</code> are effective).</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s3">Configuring the allow and deny lists</h2>
+  <p>The allowlist and denylist are filters that narrow down which servers are allowed to load. They are not a registry, so a server is only subject to them once it has been added by a user, a plugin, or the organization.</p>
+  <h3>Fix the allow list on the admin side</h3>
+  <p>Put <code>allowedMcpServers</code> and <code>allowManagedMcpServersOnly: true</code> together in managed settings, such as server-managed settings or a distributed <code>managed-settings.json</code>. Reading the lock and the allowlist across multiple managed sources requires Claude Code v2.1.273 or later.</p>
+<pre><code>{
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [
+    { "serverUrl": "https://api.githubcopilot.com/*" },
+    { "serverUrl": "https://*.internal.example.com/*" }
+  ]
+}</code></pre>
+  <p>While this is <code>true</code>, the user, project, and local allowlists are ignored. Denylists are merged across all scopes, so users can still block things for themselves.</p>
+  <p>Without <code>allowManagedMcpServersOnly</code>, allowlists are merged across all scopes, and users can extend them in their own <code>~/.claude/settings.json</code>. Note that <code>allowManagedPermissionRulesOnly</code> locks down only permission rules and does not enforce the MCP allowlist.</p>
+  <h3>Unset vs. an empty array</h3>
+  <ul>
+    <li>If <code>allowedMcpServers</code> is not set, all servers are allowed. If it is an empty array <code>[]</code>, none are allowed (except servers that skip the allowlist check). If it has entries, only matching servers are allowed.</li>
+    <li>If <code>deniedMcpServers</code> is unset or an empty array, nothing is blocked. If it has entries, matching servers are blocked regardless of other settings.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s4">How to write entries and points to note when matching</h2>
+  <p>Write each entry using exactly one of the following keys.</p>
+  <ul>
+    <li><code>serverUrl</code>: For HTTP and SSE remote servers. Write the URL as an exact match or with a <code>*</code> wildcard.</li>
+    <li><code>serverCommand</code>: For stdio servers. The command and arguments must match exactly, including order, and <code>env</code> is not compared.</li>
+    <li><code>serverName</code>: matches only the label the user gave exactly; wildcards are not supported.</li>
+  </ul>
+  <p>The official docs warn that <code>serverName</code> is not a security control. The name is a label chosen by the user, and any server can be named <code>github</code>. To control which servers actually run, use <code>serverCommand</code> or <code>serverUrl</code>.</p>
+  <p>Pay attention to URL ports as well. If you write the full hostname and omit the port, only the default port applies (443 for <code>https</code>, 80 for <code>http</code>); if the hostname contains <code>*</code>, all ports are covered. The same goes for deny lists: <code>https://staging.example.com/*</code> does not block <code>https://staging.example.com:8443/api</code>.</p>
+  <p>If the allowlist contains even one <code>serverUrl</code>, remote servers must match by URL, and matching by <code>serverName</code> applies only when there is no <code>serverUrl</code>. The same goes for stdio with <code>serverCommand</code>. The official docs recommend writing entries you rely on for enforcement with literal URLs and commands.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+  <h2 id="s5">Servers that don't pass the allowlist, and what users see</h2>
+  <p>Some servers skip the allowlist check: your organization's own servers (everything in <code>managedMcpServers</code>, plus <code>managed-mcp.json</code> entries that don't use <code>${VAR}</code> expansion outside <code>env</code>), built-in servers such as Claude in Chrome and the <code>ide</code> server, and the Slack tools in Claude Tag sessions. The denylist applies regardless of where a server comes from, except for in-process servers with <code>type: "sdk"</code>.</p>
+  <p>Also check in advance how this looks to users. When a previously configured server is blocked by policy, it disappears from <code>/mcp</code> and <code>claude mcp list</code>. Because the reason isn't shown to users, you need to tell them what is blocked when you roll out a new restriction.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can users expand the allowlist themselves?</summary>
+      <p>It is possible if you don't set <code>allowManagedMcpServersOnly</code>. Allowlists are merged across all scopes, and users can extend them in their own <code>~/.claude/settings.json</code>. If you put <code>allowedMcpServers</code> and <code>allowManagedMcpServersOnly: true</code> in managed settings, the user, project, and local allowlists are ignored.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+    <details>
+      <summary>Is it OK to manage allow and deny by <code>serverName</code> alone?</summary>
+      <p>According to the official docs, <code>serverName</code> is not a security measure. The name is a label chosen by the user, not the actual server. To control which servers actually run, add <code>serverCommand</code> or <code>serverUrl</code> entries.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+    <details>
+      <summary>If I distribute <code>managed-mcp.json</code>, can users no longer add MCP servers?</summary>
+      <p>According to the official docs, in the fixed-distribution pattern everyone uses the same servers and no others can be added. Running <code>claude mcp add</code> shows an error saying that the enterprise MCP configuration is active and has exclusive control.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/managed-mcp" rel="noopener">Control MCP server access for your organization</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-mcp-scopes/index.html">Claude Code MCP configuration: local vs. project vs. user scope, and .mcp.json</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-mcp-quickstart/index.html">Connecting MCP servers to Claude Code (add, check, remove)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-managed-settings/index.html">How to roll out Claude Code managed settings company-wide</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

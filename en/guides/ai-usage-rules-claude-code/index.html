@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Think About Generative AI Usage Rules Before Using Claude Code at a Small or Midsize Company | Chuki DX Lab</title>
+<meta name="description" content="For small and midsize companies, this guide organizes the generative AI usage rules to settle before using Claude Code internally: five points (permissions, external text, secrets, data handling, and sharing settings) plus the training policy for each plan.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/ai-usage-rules-claude-code/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/ai-usage-rules-claude-code/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/ai-usage-rules-claude-code/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/ai-usage-rules-claude-code/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="How to think about generative AI usage rules before using Claude Code at a small or midsize company">
+<meta property="og:description" content="For small and midsize companies, this guide organizes the generative AI usage rules to settle before using Claude Code internally: five points (permissions, external text, secrets, data handling, and sharing settings) plus the training policy for each plan.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/ai-usage-rules-claude-code/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-ai-usage-rules-claude-code.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How to think about generative AI usage rules before using Claude Code at a small or midsize company">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-ai-usage-rules-claude-code.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to think about generative AI usage rules before using Claude Code at a small or midsize company",
+  "description": "For small and midsize companies, this guide organizes the generative AI usage rules to settle before using Claude Code internally: five points (permissions, external text, secrets, data handling, and sharing settings) plus the training policy for each plan.",
+  "datePublished": "2026-10-15",
+  "dateModified": "2026-10-15",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/ai-usage-rules-claude-code/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Usage rules for Claude Code",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/ai-usage-rules-claude-code/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does the handling of training differ between individual plans and business plans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official docs, on Free, Pro, and Max, users choose this in their settings, and when it is on, Claude Code data is also used for training. On Team, Enterprise, the API, and similar plans, data is generally not used for training under the commercial terms. The exception is when a customer chooses to provide data to improve the models."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is banning generative AI entirely the safe choice?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Chuki DX Lab article says that a total ban may look the safest, but it tends to invite shadow AI, where people use AI secretly on personal phones and accounts. It argues for a design you can explain as \"check in this order, and use only within this scope.\""
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should I handle API keys and passwords?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In Chuki DX Lab's article, the recommendation is to put keys in a dedicated config file such as .env, and list it in .gitignore so it stays out of version control. Don't write the key itself in code, notes, runbooks, or prompts to the AI."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/ai-usage-rules-claude-code/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Usage rules for Claude Code</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Decide this first: think of rules in three layers</a></li>
+        <li><a href="#s2">What to let it do without confirmation, and how to handle external text</a></li>
+        <li><a href="#s3">Where to keep secrets, and sharing settings across the team</a></li>
+        <li><a href="#s4">How conversation data is handled by plan</a></li>
+        <li><a href="#s5">Notes on feedback, surveys, and local storage</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>How to think about generative AI usage rules before using Claude Code at a small or midsize company</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Before you start, decide five things: what Claude may do without asking for confirmation, how to treat external text, where to keep secrets, how data is handled, and how to share settings.</li>
+      <li>To check whether your data will be used for training, look at three layers separately: the terms (your contract plan), the data you bring in, and the tool settings.</li>
+      <li>According to the official docs, individual plans let you choose in settings whether your data is used for training, while business plans are, as a rule, not used for training under the commercial terms. There are conditions, though, and the terms change, so check the latest version when you adopt it.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Decide this first: think of rules in three layers</h2>
+  <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) is an AI agent that can read and write files and run commands on its own. Because it can do more than a chat-based AI, there are more things to decide before you use it.</p>
+  <p>A Chuki DX Lab article explains that "not training on your data" can't be settled with a single setting, and breaks it down into the following three layers.</p>
+  <ol>
+    <li>Terms (contract) layer: Decide which plan and account to use, then check how data is handled on the official pages and record it.</li>
+    <li>Data layer: decide what not to put in folders Claude Code can read in the first place.</li>
+    <li>Settings layer: use settings to make files you don't want read unreadable, and document the usage rules.</li>
+  </ol>
+  <p>You can't change the terms yourself, but you can decide your own data and settings. If you design things so that confidential information is never handed over in the first place, the damage stays limited even if the terms change. The same article also says that a blanket ban tends to lead to shadow AI (AI use the company doesn't know about). This guide reflects the content as of writing (October 2026), and specifications may change.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/n2e750e4913b1" rel="noopener">Design Patterns for Keeping Claude Code from Learning Your Business Information — 5 Rules Corporate IT Should Decide Before Rollout (Japanese)</a></p>
+  <h2 id="s2">What to let it do without confirmation, and how to handle external text</h2>
+  <p>According to a Chuki DX Lab article, Claude Code lets you choose with a permission mode how much it can do without asking, and you can also set allow and deny rules for individual commands. For example, a command like <code>curl</code>, which fetches content from the web, is not automatically allowed by default.</p>
+  <p>The article suggests that corporate IT draw the line in the following three categories. All are examples.</p>
+  <ul>
+    <li>Operations to allow automatically (e.g., reading files, running tests)</li>
+    <li>Actions to confirm every time (for example: deleting files, communicating externally)</li>
+    <li>Prohibited actions (e.g., connecting to production servers, sending files outside the company)</li>
+  </ul>
+  <p>It also warns that automating everything because it is convenient leaves no place to stop the AI when it does something wrong.</p>
+  <p>Another thing to watch for is prompt injection. This is an attack where text like "follow this instruction" is planted in a web page, an email, or a file from outside, and the AI mistakes it for a real instruction and acts on it. The official docs reportedly list points such as reviewing suggested commands before running them, not feeding untrusted content directly to the AI, and reviewing changes to important files before accepting them.</p>
+  <p>As an internal rule, the suggestion is to require a person to check before running anything when Claude Code reads a client's files or text copied from the web, rather than accepting its suggestions at face value.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/ndf769bfb839a" rel="noopener">Five security rules corporate IT should set before using an AI agent (Claude Code) internally (Japanese)</a></p>
+  <h2 id="s3">Where to keep secrets, and sharing settings across the team</h2>
+  <p>AI agents read files in the working folder, so any passwords or API keys stored there may be read during a task. The article lists the following countermeasures.</p>
+  <ul>
+    <li>Collect them in a dedicated configuration file (for example, <code>.env</code>)</li>
+    <li>Keep that file out of version control (add it to <code>.gitignore</code>)</li>
+    <li>Don't write keys directly in code, notes, or procedure documents</li>
+    <li>Don't paste the key itself into requests to AI, either</li>
+  </ul>
+  <p>Also, if settings are left to individuals, they end up inconsistent: "A allows everything automatically" while "B confirms every time." Claude Code has settings that an organization can enforce (managed settings) and a way to share per-project permission settings as files. The official docs reportedly also recommend sharing approved permission settings through version control and reviewing them regularly. At a minimum, I suggest starting by creating one standard permissions file and distributing it to everyone's environment.</p>
+  <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/ndf769bfb839a" rel="noopener">Five security rules corporate IT should set before using an AI agent (Claude Code) internally (Japanese)</a></p>
+  <h2 id="s4">How conversation data is handled by plan</h2>
+  <p>The official docs explain the training policy separately for each plan.</p>
+  <ul>
+    <li>Individual plans (Free, Pro, Max): Users can choose whether their data is used to improve future models. When the setting is on, Claude Code data from these accounts is also used for training.</li>
+    <li>For business use (Team, Enterprise, API, third-party platforms, Claude Gov): under the commercial terms, code and prompts sent to Claude Code are not used to train generative models. The exception is when the customer chooses to provide data for model improvement (for example, the Development Partner Program).</li>
+  </ul>
+  <p>The Development Partner Program is something an organization's admin must explicitly opt in to. It covers only Anthropic's own API; the docs state that users of Amazon Bedrock or Google Cloud's Agent Platform are excluded.</p>
+  <p>Retention periods differ too. For individual plans, it is 5 years if you allow model improvement and 30 days if you don't. The standard for business plans (Team, Enterprise, API) is 30 days. Zero data retention (ZDR) is available for Claude Code on Claude for Enterprise, for accounts that meet the requirements. It is not included in the standard Enterprise plan and is enabled per organization after confirmation.</p>
+  <p>If you start with an individual plan, a Chuki DX Lab article suggests checking the settings at setup and keeping screenshots as a record. Decide first which plan you will use, then confirm it on the official page and record it.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+  <h2 id="s5">Notes on feedback, surveys, and local storage</h2>
+  <p>Separately from the training policy, the official docs also explain how the information users send and the information stored locally are handled.</p>
+  <ul>
+    <li>Conversation records shared with <code>/feedback</code> are retained for 5 years, including <code>/bug</code> and <code>/share</code>, which are reported through the same path.</li>
+    <li>For the session quality survey rating itself, only the rating is recorded. A follow-up question may then ask whether Anthropic may view the session transcript, and the conversation transcript and related data are uploaded only if you choose "Yes" (for sessions on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and the signed-in Claude apps gateway, nothing is uploaded; it is written to a local archive in <code>~/.claude/feedback-bundles/</code> and does not leave your machine until you transfer that file). Known API key and token patterns are redacted, but source code and file contents are sent as-is, and shared transcripts are retained for up to 6 months.</li>
+    <li>To disable the survey, set <code>CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1</code>.</li>
+    <li>Session transcripts are also stored locally in plain text, kept in <code>~/.claude/projects/</code> for 30 days by default. You can adjust the period with <code>cleanupPeriodDays</code>.</li>
+  </ul>
+  <p>For details, the docs direct you to the commercial terms, consumer terms of use, and privacy policy. Before you roll this out company-wide, check the official docs for the content that matches the plan you use.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>How does the handling of training differ between individual plans and business plans?</summary>
+      <p>According to the official docs, on Free, Pro, and Max, users choose this in their settings, and when it is on, Claude Code data is also used for training. On Team, Enterprise, the API, and similar plans, data is generally not used for training under the commercial terms. The exception is when a customer chooses to provide data to improve the models.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a></p>
+    </details>
+    <details>
+      <summary>Is banning generative AI entirely the safe choice?</summary>
+      <p>A Chuki DX Lab article says that a total ban may look the safest, but it tends to invite shadow AI, where people use AI secretly on personal phones and accounts. It argues for a design you can explain as "check in this order, and use only within this scope."</p>
+      <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/n2e750e4913b1" rel="noopener">Design Patterns for Keeping Claude Code from Learning Your Business Information — 5 Rules Corporate IT Should Decide Before Rollout (Japanese)</a></p>
+    </details>
+    <details>
+      <summary>How should I handle API keys and passwords?</summary>
+      <p>In Chuki DX Lab's article, the recommendation is to put keys in a dedicated config file such as <code>.env</code>, and list it in <code>.gitignore</code> so it stays out of version control. Don't write the key itself in code, notes, runbooks, or prompts to the AI.</p>
+      <p class="hint">Source: <a href="https://note.com/chuki_dx_note/n/ndf769bfb839a" rel="noopener">Five security rules corporate IT should set before using an AI agent (Claude Code) internally (Japanese)</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../settings-generator/index.html">Claude Code Permissions (settings.json) Generator</a>: Choose deny / ask / allow rules and it outputs a settings.json with where to put it. Use it to draft settings before you distribute them.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://note.com/chuki_dx_note/n/ndf769bfb839a" rel="noopener">5 security rules corporate IT should decide before using an AI agent (Claude Code) in the company</a> (Japanese; article by Chuki DX Lab)</li>
+    <li><a href="https://note.com/chuki_dx_note/n/n2e750e4913b1" rel="noopener">Design patterns to keep Claude Code from learning your business information: 5 rules corporate IT should set before rollout (Japanese)</a> (a Chuki DX Lab article)</li>
+    <li><a href="https://code.claude.com/docs/en/data-usage" rel="noopener">Data usage</a> (official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-legal-compliance/index.html">Claude Code terms of use and compliance: terms by plan and what to check</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-devcontainer/index.html">Running Claude Code in a dev container: settings and organizational rules</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permissions-basics/index.html">Claude Code permission basics (deny/ask/allow), and what they do and don't cover</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>

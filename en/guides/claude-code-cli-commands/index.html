@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code CLI commands: when to use claude, claude -p, and claude update | Chuki DX Lab</title>
+<meta name="description" content="The CLI commands in the official Claude Code docs, organized by launching, non-interactive runs, updating, authentication, MCP, and background sessions. Also covers conditions and caveats corporate IT should check before using it internally.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cli-commands/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cli-commands/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cli-commands/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-cli-commands/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Claude Code CLI commands: when to use claude, claude -p, and claude update">
+<meta property="og:description" content="The CLI commands in the official Claude Code docs, organized by launching, non-interactive runs, updating, authentication, MCP, and background sessions. Also covers conditions and caveats corporate IT should check before using it internally.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cli-commands/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-cli-commands.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code CLI commands: when to use claude, claude -p, and claude update">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-cli-commands.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code CLI commands: when to use claude, claude -p, and claude update",
+  "description": "The CLI commands in the official Claude Code docs, organized by launching, non-interactive runs, updating, authentication, MCP, and background sessions. Also covers conditions and caveats corporate IT should check before using it internally.",
+  "datePublished": "2026-10-24",
+  "dateModified": "2026-10-24",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cli-commands/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "CLI command list",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-cli-commands/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When should I use claude and when claude -p?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "claude starts an interactive session, while claude -p \"query\" sends a query through the SDK and exits. In short: use the former to keep a conversation going, and the latter to finish with a single query. To continue where you left off, use claude -c or claude -c -p \"query\"."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between claude update and claude install?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs explain that claude update updates to the latest version, and claude install [version] installs or reinstalls the native binary; you can specify a version such as 2.1.118, stable, or latest. For steps to install a specific version, check the official docs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I check my login status with a command?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "claude auth status shows the authentication state as JSON. Add --text for a human-readable format. It exits with code 0 when you're logged in and 1 when you're not."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-cli-commands/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">CLI command list</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Basic commands for starting, asking questions, and resuming</a></li>
+        <li><a href="#s2">Commands for updating, installing, and diagnostics</a></li>
+        <li><a href="#s3">Authentication-related commands</a></li>
+        <li><a href="#s4">MCP and plugin commands</a></li>
+        <li><a href="#s5">Background sessions and commands that need attention</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code CLI commands: when to use claude, claude -p, and claude update</h1>
+  <p class="article-meta">Published: <time datetime="2026-10-24">October 24, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>There are three everyday entry points: <code>claude</code> to start an interactive session, <code>claude -p "query"</code> to send one query and exit, and <code>claude -c</code> to continue the most recent conversation.</li>
+      <li>To update, use <code>claude update</code>. To install or reinstall a specific version, use <code>claude install [version]</code>. To check the installation's status, use the read-only <code>claude doctor</code>.</li>
+      <li><code>claude mcp</code>, the background session commands, <code>claude purge</code>, and similar commands depend on version or environment conditions, and some involve deletion, so check the official docs before you distribute them company-wide.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Basic commands for starting, asking questions, and resuming</h2>
+  <p>This guide is based on the command table in the CLI reference of the official docs. According to the official docs, Claude Code (an AI coding agent from Anthropic that runs in the terminal) uses commands starting with <code>claude</code> to start sessions, pipe in content, resume conversations, and manage updates. It is based on the table as of writing (October 2026), so check the official docs for the latest information.</p>
+  <h3>Start interactively</h3>
+  <ul>
+    <li><code>claude</code>: starts an interactive session.</li>
+    <li><code>claude "query"</code>: starts an interactive session with an initial prompt. For example: <code>claude "explain this project"</code>.</li>
+  </ul>
+  <h3>Finish in one go</h3>
+  <p><code>claude -p "query"</code> sends a query through the SDK and then exits. The example is <code>claude -p "explain this function"</code>. The table also lists piping file contents in for processing; the example passes a log file and asks Claude to explain it.</p>
+  <h3>Resume from where you left off</h3>
+  <ul>
+    <li><code>claude -c</code>: Continues the most recent conversation in the current directory.</li>
+    <li><code>claude -c -p "query"</code>: Continues via the SDK. For example: <code>claude -c -p "Check for type errors"</code>.</li>
+    <li><code>claude -r "&lt;session&gt;" "query"</code>: Resumes a session by ID or name. For example: <code>claude -r "auth-refactor" "Finish this PR"</code>.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+  <h2 id="s2">Commands for updating, installing, and diagnostics</h2>
+  <p><code>claude update</code> updates to the latest version. <code>claude install [version]</code> installs or reinstalls the native binary, and accepts a version such as <code>2.1.118</code>, as well as <code>stable</code> or <code>latest</code>. An example is <code>claude install stable</code>. For details, see the Install a specific version section of the official docs.</p>
+  <p><code>claude doctor</code> shows, read-only and without starting a session, the installation status, settings file validation errors, Remote Control eligibility, and more. The in-session check that can also apply fixes is <code>/doctor</code>.</p>
+  <p>If you mistype a subcommand, Claude Code suggests the closest match and exits without starting a session. For example, <code>claude udpate</code> prints <code>Did you mean claude update?</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+  <h2 id="s3">Authentication-related commands</h2>
+  <ul>
+    <li><code>claude auth login</code>: Signs in to your Anthropic account. Use <code>--email</code> to prefill the email address and <code>--sso</code> to force SSO authentication. With <code>--console</code>, you sign in through the Anthropic Console with usage-based API billing instead of a Claude subscription.</li>
+    <li><code>claude auth logout</code>: logs you out of your Anthropic account.</li>
+    <li><code>claude auth status</code>: Shows the authentication status as JSON. Use <code>--text</code> for a human-readable format. It exits with code 0 when logged in and 1 when not logged in.</li>
+  </ul>
+  <p><code>authMethod</code> in the JSON from <code>claude auth status</code> is one of <code>none</code>, <code>claude.ai</code>, <code>oauth_token</code>, <code>api_key</code>, <code>api_key_helper</code>, or <code>third_party</code>. The <code>configDirectory</code> field, which shows the config directory, requires Claude Code v2.1.268 or later.</p>
+  <p><code>claude setup-token</code> generates a long-lived OAuth token for CI and scripts. The token is only displayed in the terminal and is not saved, and a Claude subscription is required. Be careful how you handle any copy of the displayed value.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+  <h2 id="s4">MCP and plugin commands</h2>
+  <p><code>claude mcp</code> is the command for configuring Model Context Protocol (MCP) servers. For usage details, see the MCP page in the official docs.</p>
+  <ul>
+    <li><code>claude mcp login &lt;name&gt;</code>: runs the OAuth flow (the authentication procedure) for a configured MCP server without opening the interactive <code>/mcp</code> panel. It works with HTTP, SSE, and claude.ai connector servers. Over SSH, add <code>--no-browser</code> to print the authorization URL instead of opening a browser. Example: <code>claude mcp login sentry</code>.</li>
+    <li><code>claude mcp logout &lt;name&gt;</code>: Clears the OAuth credentials stored for an MCP server. For example, <code>claude mcp logout sentry</code>.</li>
+  </ul>
+  <p><code>claude plugin</code> is the command for managing plugins, and its alias is <code>claude plugins</code>. An example is <code>claude plugin install code-review@claude-plugins-official</code>, and the subcommands are collected in the plugin reference in the official docs.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+  <h2 id="s5">Background sessions and commands that need attention</h2>
+  <p><code>claude agents</code> opens the agent view, where you monitor and assign parallel background sessions. It requires an interactive terminal. For individual operations, use <code>claude attach 7c5dcf5d</code>, <code>claude logs 7c5dcf5d</code>, <code>claude stop 7c5dcf5d</code>, <code>claude respawn 7c5dcf5d</code>, and <code>claude rm 7c5dcf5d</code>. They attach to a session, show recent output, stop it, restart it while keeping the conversation, and remove it from the list, respectively. Passing part of a name instead of an ID to <code>attach</code> and <code>logs</code> requires Claude Code v2.1.290 or later.</p>
+  <h3>Commands that involve deletion</h3>
+  <p><code>claude purge [path]</code> deletes all local state for a project (transcripts, task lists, debug logs, file edit history, prompt history lines, and that project's entry in <code>~/.claude.json</code>). Use <code>--dry-run</code> to preview, <code>-y</code>/<code>--yes</code> to skip confirmation, and <code>--all</code> to target all projects. An example is <code>claude purge ~/work/repo --dry-run</code>; it's safest to start with <code>--dry-run</code>.</p>
+  <h3>Commands with environment conditions</h3>
+  <p><code>claude import [source]</code> imports settings from other coding agents, but it doesn't work with Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, or Claude Platform on AWS, and it requires v2.1.213 or later. <code>claude gateway</code> is for administrators and requires <code>--config</code>. The <code>--post</code> option of <code>claude ultrareview [target]</code> targets github.com pull requests and requires v2.1.227 or later.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>When should I use <code>claude</code> and when <code>claude -p</code>?</summary>
+      <p><code>claude</code> starts an interactive session, while <code>claude -p "query"</code> sends a query through the SDK and exits. In short: use the former to keep a conversation going, and the latter to finish with a single query. To continue where you left off, use <code>claude -c</code> or <code>claude -c -p "query"</code>.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+    </details>
+    <details>
+      <summary>What is the difference between <code>claude update</code> and <code>claude install</code>?</summary>
+      <p>The official docs explain that <code>claude update</code> updates to the latest version, and <code>claude install [version]</code> installs or reinstalls the native binary; you can specify a version such as <code>2.1.118</code>, <code>stable</code>, or <code>latest</code>. For steps to install a specific version, check the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+    </details>
+    <details>
+      <summary>Can I check my login status with a command?</summary>
+      <p><code>claude auth status</code> shows the authentication state as JSON. Add <code>--text</code> for a human-readable format. It exits with code 0 when you're logged in and 1 when you're not.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/cli-reference" rel="noopener">CLI reference</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-slash-commands/index.html">How to use Claude Code slash commands, and the main commands for each stage of your work</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-headless/index.html">How to run Claude Code from scripts with claude -p (headless mode)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+</body>
+</html>
