@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When Claude Code stops at a usage limit: the setting that continues automatically after reset, and when it doesn't | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, based on the official docs, how Claude Code automatically continues after a usage limit reset, the required version, the condition under which it stops after 3 attempts, how to cancel, and the cases where it does not continue along with the setting to turn it off.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-limit-auto-continue/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-limit-auto-continue/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-limit-auto-continue/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-limit-auto-continue/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="When Claude Code Stops at a Limit: Auto-Resume After Reset, and When It Doesn&#x27;t Resume">
+<meta property="og:description" content="This guide covers, based on the official docs, how Claude Code automatically continues after a usage limit reset, the required version, the condition under which it stops after 3 attempts, how to cancel, and the cases where it does not continue along with the setting to turn it off.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-limit-auto-continue/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-usage-limit-auto-continue.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="When Claude Code Stops at a Limit: Auto-Resume After Reset, and When It Doesn&#x27;t Resume">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-usage-limit-auto-continue.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "When Claude Code Stops at a Limit: Auto-Resume After Reset, and When It Doesn't Resume",
+  "description": "This guide covers, based on the official docs, how Claude Code automatically continues after a usage limit reset, the required version, the condition under which it stops after 3 attempts, how to cancel, and the cases where it does not continue along with the setting to turn it off.",
+  "datePublished": "2026-11-26",
+  "dateModified": "2026-11-26",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-limit-auto-continue/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Auto-resume after a limit resets",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-limit-auto-continue/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What if I want to stop the automatic continuation setting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Turn off Continue automatically at usage limit in /config, or set autoContinueAtUsageLimit to false in your user settings. If you only want to stop while it's waiting, press Esc at an empty prompt to cancel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I hit the limit even after three continuations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Automatic continuing stops and a notice appears. Choose what to do next with /rate-limit-options. If you send your next prompt or choose to wait in the menu, the count resets."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I decide centrally, for all company devices, whether automatic waiting starts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs state that setting autoContinueAtUsageLimit in managed settings lets you control, organization-wide, whether Claude Code starts waiting automatically. Check the official docs for details such as precedence."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-usage-limit-auto-continue/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Auto-resume after a limit resets</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">What it does: continues automatically after the limit resets</a></li>
+        <li><a href="#s2">What is displayed while waiting, and how the wait ends</a></li>
+        <li><a href="#s3">Precautions before stepping away, and how to cancel</a></li>
+        <li><a href="#s4">When it doesn&#x27;t resume automatically, and the setting to turn it off</a></li>
+        <li><a href="#s5">Options to keep going without waiting: /model, /usage, /usage-credits</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>When Claude Code Stops at a Limit: Auto-Resume After Reset, and When It Doesn't Resume</h1>
+  <p class="article-meta">Published: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (November 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Claude Code (an AI coding agent from Anthropic that runs in the terminal) automatically resumes work after the reset when you hit a usage limit in an interactive session signed in with a claude.ai subscription. It is on by default and requires v2.1.234 or later.</li>
+      <li>To have it continue automatically, keep the session open while it waits. If it doesn't continue, or if you hit the limit three times in a row, choose the next action with <code>/rate-limit-options</code>.</li>
+      <li>Permission prompts still appear as usual when the work continues. Before you step away, expect that it may stop at a prompt. To stop it, press <code>Esc</code>; to disable it, change the setting with <code>/config</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">What it does: continues automatically after the limit resets</h2>
+  <p>According to the official docs, when a task stops partway because you hit your claude.ai usage limit, Claude Code waits in the open session and resumes the task on its own after the reset. It is on by default for interactive sessions signed in with a claude.ai subscription, and requires v2.1.234 or later. This is based on the official docs as of writing (November 2026).</p>
+  <p>The continuation starts with a prompt that nudges Claude to pick up where it stopped, rather than resending your last message.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+  <h2 id="s2">What is displayed while waiting, and how the wait ends</h2>
+  <p>While waiting, the two lines at the bottom of the session show when the limit resets and when the continuation will start.</p>
+<pre><code>Usage limit reached · limit resets 3:45pm
+Continuing automatically at 3:45pm · Esc to cancel</code></pre>
+  <p>Either line may have a help link on the first line and a follow-up such as <code>/usage-credits to continue now</code> on the second. The wait ends as follows.</p>
+  <ul>
+    <li><strong>At reset</strong>: The second line changes to <code>Continuing shortly · Esc to cancel</code>, the conversation shows <code>Usage limit reset · Continuing automatically</code>, and work resumes.</li>
+    <li><strong>After your PC sleeps</strong>: If the reset happened during a sleep of more than about 30 minutes, the first line reads <code>Your usage limit has reset</code> and the second reads <code>Press enter to continue</code>, so press <code>Enter</code>. If the sleep was shorter, or ended before the reset, it continues automatically.</li>
+    <li><strong>Resume early</strong>: While you wait, if you finish adding credits with <code>/usage-credits</code>, sign in again after <code>/upgrade</code>, or switch models with <code>/model</code>, Claude Code checks whether your usage has been restored and continues right away if it has. Upgrades or purchases you made yourself in the browser are not checked. With settings that run plan mode on a different model, such as <code>opusplan</code>, it waits until the reset.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+  <h2 id="s3">Precautions before stepping away, and how to cancel</h2>
+  <p>Permission prompts still appear as usual for the resumed task. If you step away, it may stop at a prompt. Also, if the resumed work hits the limit again, the wait starts over.</p>
+  <p>Automatic continuing stops after 3 times. After the third, it stops and shows the notice <code>Automatic continue stopped after repeated usage-limit hits</code>, and you choose what to do next with <code>/rate-limit-options</code>. If you send your next prompt or choose to wait in that menu, the count resets.</p>
+  <h3>How to cancel</h3>
+  <p>While it's displayed, press <code>Esc</code> or <code>Ctrl+C</code> at an empty prompt, or choose <strong>Don't continue automatically</strong> in <code>/rate-limit-options</code>. A line starting with <code>Automatic continue cancelled</code> appears. After canceling, it won't continue until you send a prompt or choose the line starting with <strong>Wait here, then continue automatically</strong> in <code>/rate-limit-options</code>.</p>
+  <p>The wait also ends without running the continuation in these cases.</p>
+  <ul>
+    <li>When you send a prompt (that prompt is sent instead of waiting)</li>
+    <li>You exit Claude Code (resuming the session does not resume the wait)</li>
+    <li>When the conversation is replaced, such as switching accounts with <code>/login</code>, clearing or rewinding the conversation, or <code>/resume</code> of a different session</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+  <h2 id="s4">When it doesn't resume automatically, and the setting to turn it off</h2>
+  <p>Claude Code does not start a wait on its own in these cases.</p>
+  <ul>
+    <li>Remote Control and agent team teammate sessions (a person at that terminal can still start one manually)</li>
+    <li>When the reset is more than 24 hours away (a weekly limit can be several days out)</li>
+    <li>You hit an Opus or Sonnet limit but are running a model outside that family (because the next turn may not hit the limit)</li>
+  </ul>
+  <p>In these cases, or when automatic continuation is turned off, hitting the limit on your own machine opens the usage limit options menu once per reset window. Choose the line that starts with <strong>Wait here, then continue automatically</strong> to start waiting. In Remote Control or a teammate's session, run <code>/rate-limit-options</code> yourself.</p>
+  <p>In some cases the option to wait doesn't appear at all: background sessions and <code>-p</code> runs, API keys, cloud providers, and pay-as-you-go billing (metered per request, so there's no reset to wait for), and LLM gateways without a saved claude.ai login.</p>
+  <h3>Turn it off</h3>
+  <p>In <code>/config</code>, turn off <strong>Continue automatically at usage limit</strong>, or set <code>autoContinueAtUsageLimit</code> to <code>false</code> in your user settings. <code>/config autoContinueAtUsageLimit=false</code> also works, but you can't undo it with the <code>key=value</code> form, because this setting allows unattended runs. Check the official settings reference for which settings files are loaded.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+  <h2 id="s5">Options to keep going without waiting: /model, /usage, /usage-credits</h2>
+  <p>The official docs say the response depends on the type of limit. Session and weekly limits apply to all models, so switching with <code>/model</code> won't lift them. Opus and Sonnet limits apply only to that model family, so you can keep working by switching to a model outside that family with <code>/model</code>. However, each model has its own prompt cache, so the next request reloads the entire conversation.</p>
+  <ul>
+    <li><code>/usage</code>: Shows your plan limits and reset times.</li>
+    <li><code>/usage-credits</code>: On Pro, Max, and Ultra you can buy additional usage; on Team and Enterprise you ask an admin. For how billing is handled, see the official Help Center, and check the official pricing page for current amounts.</li>
+    <li>Code tab in the Desktop app: The session limit card has an <strong>Auto-continue when limits reset</strong> checkbox (the weekly limit card does not). It is separate from the CLI setting, so turn each one off individually.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/errors" rel="noopener">Error reference</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>What if I want to stop the automatic continuation setting?</summary>
+      <p>Turn off <strong>Continue automatically at usage limit</strong> in <code>/config</code>, or set <code>autoContinueAtUsageLimit</code> to <code>false</code> in your user settings. If you only want to stop while it's waiting, press <code>Esc</code> at an empty prompt to cancel.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+    </details>
+    <details>
+      <summary>What happens if I hit the limit even after three continuations?</summary>
+      <p>Automatic continuing stops and a notice appears. Choose what to do next with <code>/rate-limit-options</code>. If you send your next prompt or choose to wait in the menu, the count resets.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a></p>
+    </details>
+    <details>
+      <summary>Can I decide centrally, for all company devices, whether automatic waiting starts?</summary>
+      <p>The official docs state that setting <code>autoContinueAtUsageLimit</code> in managed settings lets you control, organization-wide, whether Claude Code starts waiting automatically. Check the official docs for details such as precedence.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/interactive-mode" rel="noopener">Interactive mode</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/errors" rel="noopener">Error reference</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-usage-limits/index.html">What to do when you hit Claude Code's usage limit: what's shown, resets, and whether to wait or add more</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code Pricing and Plans Compared: Pro, Max, Team, Enterprise, and Console, and How to Choose</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-reduce-tokens/index.html">How to Reduce Claude Code Token Usage and Check Your Usage</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
+</body>
+</html>

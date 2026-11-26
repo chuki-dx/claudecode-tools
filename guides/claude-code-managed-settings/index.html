@@ -32,7 +32,7 @@
   "headline": "Claude Code の管理者設定(managed settings)を全社に配る方法",
   "description": "Claude Code の managed settings を全社に配る方法を、公式ドキュメントに沿って整理します。配布方法の選び方、ファイル配布の手順、反映の確認と注意点までを解説します。",
   "datePublished": "2026-10-17",
-  "dateModified": "2026-10-17",
+  "dateModified": "2026-11-26",
   "inLanguage": "ja",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-managed-settings/",
   "author": {
@@ -140,6 +140,7 @@
         <li><a href="#conclusion-heading">結論</a></li>
         <li><a href="#s1">何ができるか:管理者設定と4つの配布方法</a></li>
         <li><a href="#s2">ファイルで配る手順</a></li>
+        <li><a href="#s2-example">コピーして使える managed-settings.json の例(公式の組織向けサンプル)</a></li>
         <li><a href="#s3">チームごとにファイルを分ける</a></li>
         <li><a href="#s4">反映の確認と、うまくいかないとき</a></li>
         <li><a href="#s5">配る前に知っておく注意点</a></li>
@@ -150,7 +151,7 @@
   </aside>
   <article>
   <h1>Claude Code の管理者設定(managed settings)を全社に配る方法</h1>
-  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 更新: <time datetime="2026-11-26">2026年11月26日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
@@ -197,6 +198,69 @@
   <h3>3. 適用を確認する</h3>
   <p>まず1台で、Claude Code 内で <code>/status</code> を実行します。<code>Setting sources</code> の行に <code>Enterprise managed settings (file)</code> と表示されます。確認できてから、残りの端末に展開します。</p>
   <p class="hint">出典: <a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
+  <h2 id="s2-example">コピーして使える managed-settings.json の例(公式の組織向けサンプル)</h2>
+  <p>公式ドキュメントの設定例のページには、管理者設定で使うキーの形をまとめて示した <code>managed-settings.json</code> があります。推奨のポリシーではなく、キーごとに値の一例を入れたものです。コメントの無い正しい JSON なので、そのまま貼り付けて、組織の UUID・サーバーの URL・マーケットプレイスを自社の値に置き換え、要らないキーは消して使います(設定ファイルにはコメントを書けません)。</p>
+<pre><code>{
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": [
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  ],
+  "availableModels": [
+    "opus",
+    "sonnet"
+  ],
+  "enforceAvailableModels": true,
+  "permissions": {
+    "deny": [
+      "Bash(curl *)",
+      "Read(./.env)",
+      "Read(./secrets/**)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+  "allowManagedPermissionRulesOnly": true,
+  "allowedMcpServers": [
+    {
+      "serverUrl": "https://api.githubcopilot.com/*"
+    }
+  ],
+  "allowManagedMcpServersOnly": true,
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "acme-corp/approved-plugins"
+    }
+  ],
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "registry.npmjs.org",
+        "github.com"
+      ],
+      "allowManagedDomainsOnly": true
+    }
+  },
+  "requiredMinimumVersion": "2.1.150",
+  "cleanupPeriodDays": 7,
+  "companyAnnouncements": [
+    "Welcome to Acme Corp! Review our code guidelines at docs.example.com"
+  ]
+}</code></pre>
+  <p>各キーの意味は次のとおりです(公式ドキュメントの説明の要約)。</p>
+  <ul>
+    <li><code>forceLoginMethod</code>・<code>forceLoginOrgUUID</code>: ログイン方法と組織を固定します。</li>
+    <li><code>availableModels</code>・<code>enforceAvailableModels</code>: セッションで使えるモデルを絞ります。</li>
+    <li><code>permissions.deny</code>: 2つのファイルの読み取りと <code>curl</code> のコマンドを拒否します。<code>disableBypassPermissionsMode</code> は bypass の権限モードを無くします。</li>
+    <li><code>allowManagedPermissionRulesOnly</code>・<code>allowManagedMcpServersOnly</code>: 管理者設定の権限ルールと MCP の許可リストだけを有効にします。<code>allowedMcpServers</code> は MCP サーバーを URL で指定します。</li>
+    <li><code>strictKnownMarketplaces</code>: プラグインのマーケットプレイスを1つだけ許可します。</li>
+    <li><code>sandbox</code>: 決まったネットワークの許可リストでコマンドをサンドボックス内で動かし、サンドボックス外での再実行をさせません。<code>failIfUnavailable</code> は、サンドボックスを使えない環境では起動しないようにします(Anthropic がホストする環境は除く)。</li>
+    <li><code>requiredMinimumVersion</code>: Claude Code の最低バージョンを決めます。<code>cleanupPeriodDays</code> はセッションの記録などの手元のデータの保持を7日に縮めます。<code>companyAnnouncements</code> は起動時にメッセージを出します。</li>
+  </ul>
+  <p>置き場所は上の手順2と同じです(macOS は <code>/Library/Application Support/ClaudeCode/managed-settings.json</code>、Linux と WSL は <code>/etc/claude-code/managed-settings.json</code>、Windows は <code>C:\Program Files\ClaudeCode\managed-settings.json</code>)。同じ JSON は MDM や server-managed settings でも配れます。1つのファイルは届いたすべての端末・アカウントに効くので、グループごとに値を変えたいときは、別のファイルやプロファイルをそのグループに配ります。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/settings-example" rel="noopener">Settings examples: An organization's managed settings</a>、<a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
   <h2 id="s3">チームごとにファイルを分ける</h2>
   <p>複数のチームがポリシーの一部ずつを持つ場合は、共有ファイルを編集する代わりに、<code>managed-settings.json</code> と同じディレクトリの <code>managed-settings.d/</code> に部分ごとのファイルを置けます。Claude Code は <code>managed-settings.json</code> を先に、次に <code>*.json</code> を英数字順に統合します。<code>10-telemetry.json</code> と <code>20-security.json</code> のように数字の接頭辞で順序を決められます。</p>
   <p>同じキーが複数のファイルにある場合の扱いは次のとおりです。</p>
@@ -255,6 +319,7 @@
   <h2 id="refs">参考(執筆時点)</h2>
   <ul>
     <li><a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a>(公式ドキュメント)</li>
+    <li><a href="https://code.claude.com/docs/en/settings-example" rel="noopener">Settings examples</a>(公式ドキュメント)</li>
   </ul>
   <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
   </article>
@@ -265,7 +330,7 @@
   <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
   <ul class="offer-list">
     <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-standard-kit-joshisu.jpg" width="1280" height="670" alt="note の有料記事「情シスが配る Claude Code 社内標準セット」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n9524803d393b" rel="noopener">情シスが配る Claude Code 社内標準セット</a><span class="tag">note の有料記事・1,480円</span><br><span class="hint">settings.json の全文と実機での確認結果、CLAUDE.md のひな形、業務スキル5本の SKILL.md、配置スクリプト、動作確認のチェックリストを、配布できる形でまとめています(Windows 前提)。(無料部分で考え方と目次を確認できます)</span></span></li>
-    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-ringi-template.jpg" width="1280" height="670" alt="note の有料記事「中小企業の情シスが Claude Code を導入するときの稟議突破ガイド」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・1,500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-ringi-template.jpg" width="1280" height="670" alt="note の有料記事「中小企業の情シスが Claude Code を導入するときの稟議突破ガイド」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n45f5986ccbf7" rel="noopener">中小企業の情シスが Claude Code を導入するときの稟議突破ガイド</a><span class="tag">note の有料記事・500円</span><br><span class="hint">稟議書テンプレート全文、ROI 試算の構造(数式と計算例)、想定質問15個と回答例をまとめています。(無料部分で稟議が止まる理由と中身の一覧を確認できます)</span></span></li>
   </ul>
   <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
 </aside>
@@ -297,5 +362,6 @@
 </footer>
 <script src="../../assets/ui.js" defer></script>
 <script src="../../assets/count.js" defer></script>
+<script src="../../assets/click.js" defer></script>
 </body>
 </html>

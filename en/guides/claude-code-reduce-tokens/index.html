@@ -32,7 +32,7 @@
   "headline": "How to reduce Claude Code token usage and how to check it",
   "description": "How to reduce Claude Code token usage, organized around the official docs. Covers checking with /usage, /clear, model selection, extended thinking, and reviewing MCP, written for corporate IT.",
   "datePublished": "2026-10-15",
-  "dateModified": "2026-10-15",
+  "dateModified": "2026-11-26",
   "inLanguage": "en",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-reduce-tokens/",
   "author": {
@@ -142,6 +142,7 @@
         <li><a href="#s3">Review your model and extended thinking settings</a></li>
         <li><a href="#s4">MCP, hooks, subagents, and how to write requests</a></li>
         <li><a href="#s5">When usage tends to grow, and managing it across an organization</a></li>
+        <li><a href="#s6">Common pitfalls</a></li>
         <li><a href="#faq-heading">FAQ</a></li>
         <li><a href="#refs">References (as of writing)</a></li>
       </ol>
@@ -149,7 +150,7 @@
   </aside>
   <article>
   <h1>How to reduce Claude Code token usage and how to check it</h1>
-  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> · Chuki DX Lab · The content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section.</p>
+  <p class="article-meta">Published: <time datetime="2026-10-15">October 15, 2026</time> | Updated: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (October 2026); sources are listed at the end of each section</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
@@ -205,6 +206,19 @@ When you are using compact, please focus on test output and code changes</code><
   <p>When you manage usage at the organization level, Teams and Enterprise rely mainly on the spend reports and limit settings in the admin console, Console on workspace spend limits, and cloud-provider setups on each cloud's billing console. OpenTelemetry works with any setup. Check the official docs for detailed setup steps.</p>
   <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
 
+  <h2 id="s6">Common pitfalls</h2>
+  <p>Based on the official docs, here are the points that commonly cause confusion when you try to reduce usage.</p>
+  <ul>
+    <li><strong>Treating the dollar figure in the <code>/usage</code> Session block as your bill</strong>: The Session block is shown for API users. Pro, Max, and Ultra usage is included in the subscription, so this cost figure is not relevant to billing. If you're on a subscription, look at the plan usage bar and breakdown on the same screen.</li>
+    <li><strong>The token count next to the spinner doesn't match <code>/usage</code></strong>: The number next to the spinner is an estimate of what that turn output. It doesn't include the prompt you sent or the conversation history, and it resets each turn. Usage by model in <code>/usage</code> is the total for the whole session, so they don't match.</li>
+    <li><strong>Usage can grow while you are away</strong>: session recaps and idle compaction can use tokens even when you are doing nothing. If prompt suggestions are on, a short request is also sent after Claude's response. How to turn these off is covered at the official docs link.</li>
+    <li><strong>You see "rate limited until" in <code>/usage</code> and think your work has been blocked</strong>: This means Claude Code can't fetch your plan's limit information. It does not mean your work with Claude is being restricted. After the displayed time has passed, press <code>r</code> to fetch it again.</li>
+    <li><strong>Running <code>/compact</code> on a large conversation to save money</strong>: <code>/compact</code> reads the conversation it summarizes, so with a large context it is itself a large request. If you don't need to continue and just want a fresh start, <code>/clear</code> costs nothing.</li>
+    <li><strong>The breakdown doesn't show another PC or claude.ai</strong>: The <code>/usage</code> breakdown is an estimate calculated from this PC's session history. Usage on other devices or on claude.ai is not included.</li>
+  </ul>
+  <p>Related guides: for handling long conversations, see "<a href="../claude-code-context-compact/index.html">The context window and /compact</a>"; for operations that invalidate the cache, "<a href="../claude-code-prompt-caching/index.html">How prompt caching works</a>"; for switching models, "<a href="../claude-code-model-select/index.html">Choosing and switching models</a>"; and for monthly costs when using the API, "<a href="../claude-code-api-cost-estimate/index.html">How to estimate API costs</a>".</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
   <section aria-labelledby="faq-heading">
     <h2 id="faq-heading">FAQ</h2>
     <details>
@@ -237,12 +251,22 @@ When you are using compact, please focus on test output and code changes</code><
   </article>
   </div>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">Related guides</h2>
     <ul>
       <li><a href="../claude-code-prompt-caching/index.html">How Claude Code prompt caching works: what keeps it and what breaks it</a><span class="tag">Guide</span></li>
       <li><a href="../claude-code-context-compact/index.html">Claude Code context and /compact: what stays and what is lost in a long conversation</a><span class="tag">Guide</span></li>
       <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-model-select/index.html">How to choose and switch models in Claude Code (/model and settings)</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-usage-limit-auto-continue/index.html">When Claude Code stops at a usage limit: auto-continue after reset, and when it doesn't continue</a><span class="tag">Guide</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -262,9 +286,11 @@ When you are using compact, please focus on test output and code changes</code><
     <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
     <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
     <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
   </div>
 </footer>
 <script src="../../../assets/ui.js" defer></script>
 <script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
 </body>
 </html>

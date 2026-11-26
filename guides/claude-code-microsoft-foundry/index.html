@@ -32,7 +32,7 @@
   "headline": "Claude Code を Microsoft Foundry(Azure)経由で使う設定手順と注意点",
   "description": "Claude Code を Azure の Microsoft Foundry 経由で動かすための前提、認証方式、環境変数、モデルバージョンの固定、権限設定を、公式ドキュメントに基づいて情シス向けに整理します。",
   "datePublished": "2026-10-17",
-  "dateModified": "2026-10-17",
+  "dateModified": "2026-11-26",
   "inLanguage": "ja",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-microsoft-foundry/",
   "author": {
@@ -143,6 +143,7 @@
         <li><a href="#s3">手順3〜5:環境変数、モデル固定、起動確認</a></li>
         <li><a href="#s4">権限設定と1Mトークンのコンテキスト</a></li>
         <li><a href="#s5">つまずきやすい点と配布前の確認</a></li>
+        <li><a href="#s6">デプロイできないとき(リージョン・サブスクリプション・権限)</a></li>
         <li><a href="#faq-heading">よくある質問</a></li>
         <li><a href="#refs">参考(執筆時点)</a></li>
       </ol>
@@ -150,7 +151,7 @@
   </aside>
   <article>
   <h1>Claude Code を Microsoft Foundry(Azure)経由で使う設定手順と注意点</h1>
-  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+  <p class="article-meta">公開: <time datetime="2026-10-17">2026年10月17日</time> ・ 更新: <time datetime="2026-11-26">2026年11月26日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
@@ -240,6 +241,27 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
   <p>社内に配る情シスの方は、モデルバージョンの固定、Haiku デプロイの有無、デプロイ名の付け方(1M の判別に影響します)を先に決めておくと安全です。執筆時点(2026年10月)の内容なので、導入前に公式ドキュメントで最新を確認してください。</p>
   <p class="hint">出典: <a href="https://code.claude.com/docs/en/microsoft-foundry" rel="noopener">Claude Code on Microsoft Foundry</a></p>
 
+  <h2 id="s6">デプロイできないとき(リージョン・サブスクリプション・権限)</h2>
+  <p>Claude のデプロイが作れない・選べないときは、Claude Code の設定より前の、Azure 側の条件を確かめます。以下は Microsoft Learn と Anthropic のドキュメントに書かれている条件です(2026年11月26日に確認)。</p>
+  <h3>1. リソース(プロジェクト)のリージョンが対応しているか</h3>
+  <p>Microsoft Learn の手順では、Foundry のプロジェクトを Claude モデルのデプロイに対応した場所に作ることが前提です。リージョンごとの対応は「Region availability by deployment type」の表で示され、表のリージョンにデプロイするには、そのリージョンにプロジェクトかハブが必要とされています。Anthropic のドキュメントも、モデルが使える Azure リージョンに Foundry のリソースを作るよう案内しています。</p>
+  <p>2026年11月26日に表を確認した時点では、Global Standard で Claude モデルに印が付いていたのは米国のリージョン(<code>eastus2</code> など)と <code>swedencentral</code> で、アジア太平洋の表(<code>japaneast</code>・<code>japanwest</code> を含む)には Claude モデルの行がありませんでした。モデルによって対応リージョンが違い(例: Fable 系は <code>eastus2</code> と <code>swedencentral</code> だけ)、表は更新されます。日本東部で作れないときは、デプロイの前に最新の表で、使うモデルの行を確認してください。Microsoft Learn のトラブルシューティングでは、「Region not available」は対応していないリージョンへのデプロイが原因で、使うモデルに対応したリージョンにデプロイするよう案内されています。</p>
+  <h3>2. サブスクリプションの種類と請求先の国</h3>
+  <p>Microsoft Learn によると、Claude モデルを使うには、Anthropic がモデルを販売している国・地域に請求先がある、有料の Azure サブスクリプションが必要です。次の種類は対応していません。</p>
+  <ul>
+    <li>CSP(Cloud Solution Provider)のサブスクリプション</li>
+    <li>従量課金の支払い方法が有効でないサブスクリプション(学生向け、無料試用、スタートアップのクレジットなど)</li>
+    <li>Azure のクレジットだけを使うスポンサー付きのサブスクリプション</li>
+  </ul>
+  <p>「Subscription eligibility error」は、サブスクリプションの種類か請求先の地域が対応していないか、そのモデルの既定のクォータが 0 の場合に出るとされています。「Offer not available in your country/region」「Marketplace purchase eligibility check failed」も、提供元がその国・地域やリージョンでモデルを提供していない場合のエラーとして挙げられています。</p>
+  <h3>3. Marketplace の購読と権限</h3>
+  <ul>
+    <li>Anthropic のドキュメントによると、最初の Claude のデプロイでは Azure Marketplace の規約を確認し、<strong>Agree and Proceed</strong> で Marketplace のオファーを購読します。Microsoft Learn では、パートナーのモデルの購読に必要な権限を持っていることが前提条件に挙げられています。</li>
+    <li>403 Forbidden は、リソースやサブスクリプションの権限不足が原因とされています。Microsoft Learn ではリソースグループの Contributor か Owner、Entra ID の場合は Cognitive Services User のロールを確認するよう案内されています。</li>
+    <li>「Model not found」「Deployment not found」が出る場合は、デプロイ名が正しいか、モデルがそのリージョンで使えるかを確認します(Anthropic のドキュメント)。Claude Code ではデプロイ名をモデル用の環境変数に入れるので、手順4の値とポータルのデプロイ名が一致しているかも見ます。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude" rel="noopener">Deploy and use Claude models in Microsoft Foundry(Microsoft Learn)</a>、<a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners#region-availability-by-deployment-type" rel="noopener">Foundry Models from partners and community: Region availability by deployment type(Microsoft Learn)</a>、<a href="https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry" rel="noopener">Claude in Microsoft Foundry(Anthropic)</a></p>
+
   <section aria-labelledby="faq-heading">
     <h2 id="faq-heading">よくある質問</h2>
     <details>
@@ -267,6 +289,9 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
   <h2 id="refs">参考(執筆時点)</h2>
   <ul>
     <li><a href="https://code.claude.com/docs/en/microsoft-foundry" rel="noopener">Claude Code on Microsoft Foundry</a>(公式ドキュメント)</li>
+    <li><a href="https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry" rel="noopener">Claude in Microsoft Foundry</a>(Anthropic の公式ドキュメント)</li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude" rel="noopener">Deploy and use Claude models in Microsoft Foundry</a>(Microsoft Learn)</li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners" rel="noopener">Foundry Models from partners and community</a>(Microsoft Learn。リージョンの表)</li>
   </ul>
   <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
   </article>
@@ -286,6 +311,7 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
     <ul>
       <li><a href="../claude-code-cloud-providers/index.html">Claude Code を企業導入するには?Bedrock・Google Cloud など提供経路の選び方</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-login-auth/index.html">Claude Code のログイン方法の違いとチームでの認証設定</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-usage-per-user/index.html">Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合</a><span class="tag">解説</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -309,5 +335,6 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
 </footer>
 <script src="../../assets/ui.js" defer></script>
 <script src="../../assets/count.js" defer></script>
+<script src="../../assets/click.js" defer></script>
 </body>
 </html>

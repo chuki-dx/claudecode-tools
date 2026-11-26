@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code extension settings for VS Code: permission modes like Manual, and using the CLI | Chuki DX Lab</title>
+<meta name="description" content="This guide covers, based on the official docs, the VS Code Claude Code extension: the install link, the initialPermissionMode and useTerminal settings, the permission modes including Manual, and how to use claude in the integrated terminal.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode-settings/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode-settings/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode-settings/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-vscode-settings/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="VS Code Claude Code extension settings: permission modes such as Manual, and using the CLI">
+<meta property="og:description" content="This guide covers, based on the official docs, the VS Code Claude Code extension: the install link, the initialPermissionMode and useTerminal settings, the permission modes including Manual, and how to use claude in the integrated terminal.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode-settings/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-vscode-settings.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="VS Code Claude Code extension settings: permission modes such as Manual, and using the CLI">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-vscode-settings.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "VS Code Claude Code extension settings: permission modes such as Manual, and using the CLI",
+  "description": "This guide covers, based on the official docs, the VS Code Claude Code extension: the install link, the initialPermissionMode and useTerminal settings, the permission modes including Manual, and how to use claude in the integrated terminal.",
+  "datePublished": "2026-11-26",
+  "dateModified": "2026-11-26",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode-settings/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "VS Code extension settings and permission modes",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-vscode-settings/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Manual mode separate from default?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "manual is not a separate mode; it is an alias for default. According to the official docs, Manual mode is written as default in the settings value, and in the extension's initialPermissionMode, manual selects the Manual mode shown in the mode display."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I install the extension, can I also use the claude command in a terminal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The extension does not add claude to your PATH, so to use it in a terminal you need to install the CLI separately. If it still can't be found after installing, see the PATH troubleshooting steps in the official docs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I set initialPermissionMode in workspace settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The official docs say VS Code reads initialPermissionMode from user settings and ignores workspace values. Before v2.1.225, workspace values were also applied."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-vscode-settings/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">VS Code extension settings and permission modes</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Installation methods and prerequisites</a></li>
+        <li><a href="#s2">Where the extension settings are and the main options</a></li>
+        <li><a href="#s3">Permission modes and where Manual fits</a></li>
+        <li><a href="#s4">Which mode a new conversation starts in</a></li>
+        <li><a href="#s5">Differences between the extension and the CLI, and how to use claude in the integrated terminal</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>VS Code Claude Code extension settings: permission modes such as Manual, and using the CLI</h1>
+  <p class="article-meta">Published: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (November 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>Install the extension with the "Install for VS Code" link in the official docs, or by searching for "Claude Code" in the Extensions view. To use <code>claude</code> in a terminal, you need to install the CLI separately.</li>
+      <li>Manual is an alias for <code>default</code>. Choose a permission mode within the "Best for" range given in the source. The mode a new conversation starts in depends on <code>initialPermissionMode</code> and on your Claude Code version.</li>
+      <li>To get a terminal-style screen, use <code>useTerminal</code>. You can carry a conversation from the extension over to the CLI with <code>claude --resume</code>.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Installation methods and prerequisites</h2>
+  <p>According to the official docs, the Claude Code extension (Claude Code is Anthropic's AI coding agent that runs in the terminal) requires VS Code 1.94.0 or later and an Anthropic account. The account can be a paid Claude subscription (Pro, Max, Ultra, Team, Enterprise) or a Claude Console account, and an API key is not required. If you use an external provider such as Amazon Bedrock, check the official docs.</p>
+  <p>There are two ways to install. Open the "Install for VS Code" link (which points to <code>vscode:extension/anthropic.claude-code</code>), or open the Extensions view with <code>Ctrl+Shift+X</code> (<code>Cmd+Shift+X</code> on Mac), search for "Claude Code", and click <strong>Install</strong>.</p>
+  <p>The extension marketplace is third-party software, and the docs note that Anthropic does not recommend, maintain, or audit it. If the extension doesn't appear after installation, try restarting VS Code or running "Developer: Reload Window" from the Command Palette.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s2">Where the extension settings are and the main options</h2>
+  <p>The official docs split settings into two places. The VS Code extension settings (<code>Ctrl+,</code> (<code>Cmd+,</code> on Mac), then <strong>Extensions &gt; Claude Code</strong>) control how the extension behaves. <code>~/.claude/settings.json</code> is shared by the extension and the CLI, and you use it for allowed commands, environment variables, hooks, MCP servers, and so on.</p>
+  <p>The main extension settings are as follows.</p>
+  <ul>
+    <li><code>useTerminal</code> (default <code>false</code>): Launches Claude in terminal mode instead of the graphical panel.</li>
+    <li><code>initialPermissionMode</code> (unset by default): Controls the approval prompt for new conversations. The values are <code>default</code>, <code>plan</code>, <code>acceptEdits</code>, and <code>bypassPermissions</code>.</li>
+    <li><code>preferredLocation</code> (default <code>panel</code>): Where Claude opens, either <code>sidebar</code> (right) or <code>panel</code> (new tab).</li>
+    <li><code>allowDangerouslySkipPermissions</code> (default <code>false</code>): Adds Bypass permissions to the mode selection. The docs say to use it only in sandboxes without internet access.</li>
+  </ul>
+  <p>For <code>initialPermissionMode</code>, only the value in user settings is read; the workspace value is ignored. Before v2.1.225, the default was <code>default</code> and the workspace value was also applied.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+  <h2 id="s3">Permission modes and where Manual fits</h2>
+  <p>According to the official docs, each mode is a trade-off between convenience and oversight. Manual mode is written as <code>default</code> in settings values. In the extension's <code>initialPermissionMode</code>, too, <code>manual</code> is an alias for <code>default</code>, and you pick <strong>Manual</strong> in the mode display. In the CLI you can also write <code>claude --permission-mode manual</code> or <code>"defaultMode": "manual"</code>.</p>
+  <p>The "Best for" entries in the source table are below. I don't claim which is best; use them as input for choosing based on your use case and internal rules.</p>
+  <ul>
+    <li><code>default</code> (Manual): sensitive work and unfamiliar code</li>
+    <li><code>acceptEdits</code>: Iterative work on code you are reviewing</li>
+    <li><code>plan</code>: Work that involves exploring the codebase before making changes</li>
+    <li><code>auto</code>: Long tasks, or when you want fewer approval prompts</li>
+    <li><code>dontAsk</code>: Locked-down CI and scripts</li>
+    <li><code>bypassPermissions</code>: isolated containers and VMs only</li>
+  </ul>
+  <p>The extension's <code>initialPermissionMode</code> accepts the four values from the previous section. Deny rules apply in all modes, including <code>bypassPermissions</code>, while allow rules have no effect in <code>bypassPermissions</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s4">Which mode a new conversation starts in</h2>
+  <p>If you leave <code>initialPermissionMode</code> unset, the extension decides the starting mode. According to the official docs as of writing (November 2026), when you start in the terminal or the VS Code extension, the built-in default is <code>auto</code> on Claude Code v2.1.283 and later. Before that, it was <code>auto</code> for sessions on Pro, Max, Ultra, and Team plans that fetch the feature flag, and <code>default</code> otherwise.</p>
+  <p>However, even if <code>auto</code> is selected, the session starts in Manual if auto mode isn't available in that session. It is also <code>default</code> if <code>disableAutoMode</code> is <code>"disable"</code> in any settings file.</p>
+  <p>In the extension too, from v2.1.283 onward <code>~/.claude/settings.json</code> can be one of the inputs for the starting mode (before that, only for Pro, Max, Ultra, and Team plans). However, when the extension decides the starting mode, it does not read project settings. For the exact order, see "Switch permission modes" in the official docs.</p>
+  <p>If you want terminal sessions to always start in Manual, save the following in <code>~/.claude/settings.json</code>.</p>
+<pre><code>{
+  "permissions": {
+    "defaultMode": "default"
+  }
+}</code></pre>
+  <p>In the next session, the status bar shows <code>⏸ manual mode on</code>.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+  <h2 id="s5">Differences between the extension and the CLI, and how to use claude in the integrated terminal</h2>
+  <p>According to the official docs, the extension is a graphical panel and the CLI is a terminal command line, and some features are CLI-only. The CLI has all commands and skills, while the extension has a subset (check with <code>/</code>). The <code>!</code> Bash shortcut and tab completion are CLI-only.</p>
+  <p>If you want a CLI-style screen, check <strong>Use Terminal</strong> (<code>useTerminal</code>) under <strong>Extensions &gt; Claude Code</strong>.</p>
+  <p>To use <code>claude</code> in the integrated terminal, you need to install the CLI separately. The extension does not add <code>claude</code> to your PATH, and the bundled CLI is a private copy for the chat panel. If <code>claude</code> still can't be found after installing, see the PATH troubleshooting steps in the official docs.</p>
+  <p>To connect the extension to an integrated terminal, install the extension and then start <code>claude</code>; it connects automatically. Claude Code v2.1.318 and later do not install the extension automatically, so until you install it, <code>/ide</code> reports "No available IDEs detected". In an external terminal, connect to VS Code with <code>/ide</code>.</p>
+  <p>The extension and the CLI share conversation history. To continue an extension conversation in the CLI, run <code>claude --resume</code> in a terminal and pick it from the selection screen.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Is Manual mode separate from default?</summary>
+      <p><code>manual</code> is not a separate mode; it is an alias for <code>default</code>. According to the official docs, Manual mode is written as <code>default</code> in the settings value, and in the extension's <code>initialPermissionMode</code>, <code>manual</code> selects the <strong>Manual</strong> mode shown in the mode display.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a></p>
+    </details>
+    <details>
+      <summary>If I install the extension, can I also use the claude command in a terminal?</summary>
+      <p>No. The extension does not add <code>claude</code> to your PATH, so to use it in a terminal you need to install the CLI separately. If it still can't be found after installing, see the PATH troubleshooting steps in the official docs.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+    <details>
+      <summary>Can I set initialPermissionMode in workspace settings?</summary>
+      <p>The official docs say VS Code reads <code>initialPermissionMode</code> from user settings and ignores workspace values. Before v2.1.225, workspace values were also applied.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../troubleshooting/index.html">Claude Code Troubleshooting Cheat Sheet</a>: a cheat sheet where you can look up common symptoms of using Claude Code on Windows, with causes and fixes.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/vs-code" rel="noopener">Use Claude Code in VS Code</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/permission-modes" rel="noopener">Choose a permission mode</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-vscode/index.html">Using Claude Code in VS Code: installing the extension and how it differs from the CLI</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-permission-modes/index.html">Claude Code permission modes compared: how to choose between default, acceptEdits, plan, and auto</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-install-windows/index.html">Installing Claude Code on Windows: native vs. WSL and post-install checks</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
+</body>
+</html>

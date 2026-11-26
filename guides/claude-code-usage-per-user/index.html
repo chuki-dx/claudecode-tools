@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合 | 中小DXラボ</title>
+<meta name="description" content="Claude Code のユーザー別の利用コストを、Team・Enterprise の支出レポートから CSV で出す手順と、含まれない利用の条件、Enterprise の API、Console・クラウド経由の確認先を公式情報で整理します。">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="中小DXラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合">
+<meta property="og:description" content="Claude Code のユーザー別の利用コストを、Team・Enterprise の支出レポートから CSV で出す手順と、含まれない利用の条件、Enterprise の API、Console・クラウド経由の確認先を公式情報で整理します。">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-usage-per-user.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/guides-claude-code-usage-per-user.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合",
+  "description": "Claude Code のユーザー別の利用コストを、Team・Enterprise の支出レポートから CSV で出す手順と、含まれない利用の条件、Enterprise の API、Console・クラウド経由の確認先を公式情報で整理します。",
+  "datePublished": "2026-11-26",
+  "dateModified": "2026-11-26",
+  "inLanguage": "ja",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/",
+  "author": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "中小DXラボ"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://chuki-dx.github.io/claudecode-tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "解説",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ユーザー別コストと CSV",
+      "item": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Enterprise の Admin は支出レポートの CSV を出せますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "公式ヘルプセンターによると、Enterprise の Admin が見られるのは Spend を除く分析です。支出の確認は Owner か Primary Owner に依頼してください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "CSV に席の枠内の利用は入りますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "入りません。席ベースの Enterprise プランでは、使用クレジットを有効にした場合に、席の枠を超えた支出だけが反映されます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bedrock などクラウド経由でも、ユーザー別のコストは分かりますか?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "分析ダッシュボードの対象外です。公式ドキュメントでは、OpenTelemetry、Claude apps gateway、LLM gateway の3つの方法が挙げられています。"
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">中小DXラボ <span class="brand-sub">のツール</span></span></a>
+    <nav id="site-nav" aria-label="ツール">
+      <a href="../../settings-generator/index.html">権限設定ジェネレーター</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md 生成</a>
+      <a href="../../skill-generator/index.html">スキル雛形生成</a>
+      <a href="../../troubleshooting/index.html">つまずき早見表</a>
+      <a href="../../cost-calculator/index.html">API 料金 見積もり計算機</a>
+      <a href="../index.html">解説</a>
+      <a href="../../books/index.html">本・有料記事</a>
+    </nav>
+    <a class="lang-switch" href="../../en/guides/claude-code-usage-per-user/index.html" hreflang="en" lang="en" aria-label="Read this page in English" title="English">EN</a>
+    <button type="button" class="theme-toggle" aria-label="配色を切り替える(ライト・ダーク)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <ol>
+      <li><a href="../../index.html">ホーム</a></li>
+      <li><a href="../index.html">解説</a></li>
+      <li aria-current="page">ユーザー別コストと CSV</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="目次">
+    <details class="toc">
+      <summary>目次</summary>
+      <ol>
+        <li><a href="#conclusion-heading">結論</a></li>
+        <li><a href="#s1">契約形態ごとに、ユーザー別の数字を見る場所が違う</a></li>
+        <li><a href="#s2">Team・Enterprise:支出レポートを CSV で出す手順</a></li>
+        <li><a href="#s3">CSV の中身と、含まれない利用・更新の頻度</a></li>
+        <li><a href="#s4">Enterprise の Analytics API と、ダッシュボードのそのほかの CSV</a></li>
+        <li><a href="#s5">Console(API)・クラウド経由の場合の確認先</a></li>
+        <li><a href="#faq-heading">よくある質問</a></li>
+        <li><a href="#refs">参考(執筆時点)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Claude Code のユーザー別コストを CSV で出す:Team・Enterprise の支出レポートと API・クラウドの場合</h1>
+  <p class="article-meta">公開: <time datetime="2026-11-26">2026年11月26日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年11月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">結論</h2>
+    <ul>
+      <li>Team・Enterprise の分析画面にある支出レポートは、ユーザー別・モデル別の CSV として出力できます(更新は日次)。ただし対象は使用クレジットの支出で、席の枠内の利用は含まれません。</li>
+      <li>支出レポートを見られるのは、Team の Owner・Primary Owner と、Enterprise の Owner・Primary Owner です。Enterprise の Admin は Spend 以外の分析を見られます。</li>
+      <li>API 利用(Console)とクラウド経由では確認する場所が別です。クラウド経由は分析画面の対象外なので、OpenTelemetry などで自前に集計します。</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">契約形態ごとに、ユーザー別の数字を見る場所が違う</h2>
+  <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)のユーザー別の利用量やコストは、組織の利用形態によって見る場所が変わります。公式ドキュメントによると、形態は Claude for Teams・Enterprise、Claude Console(API)、クラウド経由(Amazon Bedrock、Google Cloud's Agent Platform、Microsoft Foundry)の3つです。</p>
+  <p>Teams・Enterprise では利用が各メンバーの席の枠から引かれ、Console とクラウドではトークン単位で組織に課金されます。サインイン方法が混在する場合は、各開発者が認証に使った方法で計測されます。</p>
+  <ul>
+    <li>Teams・Enterprise:組織の分析画面の支出レポート(CSV 出力あり)。Enterprise ではさらに Enterprise Analytics API</li>
+    <li>Console(API):Console のダッシュボードと Claude Code Analytics API</li>
+    <li>クラウド経由:OpenTelemetry か LLM gateway</li>
+  </ul>
+  <p>OpenTelemetry は全ての構成で使え、ユーザー別のトークン・コストを自社の監視基盤へほぼリアルタイムで流せる唯一の選択肢とされています。なお、本記事は執筆時点(2026年11月)の公式ドキュメントとヘルプセンターの記載に基づきます。画面名やボタン名は変わることがあるため、実際の画面で確認してください。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s2">Team・Enterprise:支出レポートを CSV で出す手順</h2>
+  <p>公式ヘルプセンターによると、使用状況の分析は Team プランの Owner と Primary Owner、Enterprise プランの Owner・Primary Owner・Admin が使えます。ただし Enterprise の Admin が見られるのは Spend を除く分析です。</p>
+  <p>支出レポートは、選んだ期間について、ユーザー別・モデル別にトークン使用量と推定支出を確認できる CSV です。出力の手順は次のとおりです。</p>
+  <ol>
+    <li>Settings &gt; Analytics を開きます。</li>
+    <li>How much is Claude costing? の節までスクロールします。</li>
+    <li>「Export spend report」ボタンをクリックします。</li>
+    <li>期間を MTD、Last Month、Last 90 Days、Custom から選びます。</li>
+    <li>Custom の場合は開始日と終了日を選びます。最大90日さかのぼれ、最新のデータは前日分です。</li>
+    <li>「Download」をクリックします。</li>
+  </ol>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+  <h2 id="s3">CSV の中身と、含まれない利用・更新の頻度</h2>
+  <p>公式ヘルプセンターによると、CSV の1行は特定の人による特定モデルの利用で、支出は選んだ期間全体で合計されます。列は次のとおりです。</p>
+  <ul>
+    <li>ユーザーのメールアドレス</li>
+    <li>Account UUID</li>
+    <li>Product(Chat、Claude Code、Cowork、Office Agents など)</li>
+    <li>Model と model family</li>
+    <li><code>total_requests</code>:API 呼び出しの回数</li>
+    <li><code>total_prompt_tokens</code>:各リクエストの入力側で消費したトークン数</li>
+    <li><code>total_completion_tokens</code>:Claude が生成したトークン数(拡張思考のトークンを含む)</li>
+    <li><code>total_net_spend_usd</code>:割引・クレジット・交渉レートを適用した後の費用(USD)</li>
+    <li><code>total_gross_spend_usd</code>:割引やクレジットを適用する前の費用(USD)</li>
+  </ul>
+  <h3>席の枠内の利用は含まれない</h3>
+  <p>席ベースの Enterprise プランでは、支出データが対象にするのは席の枠を超えた分の支出です。席ベースの Enterprise プランでは、組織が使用クレジットを有効にしている場合だけ支出レポートが表示され、席の枠内の利用は含まれません。使用量ベースの Enterprise プランでは、組織の全利用が含まれます。Claude Code の公式ドキュメントでも、席の枠内の利用はドルで計測されないと説明されています。</p>
+  <h3>更新の頻度と請求との関係</h3>
+  <p>データは毎日更新され、1日の遅れがあります。ヘルプセンターでは、エクスポートした支出レポートは請求書とおおむね一致するはずとされていますが、プロジェクトタグでグループ化した支出は一致しない場合があります。また、以前は Claude Code にまとめられていた Code Review やセキュリティ機能などの一部は、別の項目として表示されます。</p>
+  <p class="hint">出典: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+  <h2 id="s4">Enterprise の Analytics API と、ダッシュボードのそのほかの CSV</h2>
+  <p>公式ドキュメントによると、Enterprise プランでは Enterprise Analytics API が、Claude Code を含む Claude の各サービスについて、ユーザー別の利用とコストのレポートを返します。Teams プランでは使えないため、Teams では前の節の支出レポート CSV を使います。</p>
+  <p>キーは Primary Owner が <code>read:analytics</code> スコープで作成します。ヘルプセンターによると、Analytics API の有効化とキー作成ができるのは Primary Owner だけで、Owner や Admin には設定画面にそもそも表示されません。これは権限エラーではなく想定どおりの動きです。</p>
+  <p>Claude Code の分析ダッシュボードにも CSV 出力があります。Leaderboard の「Export all users」で全ユーザーの貢献データ(PR とコード行数)が出ますが、これはコストの CSV ではありません。コストは支出レポートで確認します。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/analytics" rel="noopener">Track team usage with analytics</a></p>
+  <h2 id="s5">Console(API)・クラウド経由の場合の確認先</h2>
+  <h3>Console(API)の場合</h3>
+  <p>公式ドキュメントによると、Console の Claude Code 用ダッシュボードで、メンバーごとの支出と受け入れられた行数を確認できます。表示には UsageView 権限が必要で、Developer、Billing、Admin、Owner、Primary Owner のロールが持っています。チームインサイトの表は、既定では直近30日の Members、Spend、Lines accepted を表示します。金額は分析用の推定値で、実際の費用は Cost ページで確認します。</p>
+  <p>日次のユーザー別指標をプログラムで取るには、Admin API key を使って Claude Code Analytics API を呼びます。ダッシュボードの CSV 出力については出典に記載がないため、公式ドキュメントで確認してください。</p>
+  <h3>クラウド経由の場合</h3>
+  <p>Amazon Bedrock などでは、Claude Code からクラウド側のメトリクスが Anthropic に送られないため、分析ダッシュボードと Claude Code Analytics API の対象外です。ユーザー別に集計する選択肢は3つあります。</p>
+  <ul>
+    <li>OpenTelemetry:各開発者のマシンから自社の監視基盤へ出し、ユーザー別のトークン数・コスト・ツール活動を得ます。</li>
+    <li>Claude apps gateway:自社で運用し、ユーザー別の利用の帰属、OTLP メトリクス、ユーザー別の支出上限を提供します。</li>
+    <li>LLM gateway:通信をすべてプロキシ経由にし、キー単位で支出を追跡します。例の LiteLLM はオープンソースで、Anthropic とは無関係であり、セキュリティ監査はされていないとされています。</li>
+  </ul>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">よくある質問</h2>
+    <details>
+      <summary>Enterprise の Admin は支出レポートの CSV を出せますか?</summary>
+      <p>公式ヘルプセンターによると、Enterprise の Admin が見られるのは Spend を除く分析です。支出の確認は Owner か Primary Owner に依頼してください。</p>
+      <p class="hint">出典: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+    </details>
+    <details>
+      <summary>CSV に席の枠内の利用は入りますか?</summary>
+      <p>入りません。席ベースの Enterprise プランでは、使用クレジットを有効にした場合に、席の枠を超えた支出だけが反映されます。</p>
+      <p class="hint">出典: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+    </details>
+    <details>
+      <summary>Bedrock などクラウド経由でも、ユーザー別のコストは分かりますか?</summary>
+      <p>分析ダッシュボードの対象外です。公式ドキュメントでは、OpenTelemetry、Claude apps gateway、LLM gateway の3つの方法が挙げられています。</p>
+      <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">関連する無料ツール</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API 料金 見積もり計算機</a>: 入力・出力・キャッシュのトークン数と人数から、API で使う場合の月額の目安を計算します。</p>
+  </section>
+
+  <h2 id="refs">参考(執筆時点)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a>(公式ドキュメント)</li>
+    <li><a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a>(公式ヘルプセンター)</li>
+    <li><a href="https://code.claude.com/docs/en/analytics" rel="noopener">Track team usage with analytics</a>(公式ドキュメント)</li>
+  </ul>
+  <p class="hint">この記事は、上の出典の内容を中小DXラボが要約・再構成したものです。仕様は変わることがあります。社内で使う・配る前に、公式ドキュメントで最新の情報を確認してください。</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">社内で使える形にまとめた本・記事(有料)</h2>
+  <p>ここで扱っている内容を、配れる設定ファイル・ひな形・手順つきでまとめた中小DXラボの有料コンテンツです。</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/claudecode-usage-cost-dept.jpg" width="1280" height="670" alt="note の有料記事「部署で使う Claude Code の使用量を把握して月額を見積もる」のアイキャッチ画像" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://note.com/chuki_dx_note/n/n068fdd9ea3f5" rel="noopener">部署で使う Claude Code の使用量を把握して月額を見積もる</a><span class="tag">note の有料記事・980円</span><br><span class="hint">ログの保存場所と構造、集計スクリプト全文、API 換算の式、月額見積もりの Excel ひな形、上限とモデルのルールの決め方をまとめています(Windows)。(無料部分で考え方と目次を確認できます)</span></span></li>
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/eyecatch/book-claude-code-for-joshisu.jpg" width="1280" height="670" alt="Zenn の本「情シスのための Claude Code 導入・運用ガイド」の表紙" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://zenn.dev/chukidx_dev/books/claude-code-for-joshisu" rel="noopener">情シスのための Claude Code 導入・運用ガイド</a><span class="tag">Zenn の本・2,500円</span><br><span class="hint">試す前の確認、最初の1週間、稟議、セキュリティ設定、CLAUDE.md の育て方、最初の自動化(Excel 集計)、ノーコードとの使い分け、社内展開までの全10章。付録に settings.json・チェックリスト・ひな形をまとめています。(はじめに〜第2章は無料で読めます)</span></span></li>
+  </ul>
+  <p class="hint">どれも購入前に無料部分で中身を確かめられます。目的別の一覧は<a href="../../books/index.html">本・有料記事の選び方</a>へ。</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">関連する解説</h2>
+    <ul>
+      <li><a href="../claude-code-usage-monitoring/index.html">Claude Code の利用状況を把握する方法:アナリティクスと OpenTelemetry の使い分け</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code の料金・プラン比較:Pro・Max・Team・Enterprise・Console の違いと選び方</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">フォローして新着を受け取る</h2>
+    <p>新しいツール・解説・毎週のレシピ追加を X でお知らせしています。</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>中小DXラボ</span></div>
+    <p>中小DXラボのほかのサイト: <a href="https://shiken.ai-income.jp/" rel="noopener">IT資格・試験日程カレンダー</a> ・ <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar(英語)</a></p>
+    <p>運営: 中小DXラボ ・ <a href="../../about/index.html">運営者情報・免責・広告の方針</a></p>
+    <p>免責: このページの情報は、執筆時点で確認した範囲のものです。Claude Code の仕様は変わることがあります。利用の前に公式ドキュメントで最新の情報を確認してください。このページの情報の利用によって生じた損害について、運営者は責任を負いかねます。</p>
+  </div>
+</footer>
+<script src="../../assets/ui.js" defer></script>
+<script src="../../assets/count.js" defer></script>
+<script src="../../assets/click.js" defer></script>
+</body>
+</html>

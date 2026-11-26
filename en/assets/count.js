@@ -1,11 +1,13 @@
 /* 閲覧数を数えるための小さなスクリプト(scripts/build_site.py が全ページに足す)
    送るもの: 開いたページのパスと、直前に見ていた別サイトのドメイン名と、リンクに付いた utm_source(threads / bluesky など。短い英数字のときだけ)だけ。Cookie・保存・第三者のサービスは使わない
    送り先: 運営者のサーバ(jpexam.ai-income.jp/px.gif。1x1 の画像を返すだけ)
-   ブラウザでトラッキング拒否(Do Not Track / Global Privacy Control)が有効なときと、公開先以外(手元の確認)では送らない */
+   ブラウザでトラッキング拒否(Do Not Track / Global Privacy Control)が有効なときと、公開先以外(手元の確認)では送らない
+   運営者の端末(運営者が自分で付けた Cookie / localStorage の ainc_own=1 がある)では、閲覧数の代わりに「運営者の端末」の合図だけ送る */
 (function () {
   "use strict";
   try {
     if (location.hostname !== "chuki-dx.github.io") return;
+    if(/(?:^|;\s*)ainc_own=1/.test(document.cookie)||(function(){try{return localStorage.getItem('ainc_own')==='1'}catch(e){return false}})()){var o=new Image(1,1);o.src='https://jpexam.ai-income.jp/px.gif?own=1';return;}
     var n = navigator;
     if (n.doNotTrack === "1" || window.doNotTrack === "1" || n.globalPrivacyControl === true || n.webdriver) return;
     var ref = "";

@@ -32,7 +32,7 @@
   "headline": "Claude Code のトークン使用量を減らす方法と、使用量の確かめ方",
   "description": "Claude Code のトークン消費を抑える方法を、公式ドキュメントに沿って整理。/usage での確認、/clear、モデル選択、拡張思考、MCP の見直しまで、情シス向けに解説します。",
   "datePublished": "2026-10-15",
-  "dateModified": "2026-10-15",
+  "dateModified": "2026-11-26",
   "inLanguage": "ja",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/guides/claude-code-reduce-tokens/",
   "author": {
@@ -143,6 +143,7 @@
         <li><a href="#s3">モデルと拡張思考を見直す</a></li>
         <li><a href="#s4">MCP・hooks・サブエージェント・依頼の書き方</a></li>
         <li><a href="#s5">使用量が増えやすい場面と、組織での管理</a></li>
+        <li><a href="#s6">よくあるつまずき</a></li>
         <li><a href="#faq-heading">よくある質問</a></li>
         <li><a href="#refs">参考(執筆時点)</a></li>
       </ol>
@@ -150,7 +151,7 @@
   </aside>
   <article>
   <h1>Claude Code のトークン使用量を減らす方法と、使用量の確かめ方</h1>
-  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
+  <p class="article-meta">公開: <time datetime="2026-10-15">2026年10月15日</time> ・ 更新: <time datetime="2026-11-26">2026年11月26日</time> ・ 中小DXラボ ・ 内容は執筆時点(2026年10月)の公式ドキュメントなどの出典にもとづきます(各節の末尾に出典を記載)</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
@@ -206,6 +207,19 @@ When you are using compact, please focus on test output and code changes</code><
   <p>組織で管理する場合、Teams・Enterprise は管理画面の支出レポートと上限設定、Console はワークスペースの支出上限、クラウド経由は各クラウドの請求コンソールが中心です。OpenTelemetry はどの構成でも使えます。詳しい設定手順は公式ドキュメントで確認してください。</p>
   <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
 
+  <h2 id="s6">よくあるつまずき</h2>
+  <p>公式ドキュメントの説明から、使用量を減らそうとして迷いやすい点をまとめます。</p>
+  <ul>
+    <li><strong><code>/usage</code> の Session のドル表示を請求額だと思う</strong>: Session ブロックは API の利用者向けの表示です。Pro・Max・Ultra の利用料はサブスクリプションに含まれるため、この費用額は請求の面では関係ありません。サブスクリプションの方は、同じ画面のプランの使用量のバーと内訳を見ます。</li>
+    <li><strong>スピナー横のトークン数と <code>/usage</code> が合わない</strong>: スピナー横の数は、そのターンが出力した量の概算です。送ったプロンプトや会話の履歴は含まれず、ターンごとにリセットされます。<code>/usage</code> の Usage by model はセッション全体の合計なので、一致しません。</li>
+    <li><strong>席を外している間も使用量が増える</strong>: セッションの要約(session recap)と待機中のコンパクトは、何もしていない間にもトークンを使うことがあります。プロンプトの候補(prompt suggestions)がオンなら、Claude の応答のあとに短いリクエストも送られます。止め方は公式ドキュメントのリンク先にあります。</li>
+    <li><strong><code>/usage</code> に rate limited until と出て、作業が止められたと思う</strong>: これはプランの上限の情報を取りに行けない状態のことで、Claude との作業が制限されているという意味ではありません。表示された時刻を過ぎてから <code>r</code> で取り直します。</li>
+    <li><strong>節約のつもりで大きな会話を <code>/compact</code> する</strong>: <code>/compact</code> は要約する会話を読むので、大きなコンテキストではそれ自体が大きなリクエストです。続きが要らず、仕切り直したいだけなら <code>/clear</code> には費用がかかりません。</li>
+    <li><strong>内訳に別の PC や claude.ai の分が出ない</strong>: <code>/usage</code> の内訳は、この PC のセッションの履歴から計算した概算です。ほかの端末や claude.ai での利用は含まれません。</li>
+  </ul>
+  <p>関連する解説: 長い会話の扱いは「<a href="../claude-code-context-compact/index.html">コンテキストウィンドウと /compact</a>」、キャッシュが切れる操作は「<a href="../claude-code-prompt-caching/index.html">プロンプトキャッシュの仕組み</a>」、モデルの切り替えは「<a href="../claude-code-model-select/index.html">モデルの選び方と切り替え方</a>」、API で使う場合の月額は「<a href="../claude-code-api-cost-estimate/index.html">API の料金の見積もり方</a>」にまとめています。</p>
+  <p class="hint">出典: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
   <section aria-labelledby="faq-heading">
     <h2 id="faq-heading">よくある質問</h2>
     <details>
@@ -253,6 +267,8 @@ When you are using compact, please focus on test output and code changes</code><
       <li><a href="../claude-code-prompt-caching/index.html">Claude Code のプロンプトキャッシュの仕組み:効く操作・切れる操作</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-context-compact/index.html">Claude Code のコンテキストと /compact:長い会話で何が残り、何が消えるか</a><span class="tag">解説</span></li>
       <li><a href="../claude-code-api-cost-estimate/index.html">Claude Code を API で使うときの料金の見積もり方(トークンの数え方と単価)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-model-select/index.html">Claude Code のモデルの選び方と切り替え方(/model と設定)</a><span class="tag">解説</span></li>
+      <li><a href="../claude-code-usage-limit-auto-continue/index.html">Claude Code が上限で止まったら:リセット後に自動で続ける設定と、続かない場合</a><span class="tag">解説</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -276,5 +292,6 @@ When you are using compact, please focus on test output and code changes</code><
 </footer>
 <script src="../../assets/ui.js" defer></script>
 <script src="../../assets/count.js" defer></script>
+<script src="../../assets/click.js" defer></script>
 </body>
 </html>

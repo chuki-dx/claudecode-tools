@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Export Claude Code Cost per User as CSV: Spend Reports for Team and Enterprise, and for API and Cloud Usage | Chuki DX Lab</title>
+<meta name="description" content="This guide covers how to export per-user Claude Code costs as a CSV from the Team and Enterprise spend report, which usage is not included, the Enterprise API, and where to check on Console and cloud providers, based on official information.">
+<link rel="canonical" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="ja" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="en" href="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/">
+<link rel="alternate" hreflang="x-default" href="https://chuki-dx.github.io/claudecode-tools/guides/claude-code-usage-per-user/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Chuki DX Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Export Claude Code per-user costs as CSV: spend reports for Team and Enterprise, and for API and cloud setups">
+<meta property="og:description" content="This guide covers how to export per-user Claude Code costs as a CSV from the Team and Enterprise spend report, which usage is not included, the Enterprise API, and where to check on Console and cloud providers, based on official information.">
+<meta property="og:url" content="https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-usage-per-user.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Export Claude Code per-user costs as CSV: spend reports for Team and Enterprise, and for API and cloud setups">
+<meta name="twitter:image" content="https://chuki-dx.github.io/claudecode-tools/og/en-guides-claude-code-usage-per-user.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#07080d">
+<script>(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{var m=/(?:^|;)dxl-theme=(light|dark)(?:;|$)/.exec(window.name||'');if(m)d.setAttribute('data-theme',m[1]);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Export Claude Code per-user costs as CSV: spend reports for Team and Enterprise, and for API and cloud setups",
+  "description": "This guide covers how to export per-user Claude Code costs as a CSV from the Team and Enterprise spend report, which usage is not included, the Enterprise API, and where to check on Console and cloud providers, based on official information.",
+  "datePublished": "2026-11-26",
+  "dateModified": "2026-11-26",
+  "inLanguage": "en",
+  "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/",
+  "author": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Chuki DX Lab"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Guides",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Per-user cost and CSV",
+      "item": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-usage-per-user/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can an Enterprise Admin export the spend report as CSV?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to the official Help Center, an Enterprise Admin can view analytics other than Spend. To check spend, ask an Owner or the Primary Owner."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the CSV include usage within seat allowances?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. On seat-based Enterprise plans, if you enable usage credits, only spend beyond the seat allowance is reflected."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see per-user cost when using a cloud provider such as Bedrock?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "These are outside the analytics dashboard. The official docs list three methods: OpenTelemetry, Claude apps gateway, and LLM gateway."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body class="pg-guide">
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../index.html"><svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><defs><linearGradient id="dxl-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".55" stop-color="#4f7bff"/><stop offset="1" stop-color="#19c3e6"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dxl-g)"/><rect x="1.5" y="1.5" width="29" height="29" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".28"/><path d="M9 11.5l5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 21.5h6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><circle cx="23.5" cy="10" r="2.2" fill="#fff" fill-opacity=".9"/></svg><span class="brand-name">Chuki DX Lab <span class="brand-sub">Tools</span></span></a>
+    <nav id="site-nav" aria-label="Tools">
+      <a href="../../settings-generator/index.html">Permissions Generator</a>
+      <a href="../../claude-md-generator/index.html">CLAUDE.md Generator</a>
+      <a href="../../skill-generator/index.html">Skill Generator</a>
+      <a href="../../troubleshooting/index.html">Troubleshooting Cheat Sheet</a>
+      <a href="../../cost-calculator/index.html">API Cost Calculator</a>
+      <a href="../index.html">Guides</a>
+    </nav>
+    <a class="lang-switch" href="../../../guides/claude-code-usage-per-user/index.html" hreflang="ja" lang="ja" aria-label="このページを日本語で読む" title="日本語">JA</a>
+    <button type="button" class="theme-toggle" aria-label="Switch color theme (light / dark)" hidden><svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu" hidden><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../index.html">Guides</a></li>
+      <li aria-current="page">Per-user cost and CSV</li>
+    </ol>
+  </nav>
+
+  <div class="article-layout">
+  <aside class="toc-wrap" aria-label="Contents">
+    <details class="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#conclusion-heading">Key takeaways</a></li>
+        <li><a href="#s1">Where to see per-user numbers depends on your contract type</a></li>
+        <li><a href="#s2">Team and Enterprise: how to export the spend report as CSV</a></li>
+        <li><a href="#s3">What the CSV contains, what it excludes, and how often it updates</a></li>
+        <li><a href="#s4">The Enterprise Analytics API and other CSV exports from the dashboard</a></li>
+        <li><a href="#s5">Where to check for Console (API) and cloud setups</a></li>
+        <li><a href="#faq-heading">FAQ</a></li>
+        <li><a href="#refs">References (as of writing)</a></li>
+      </ol>
+    </details>
+  </aside>
+  <article>
+  <h1>Export Claude Code per-user costs as CSV: spend reports for Team and Enterprise, and for API and cloud setups</h1>
+  <p class="article-meta">Published: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (November 2026); sources are listed at the end of each section</p>
+
+  <section class="card summary-box" aria-labelledby="conclusion-heading">
+    <h2 id="conclusion-heading">Key takeaways</h2>
+    <ul>
+      <li>The spend report in the Team and Enterprise analytics screen can be exported as a CSV by user and by model (updated daily). However, it covers only spend on usage credits and does not include usage within seat allowances.</li>
+      <li>The spend report can be viewed by Owners and Primary Owners on Team, and by Owners and Primary Owners on Enterprise. Enterprise Admins can view analytics other than Spend.</li>
+      <li>API usage (Console) and usage through cloud providers are checked in different places. Cloud usage is outside the analytics screen, so aggregate it yourself with OpenTelemetry or similar.</li>
+    </ul>
+  </section>
+
+  <h2 id="s1">Where to see per-user numbers depends on your contract type</h2>
+  <p>Where you view per-user usage and cost for Claude Code (Anthropic's AI coding agent that runs in the terminal) depends on how your organization uses it. According to the official docs, there are three types: Claude for Teams and Enterprise, Claude Console (API), and cloud providers (Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry).</p>
+  <p>On Teams and Enterprise, usage is deducted from each member's seat allowance. On Console and cloud providers, the organization is billed per token. If people sign in in different ways, usage is measured by the method each developer used to authenticate.</p>
+  <ul>
+    <li>Teams and Enterprise: the spend report in the organization's analytics screen (CSV export available). Enterprise also has the Enterprise Analytics API.</li>
+    <li>Console (API): the Console dashboard and the Claude Code Analytics API</li>
+    <li>Via cloud providers: OpenTelemetry or an LLM gateway</li>
+  </ul>
+  <p>OpenTelemetry works with every setup and is described as the only option that can stream per-user token and cost data to your own monitoring stack in near real time. This guide is based on the official docs and Help Center as of writing (November 2026). Screen and button names may change, so check them on your actual screen.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+  <h2 id="s2">Team and Enterprise: how to export the spend report as CSV</h2>
+  <p>According to the official Help Center, usage analytics are available to the Owner and Primary Owner on Team plans, and to the Owner, Primary Owner, and Admin on Enterprise plans. However, Enterprise Admins can see only the analytics other than Spend.</p>
+  <p>The spend report is a CSV that shows token usage and estimated spend by user and by model for the period you select. Here is how to export it.</p>
+  <ol>
+    <li>Open Settings &gt; Analytics.</li>
+    <li>Scroll to the How much is Claude costing? section.</li>
+    <li>Click the "Export spend report" button.</li>
+    <li>Choose a period from MTD, Last Month, Last 90 Days, or Custom.</li>
+    <li>For Custom, choose a start date and an end date. You can go back up to 90 days, and the most recent data is from the previous day.</li>
+    <li>Click "Download".</li>
+  </ol>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+  <h2 id="s3">What the CSV contains, what it excludes, and how often it updates</h2>
+  <p>According to the official Help Center, each CSV row is one specific person's usage of one specific model, and spend is totaled across the entire selected period. The columns are as follows.</p>
+  <ul>
+    <li>User email address</li>
+    <li>Account UUID</li>
+    <li>Product (Chat, Claude Code, Cowork, Office Agents, and more)</li>
+    <li>Model and model family</li>
+    <li><code>total_requests</code>: Number of API calls</li>
+    <li><code>total_prompt_tokens</code>: Number of tokens consumed on the input side of each request</li>
+    <li><code>total_completion_tokens</code>: The number of tokens Claude generated (including extended thinking tokens)</li>
+    <li><code>total_net_spend_usd</code>: Cost (USD) after discounts, credits, and negotiated rates are applied</li>
+    <li><code>total_gross_spend_usd</code>: Cost in USD before discounts or credits are applied</li>
+  </ul>
+  <h3>Usage within the seat allowance is not included</h3>
+  <p>On seat-based Enterprise plans, the spend data covers only spend beyond the seat allowance. On seat-based Enterprise plans, the spend report appears only if the organization has enabled usage credits, and it does not include usage within the seat allowance. On usage-based Enterprise plans, all of the organization's usage is included. The official Claude Code docs also explain that usage within the seat allowance is not measured in dollars.</p>
+  <h3>Update frequency and how it relates to billing</h3>
+  <p>Data is updated daily, with a one-day delay. The Help Center says an exported spend report should roughly match your invoice, but spend grouped by project tag may not match. Also, some items that used to be bundled under Claude Code, such as Code Review and security features, now appear as separate line items.</p>
+  <p class="hint">Source: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+  <h2 id="s4">The Enterprise Analytics API and other CSV exports from the dashboard</h2>
+  <p>According to the official docs, on the Enterprise plan the Enterprise Analytics API returns per-user usage and cost reports for Claude services, including Claude Code. It is not available on the Teams plan, so for Teams, use the spend report CSV described in the previous section.</p>
+  <p>The Primary Owner creates the key with the <code>read:analytics</code> scope. According to the Help Center, only the Primary Owner can enable the Analytics API and create keys, and it isn't shown in the settings screen at all for Owners or Admins. This is expected behavior, not a permissions error.</p>
+  <p>The Claude Code analytics dashboard also has a CSV export. "Export all users" in the Leaderboard outputs contribution data for all users (PRs and lines of code), but this is not a cost CSV. Check costs in the spend report.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/analytics" rel="noopener">Track team usage with analytics</a></p>
+  <h2 id="s5">Where to check for Console (API) and cloud setups</h2>
+  <h3>For Console (API)</h3>
+  <p>According to the official docs, the Claude Code dashboard in the Console shows spend and accepted lines per member. Viewing it requires the UsageView permission, which the Developer, Billing, Admin, Owner, and Primary Owner roles have. By default, the team insights table shows Members, Spend, and Lines accepted for the last 30 days. The amounts are estimates for analysis; check the Cost page for actual charges.</p>
+  <p>To pull daily per-user metrics programmatically, call the Claude Code Analytics API with an Admin API key. The source does not mention CSV export from the dashboard, so check the official docs.</p>
+  <h3>Via cloud providers</h3>
+  <p>With Amazon Bedrock and similar setups, Claude Code does not send cloud-side metrics to Anthropic, so they are not covered by the analytics dashboard or the Claude Code Analytics API. There are three options for aggregating by user.</p>
+  <ul>
+    <li>OpenTelemetry: Export from each developer's machine to your own monitoring platform to get per-user token counts, costs, and tool activity.</li>
+    <li>Claude apps gateway: You run it yourself, and it provides per-user usage attribution, OTLP metrics, and per-user spend limits.</li>
+    <li>LLM gateway: Routes all traffic through a proxy and tracks spend per key. The example, LiteLLM, is open source, is not affiliated with Anthropic, and is stated to have not been security audited.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+
+  <section aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <details>
+      <summary>Can an Enterprise Admin export the spend report as CSV?</summary>
+      <p>According to the official Help Center, an Enterprise Admin can view analytics other than Spend. To check spend, ask an Owner or the Primary Owner.</p>
+      <p class="hint">Source: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+    </details>
+    <details>
+      <summary>Does the CSV include usage within seat allowances?</summary>
+      <p>No. On seat-based Enterprise plans, if you enable usage credits, only spend beyond the seat allowance is reflected.</p>
+      <p class="hint">Source: <a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a></p>
+    </details>
+    <details>
+      <summary>Can I see per-user cost when using a cloud provider such as Bedrock?</summary>
+      <p>These are outside the analytics dashboard. The official docs list three methods: OpenTelemetry, Claude apps gateway, and LLM gateway.</p>
+      <p class="hint">Source: <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
+    </details>
+  </section>
+
+  <section class="card tool-cta" aria-labelledby="tool-heading">
+    <h2 id="tool-heading">Related free tool</h2>
+    <p><a href="../../cost-calculator/index.html">Claude Code API Cost Calculator</a>: Estimates monthly cost when using the API, based on input, output, and cache token counts and the number of users.</p>
+  </section>
+
+  <h2 id="refs">References (as of writing)</h2>
+  <ul>
+    <li><a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a> (the official docs)</li>
+    <li><a href="https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans" rel="noopener">View usage analytics for Team and Enterprise plans</a> (official Help Center)</li>
+    <li><a href="https://code.claude.com/docs/en/analytics" rel="noopener">Track team usage with analytics</a> (the official docs)</li>
+  </ul>
+  <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
+  </article>
+  </div>
+
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
+  <aside class="card related" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related guides</h2>
+    <ul>
+      <li><a href="../claude-code-usage-monitoring/index.html">How to track Claude Code usage: choosing between analytics and OpenTelemetry</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-plans-compare/index.html">Claude Code Pricing and Plans Compared: Pro, Max, Team, Enterprise, and Console, and How to Choose</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-api-cost-estimate/index.html">How to estimate costs when using Claude Code with the API (counting tokens and unit prices)</a><span class="tag">Guide</span></li>
+    </ul>
+  </aside>
+  <aside class="card follow-box" aria-labelledby="follow-heading">
+    <h2 id="follow-heading">Follow for updates</h2>
+    <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
+    <ul class="follow-links">
+      <li><a href="https://x.com/chuki_dx" rel="me noopener">X(@chuki_dx)</a></li>
+      <li><a href="https://note.com/chuki_dx_note" rel="me noopener">note(chuki_dx_note)</a></li>
+      <li><a href="https://zenn.dev/chukidx_dev" rel="me noopener">Zenn(chukidx_dev)</a></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-mark" aria-hidden="true"><span>Chuki DX Lab</span></div>
+    <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
+    <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
+    <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
+  </div>
+</footer>
+<script src="../../../assets/ui.js" defer></script>
+<script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
+</body>
+</html>

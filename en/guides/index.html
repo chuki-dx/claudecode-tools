@@ -52,7 +52,7 @@
  "name": "Claude Code Guides",
  "url": "https://chuki-dx.github.io/claudecode-tools/en/guides/",
  "inLanguage": "en",
- "dateModified": "2026-10-26",
+ "dateModified": "2026-11-26",
  "isPartOf": {
   "@type": "WebSite",
   "name": "Claude Code Tools for IT Admins",
@@ -134,7 +134,7 @@
     </li>
   </ul>
   <h2 id="more-guides">Guides by topic (summary of the official docs)</h2>
-  <p class="hint">The 74 guides below are summaries and restructured versions based on the official docs and other sources as of writing (October 2026), with the source shown at the end of each section.</p>
+  <p class="hint">The 78 guides below summarize and reorganize the official docs and other sources as of writing (October–November 2026), with a source cited at the end of each section.</p>
   <h2 id="g-settings-generator">Settings, permissions, and safety</h2>
   <ul class="guide-list">
     <li class="card">
@@ -250,6 +250,11 @@
     <li class="card">
       <h3><a href="claude-code-security-scan/index.html">How to find code vulnerabilities with the Claude Security plugin and turn them into patches</a></h3>
       <p>A guide for corporate IT on using a Claude Code plugin to scan code for vulnerabilities and produce reviewed patches, along with the prerequisites and cautions.</p>
+      <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-terms-review/index.html">How to check Claude Code's terms of use in an internal review: applicable terms, PDFs, effective dates, and data handling</a></h3>
+      <p>For legal and corporate IT reviews, this guide covers how to determine which terms apply to Claude Code, where to find the PDFs and effective dates, data and output rights, and update notifications, all based on the official documentation.</p>
       <p class="hint">Related tool: <a href="../settings-generator/index.html">Permissions (settings.json) Generator</a></p>
     </li>
   </ul>
@@ -441,6 +446,11 @@
       <p>This guide organizes the official CLI commands such as claude, claude -p, claude update, and claude mcp by use case, with conditions and notes.</p>
       <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
     </li>
+    <li class="card">
+      <h3><a href="claude-code-vscode-settings/index.html">Claude Code extension settings in VS Code: permission modes such as Manual, and how to use the CLI</a></h3>
+      <p>This guide covers installing and configuring the Claude Code extension, choosing a permission mode such as Manual (an alias for default), and using the CLI in a terminal.</p>
+      <p class="hint">Related tool: <a href="../troubleshooting/index.html">Troubleshooting Cheat Sheet</a></p>
+    </li>
   </ul>
   <h2 id="g-cost-calculator">Pricing, usage, and models</h2>
   <ul class="guide-list">
@@ -519,7 +529,25 @@
       <p>This guide covers what a gateway can centrally manage, how to choose between an Anthropic-provided option and an existing product, and the order and cautions for rollout.</p>
       <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
     </li>
+    <li class="card">
+      <h3><a href="claude-code-usage-per-user/index.html">Export Claude Code cost per user as CSV: Team and Enterprise spend reports, and the API and cloud cases</a></h3>
+      <p>This guide covers where to check per-user costs: exporting the Team and Enterprise spend report as a CSV, the Enterprise Analytics API, and Console and cloud provider setups.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
+    <li class="card">
+      <h3><a href="claude-code-usage-limit-auto-continue/index.html">When Claude Code stops at a usage limit: auto-continue after reset, and when it doesn't continue</a></h3>
+      <p>When Claude Code on a claude.ai subscription stops at a usage limit, it can resume automatically after the reset. This guide covers how that works and what to do when it doesn't.</p>
+      <p class="hint">Related tool: <a href="../cost-calculator/index.html">API Cost Calculator</a></p>
+    </li>
   </ul>
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
     <h2 id="follow-heading">Follow for updates</h2>
     <p>New tools, guides and weekly recipes are announced on X (posts are mostly in Japanese).</p>
@@ -537,9 +565,11 @@
     <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
     <p>Operated by Chuki DX Lab ・ <a href="../about/index.html">About, disclaimer and advertising policy</a></p>
     <p>Disclaimer: The information in each guide reflects what I confirmed as of writing. Claude Code's specifications and pricing may change. Before you use it, check the official docs for the latest information. The operator is not responsible for any damages resulting from the use of information in these guides.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
   </div>
 </footer>
 <script src="../../assets/ui.js" defer></script>
 <script src="../../assets/count.js" defer></script>
+<script src="../../assets/click.js" defer></script>
 </body>
 </html>

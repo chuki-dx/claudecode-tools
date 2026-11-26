@@ -32,7 +32,7 @@
   "headline": "Using Claude Code through Microsoft Foundry (Azure): setup steps and caveats",
   "description": "This guide organizes, for corporate IT and based on the official docs, the prerequisites, authentication methods, environment variables, model version pinning, and permission settings for running Claude Code through Microsoft Foundry on Azure.",
   "datePublished": "2026-10-17",
-  "dateModified": "2026-10-17",
+  "dateModified": "2026-11-26",
   "inLanguage": "en",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-microsoft-foundry/",
   "author": {
@@ -142,6 +142,7 @@
         <li><a href="#s3">Steps 3 to 5: environment variables, pinning the model, and verifying startup</a></li>
         <li><a href="#s4">Permissions and the 1M-token context</a></li>
         <li><a href="#s5">Common pitfalls and pre-distribution checks</a></li>
+        <li><a href="#s6">When you can&#x27;t deploy (region, subscription, permissions)</a></li>
         <li><a href="#faq-heading">FAQ</a></li>
         <li><a href="#refs">References (as of writing)</a></li>
       </ol>
@@ -149,7 +150,7 @@
   </aside>
   <article>
   <h1>Using Claude Code through Microsoft Foundry (Azure): setup steps and caveats</h1>
-  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> | Updated: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (October 2026); sources are listed at the end of each section</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
@@ -239,6 +240,27 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
   <p>If you are in corporate IT rolling this out company-wide, it is safer to decide first whether to pin the model version, whether to have a Haiku deployment, and how to name deployments (this affects 1M detection). This reflects the content as of writing (October 2026), so check the official docs for the latest before rollout.</p>
   <p class="hint">Source: <a href="https://code.claude.com/docs/en/microsoft-foundry" rel="noopener">Claude Code on Microsoft Foundry</a></p>
 
+  <h2 id="s6">When you can't deploy (region, subscription, permissions)</h2>
+  <p>If you can't create or select a Claude deployment, check the Azure-side requirements first, before looking at Claude Code settings. The following are the conditions described in Microsoft Learn and Anthropic's docs (checked on November 26, 2026).</p>
+  <h3>1. Is the resource (project) region supported?</h3>
+  <p>The Microsoft Learn procedure assumes you create your Foundry project in a location that supports Claude model deployments. Support by region is shown in the "Region availability by deployment type" table, and to deploy to a region in that table, you need a project or hub in that region. Anthropic's documentation likewise tells you to create the Foundry resource in an Azure region where the model is available.</p>
+  <p>When I checked the table on November 26, 2026, the regions marked for Claude models under Global Standard were US regions (such as <code>eastus2</code>) and <code>swedencentral</code>. The Asia Pacific table (including <code>japaneast</code> and <code>japanwest</code>) had no rows for Claude models. Supported regions differ by model (for example, Fable models are only in <code>eastus2</code> and <code>swedencentral</code>), and the table gets updated. If you can't create a deployment in Japan East, check the row for your model in the latest table before deploying. In the Microsoft Learn troubleshooting guide, "Region not available" is caused by deploying to an unsupported region, and the guidance is to deploy to a region that supports your model.</p>
+  <h3>2. Subscription type and billing country</h3>
+  <p>According to Microsoft Learn, using Claude models requires a paid Azure subscription with a billing address in a country or region where Anthropic sells the models. The following types are not supported.</p>
+  <ul>
+    <li>CSP (Cloud Solution Provider) subscriptions</li>
+    <li>Subscriptions without an active pay-as-you-go payment method (such as student plans, free trials, and startup credits)</li>
+    <li>Sponsored subscriptions that use only Azure credits</li>
+  </ul>
+  <p>"Subscription eligibility error" is said to appear when the subscription type or billing region is not supported, or when the default quota for that model is 0. "Offer not available in your country/region" and "Marketplace purchase eligibility check failed" are also listed as errors that occur when the provider does not offer the model in that country, region, or location.</p>
+  <h3>3. Marketplace subscriptions and permissions</h3>
+  <ul>
+    <li>According to Anthropic's documentation, on your first Claude deployment you review the Azure Marketplace terms and subscribe to the Marketplace offer with <strong>Agree and Proceed</strong>. Microsoft Learn lists having the permissions required to subscribe to partner models as a prerequisite.</li>
+    <li>A 403 Forbidden error is attributed to insufficient permissions on the resource or subscription. Microsoft Learn advises checking for the Contributor or Owner role on the resource group, or the Cognitive Services User role when using Entra ID.</li>
+    <li>If you see "Model not found" or "Deployment not found," check that the deployment name is correct and that the model is available in that region (Anthropic docs). Claude Code takes the deployment name through the model environment variables, so also check that the values from step 4 match the deployment names in the portal.</li>
+  </ul>
+  <p class="hint">Source: <a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude" rel="noopener">Deploy and use Claude models in Microsoft Foundry (Microsoft Learn)</a>, <a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners#region-availability-by-deployment-type" rel="noopener">Foundry Models from partners and community: Region availability by deployment type (Microsoft Learn)</a>, <a href="https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry" rel="noopener">Claude in Microsoft Foundry (Anthropic)</a></p>
+
   <section aria-labelledby="faq-heading">
     <h2 id="faq-heading">FAQ</h2>
     <details>
@@ -266,16 +288,28 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
   <h2 id="refs">References (as of writing)</h2>
   <ul>
     <li><a href="https://code.claude.com/docs/en/microsoft-foundry" rel="noopener">Claude Code on Microsoft Foundry</a> (the official docs)</li>
+    <li><a href="https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry" rel="noopener">Claude in Microsoft Foundry</a> (Anthropic official docs)</li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude" rel="noopener">Deploy and use Claude models in Microsoft Foundry</a>(Microsoft Learn)</li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners" rel="noopener">Foundry Models from partners and community</a> (Microsoft Learn; region table)</li>
   </ul>
   <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
   </article>
   </div>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">Related guides</h2>
     <ul>
       <li><a href="../claude-code-cloud-providers/index.html">How Do You Roll Out Claude Code in a Company? Choosing Between Bedrock, Google Cloud, and Other Providers</a><span class="tag">Guide</span></li>
       <li><a href="../claude-code-login-auth/index.html">Claude Code login methods and team authentication settings</a><span class="tag">Guide</span></li>
+      <li><a href="../claude-code-usage-per-user/index.html">Export Claude Code cost per user as CSV: Team and Enterprise spend reports, and the API and cloud cases</a><span class="tag">Guide</span></li>
     </ul>
   </aside>
   <aside class="card follow-box" aria-labelledby="follow-heading">
@@ -295,9 +329,11 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-haiku-4-5'</code></pre>
     <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
     <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
     <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
   </div>
 </footer>
 <script src="../../../assets/ui.js" defer></script>
 <script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
 </body>
 </html>

@@ -32,7 +32,7 @@
   "headline": "How to roll out Claude Code managed settings company-wide",
   "description": "This guide follows the official docs to explain how to roll out Claude Code managed settings company-wide, from choosing a distribution method and the file distribution steps to confirming that settings took effect and points to note.",
   "datePublished": "2026-10-17",
-  "dateModified": "2026-10-17",
+  "dateModified": "2026-11-26",
   "inLanguage": "en",
   "mainEntityOfPage": "https://chuki-dx.github.io/claudecode-tools/en/guides/claude-code-managed-settings/",
   "author": {
@@ -139,6 +139,7 @@
         <li><a href="#conclusion-heading">Key takeaways</a></li>
         <li><a href="#s1">What you can do: managed settings and four ways to distribute them</a></li>
         <li><a href="#s2">Steps to distribute with a file</a></li>
+        <li><a href="#s2-example">A managed-settings.json example you can copy (the official sample for organizations)</a></li>
         <li><a href="#s3">Split files by team</a></li>
         <li><a href="#s4">Confirming it took effect, and what to do if it doesn&#x27;t work</a></li>
         <li><a href="#s5">Caveats to know before you distribute</a></li>
@@ -149,7 +150,7 @@
   </aside>
   <article>
   <h1>How to roll out Claude Code managed settings company-wide</h1>
-  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> ・ Chuki DX Lab ・ Content is based on the official docs and other sources as of writing (October 2026); sources are listed at the end of each section</p>
+  <p class="article-meta">Published: <time datetime="2026-10-17">October 17, 2026</time> | Updated: <time datetime="2026-11-26">November 26, 2026</time> | Chuki DX Lab | Content is based on sources such as the official docs as of writing (October 2026); sources are listed at the end of each section</p>
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
@@ -196,6 +197,69 @@
   <h3>3. Verify that it applied</h3>
   <p>Start with one machine and run <code>/status</code> inside Claude Code. The <code>Setting sources</code> line should show <code>Enterprise managed settings (file)</code>. Once you've confirmed that, roll it out to the remaining machines.</p>
   <p class="hint">Source: <a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
+  <h2 id="s2-example">A managed-settings.json example you can copy (the official sample for organizations)</h2>
+  <p>The settings examples page in the official docs has a <code>managed-settings.json</code> that shows the shape of the keys used in managed settings. It is not a recommended policy; it puts one example value in each key. It is valid JSON with no comments, so you can paste it as is, replace the organization UUID, server URLs, and marketplaces with your own values, and delete the keys you don't need (settings files can't contain comments).</p>
+<pre><code>{
+  "forceLoginMethod": "claudeai",
+  "forceLoginOrgUUID": [
+    "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  ],
+  "availableModels": [
+    "opus",
+    "sonnet"
+  ],
+  "enforceAvailableModels": true,
+  "permissions": {
+    "deny": [
+      "Bash(curl *)",
+      "Read(./.env)",
+      "Read(./secrets/**)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+  "allowManagedPermissionRulesOnly": true,
+  "allowedMcpServers": [
+    {
+      "serverUrl": "https://api.githubcopilot.com/*"
+    }
+  ],
+  "allowManagedMcpServersOnly": true,
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "acme-corp/approved-plugins"
+    }
+  ],
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "registry.npmjs.org",
+        "github.com"
+      ],
+      "allowManagedDomainsOnly": true
+    }
+  },
+  "requiredMinimumVersion": "2.1.150",
+  "cleanupPeriodDays": 7,
+  "companyAnnouncements": [
+    "Welcome to Acme Corp! Review our code guidelines at docs.example.com"
+  ]
+}</code></pre>
+  <p>Each key means the following (a summary of the official docs).</p>
+  <ul>
+    <li><code>forceLoginMethod</code>, <code>forceLoginOrgUUID</code>: Lock the login method and organization.</li>
+    <li><code>availableModels</code>, <code>enforceAvailableModels</code>: Restrict which models can be used in a session.</li>
+    <li><code>permissions.deny</code>: Denies reading two files and the <code>curl</code> command. <code>disableBypassPermissionsMode</code> removes the bypass permission mode.</li>
+    <li><code>allowManagedPermissionRulesOnly</code>, <code>allowManagedMcpServersOnly</code>: Enable only the permission rules and the MCP allowlist from managed settings. <code>allowedMcpServers</code> specifies MCP servers by URL.</li>
+    <li><code>strictKnownMarketplaces</code>: Allows only one plugin marketplace.</li>
+    <li><code>sandbox</code>: Runs commands inside the sandbox with a fixed network allowlist and prevents re-running them outside the sandbox. <code>failIfUnavailable</code> stops Claude Code from starting in environments where the sandbox can't be used (except Anthropic-hosted environments).</li>
+    <li><code>requiredMinimumVersion</code>: Sets the minimum Claude Code version. <code>cleanupPeriodDays</code> shortens retention of local data such as session records to 7 days. <code>companyAnnouncements</code> shows a message at startup.</li>
+  </ul>
+  <p>The location is the same as in step 2 above (macOS: <code>/Library/Application Support/ClaudeCode/managed-settings.json</code>; Linux and WSL: <code>/etc/claude-code/managed-settings.json</code>; Windows: <code>C:\Program Files\ClaudeCode\managed-settings.json</code>). You can also distribute the same JSON through MDM or server-managed settings. One file applies to every device and account it reaches, so if you want different values per group, roll out a separate file or profile to that group.</p>
+  <p class="hint">Source: <a href="https://code.claude.com/docs/en/settings-example" rel="noopener">Settings examples: An organization's managed settings</a>, <a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
   <h2 id="s3">Split files by team</h2>
   <p>When multiple teams each own part of the policy, instead of editing a shared file, you can put one file per part in <code>managed-settings.d/</code>, in the same directory as <code>managed-settings.json</code>. Claude Code merges <code>managed-settings.json</code> first, then the <code>*.json</code> files in alphanumeric order. You can control the order with numeric prefixes, such as <code>10-telemetry.json</code> and <code>20-security.json</code>.</p>
   <p>When the same key appears in multiple files, it is handled as follows.</p>
@@ -254,11 +318,20 @@
   <h2 id="refs">References (as of writing)</h2>
   <ul>
     <li><a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a> (official docs)</li>
+    <li><a href="https://code.claude.com/docs/en/settings-example" rel="noopener">Settings examples</a> (the official docs)</li>
   </ul>
   <p class="hint">This article is a summary and restructuring of the sources above by Chuki DX Lab. Specifications can change. Before using or distributing this inside your company, check the official docs for the latest information.</p>
   </article>
   </div>
 
+<aside class="card paid-cta" aria-labelledby="paid-heading">
+  <h2 id="paid-heading">Ready-to-use files for your team (paid)</h2>
+  <p>The settings, templates and skills behind these tools, packaged so you can hand them to a team as-is.</p>
+  <ul class="offer-list">
+    <li class="has-thumb"><span class="offer-thumb"><img src="../../../assets/products/claude-code-team-pack.jpg" width="1280" height="670" alt="Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills cover" loading="lazy" decoding="async"></span><span class="offer-body"><a href="https://bearball.gumroad.com/l/claude-code-team-pack" rel="noopener">Claude Code Team Starter Pack — settings.json presets, hooks, CLAUDE.md templates, 5 business skills</a><span class="tag">ZIP download · $15</span><br><span class="hint">6 permission presets (Windows / macOS) · hooks examples · 4 CLAUDE.md templates · 5 SKILL.md business skills · rollout checklist</span></span></li>
+  </ul>
+  <p class="hint">Instant download. Everything on this site stays free; the pack saves you the assembly work.</p>
+</aside>
   <aside class="card related" aria-labelledby="related-heading">
     <h2 id="related-heading">Related guides</h2>
     <ul>
@@ -283,9 +356,11 @@
     <p>Other sites by Chuki DX Lab: <a href="https://shiken.ai-income.jp/" rel="noopener">IT Certification Exam Calendar (Japanese)</a> · <a href="https://jpexam.ai-income.jp/" rel="noopener">Japan Work &amp; JLPT Exam Calendar</a></p>
     <p>Operated by Chuki DX Lab ・ <a href="../../about/index.html">About, disclaimer and advertising policy</a></p>
     <p>Disclaimer: The information on this page is limited to what I verified as of writing. Claude Code's behavior may change. Before using it, check the latest information in the official docs. The operator accepts no responsibility for any damages arising from the use of the information on this page.</p>
+    <p class="amazon-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
   </div>
 </footer>
 <script src="../../../assets/ui.js" defer></script>
 <script src="../../../assets/count.js" defer></script>
+<script src="../../../assets/click.js" defer></script>
 </body>
 </html>
