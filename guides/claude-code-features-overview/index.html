@@ -155,12 +155,28 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
+    <p class="answer-first">CLAUDE.md は毎セッション自動で読み込まれる常時の指示、スキルは必要なときに読み込む資料や <code>/deploy</code> のように呼び出す手順、hooks はイベントのたびに必ず実行される処理です。MCP は外部サービスへの接続、サブエージェントは別のコンテキストで動いて要約だけを返す作業役、プラグインはこれらをまとめて配る単位です。毎回必ず守らせたいルールは、CLAUDE.md の指示ではなく hook で強制します。</p>
     <ul>
       <li>毎回守らせたい規約やビルドコマンドは CLAUDE.md に、必要なときだけ使う資料や呼び出す手順はスキルに分けます。</li>
       <li>毎回必ず実行させたいことや、破られては困るガードレールは hooks にします。外部サービスとの接続は MCP、大量の読み取りを切り離したい作業はサブエージェントの役割です。</li>
       <li>最初から全部設定する必要はありません。同じ失敗や手作業が繰り返されたときに、該当する機能を一つずつ足していきます。</li>
     </ul>
+    <p class="hint answer-asof">2026年10月時点の公式ドキュメントにもとづく要約です。出典: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">機能</th><th scope="col">役割</th><th scope="col">向いている用途</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">CLAUDE.md</th><td>毎セッション自動で読み込まれる</td><td>コーディング規約、ビルドコマンド、「〜しない」ルール</td></tr>
+        <tr><th scope="row">スキル</th><td>必要なときに読み込む。呼び出して手順を動かせる</td><td>たまに使う資料、デプロイやレビューの手順</td></tr>
+        <tr><th scope="row">hooks</th><td>イベントのたびに必ず発火する</td><td>編集後のリント、危険なコマンドのブロック、通知</td></tr>
+        <tr><th scope="row">MCP</th><td>外部サービスへの接続</td><td>データベースへの問い合わせ、Slack への投稿、ブラウザの操作</td></tr>
+        <tr><th scope="row">サブエージェント</th><td>別のコンテキストで動き、要約だけを返す</td><td>多数のファイルを読む調査</td></tr>
+        <tr><th scope="row">プラグイン</th><td>スキル・hooks・サブエージェント・MCP サーバーをまとめて配る単位</td><td>複数のリポジトリや社内への配布</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">各機能が担う役割をひとことで整理する</h2>
   <p>この記事は、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の拡張機能の使い分けを、公式ドキュメントの記述に沿って整理したものです。執筆時点(2026年10月)の内容で、私が実機で試した結果ではありません。</p>

@@ -154,12 +154,28 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
+    <p class="answer-first">CLAUDE.md holds always-on instructions that are loaded automatically every session. Skills are reference material loaded when needed, or procedures you invoke like <code>/deploy</code>. Hooks are actions that always run on every event. MCP connects to external services, subagents do work in a separate context and return only a summary, and plugins are the unit for distributing all of these together. For rules that must be followed every time, enforce them with a hook rather than with an instruction in CLAUDE.md.</p>
     <ul>
       <li>Put conventions and build commands you want followed every time in CLAUDE.md, and put reference material and procedures you only need occasionally in skills.</li>
       <li>Use hooks for things that must run every time and for guardrails that must not be broken. MCP is for connecting to external services, and subagents are for work where you want to isolate large amounts of reading.</li>
       <li>You don't need to configure everything from the start. When the same mistake or manual work keeps recurring, add the relevant feature one at a time.</li>
     </ul>
+    <p class="hint answer-asof">This is a summary based on the official docs as of October 2026. Source: <a href="https://code.claude.com/docs/en/features-overview" rel="noopener">Extend Claude Code</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">Feature</th><th scope="col">Role</th><th scope="col">Best for</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">CLAUDE.md</th><td>Loaded automatically every session</td><td>Coding conventions, build commands, "don't do X" rules</td></tr>
+        <tr><th scope="row">Skills</th><td>Loaded when needed. You can invoke it to run a procedure</td><td>Occasionally used reference material, deploy and review procedures</td></tr>
+        <tr><th scope="row">hooks</th><td>Always fires on every event</td><td>Linting after edits, blocking dangerous commands, notifications</td></tr>
+        <tr><th scope="row">MCP</th><td>Connection to external services</td><td>Querying databases, posting to Slack, controlling a browser</td></tr>
+        <tr><th scope="row">Subagents</th><td>Runs in a separate context and returns only a summary</td><td>Research that involves reading many files</td></tr>
+        <tr><th scope="row">Plugins</th><td>A unit for distributing skills, hooks, subagents, and MCP servers together</td><td>Distribution across multiple repositories or the whole company</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">A one-line summary of each feature's role</h2>
   <p>This article organizes when to use each Claude Code (the AI coding agent from Anthropic that runs in the terminal) extension feature, based on the official docs. It reflects the content as of writing (October 2026) and is not the result of my own testing on a real machine.</p>

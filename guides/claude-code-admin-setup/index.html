@@ -154,12 +154,26 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
+    <p class="answer-first">Claude Code を組織で導入するときは、API プロバイダー(Claude for Teams / Enterprise、Claude Console、Amazon Bedrock などのクラウド)を決め、管理設定の届け方を選び、制限する範囲を管理設定で配ります。管理値は一部の例外を除き、利用者のユーザー設定とプロジェクト設定より優先されます。設定後は利用者に <code>/status</code> を実行してもらい、<code>Setting sources</code> の行に <code>Enterprise managed settings</code> と出るかで確かめます。</p>
     <ul>
       <li>公式ドキュメントによると、Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)の組織ポリシーは管理設定で配り、利用者のローカル設定より優先されます。</li>
       <li>判断の順番は、API プロバイダー、設定の届け方、制限する範囲、利用状況の把握、データの扱いです。</li>
       <li>設定後は利用者に <code>/status</code> を実行してもらい、管理設定が効いているか確かめます。</li>
     </ul>
+    <p class="hint answer-asof">2026年10月時点の公式ドキュメントにもとづく要約です。出典: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">届け方</th><th scope="col">優先順位</th><th scope="col">対象と注意</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">サーバー管理(claude.ai の管理コンソール)</th><td>1(最優先)</td><td>全プラットフォーム。Claude for Teams または Enterprise プランが必要</td></tr>
+        <tr><th scope="row">plist / レジストリ(<code>HKLM\SOFTWARE\Policies\ClaudeCode</code>)</th><td>2</td><td>macOS と Windows。書き込みに管理者権限が要る</td></tr>
+        <tr><th scope="row">ファイル(<code>managed-settings.json</code>)</th><td>3</td><td>macOS、Linux、WSL と Windows</td></tr>
+        <tr><th scope="row">ユーザーレジストリ(<code>HKCU\SOFTWARE\Policies\ClaudeCode</code>)</th><td>4(最下位)</td><td>Windows のみ。昇格なしで書けるため、強制ではなく便宜的な既定値</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">まず API プロバイダーを決める</h2>
   <p>公式ドキュメントでは、管理設定は Claude の管理コンソール、MDM(端末を一括管理する仕組み)、ディスク上のファイルのどれかで配るとされています。SSO、SCIM、シート割り当ては Claude アカウント側の設定で、別の管理者ガイドを参照する扱いです。</p>

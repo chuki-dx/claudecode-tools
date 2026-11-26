@@ -154,12 +154,27 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
+    <p class="answer-first">Pro と Max は、Claude(Web・デスクトップ・モバイル)と Claude Code を1つのサブスクリプションで使えるプランです。Code Review、Server-managed settings、SSO は Team・Enterprise のみ、SCIM、Compliance API、Zero Data Retention は Enterprise のみが対象です。プランの利用枠と Console の API クレジットは別の請求で、<code>ANTHROPIC_API_KEY</code> が設定されていると API の利用料金がかかります。</p>
     <ul>
       <li>Pro と Max は、Claude(Web・デスクトップ・モバイル)と Claude Code を1つのサブスクリプションで使えます。個人や少人数で試す入口です。</li>
       <li>SSO やサーバー管理設定、Code Review などは、公式ドキュメントの機能一覧で Team 以上が対象です。金額は公式の料金ページで確認してください。</li>
       <li>プランの利用枠と Console の API クレジットは別の請求です。<code>ANTHROPIC_API_KEY</code> が設定されていると API 課金になるため、先に確認してください。</li>
     </ul>
+    <p class="hint answer-asof">2026年10月時点の公式ドキュメント・公式ヘルプセンターにもとづく要約です。金額は公式の料金ページで確認してください。出典: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a>、<a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a>、<a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">機能</th><th scope="col">使えるプラン(claude.ai アカウントでログインした場合)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Computer use と Dispatch(Desktop)</th><td>Pro・Max のみ</td></tr>
+        <tr><th scope="row">Code Review、分析ダッシュボードと貢献メトリクス、Server-managed settings、SSO</th><td>Team・Enterprise のみ</td></tr>
+        <tr><th scope="row">Enterprise Analytics API、SCIM、Compliance API と Zero Data Retention</th><td>Enterprise のみ(Zero Data Retention は別途の有効化が必要)</td></tr>
+        <tr><th scope="row">Remote Control と Channels</th><td>Pro・Max は利用可。Team・Enterprise は管理者が有効にした場合</td></tr>
+        <tr><th scope="row">Cloud sessions(クラウドセッション)</th><td>全プラン(Enterprise はプレミアムシートか Chat + Claude Code シートが必要)</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">Claude Code で何ができるか(Pro・Max)</h2>
   <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)について、公式ヘルプセンターによると、Claude のモデルをターミナルや対応する IDE から直接使えるツールで、複雑なコーディング作業を任せつつ、透明性と制御を保てるとされています。Pro と Max では、Claude(Web・デスクトップ・モバイル)とターミナルの Claude Code を1つのサブスクリプションで使えます。</p>

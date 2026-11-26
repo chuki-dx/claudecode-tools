@@ -155,12 +155,26 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">結論</h2>
+    <p class="answer-first">Claude Code の管理者設定(managed settings)は、<code>settings.json</code> と同じ形のポリシーを、サーバー管理、MDM・OS のポリシー、<code>managed-settings.json</code> のファイル、HKCU レジストリのいずれかで端末に配る仕組みです。最も手早いのはファイルで、Windows は <code>C:\Program Files\ClaudeCode\managed-settings.json</code>、macOS は <code>/Library/Application Support/ClaudeCode/managed-settings.json</code>、Linux と WSL は <code>/etc/claude-code/managed-settings.json</code> に置きます。配布後は <code>/status</code> の <code>Setting sources</code> の行で効いているかを確かめます。</p>
     <ul>
       <li>管理者設定は <code>settings.json</code> と同じ形のポリシーを、サーバー、MDM、ファイル、HKCU レジストリのいずれかで端末に届ける仕組みです。</li>
       <li>MDM のない端末や Linux では、OS ごとの決まった場所に <code>managed-settings.json</code> を置く方法が手早いと、公式ドキュメントは説明しています。</li>
       <li>配布後は <code>/status</code> と <code>claude doctor</code> で確認します。クラウドセッションなど、届かない範囲がある点にも注意が必要です。</li>
     </ul>
+    <p class="hint answer-asof">2026年10月時点の公式ドキュメントにもとづく要約です。出典: <a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">配布方法</th><th scope="col">読み込みのタイミング</th><th scope="col">向いている場面</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">サーバー管理(claude.ai の管理コンソール、Claude apps gateway)</th><td>起動時に取得し、1時間ごとに確認</td><td>各端末に触れず一か所で変えたい</td></tr>
+        <tr><th scope="row">MDM・OS のポリシー(macOS の構成プロファイル、Windows の <code>HKLM</code>)</th><td>起動時に読み、30分ごとに確認</td><td>Jamf、Intune、グループポリシーで配れる</td></tr>
+        <tr><th scope="row">ファイル(<code>managed-settings.json</code>)</th><td>起動時に読み、ファイルが変わると再読み込み</td><td>MDM のない端末、Linux、自作イメージ</td></tr>
+        <tr><th scope="row">HKCU レジストリ(Windows・WSL)</th><td>条件が合うときだけ使われる</td><td><code>HKLM</code> に書き込めない場合</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">何ができるか:管理者設定と4つの配布方法</h2>
   <p>Claude Code(Anthropic 社が提供する、ターミナルで動く AI コーディングエージェント)には、管理者が端末にポリシーを配る managed settings(管理者設定)があります。公式ドキュメントによると、どの配布方法でも <code>settings.json</code> と同じポリシーのキーを使えます。本記事は執筆時点(2026年10月)の公式ドキュメントだけを根拠にしています。導入前に最新の内容を公式ドキュメントで確認してください。</p>

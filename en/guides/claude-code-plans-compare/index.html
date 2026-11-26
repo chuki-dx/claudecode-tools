@@ -153,12 +153,27 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
+    <p class="answer-first">Pro and Max are plans that let you use Claude (web, desktop, mobile) and Claude Code under a single subscription. Code Review, Server-managed settings, and SSO are available only on Team and Enterprise; SCIM, the Compliance API, and Zero Data Retention are available only on Enterprise. Plan usage limits and Console API credits are billed separately, and if <code>ANTHROPIC_API_KEY</code> is set, you are charged API usage fees.</p>
     <ul>
       <li>Pro and Max let you use Claude (web, desktop, and mobile) and Claude Code under a single subscription. They are an entry point for individuals or small groups to try it out.</li>
       <li>SSO, server-managed settings, Code Review, and similar features are listed in the official docs' feature list as available on Team and above. Check the official pricing page for amounts.</li>
       <li>Your plan's usage allowance and Console API credits are billed separately. If <code>ANTHROPIC_API_KEY</code> is set, usage is billed to the API, so check this first.</li>
     </ul>
+    <p class="hint answer-asof">This is a summary based on the official docs and the official Help Center as of October 2026. Check prices on the official pricing page. Sources: <a href="https://code.claude.com/docs/en/feature-availability" rel="noopener">Feature availability</a>, <a href="https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan" rel="noopener">Use Claude Code with your Pro or Max plan</a>, <a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan" rel="noopener">Use Claude Code with your Team or Enterprise plan</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">Feature</th><th scope="col">Available plans (when signed in with a claude.ai account)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Computer use and Dispatch (Desktop)</th><td>Pro and Max only</td></tr>
+        <tr><th scope="row">Code Review, analytics dashboard and contribution metrics, Server-managed settings, SSO</th><td>Team and Enterprise only</td></tr>
+        <tr><th scope="row">Enterprise Analytics API, SCIM, Compliance API, and Zero Data Retention</th><td>Enterprise only (Zero Data Retention must be enabled separately)</td></tr>
+        <tr><th scope="row">Remote Control and Channels</th><td>Available on Pro and Max. On Team and Enterprise, only if an admin has enabled it</td></tr>
+        <tr><th scope="row">Cloud sessions</th><td>All plans (Enterprise requires a Premium seat or a Chat + Claude Code seat)</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">What you can do with Claude Code (Pro and Max)</h2>
   <p>Claude Code is an AI coding agent from Anthropic that runs in the terminal. According to the official Help Center, it is a tool that lets you use Claude models directly from the terminal or a supported IDE, so you can delegate complex coding work while keeping transparency and control. With Pro and Max, one subscription covers both Claude (web, desktop, and mobile) and Claude Code in the terminal.</p>

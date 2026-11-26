@@ -154,12 +154,26 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
+    <p class="answer-first">Claude Code managed settings let you distribute a policy in the same format as <code>settings.json</code> to devices through one of these: server-managed settings, an MDM or OS policy, a <code>managed-settings.json</code> file, or the HKCU registry. The quickest option is the file. Place it at <code>C:\Program Files\ClaudeCode\managed-settings.json</code> on Windows, <code>/Library/Application Support/ClaudeCode/managed-settings.json</code> on macOS, and <code>/etc/claude-code/managed-settings.json</code> on Linux and WSL. After distributing it, check the <code>Setting sources</code> line in <code>/status</code> to confirm it is in effect.</p>
     <ul>
       <li>Admin settings are a mechanism for delivering a policy in the same format as <code>settings.json</code> to devices through a server, MDM, a file, or the HKCU registry.</li>
       <li>For machines without MDM, and for Linux, the official docs say the quick way is to place <code>managed-settings.json</code> at the fixed location for each OS.</li>
       <li>After distribution, verify with <code>/status</code> and <code>claude doctor</code>. Also note that some scopes, such as cloud sessions, are not reached.</li>
     </ul>
+    <p class="hint answer-asof">This is a summary based on the official docs as of October 2026. Source: <a href="https://code.claude.com/docs/en/managed-settings" rel="noopener">Deploy managed settings</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">Distribution method</th><th scope="col">When it loads</th><th scope="col">Best for</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Server-managed settings (claude.ai admin console, Claude apps gateway)</th><td>Fetched at startup, then checked every hour</td><td>You want to change settings in one place without touching each device</td></tr>
+        <tr><th scope="row">MDM / OS policy (macOS configuration profile, Windows <code>HKLM</code>)</th><td>Read at startup; checked every 30 minutes</td><td>Can be distributed with Jamf, Intune, or Group Policy</td></tr>
+        <tr><th scope="row">File (<code>managed-settings.json</code>)</th><td>Read at startup; reloaded when the file changes</td><td>Devices without MDM, Linux, custom images</td></tr>
+        <tr><th scope="row">HKCU registry (Windows, WSL)</th><td>Used only when conditions match</td><td>When you can't write to <code>HKLM</code></td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">What you can do: managed settings and four ways to distribute them</h2>
   <p>Claude Code (an AI coding agent from Anthropic that runs in the terminal) has managed settings, which let admins distribute policies to devices. According to the official docs, every distribution method uses the same policy keys as <code>settings.json</code>. This article is based only on the official docs as of writing (October 2026). Before you roll anything out, check the latest information in the official docs.</p>

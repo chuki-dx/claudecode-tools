@@ -153,12 +153,26 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
+    <p class="answer-first">To roll out Claude Code across an organization, you choose an API provider (Claude for Teams / Enterprise, Claude Console, or a cloud such as Amazon Bedrock), choose how to deliver managed settings, and distribute the restrictions you want through those managed settings. With a few exceptions, managed values take precedence over users' user settings and project settings. After setup, have users run <code>/status</code> and check that the <code>Setting sources</code> line shows <code>Enterprise managed settings</code>.</p>
     <ul>
       <li>According to the official docs, organization policies for Claude Code (Anthropic's AI coding agent that runs in the terminal) are distributed through managed settings and take precedence over users' local settings.</li>
       <li>The order of decisions is: API provider, how settings are delivered, the scope of restrictions, visibility into usage, and data handling.</li>
       <li>After you configure it, ask users to run <code>/status</code> to confirm that the managed settings are in effect.</li>
     </ul>
+    <p class="hint answer-asof">This is a summary based on the official docs as of October 2026. Source: <a href="https://code.claude.com/docs/en/admin-setup" rel="noopener">Set up Claude Code for your organization</a></p>
   </section>
+
+  <div class="table-scroll answer-table">
+    <table>
+      <thead><tr><th scope="col">Delivery method</th><th scope="col">Priority</th><th scope="col">Scope and notes</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Server-managed (claude.ai admin console)</th><td>1 (highest priority)</td><td>All platforms. Requires a Claude for Teams or Enterprise plan</td></tr>
+        <tr><th scope="row">plist / registry (<code>HKLM\SOFTWARE\Policies\ClaudeCode</code>)</th><td>2</td><td>macOS and Windows. Writing requires administrator privileges</td></tr>
+        <tr><th scope="row">File (<code>managed-settings.json</code>)</th><td>3</td><td>macOS, Linux, WSL, and Windows</td></tr>
+        <tr><th scope="row">User registry (<code>HKCU\SOFTWARE\Policies\ClaudeCode</code>)</th><td>4 (lowest)</td><td>Windows only. It can be written without elevation, so it works as a convenient default rather than an enforced setting</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h2 id="s1">First, decide on an API provider</h2>
   <p>According to the official docs, managed settings can be distributed through the Claude admin console, MDM (a system for managing devices in bulk), or files on disk. SSO, SCIM, and seat assignment are configured on the Claude account side and are covered in a separate admin guide.</p>

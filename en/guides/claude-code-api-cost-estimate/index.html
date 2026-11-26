@@ -154,11 +154,13 @@
 
   <section class="card summary-box" aria-labelledby="conclusion-heading">
     <h2 id="conclusion-heading">Key takeaways</h2>
+    <p class="answer-first">The cost of Claude Code through the API is the token counts for input, cache writes, cache reads, and output, each multiplied by its per-million-token unit price and then summed. On the official pricing page as of 2026-10-14, Sonnet 5.5 is 2 USD for input and 10 USD for output, and Opus 5.5 is 4 USD for input and 20 USD for output (per million tokens). The official docs give an enterprise average of about 13 USD per developer per active day, or 150 to 250 USD per month.</p>
     <ul>
       <li>API cost is calculated as "number of tokens × price per million tokens," summed across each type: <strong>input, cache write, cache read, and output</strong>.</li>
       <li>Claude Code sends the conversation history every time, so <strong>cache-read token counts tend to be large</strong>. This is where it differs from estimates for ordinary chat.</li>
       <li>A price list alone doesn't determine a department's monthly cost. As the official docs advise, try it with a small group, measure the actual token usage, and then make your estimate.</li>
     </ul>
+    <p class="hint answer-asof">Unit prices are the values I confirmed on the official pages as of 2026-10-14. Sources: <a href="https://platform.claude.com/docs/en/about-claude/pricing" rel="noopener">Pricing</a>, <a href="https://code.claude.com/docs/en/costs" rel="noopener">Manage costs effectively</a></p>
   </section>
 
   <h2 id="tokens">What is a token?</h2>

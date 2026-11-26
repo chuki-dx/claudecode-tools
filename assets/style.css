@@ -1596,6 +1596,12 @@ tbody tr:hover { background: var(--accent-soft); }
 td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 :not(.table-scroll) > table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 
+/* 解説の冒頭の「短い答え」と早見表(AI 検索に引用されやすい形) */
+.summary-box .answer-first { margin: 8px 0 4px; line-height: 1.9; }
+.summary-box .answer-asof { margin: 10px 0 0; }
+.answer-table th { white-space: normal; }
+.answer-table tbody th[scope="row"] { font-size: 0.9rem; letter-spacing: 0; color: var(--text); background: transparent; min-width: 9em; }
+
 .ts-table { min-width: 760px; }
 .ts-table th:nth-child(1) { width: 26%; }
 .ts-table th:nth-child(2), .ts-table th:nth-child(3) { width: 26%; }
